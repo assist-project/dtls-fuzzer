@@ -19,6 +19,7 @@ import de.learnlib.oracles.SULOracle;
 import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
 import de.rub.nds.modelfuzzer.fuzz.DtlsMessageFragmenter;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationBug;
+import de.rub.nds.modelfuzzer.fuzz.FragmentationGeneratorFactory;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationStrategy;
 import de.rub.nds.modelfuzzer.fuzz.FragmentingInputExecutor;
 import de.rub.nds.modelfuzzer.fuzz.FuzzingReport;
@@ -77,7 +78,9 @@ public class ModelBasedFuzzer {
 		List<TlsInput> inputs = SymbolicAlphabet.createWords(
 				Arrays.asList(TlsSymbol.RSA_CLIENT_HELLO, TlsSymbol.RSA_CLIENT_HELLO, TlsSymbol.RSA_CLIENT_KEY_EXCHANGE, 
 						TlsSymbol.CHANGE_CIPHER_SPEC, TlsSymbol.FINISHED, TlsSymbol.FINISHED, TlsSymbol.APPLICATION));
-		FuzzedTlsInput input = new FuzzedTlsInput(inputs.get(5), new FragmentingInputExecutor(new DtlsMessageFragmenter(FragmentationStrategy.EVEN, 2)));
+		FuzzedTlsInput input = new FuzzedTlsInput(inputs.get(5), new FragmentingInputExecutor(
+				new DtlsMessageFragmenter(FragmentationStrategy.EVEN, 2), 
+				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN)));
 		inputs.set(5, input);
 		Word<TlsInput> test = Word.fromList(inputs);
 		tlsOracle.answerQuery(test);
@@ -100,7 +103,8 @@ public class ModelBasedFuzzer {
 
 		DtlsMessageFragmenter fragmenter = new DtlsMessageFragmenter(FragmentationStrategy.EVEN, 2);
 
-		FragmentingInputExecutor fuzzingExecutor = new FragmentingInputExecutor(fragmenter);
+		FragmentingInputExecutor fuzzingExecutor = new FragmentingInputExecutor(fragmenter, 
+				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
 
 		for (Word<TlsInput> statePrefix : stateCover) {
 			FastMealyState<String> state = specification.getState(statePrefix);

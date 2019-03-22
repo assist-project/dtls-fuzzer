@@ -17,17 +17,21 @@ import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
 public class FragmentingInputExecutor extends InputExecutor {
 	
 	private DtlsMessageFragmenter dtlsMessageFragmenter;
+	private FragmentationGenerator fragmentationGenerator;
 
-	public FragmentingInputExecutor(DtlsMessageFragmenter fragmenter) {
+	public FragmentingInputExecutor(DtlsMessageFragmenter fragmenter, FragmentationGenerator fragmentationGenerator) {
 		this.dtlsMessageFragmenter = fragmenter;
+		this.fragmentationGenerator = fragmentationGenerator;
 	}
 
 	protected void sendMessage(ProtocolMessage message, State state) {
 		if (message.isHandshakeMessage()) {
 			stripFields(message);
+			message.setAdjustContext(false);
 			message.getHandler(state.getTlsContext()).prepareMessage(message);
 			SendMessageHelper helper = new SendMessageHelper();
-			List<DtlsHandshakeMessageFragment> dtlsFragments = dtlsMessageFragmenter.generateDtlsFragments((HandshakeMessage) message, state);
+			DtlsFragmentationResult result = dtlsMessageFragmenter.generateDtlsFragments((HandshakeMessage) message, state, fragmentationGenerator);
+			List<DtlsHandshakeMessageFragment> dtlsFragments = result.getDtlsFragments();
 			List<AbstractRecord> records = generateRecords(dtlsFragments, state);
 			try {
 				helper.sendRecords(records, state.getTlsContext());

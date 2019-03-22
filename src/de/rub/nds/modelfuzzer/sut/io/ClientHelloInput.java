@@ -13,7 +13,7 @@ public class ClientHelloInput extends TlsInput{
 
 	private CipherSuite suite;
 
-	ClientHelloInput(CipherSuite cipherSuite) {
+	public ClientHelloInput(CipherSuite cipherSuite) {
 		super(new InputExecutor());
 		this.suite = cipherSuite;
 	}
@@ -22,8 +22,7 @@ public class ClientHelloInput extends TlsInput{
 	public ProtocolMessage generateMessage(State state) {
 		state.getConfig().setDefaultSelectedCipherSuite(suite);
         state.getConfig().setDefaultServerSupportedCiphersuites(suite);
-        state.getConfig().setDefaultClientSupportedCiphersuites(
-        		Arrays.asList(CipherSuite.values()).subList(CipherSuite.values().length-30, CipherSuite.values().length));
+        state.getConfig().setDefaultClientSupportedCiphersuites(Arrays.asList(suite));
         if (suite.name().contains("EC")) {
             state.getConfig().setAddECPointFormatExtension(true);
             state.getConfig().setAddEllipticCurveExtension(true);

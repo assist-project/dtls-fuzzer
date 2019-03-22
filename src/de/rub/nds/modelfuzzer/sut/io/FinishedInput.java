@@ -5,9 +5,9 @@ import de.rub.nds.tlsattacker.core.protocol.message.FinishedMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 
-public class FinishedTlsInput extends TlsInput{
+public class FinishedInput extends TlsInput{
 	
-	public FinishedTlsInput() {
+	public FinishedInput() {
 		super(new InputExecutor());
 	}
 

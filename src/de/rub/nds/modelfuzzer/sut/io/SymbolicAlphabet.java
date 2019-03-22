@@ -39,7 +39,7 @@ public class SymbolicAlphabet {
 		symbolicMap.put(TlsSymbol.ALERT_UNEXPECTED_MESSAGE, new GenericTlsInput(buildAlertMessage(AlertLevel.FATAL, AlertDescription.UNEXPECTED_MESSAGE)));
 		symbolicMap.put(TlsSymbol.ALERT_CLOSE_NOTIFY, new GenericTlsInput(buildAlertMessage(AlertLevel.WARNING, AlertDescription.CLOSE_NOTIFY)));
 		symbolicMap.put(TlsSymbol.CHANGE_CIPHER_SPEC, new ChangeCipherSpecInput());
-		symbolicMap.put(TlsSymbol.FINISHED, new FinishedTlsInput());
+		symbolicMap.put(TlsSymbol.FINISHED, new FinishedInput());
 		symbolicMap.put(TlsSymbol.APPLICATION, new GenericTlsInput(new ApplicationMessage()));
 		symbolicMap.put(TlsSymbol.HELLO_APPLICATION, new GenericTlsInput(buildCustomApplicationMessage("Hello")));
 	}
