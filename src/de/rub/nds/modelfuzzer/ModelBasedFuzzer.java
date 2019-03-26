@@ -28,11 +28,9 @@ import de.rub.nds.modelfuzzer.sut.ProcessHandler;
 import de.rub.nds.modelfuzzer.sut.SulProcessWrapper;
 import de.rub.nds.modelfuzzer.sut.TlsSUL;
 import de.rub.nds.modelfuzzer.sut.io.FuzzedTlsInput;
-import de.rub.nds.modelfuzzer.sut.io.SymbolicAlphabet;
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
 import de.rub.nds.modelfuzzer.sut.io.TlsProcessor;
-import de.rub.nds.modelfuzzer.sut.io.TlsSymbol;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.automata.transout.impl.FastMealyState;
 import net.automatalib.util.automata.Automata;
@@ -41,7 +39,7 @@ import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
 
 public class ModelBasedFuzzer {
-	private static final Logger LOG = LogManager.getLogger(ModelBasedFuzzer.class);
+	private static final Logger LOGGER = LogManager.getLogger(ModelBasedFuzzer.class);
 	private ModelBasedFuzzerConfig config;
 
 	public ModelBasedFuzzer(ModelBasedFuzzerConfig config) {
@@ -75,16 +73,6 @@ public class ModelBasedFuzzer {
 							config.getSulDelegate().getRunWait()));
 		}
 		SULOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(tlsSut);
-		List<TlsInput> inputs = SymbolicAlphabet.createWords(
-				Arrays.asList(TlsSymbol.RSA_CLIENT_HELLO, TlsSymbol.RSA_CLIENT_HELLO, TlsSymbol.RSA_CLIENT_KEY_EXCHANGE, 
-						TlsSymbol.CHANGE_CIPHER_SPEC, TlsSymbol.FINISHED, TlsSymbol.FINISHED, TlsSymbol.APPLICATION));
-		FuzzedTlsInput input = new FuzzedTlsInput(inputs.get(5), new FragmentingInputExecutor(
-				new DtlsMessageFragmenter(FragmentationStrategy.EVEN, 2), 
-				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN)));
-		inputs.set(5, input);
-		Word<TlsInput> test = Word.fromList(inputs);
-		tlsOracle.answerQuery(test);
-		System.exit(0);
 		return tlsOracle;
 	}
 	
@@ -95,29 +83,36 @@ public class ModelBasedFuzzer {
 	}
 	
 	private FuzzingReport fuzzModel(SULOracle<TlsInput, TlsOutput> tlsOracle, FastMealy<TlsInput, String> specification) {
-		LOG.info("Starting fuzzing");
+		LOGGER.info("Starting fuzzing");
 		FuzzingReport report = new FuzzingReport();
 		Alphabet<TlsInput> inputs = specification.getInputAlphabet();
 
 		List<Word<TlsInput>> stateCover = Automata.stateCover(specification, inputs);
 
-		DtlsMessageFragmenter fragmenter = new DtlsMessageFragmenter(FragmentationStrategy.EVEN, 2);
-
-		FragmentingInputExecutor fuzzingExecutor = new FragmentingInputExecutor(fragmenter, 
-				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
-
+		int testNumber = 0;
+		int initNumFrag = 2;
+		
 		for (Word<TlsInput> statePrefix : stateCover) {
 			FastMealyState<String> state = specification.getState(statePrefix);
 			List<Word<TlsInput>> charSuffixes = Automata.stateCharacterizingSet(specification, inputs, state);
 			if (charSuffixes.isEmpty())
 				charSuffixes = Collections.singletonList(Word.<TlsInput>epsilon());
-
-			for (Word<TlsInput> suffix : charSuffixes) {
-				for (TlsInput input : inputs) {
-					TlsInput fuzzedInput = new FuzzedTlsInput(input, fuzzingExecutor);
-					Word<TlsInput> regularWord = new WordBuilder<TlsInput>().append(statePrefix).append(input)
-							.append(suffix).toWord();
+			for (TlsInput input : inputs) {
+				for (Word<TlsInput> suffix : charSuffixes) {
+					if (config.getBound() != null && testNumber >= config.getBound()) {
+						return report;
+					}
+					testNumber ++;
+					
+					TlsInput fuzzedInput = fragmentationFuzz(initNumFrag, input);
+					
+					Word<TlsInput> regularWord = new WordBuilder<TlsInput>()
+							.append(statePrefix)
+							.append(input)
+							.append(suffix)
+							.toWord();
 					Word<TlsOutput> regularOutput = tlsOracle.answerQuery(regularWord);
+					
 					Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
 							.append(statePrefix)
 							.append(fuzzedInput)
@@ -125,24 +120,33 @@ public class ModelBasedFuzzer {
 							.toWord();
 					Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
 					
-					Word<String> specificationOutputString = specification.computeOutput(regularWord);
-					
-
 					if (!fuzzedOutput.equals(regularOutput)) {
 						FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
 						report.addItem(bug);
+						break;
 					}
 					
+					
+					Word<String> specificationOutputString = specification.computeOutput(regularWord);
 					Word<String> regularOutputString = regularOutput.transform(o -> o.toString());
 					if (!specificationOutputString.equals(regularOutputString)) {
 						SpecificationBug bug = new SpecificationBug(state, statePrefix, regularWord, specificationOutputString, regularOutputString);
 						report.addItem(bug);
+						break;
 					}
-					
 				}
 			}
 		}
 		
 		return report;
+	}
+	
+	private TlsInput fragmentationFuzz(int numFragments, TlsInput input) {
+		DtlsMessageFragmenter fragmenter = new DtlsMessageFragmenter(numFragments);
+
+		FragmentingInputExecutor fuzzingExecutor = new FragmentingInputExecutor(fragmenter, 
+				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
+		TlsInput fuzzedInput = new FuzzedTlsInput(input, fuzzingExecutor);
+		return fuzzedInput;
 	}
 }

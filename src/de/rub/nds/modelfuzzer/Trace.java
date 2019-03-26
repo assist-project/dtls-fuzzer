@@ -98,7 +98,7 @@ public class Trace {
 		int stepWait = 20;
 		long runWait = 100;
 		FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
-				new DtlsMessageFragmenter(FragmentationStrategy.EVEN, 100), 
+				new DtlsMessageFragmenter(100), 
 				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
 		TlsInput [] inputs = new TlsInput [] {
 				new ClientHelloInput(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA),

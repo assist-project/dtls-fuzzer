@@ -15,7 +15,7 @@ public class Fragmentation {
 	}
 	
 	public List<Fragment> getFragments() {
-		return this.fragments;
+		return fragments;
 	}
 	
 	public int getLength() {

@@ -22,7 +22,10 @@ public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
 	@Parameter(names = "-output", required = false, description = "The file in which results should be saved")
     private String output;
 	
-    @ParametersDelegate
+	@Parameter(names = "-bound", required = false, description = "An optional bound on the total number of tests")
+    private Integer bound = null;
+	
+	@ParametersDelegate
     private SulDelegate sulDelegate;
     
     public ModelBasedFuzzerConfig(GeneralDelegate delegate) {
@@ -47,4 +50,7 @@ public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
     	return output;
     }
     
+    public Integer getBound() {
+    	return bound;
+    }
 }
