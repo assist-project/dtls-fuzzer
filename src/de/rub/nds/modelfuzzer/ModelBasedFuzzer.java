@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -113,6 +112,16 @@ public class ModelBasedFuzzer {
 							.toWord();
 					Word<TlsOutput> regularOutput = tlsOracle.answerQuery(regularWord);
 					
+					Word<String> specificationOutputString = specification.computeOutput(regularWord);
+					
+					Word<String> regularOutputString = regularOutput.transform(o -> o.toString());
+					if (!specificationOutputString.equals(regularOutputString)) {
+						SpecificationBug bug = new SpecificationBug(state, statePrefix, regularWord, specificationOutputString, regularOutputString);
+						report.addItem(bug);
+						if (!config.isExhaustive())
+							break;
+					}
+					
 					Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
 							.append(statePrefix)
 							.append(fuzzedInput)
@@ -123,17 +132,10 @@ public class ModelBasedFuzzer {
 					if (!fuzzedOutput.equals(regularOutput)) {
 						FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
 						report.addItem(bug);
-						break;
+						if (!config.isExhaustive())
+							break;
 					}
 					
-					
-					Word<String> specificationOutputString = specification.computeOutput(regularWord);
-					Word<String> regularOutputString = regularOutput.transform(o -> o.toString());
-					if (!specificationOutputString.equals(regularOutputString)) {
-						SpecificationBug bug = new SpecificationBug(state, statePrefix, regularWord, specificationOutputString, regularOutputString);
-						report.addItem(bug);
-						break;
-					}
 				}
 			}
 		}

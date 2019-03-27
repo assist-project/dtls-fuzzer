@@ -31,6 +31,7 @@ import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 
@@ -86,31 +87,54 @@ public class Trace {
 
 		private static String localGnuTLSNewPsk = "/home/paul/Modules/gnutls-3.6.4/src/gnutls-serv --udp --disable-client-cert --pskpasswd /home/paul/Scripts/gnutls/keys.psk --port 20000 --priority NORMAL:+PSK:+SRP";
 
-		private static String localTinyDtls = "/home/paul/GitHub/tinydtls/tests/dtls-server -p 20000";
+		private static String localTinyDtls = "/home/paul/Modules/tinydtls-fuzz/tests/dtls-server -p 20000";
+		
+		private static String localMbedDtls = "/home/paul/Modules/mbedtls-2.14.0/programs/ssl/ssl_server2 "
+				+ "dtls=1 psk=1234 mtu=100 key_file=/home/paul/Keys/RSA2048/server-key.pem "
+				+ "crt_file=/home/paul/Keys/RSA2048/server-cert.pem server_port=20000 exchanges=100 hs_timeout=20000-120000";
 		
 		private static String none = null;
+	}
+	
+	private static int NUM_FRAGS = 2;
+	
+	private static TlsInput fuzz(TlsInput input) {
+		FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
+				new DtlsMessageFragmenter(NUM_FRAGS), 
+				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
+		return new FuzzedTlsInput(input, fragmentingExecutor);
+	}
+	
+	private static TlsInput fuzz(TlsInput input, int numFrags) {
+		if (numFrags == 0) 
+			return input;
+		else  {
+			FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
+					new DtlsMessageFragmenter(numFrags), 
+					FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
+			return new FuzzedTlsInput(input, fragmentingExecutor);
+		}
 	}
 	
 	public static void main(String[] args) throws Exception {
 
 		init();
+		CipherSuite cs = 
+//				CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256;
+				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
+//				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
 		int iterations = 1;
-		int stepWait = 20;
+		int stepWait = 200;
 		long runWait = 100;
-		FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
-				new DtlsMessageFragmenter(100), 
-				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
 		TlsInput [] inputs = new TlsInput [] {
-				new ClientHelloInput(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA),
-				new ClientHelloInput(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA),
-				new GenericTlsInput(new RSAClientKeyExchangeMessage()),
-//				new GenericTlsInput(new CertificateMessage()),
+				fuzz(new ClientHelloInput(cs), 0),
+				fuzz(new ClientHelloInput(cs), 0),
+				fuzz(new GenericTlsInput(new PskClientKeyExchangeMessage()), 3),
 				new ChangeCipherSpecInput(),
-				new FinishedInput(),
-				new FuzzedTlsInput(new FinishedInput(), fragmentingExecutor)
+				fuzz(new FinishedInput(), 0)
 		};
 		
-		String command = Command.none;
+		String command = Command.localMbedDtls;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;
 		
 		ModelBasedFuzzerConfig modelFuzzConfig = new ModelBasedFuzzerConfig(new GeneralDelegate());
