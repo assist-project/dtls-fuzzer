@@ -12,7 +12,7 @@ public class FuzzedTlsInput extends TlsInput{
 		super(executor);
 		this.input = input;
 	}
-
+	
 	@Override
 	public ProtocolMessage generateMessage(State state) {
 		return input.generateMessage(state);
@@ -24,5 +24,9 @@ public class FuzzedTlsInput extends TlsInput{
 
 	public void postUpdate(TlsOutput output, State state) {
 		input.postUpdate(output, state);
+	}
+	
+	public TlsInput getInput() {
+		return input;
 	}
 }

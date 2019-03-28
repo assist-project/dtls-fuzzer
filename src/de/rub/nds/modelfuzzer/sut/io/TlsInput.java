@@ -13,12 +13,13 @@ public abstract class TlsInput {
 	}
 	
 
+	/**
+	 * Generates an executor for this inputs.
+	 */
 	public InputExecutor getExecutor() {
 		return inputExecutor;
 	}
 	
-	
-
 	/**
 	 * Generates a fresh message and updates the context.
 	 */

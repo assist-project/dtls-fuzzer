@@ -29,9 +29,9 @@ public class SymbolicAlphabet {
 	static {
 		symbolicMap = new EnumMap<TlsSymbol, TlsInput>(TlsSymbol.class);
 		symbolicMap.put(TlsSymbol.RSA_CLIENT_HELLO, new ClientHelloInput(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA));
-		symbolicMap.put(TlsSymbol.PSK_CLIENT_HELLO, new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA ));
+//		symbolicMap.put(TlsSymbol.PSK_CLIENT_HELLO, new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA ));
 //		symbolicMap.put(TlsSymbol.RSA_CLIENT_HELLO, new ClientHelloInput(CipherSuite.TLS_RSA_WITH_AES_128_CCM_8));
-//		symbolicMap.put(TlsSymbol.PSK_CLIENT_HELLO, new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8));
+		symbolicMap.put(TlsSymbol.PSK_CLIENT_HELLO, new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8));
 
 		symbolicMap.put(TlsSymbol.RSA_CLIENT_KEY_EXCHANGE, new GenericTlsInput(new RSAClientKeyExchangeMessage()));
 		symbolicMap.put(TlsSymbol.PSK_CLIENT_KEY_EXCHANGE, new GenericTlsInput(new PskClientKeyExchangeMessage()));

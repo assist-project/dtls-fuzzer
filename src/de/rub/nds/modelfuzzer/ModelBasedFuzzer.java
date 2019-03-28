@@ -16,17 +16,14 @@ import com.pfg666.dotparser.fsm.mealy.MealyDotParser;
 import de.learnlib.api.SUL;
 import de.learnlib.oracles.SULOracle;
 import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
-import de.rub.nds.modelfuzzer.fuzz.DtlsMessageFragmenter;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationBug;
-import de.rub.nds.modelfuzzer.fuzz.FragmentationGeneratorFactory;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationStrategy;
-import de.rub.nds.modelfuzzer.fuzz.FragmentingInputExecutor;
 import de.rub.nds.modelfuzzer.fuzz.FuzzingReport;
 import de.rub.nds.modelfuzzer.fuzz.SpecificationBug;
 import de.rub.nds.modelfuzzer.sut.ProcessHandler;
 import de.rub.nds.modelfuzzer.sut.SulProcessWrapper;
 import de.rub.nds.modelfuzzer.sut.TlsSUL;
-import de.rub.nds.modelfuzzer.sut.io.FuzzedTlsInput;
+import de.rub.nds.modelfuzzer.sut.io.FragmentedTlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
 import de.rub.nds.modelfuzzer.sut.io.TlsProcessor;
@@ -90,6 +87,7 @@ public class ModelBasedFuzzer {
 
 		int testNumber = 0;
 		int initNumFrag = 2;
+		int maxNumFrags = 3;
 		
 		for (Word<TlsInput> statePrefix : stateCover) {
 			FastMealyState<String> state = specification.getState(statePrefix);
@@ -102,8 +100,6 @@ public class ModelBasedFuzzer {
 						return report;
 					}
 					testNumber ++;
-					
-					TlsInput fuzzedInput = fragmentationFuzz(initNumFrag, input);
 					
 					Word<TlsInput> regularWord = new WordBuilder<TlsInput>()
 							.append(statePrefix)
@@ -120,35 +116,34 @@ public class ModelBasedFuzzer {
 						report.addItem(bug);
 						if (!config.isExhaustive())
 							break;
+						continue;
 					}
 					
-					Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
-							.append(statePrefix)
-							.append(fuzzedInput)
-							.append(suffix)
-							.toWord();
-					Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
-					
-					if (!fuzzedOutput.equals(regularOutput)) {
-						FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
-						report.addItem(bug);
-						if (!config.isExhaustive())
+					boolean bugsFound = false;
+					for (int numFrags=initNumFrag; numFrags<maxNumFrags; numFrags ++) {
+						TlsInput fuzzedInput = new FragmentedTlsInput(input, initNumFrag, FragmentationStrategy.EVEN);
+						Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
+								.append(statePrefix)
+								.append(fuzzedInput)
+								.append(suffix)
+								.toWord();
+						Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
+						
+						if (!fuzzedOutput.equals(regularOutput)) {
+							FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
+							report.addItem(bug);
+							bugsFound = true;
 							break;
+						}
 					}
 					
+					if (bugsFound && !config.isExhaustive()) {
+						break;
+					}
 				}
 			}
 		}
 		
 		return report;
-	}
-	
-	private TlsInput fragmentationFuzz(int numFragments, TlsInput input) {
-		DtlsMessageFragmenter fragmenter = new DtlsMessageFragmenter(numFragments);
-
-		FragmentingInputExecutor fuzzingExecutor = new FragmentingInputExecutor(fragmenter, 
-				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
-		TlsInput fuzzedInput = new FuzzedTlsInput(input, fuzzingExecutor);
-		return fuzzedInput;
 	}
 }

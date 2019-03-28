@@ -121,20 +121,21 @@ public class Trace {
 		init();
 		CipherSuite cs = 
 //				CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256;
-				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
-//				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
+//				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
+				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
 		int iterations = 1;
 		int stepWait = 200;
 		long runWait = 100;
 		TlsInput [] inputs = new TlsInput [] {
 				fuzz(new ClientHelloInput(cs), 0),
 				fuzz(new ClientHelloInput(cs), 0),
-				fuzz(new GenericTlsInput(new PskClientKeyExchangeMessage()), 3),
+				fuzz(new GenericTlsInput(new PskClientKeyExchangeMessage()), 0),
 				new ChangeCipherSpecInput(),
-				fuzz(new FinishedInput(), 0)
+				fuzz(new FinishedInput(), 0),
+				fuzz(new ClientHelloInput(cs), 1)				
 		};
 		
-		String command = Command.localMbedDtls;
+		String command = Command.localTinyDtls;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;
 		
 		ModelBasedFuzzerConfig modelFuzzConfig = new ModelBasedFuzzerConfig(new GeneralDelegate());
