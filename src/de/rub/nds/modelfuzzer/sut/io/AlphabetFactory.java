@@ -13,7 +13,7 @@ import net.automatalib.words.impl.ListAlphabet;
 
 public class AlphabetFactory {
 	
-	public static final String DEFAULT_ALPHABET = "./default_alphabet.xml";
+	public static final String DEFAULT_ALPHABET = "/default_alphabet.xml";
 	
 	public static Alphabet<TlsInput> buildConfiguredAlphabet(ModelBasedFuzzerConfig config) throws FileNotFoundException, JAXBException, IOException, XMLStreamException {
 		Alphabet<TlsInput> alphabet = null;

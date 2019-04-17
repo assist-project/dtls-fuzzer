@@ -2,6 +2,7 @@ package de.rub.nds.modelfuzzer.learn;
 
 
 import java.util.Random;
+
 import com.google.common.collect.Lists;
 
 import de.learnlib.acex.analyzers.AcexAnalyzers;
@@ -12,8 +13,9 @@ import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
-import de.learnlib.api.SUL;
 import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.counterexamples.AcexLocalSuffixFinder;
+import de.learnlib.api.SUL;
 import de.learnlib.eqtests.basic.WMethodEQOracle;
 import de.learnlib.eqtests.basic.WpMethodEQOracle;
 import de.learnlib.eqtests.basic.mealy.RandomWalkEQOracle;
@@ -36,7 +38,9 @@ public class LearnerFactory {
 				return new ExtensibleLStarMealy<TlsInput, TlsOutput>(alphabet, sulOracle, 
 						Lists.<Word<TlsInput>>newArrayList(), ObservationTableCEXHandlers.RIVEST_SCHAPIRE, ClosingStrategies.CLOSE_SHORTEST);
 			case TTT:
-				return new TTTLearnerMealy<TlsInput, TlsOutput>(alphabet, sulOracle, null);
+				AcexLocalSuffixFinder suffixFinder = new AcexLocalSuffixFinder(
+						AcexAnalyzers.BINARY_SEARCH, false, "Analyzer");
+				return new TTTLearnerMealy<TlsInput, TlsOutput>(alphabet, sulOracle, suffixFinder);
 			case KV:
 				return new KearnsVaziraniMealy<TlsInput, TlsOutput>(alphabet, sulOracle, false, AcexAnalyzers.LINEAR_FWD);
 			default:
@@ -57,6 +61,8 @@ public class LearnerFactory {
 				return new WMethodEQOracle.MealyWMethodEQOracle<>(config.getMaxDepth(), sulOracle);
 			case WP_METHOD:
 				return new WpMethodEQOracle.MealyWpMethodEQOracle<>(config.getMaxDepth(), sulOracle);
+			case RANDOM_WP_METHOD:
+				return new RandomWpMethodEQOracle<>(sulOracle, config.getMinLength(), config.getRandLength(), config.getNumberOfQueries());
 			default:
 				throw new RuntimeException("Equivalence algorithm not supported");
 		}

@@ -24,8 +24,8 @@ public class InputExecutor {
 	public TlsOutput execute(TlsInput input, State state) {
 		ProtocolMessage message = input.generateMessage(state);
 		sendMessage(message, state);
+		input.postUpdate(null, state);
 		TlsOutput output = readOutput(state);
-		input.postUpdate(output, state);
 		return output;
 	}
 	
@@ -98,6 +98,7 @@ public class InputExecutor {
     }
     
     private TlsOutput extractOutput(State state, GenericReceiveAction action) {
+    	
     	return new TlsOutput(action.getReceivedMessages(),
     			action.getReceivedRecords(),
     			extractSocketState(state)

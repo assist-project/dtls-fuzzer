@@ -41,7 +41,7 @@ public class StateMachine {
 	public void setAlphabet(Alphabet<TlsInput> alphabet) {
 		this.alphabet = alphabet;
 	}
-
+	
 	/**
 	 * Exports the hypothesis to the supplied file and generates a corresponding
 	 * viewable .pdf model.

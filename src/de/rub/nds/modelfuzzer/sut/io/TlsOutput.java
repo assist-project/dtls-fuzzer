@@ -54,7 +54,7 @@ public class TlsOutput {
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			TlsOutput that = (TlsOutput) obj;
-			if (Objects.equals(that.getState(), this.getState())) {
+//			if (Objects.equals(that.getState(), this.getState())) {
 				if (that.messages.size() == messages.size()) {
 					for (int i=0; i<messages.size(); i++) {
 						if (!messages.get(i).toCompactString()
@@ -64,9 +64,8 @@ public class TlsOutput {
 					}
 					return true;
 				}
-			}
+//			}
 		}
-		
 		return false;
 	}
 }

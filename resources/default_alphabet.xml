@@ -1,0 +1,33 @@
+<alphabet>
+    <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA"/>
+    <GenericMessageInput>
+        <RSAClientKeyExchange/>
+    </GenericMessageInput>
+    <ChangeCipherSpecInput/>
+    <FinishedInput/>
+    <GenericMessageInput>
+        <Application>
+            <data>0x5468697320697320612068656c6c6f206d65737361676521</data>
+        </Application>
+    </GenericMessageInput>
+    <GenericMessageInput>
+        <Alert>
+            <level>
+                <originalValue>1</originalValue>
+            </level>
+            <description>
+                <originalValue>0</originalValue>
+            </description>
+        </Alert>
+    </GenericMessageInput>
+    <GenericMessageInput>
+        <Alert>
+            <level>
+                <originalValue>2</originalValue>
+            </level>
+            <description>
+                <originalValue>10</originalValue>
+            </description>
+        </Alert>
+    </GenericMessageInput>
+</alphabet>

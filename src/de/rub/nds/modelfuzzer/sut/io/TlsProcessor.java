@@ -3,6 +3,7 @@ package de.rub.nds.modelfuzzer.sut.io;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +31,20 @@ public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput>{
 	public TlsOutput processOutput(String output) {
 		List<ProtocolMessage> messages = new ArrayList<ProtocolMessage>();
 		List<String> messageStrings = Arrays.asList(output.split(","));
-		messageStrings.stream().map(m -> SymbolicAlphabet.createWord(symbol))
-		for (String message : output.split(",")) {
-			SymbolicAlphabet.
+		List<ProtocolMessage> outputMessages = new ArrayList<>();
+		for (String outputString : output.split(",")) {
+			ProtocolMessage message;
+			try {
+				message = (ProtocolMessage) Class.forName(ProtocolMessage.class.getPackage().getName() + "." + outputString)
+				.getConstructor()
+				.newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException("Could not instantiate output: " + outputString);
+			} 
+			outputMessages.add(message);
+			
 		}
-		new TlsOutput();
-		return output.trim();
+		return new TlsOutput(outputMessages, Collections.emptyList(), null);
 	}
 }

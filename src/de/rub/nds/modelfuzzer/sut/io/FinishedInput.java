@@ -25,5 +25,7 @@ public class FinishedInput extends TlsInput{
 	@Override
 	public void postUpdate(TlsOutput output, State state) {
 		state.getTlsContext().getDigest().reset();
+		// we have to make this change for learning to scale
+		state.getTlsContext().setDtlsNextSendSequenceNumber(state.getTlsContext().getDtlsCurrentSendSequenceNumber() + 1);
 	}
 }

@@ -7,12 +7,12 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FuzzingReport {
-	private static final Logger LOG = LogManager.getLogger(FuzzingReport.class);
+public class TestingReport {
+	private static final Logger LOG = LogManager.getLogger(TestingReport.class);
 	
 	private List<Object> reportItems;
 	
-	public FuzzingReport() {
+	public TestingReport() {
 		reportItems = new LinkedList<>();
 	}
 	
@@ -28,7 +28,7 @@ public class FuzzingReport {
 	
 	public void printReport(PrintStream ps) {
 //		PrintWriter pw = new PrintWriter(writer);
-		ps.println("Fuzzing Report");
+		ps.println("Testing Report");
 		for (Object item : reportItems) {
 			ps.println(item);
 		}

@@ -29,10 +29,11 @@ public class Main {
             }
             
             try {
-            	ModelBasedFuzzer fuzzer = new ModelBasedFuzzer(config);
+            	ModelBasedTester fuzzer = new ModelBasedTester(config);
                 fuzzer.startFuzzing();
             } catch (Exception E) {
                 LOGGER.error("Encountered an exception. See debug for more info.");
+                E.printStackTrace();
                 //TODO ^^ what says here :)
                 LOGGER.error(E);
             }

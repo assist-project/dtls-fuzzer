@@ -34,6 +34,9 @@ private static final Logger LOG = Logger.getLogger(Extractor.class
 		.getName());
 private final ModelBasedFuzzerConfig finderConfig;
 private final Alphabet<TlsInput> alphabet;
+public static final String LEARNED_MODEL_FILENAME = "learnedModel.dot";
+public static final String STATISTICS_FILENAME = "statistics.txt";
+
 
 public Extractor(ModelBasedFuzzerConfig finderConfig, Alphabet<TlsInput> alphabet) {
 	this.finderConfig = finderConfig;
@@ -78,11 +81,7 @@ public ExtractorResult extractStateMachine() {
 	tlsSystemUnderTest = resetCounterSul;
 
 	// we are adding a cache so that executions of same inputs aren't
-	// repeated,
-	// unfortunately, the LearnLib's implementation is unstable, we are
-	// using a custom one
-	// SULCache<TlsWord, ResponseFingerprint> cachingSul =
-	// SULCache.createTreeCache(alphabet, tlsSystemUnderTest);
+	// repeated
 	CachingSULOracle<TlsInput, TlsOutput> sulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
 			tlsSystemUnderTest);
 
@@ -106,12 +105,13 @@ public ExtractorResult extractStateMachine() {
 		// it is useful to print intermediate hypothesis as learning is
 		// running
 		serializeHypothesis(stateMachine, folder, "hyp" + (rounds + 1)
-					+ ".dot");
+					+ ".dot", false);
 
 		tracker.newHypothesis(stateMachine);
 		counterExample = equivalenceAlgorithm.findCounterExample(
 				hypothesis, alphabet);
 		if (counterExample != null) {
+			LOG.warning("Counterexample: " + counterExample.toString());
 			tracker.newCounterExample(counterExample);
 			algorithm.refineHypothesis(counterExample);
 		}
@@ -122,6 +122,7 @@ public ExtractorResult extractStateMachine() {
 	StateMachine stateMachine = new StateMachine(hypothesis, alphabet);
 	tracker.finishedLearning(stateMachine);
 	Statistics statistics = tracker.generateStatistics();
+	serializeHypothesis(stateMachine, folder, LEARNED_MODEL_FILENAME, true);
 
 	LOG.log(Level.INFO, "Finished Learning");
 	LOG.log(Level.INFO, "Number of Rounds:" + rounds);
@@ -129,14 +130,15 @@ public ExtractorResult extractStateMachine() {
 
 	extractorResult.setLearnedModel(stateMachine);
 	extractorResult.setStatistics(statistics);
+	extractorResult.setLearnedModelFile(new File(folder, LEARNED_MODEL_FILENAME));
 
 	return extractorResult;
 }
 
 private void serializeHypothesis(StateMachine hypothesis, File folder,
-		String name) {
+		String name, boolean genPdf) {
 	File graphFile = new File(folder, name);
-	hypothesis.export(graphFile, false);
+	hypothesis.export(graphFile, genPdf);
 }
 
 public static class ExtractorResult {
@@ -144,6 +146,15 @@ public static class ExtractorResult {
 	public StateMachine learnedModel;
 	public Statistics statistics;
 	public final List<StateMachine> hypotheses;
+	public File learnedModelFile;
+
+	public File getLearnedModelFile() {
+		return learnedModelFile;
+	}
+
+	public void setLearnedModelFile(File learnedModelFile) {
+		this.learnedModelFile = learnedModelFile;
+	}
 
 	public ExtractorResult() {
 		this.hypotheses = new ArrayList<>();
@@ -160,7 +171,7 @@ public static class ExtractorResult {
 	public Statistics getStatistics() {
 		return statistics;
 	}
-
+	
 	private void setStatistics(Statistics statistics) {
 		this.statistics = statistics;
 	}

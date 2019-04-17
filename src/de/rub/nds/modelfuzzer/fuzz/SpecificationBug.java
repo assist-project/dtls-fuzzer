@@ -1,16 +1,17 @@
 package de.rub.nds.modelfuzzer.fuzz;
 
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
+import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
 import net.automatalib.words.Word;
 
 public class SpecificationBug extends Bug{
 	
 	private Object state;
 	private Word<TlsInput> inputs;
-	private Word<String> expected;
-	private Word<String> actual;
+	private Word<TlsOutput> expected;
+	private Word<TlsOutput> actual;
 
-	public SpecificationBug(Object state, Word<TlsInput> accessSequence, Word<TlsInput> inputs, Word<String> expected, Word<String> actual) {
+	public SpecificationBug(Object state, Word<TlsInput> accessSequence, Word<TlsInput> inputs, Word<TlsOutput> expected, Word<TlsOutput> actual) {
 		this.state = state;
 		this.inputs = inputs;
 		this.expected = expected;

@@ -1,12 +1,14 @@
 package de.rub.nds.modelfuzzer;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,20 +21,18 @@ import de.learnlib.oracles.SULOracle;
 import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationBug;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationStrategy;
-import de.rub.nds.modelfuzzer.fuzz.FuzzingReport;
 import de.rub.nds.modelfuzzer.fuzz.SpecificationBug;
+import de.rub.nds.modelfuzzer.fuzz.TestingReport;
 import de.rub.nds.modelfuzzer.learn.Extractor;
-import de.rub.nds.modelfuzzer.learn.StateMachine;
+import de.rub.nds.modelfuzzer.learn.Extractor.ExtractorResult;
 import de.rub.nds.modelfuzzer.sut.ProcessHandler;
 import de.rub.nds.modelfuzzer.sut.SulProcessWrapper;
 import de.rub.nds.modelfuzzer.sut.TlsSUL;
 import de.rub.nds.modelfuzzer.sut.io.AlphabetFactory;
-import de.rub.nds.modelfuzzer.sut.io.AlphabetSerializer;
 import de.rub.nds.modelfuzzer.sut.io.FragmentedTlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
 import de.rub.nds.modelfuzzer.sut.io.TlsProcessor;
-import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.automata.transout.impl.FastMealyState;
 import net.automatalib.util.automata.Automata;
@@ -40,24 +40,24 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
 
-public class ModelBasedFuzzer {
-	private static final Logger LOGGER = LogManager.getLogger(ModelBasedFuzzer.class);
+public class ModelBasedTester {
+	private static final Logger LOGGER = LogManager.getLogger(ModelBasedTester.class);
 	private ModelBasedFuzzerConfig config;
 
-	public ModelBasedFuzzer(ModelBasedFuzzerConfig config) {
+	public ModelBasedTester(ModelBasedFuzzerConfig config) {
 		this.config = config;
 	}
 	
 
-	public FuzzingReport startFuzzing() throws ParseException, IOException {
+	public TestingReport startFuzzing() throws ParseException, IOException {
 		SULOracle<TlsInput, TlsOutput> sutOracle = createOracle(config);
-		FastMealy<TlsInput, String> model = generateModel(config);
-		FuzzingReport report = fuzzModel(sutOracle, model);
+		ModelBasedTestingTask task = generateModelBasedTestingTask(config);
+		TestingReport report = testModel(sutOracle, task);
 		logResult(report, config);
 		return report;
 	}
 	
-	private void logResult(FuzzingReport report, ModelBasedFuzzerConfig config) throws IOException {
+	private void logResult(TestingReport report, ModelBasedFuzzerConfig config) throws IOException {
 		if (config.getOutput() == null) {
 			report.printReport(System.out);
 		} else {
@@ -78,42 +78,56 @@ public class ModelBasedFuzzer {
 		return tlsOracle;
 	}
 	
+	/**
+	 * Generates a model based testing task, that is, a specification and an alphabet to focus model based testing on.
+	 * If a specification is not provided, it is created using active learning. 
+	 */
 	public ModelBasedTestingTask generateModelBasedTestingTask(ModelBasedFuzzerConfig config) throws FileNotFoundException, ParseException {
-		Alphabet<TlsInput> alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
-		if (config.getSpecification() == null) {
+		Alphabet<TlsInput> alphabet = null;
+		try {
+			alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
+		} catch (JAXBException | IOException | XMLStreamException e) {
+			LOGGER.fatal("Failed to instantiate alphabet");
+			System.exit(0);
+		}
+		String specification = config.getSpecification(); 
+		if (specification == null || config.isOnlyLearn()) {
 			if (alphabet == null) {
-				alphabet = AlphabetFactory.buildDefaultAlphabet();
+				try {
+					alphabet = AlphabetFactory.buildDefaultAlphabet();
+				} catch (JAXBException | IOException | XMLStreamException e) {
+					LOGGER.fatal("Failed to instantiate default alphabet");
+					System.exit(0);
+				}
 			}
 			Extractor extractor = new Extractor(config, alphabet);
-			StateMachine model = extractor.extractStateMachine().getLearnedModel();
-			MealyMachine<?, TlsInput, ?, TlsOutput> mealyMachine = model.getMealyMachine();
-			return new ModelBasedTestingTask(model.getMealyMachine(), alphabet);
+			ExtractorResult result = extractor.extractStateMachine();
+			specification = result.getLearnedModelFile().getAbsolutePath();
 		}
-		else {
-			MealyDotParser<TlsInput, String> dotParser = new MealyDotParser<>(new TlsProcessor());
-			FastMealy<TlsInput, String>  model = dotParser.parseAutomaton(config.getSpecification()).get(0);
-			if (alphabet == null) {
-				alphabet = model.getInputAlphabet();
-				alphabet = model.
-			}
-			return model;
+		
+		MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor());
+		FastMealy<TlsInput, TlsOutput>  model = dotParser.parseAutomaton(config.getSpecification()).get(0);
+		if (alphabet == null) {
+			alphabet = model.getInputAlphabet();
 		}
+		return new ModelBasedTestingTask(model, alphabet);
 	}
 	
-	private FuzzingReport fuzzModel(SULOracle<TlsInput, TlsOutput> tlsOracle, FastMealy<TlsInput, String> specification) {
-		LOGGER.info("Starting fuzzing");
-		FuzzingReport report = new FuzzingReport();
-		Alphabet<TlsInput> inputs = specification.getInputAlphabet();
+	private TestingReport testModel(SULOracle<TlsInput, TlsOutput> tlsOracle, ModelBasedTestingTask task) {
+		LOGGER.info("Starting conformance testing");
+		TestingReport report = new TestingReport();
+		FastMealy<TlsInput, TlsOutput> model = task.getSpecification();
+		Alphabet<TlsInput> inputs = task.getAlphabet();
 
-		List<Word<TlsInput>> stateCover = Automata.stateCover(specification, inputs);
+		List<Word<TlsInput>> stateCover = Automata.stateCover(model, inputs);
 
 		int testNumber = 0;
 		int initNumFrag = 2;
 		int maxNumFrags = 3;
 		
 		for (Word<TlsInput> statePrefix : stateCover) {
-			FastMealyState<String> state = specification.getState(statePrefix);
-			List<Word<TlsInput>> charSuffixes = Automata.stateCharacterizingSet(specification, inputs, state);
+			FastMealyState<TlsOutput> state = model.getState(statePrefix);
+			List<Word<TlsInput>> charSuffixes = Automata.stateCharacterizingSet(model, inputs, state);
 			if (charSuffixes.isEmpty())
 				charSuffixes = Collections.singletonList(Word.<TlsInput>epsilon());
 			for (TlsInput input : inputs) {
@@ -130,11 +144,10 @@ public class ModelBasedFuzzer {
 							.toWord();
 					Word<TlsOutput> regularOutput = tlsOracle.answerQuery(regularWord);
 					
-					Word<String> specificationOutputString = specification.computeOutput(regularWord);
+					Word<TlsOutput> specificationOutput = model.computeOutput(regularWord);
 					
-					Word<String> regularOutputString = regularOutput.transform(o -> o.toString());
-					if (!specificationOutputString.equals(regularOutputString)) {
-						SpecificationBug bug = new SpecificationBug(state, statePrefix, regularWord, specificationOutputString, regularOutputString);
+					if (!specificationOutput.equals(regularOutput)) {
+						SpecificationBug bug = new SpecificationBug(state, statePrefix, regularWord, specificationOutput, regularOutput);
 						report.addItem(bug);
 						if (!config.isExhaustive())
 							break;

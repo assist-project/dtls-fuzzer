@@ -11,18 +11,21 @@ public class LearningConfig {
 	private LearningAlgorithmName learningAlgorithm = LearningAlgorithmName.TTT;
 
 	@Parameter(names = "-equivalenceAlgorithm", description = "Which algorithm shold be used for equivalance testing")
-	private EquivalenceAlgorithmName equivalenceAlgorithm = EquivalenceAlgorithmName.RANDOM_WORDS;
+	private EquivalenceAlgorithmName equivalenceAlgorithm = EquivalenceAlgorithmName.RANDOM_WP_METHOD;
 
 	@Parameter(names = "-depth", description = "Maximal depth ( W/WP Method)")
 	private int maxDepth = 4;
 
-	@Parameter(names = "-minLength", description = "Min length (random words)")
+	@Parameter(names = "-minLength", description = "Min length (random words, Random WP Method)")
 	private int minLength = 5;
 
 	@Parameter(names = "-maxLength", description = "Max length (random words)")
 	private int maxLength = 15;
 	
-	@Parameter(names = "-queries", description = "Number of queries (random words)")
+	@Parameter(names = "-randLength", description = "Size of the random part (Random WP Method)")
+	private int randLength = 5;
+	
+	@Parameter(names = "-queries", description = "Number of queries (all)")
 	private int numberOfQueries = 1000;
 	
 	@Parameter(names = "-probReset", description = "Probability of stopping execution of a test after each input")
@@ -56,4 +59,9 @@ public class LearningConfig {
 	public int getProbReset() {
 		return probReset;
 	}
+
+	public int getRandLength() {
+		return randLength;
+	}
+
 }
