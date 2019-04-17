@@ -49,7 +49,6 @@ public class DtlsMessageFragmenter {
     		dtlsFragment.setLength(message.getLength().getValue());
     		dtlsFragment.setFragmentLength(fragment.length);
     		dtlsFragment.setFragmentOffset(fragmentOffset);
-    		dtlsFragment.setMessageSeq((int) state.getTlsContext().getMessageSequenceNumber());
     		dtlsFragment.setCompleteResultingMessage(dtlsFragment.getHandler(state.getTlsContext()).getSerializer(dtlsFragment).serialize());
     		dtlsFragments.add(dtlsFragment);
     		fragmentOffset += fragment.length;

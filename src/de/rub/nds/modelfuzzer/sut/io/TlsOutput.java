@@ -48,6 +48,9 @@ public class TlsOutput {
 		return state;
 	}
 	
+	/*
+	 * Currently we only look at basically the type of a message when comparing 
+	 */
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			TlsOutput that = (TlsOutput) obj;

@@ -79,7 +79,6 @@ public class FragmentingInputExecutor extends InputExecutor {
 			LOGGER.error("Digested " + asOneFragment.toCompactString());
             LOGGER.error("Byte Array : " + ArrayConverter.bytesToHexString(asOneFragment.getCompleteResultingMessage().getValue()));
 			state.getTlsContext().getDigest().append(asOneFragment.getCompleteResultingMessage().getValue());
-			state.getTlsContext().increaseMessageSequenceNumber();
 		}
 	}
 	

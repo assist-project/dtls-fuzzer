@@ -1,5 +1,6 @@
 package de.rub.nds.modelfuzzer;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,13 +21,18 @@ import de.rub.nds.modelfuzzer.fuzz.FragmentationBug;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationStrategy;
 import de.rub.nds.modelfuzzer.fuzz.FuzzingReport;
 import de.rub.nds.modelfuzzer.fuzz.SpecificationBug;
+import de.rub.nds.modelfuzzer.learn.Extractor;
+import de.rub.nds.modelfuzzer.learn.StateMachine;
 import de.rub.nds.modelfuzzer.sut.ProcessHandler;
 import de.rub.nds.modelfuzzer.sut.SulProcessWrapper;
 import de.rub.nds.modelfuzzer.sut.TlsSUL;
+import de.rub.nds.modelfuzzer.sut.io.AlphabetFactory;
+import de.rub.nds.modelfuzzer.sut.io.AlphabetSerializer;
 import de.rub.nds.modelfuzzer.sut.io.FragmentedTlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
 import de.rub.nds.modelfuzzer.sut.io.TlsProcessor;
+import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.automata.transout.impl.FastMealyState;
 import net.automatalib.util.automata.Automata;
@@ -45,7 +51,7 @@ public class ModelBasedFuzzer {
 
 	public FuzzingReport startFuzzing() throws ParseException, IOException {
 		SULOracle<TlsInput, TlsOutput> sutOracle = createOracle(config);
-		FastMealy<TlsInput, String> model = parseModel(config);
+		FastMealy<TlsInput, String> model = generateModel(config);
 		FuzzingReport report = fuzzModel(sutOracle, model);
 		logResult(report, config);
 		return report;
@@ -72,10 +78,26 @@ public class ModelBasedFuzzer {
 		return tlsOracle;
 	}
 	
-	public FastMealy<TlsInput, String> parseModel(ModelBasedFuzzerConfig config) throws FileNotFoundException, ParseException {
-		MealyDotParser<TlsInput, String> dotParser = new MealyDotParser<>(new TlsProcessor());
-		FastMealy<TlsInput, String>  model = dotParser.parseAutomaton(config.getSpecification()).get(0);
-		return model;
+	public ModelBasedTestingTask generateModelBasedTestingTask(ModelBasedFuzzerConfig config) throws FileNotFoundException, ParseException {
+		Alphabet<TlsInput> alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
+		if (config.getSpecification() == null) {
+			if (alphabet == null) {
+				alphabet = AlphabetFactory.buildDefaultAlphabet();
+			}
+			Extractor extractor = new Extractor(config, alphabet);
+			StateMachine model = extractor.extractStateMachine().getLearnedModel();
+			MealyMachine<?, TlsInput, ?, TlsOutput> mealyMachine = model.getMealyMachine();
+			return new ModelBasedTestingTask(model.getMealyMachine(), alphabet);
+		}
+		else {
+			MealyDotParser<TlsInput, String> dotParser = new MealyDotParser<>(new TlsProcessor());
+			FastMealy<TlsInput, String>  model = dotParser.parseAutomaton(config.getSpecification()).get(0);
+			if (alphabet == null) {
+				alphabet = model.getInputAlphabet();
+				alphabet = model.
+			}
+			return model;
+		}
 	}
 	
 	private FuzzingReport fuzzModel(SULOracle<TlsInput, TlsOutput> tlsOracle, FastMealy<TlsInput, String> specification) {

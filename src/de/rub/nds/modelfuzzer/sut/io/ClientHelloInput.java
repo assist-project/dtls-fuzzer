@@ -1,6 +1,5 @@
 package de.rub.nds.modelfuzzer.sut.io;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import de.rub.nds.modelfuzzer.sut.InputExecutor;
@@ -29,13 +28,8 @@ public class ClientHelloInput extends TlsInput{
         } else {
             state.getConfig().setAddECPointFormatExtension(false);
             state.getConfig().setAddEllipticCurveExtension(false);
-        } if (suite.isPsk()) {
-        	state.getConfig().setDefaultPSKKey(new byte [] {0x12, 0x34});
-        	state.getConfig().setDefaultPSKIdentity("Client_identity".getBytes(Charset.forName("UTF-8")));
-        }
+        } 
         
-        // GnuTls adaptation:
-        state.getConfig().setAddHeartbeatExtension(true);
         ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
         
 		return message;

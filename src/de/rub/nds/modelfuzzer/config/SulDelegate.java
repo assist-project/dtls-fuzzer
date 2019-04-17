@@ -24,6 +24,9 @@ public class SulDelegate extends ClientDelegate {
 	@Parameter(names = "-runWait", required = false, description = "Time waited after running each TLS command")
 	private Long runWait = 0L;
 	
+	@Parameter(names = "-sulConfig", required = false, description = "Configuration for the SUL")
+	private String sulConfig = null;
+	
 	public SulDelegate() {
 		super();
 	}
@@ -71,5 +74,13 @@ public class SulDelegate extends ClientDelegate {
 
 	public void setRunWait(Long runWait) {
 		this.runWait = runWait;
+	}
+	
+	public String getSulConfig() {
+		return sulConfig;
+	}
+
+	public void setSulConfig(String sulConfig) {
+		this.sulConfig = sulConfig;
 	}
 }

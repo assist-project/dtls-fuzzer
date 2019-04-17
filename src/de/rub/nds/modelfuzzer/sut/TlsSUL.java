@@ -5,6 +5,7 @@
  */
 package de.rub.nds.modelfuzzer.sut;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +17,6 @@ import de.rub.nds.modelfuzzer.config.SulDelegate;
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
 import de.rub.nds.tlsattacker.core.config.Config;
-import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.record.layer.TlsRecordLayer;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.transport.tcp.ClientTcpTransportHandler;
@@ -32,6 +32,7 @@ import de.rub.nds.tlsattacker.transport.udp.ClientUdpTransportHandler;
 public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
     private static final Logger LOG = LogManager.getLogger();
+    public static final String SUL_CONFIG = "/sul.config";
     private State state = null;
 
     private Config config;
@@ -50,41 +51,8 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     
     @Override
     public void pre() {
-        config = Config.createConfig();
-        config.setEnforceSettings(false);
-        config.setQuickReceive(false);
-        config.setEarlyStop(false);
-        config.setStopActionsAfterFatal(false);
-        config.setStopRecievingAfterFatal(false);
-        config.setAddServerNameIndicationExtension(true);
-        config.setAddRenegotiationInfoExtension(Boolean.TRUE);
-        config.setAddSignatureAndHashAlgorithmsExtension(Boolean.TRUE);
-        config.setAddHeartbeatExtension(true);
+    	Config config = getSulConfig(delegate);
         delegate.applyDelegate(config);
-        config.setDefaultSelectedCipherSuite(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA);
-        config.setDefaultClientSupportedCiphersuites(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA);
-        config.setDefaultServerSupportedCiphersuites(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA);
-        config.setAddEllipticCurveExtension(false);
-        config.setAddECPointFormatExtension(false);
-        config.setUseFreshRandom(false);
-//        state.getConfig().setDefaultSelectedCipherSuite(suite);
-//        state.getConfig().setDefaultServerSupportedCiphersuites(suite);
-//        state.getConfig().setDefaultClientSupportedCiphersuites(suite);
-//        if (suite.name().contains("EC")) {
-//            state.getConfig().setAddECPointFormatExtension(true);
-//            state.getConfig().setAddEllipticCurveExtension(true);
-//        } else {
-//            state.getConfig().setAddECPointFormatExtension(false);
-//            state.getConfig().setAddEllipticCurveExtension(false);
-//        } if (suite.isPsk()) {
-//        	state.getConfig().setDefaultPSKKey(new byte [] {0x12, 0x34});
-//        	state.getConfig().setDefaultPSKIdentity("Client_identity".getBytes(Charset.forName("UTF-8")));
-//        }
-//        state.getConfig().setAddHeartbeatExtension(true);
-        byte [] a = new byte[32];
-        for (int i=0; i<a.length; i++)
-        	a[i] = 1;
-        config.setDefaultClientRandom(a);
         state = new State(config);
         state.getTlsContext().setRecordLayer(new TlsRecordLayer(state.getTlsContext()));
         state.getTlsContext().setTransportHandler(null);
@@ -140,6 +108,20 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
             return TlsOutput.socketClosed();
         }
     }
+    
+    private Config getSulConfig(SulDelegate delegate) {
+		if (config == null) {
+			if (delegate.getSulConfig() == null) {
+				config = Config.createConfig(SulDelegate.class.getResourceAsStream(SUL_CONFIG));
+				
+			} else {
+				config = Config.createConfig(new File(delegate.getSulConfig()));
+			}
+			delegate.applyDelegate(config);
+		}
+		
+		return config;
+	}
     
     public State getState() {
     	return state;

@@ -1,9 +1,13 @@
 package de.rub.nds.modelfuzzer.sut.io;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 import de.rub.nds.modelfuzzer.sut.InputExecutor;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class TlsInput {
 	
 	private InputExecutor inputExecutor;
@@ -14,7 +18,7 @@ public abstract class TlsInput {
 	
 
 	/**
-	 * Generates an executor for this inputs.
+	 * Gets the executor for this input.
 	 */
 	public InputExecutor getExecutor() {
 		return inputExecutor;

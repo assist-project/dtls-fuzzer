@@ -12,13 +12,21 @@ import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 
 public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
 	
-	@Parameter(names = "-specification", required = true, description = "A model of the specification. For examples, look at './models/'")
+	@Parameter(names = "-specification", required = true, description = "A model of the specification. For examples, look at './models/'. "
+			+ "If no specification is given, active learning is run with the provided alphabet")
     private String specification;
 	
+	
 	@Parameter(names = "-alphabet", required = false, description = "A list of comma separated strings from which a custom alphabet is constructed. "
-    		+ "If given, fuzzing will be restricted to these inputs, otherwise it will be applied to all inputs in the specification. ")
+    		+ "If given, fuzzing/learning will be restricted to these inputs. Otherwise fuzzing will be applied to all inputs in the specification, while "
+    		+ "learning will be done on a set of pre-selected inputs. ")
     private List<TlsSymbol> alphabet = null;
 	
+	@Parameter(names = "-alphabetXml", required = false, description = "A list of comma separated strings from which a custom alphabet is constructed. "
+    		+ "If given, fuzzing/learning will be restricted to these inputs. Otherwise fuzzing will be applied to all inputs in the specification, while " 
+    		+ "learning will be done on a set of pre-selected inputs. " )
+	private String alphabetXml = null;
+
 	@Parameter(names = "-output", required = false, description = "The file in which results should be saved")
     private String output;
 	
@@ -31,6 +39,9 @@ public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
 	
 	@ParametersDelegate
     private SulDelegate sulDelegate;
+	
+	@ParametersDelegate 
+	private LearningConfig learningConfig;
     
     public ModelBasedFuzzerConfig(GeneralDelegate delegate) {
         super(delegate);
@@ -40,6 +51,10 @@ public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
 
     public SulDelegate getSulDelegate() {
         return sulDelegate;
+    }
+    
+    public LearningConfig getLearningConfig() {
+    	return learningConfig;
     }
     
     public String getSpecification() {
@@ -61,4 +76,8 @@ public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
     public Boolean isExhaustive() {
     	return exhaustive;
     }
+
+	public String getAlphabetXml() {
+		return alphabetXml;
+	}
 }
