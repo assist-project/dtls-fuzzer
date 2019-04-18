@@ -23,7 +23,7 @@ import de.rub.nds.modelfuzzer.sut.TlsSUL;
 import de.rub.nds.modelfuzzer.sut.io.ChangeCipherSpecInput;
 import de.rub.nds.modelfuzzer.sut.io.ClientHelloInput;
 import de.rub.nds.modelfuzzer.sut.io.FinishedInput;
-import de.rub.nds.modelfuzzer.sut.io.FuzzedTlsInput;
+import de.rub.nds.modelfuzzer.sut.io.MutatedTlsInput;
 import de.rub.nds.modelfuzzer.sut.io.GenericTlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
@@ -102,7 +102,7 @@ public class Trace {
 		FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
 				new DtlsMessageFragmenter(NUM_FRAGS), 
 				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
-		return new FuzzedTlsInput(input, fragmentingExecutor);
+		return new MutatedTlsInput(input, fragmentingExecutor);
 	}
 	
 	private static TlsInput fuzz(TlsInput input, int numFrags) {
@@ -112,7 +112,7 @@ public class Trace {
 			FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
 					new DtlsMessageFragmenter(numFrags), 
 					FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
-			return new FuzzedTlsInput(input, fragmentingExecutor);
+			return new MutatedTlsInput(input, fragmentingExecutor);
 		}
 	}
 	

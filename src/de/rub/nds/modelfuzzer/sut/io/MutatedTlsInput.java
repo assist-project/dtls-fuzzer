@@ -4,11 +4,11 @@ import de.rub.nds.modelfuzzer.sut.InputExecutor;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 
-public class FuzzedTlsInput extends TlsInput{
+public class MutatedTlsInput extends TlsInput{
 
 	private TlsInput input;
 
-	public FuzzedTlsInput(TlsInput input, InputExecutor executor) {
+	public MutatedTlsInput(TlsInput input, InputExecutor executor) {
 		super(executor);
 		this.input = input;
 	}
@@ -19,7 +19,7 @@ public class FuzzedTlsInput extends TlsInput{
 	}
 	
 	public String toString() {
-		return "FUZZED_"+input.toString();
+		return "MUTATED_"+input.toString();
 	}
 	
 	public void preUpdate(State state) {

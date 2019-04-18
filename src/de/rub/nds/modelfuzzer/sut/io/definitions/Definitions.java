@@ -15,30 +15,24 @@ import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Definitions {
 	
-	public static Definitions generateInputDefinitions(List<TlsInput> inputs) {
-		List<InputDefinition> definitions = new LinkedList<>();
-		for (TlsInput input : inputs) {
-			definitions.add(new InputDefinition(input.toString(), input));
-		}
-		return new Definitions(definitions);
-	}
-	
 	@XmlElements(value = {
 			@XmlElement(type = InputDefinition.class, name = "InputDefinition")
 	})
 	private List<InputDefinition> inputDefinitions;
 	
-	
-	
 	public Definitions() {
 		inputDefinitions = new LinkedList<>();
 	}
 	
-	public Definitions(List<InputDefinition> inputDefinitions) {
-		this.inputDefinitions = inputDefinitions;
+	public boolean addInputDefinition(String name, TlsInput input) {
+		 TlsInput existingInput = getInputWithDefinition(name);
+		 if (existingInput == null) {
+			 inputDefinitions.add(new InputDefinition(name, input));
+			 return true;
+		 }
+		 return false;
 	}
-	
-	
+ 	
 	public List<InputDefinition>  getInputDefinitions() {
 		return inputDefinitions;
 	}

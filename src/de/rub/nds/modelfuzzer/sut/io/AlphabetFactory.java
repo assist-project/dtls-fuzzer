@@ -9,7 +9,6 @@ import javax.xml.stream.XMLStreamException;
 
 import de.rub.nds.modelfuzzer.config.ModelBasedTesterConfig;
 import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.ListAlphabet;
 
 public class AlphabetFactory {
 	
@@ -18,12 +17,8 @@ public class AlphabetFactory {
 	public static Alphabet<TlsInput> buildConfiguredAlphabet(ModelBasedTesterConfig config) throws FileNotFoundException, JAXBException, IOException, XMLStreamException {
 		Alphabet<TlsInput> alphabet = null;
 		if (config.getAlphabet() != null) {
-//			alphabet =  new ListAlphabet<TlsInput> (SymbolicAlphabet.createWords(config.getAlphabet()));
-		} else {
-			if (config.getAlphabet() != null) {
-				alphabet = AlphabetSerializer.read(new FileInputStream(config.getAlphabet()));
-			} 
-		}
+			alphabet = AlphabetSerializer.read(new FileInputStream(config.getAlphabet()));
+		} 
 		return alphabet;
 	}
 	

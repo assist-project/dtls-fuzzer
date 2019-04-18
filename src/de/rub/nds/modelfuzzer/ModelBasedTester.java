@@ -33,6 +33,7 @@ import de.rub.nds.modelfuzzer.sut.io.FragmentedTlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
 import de.rub.nds.modelfuzzer.sut.io.TlsProcessor;
+import de.rub.nds.modelfuzzer.sut.io.definitions.Definitions;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.automata.transout.impl.FastMealyState;
 import net.automatalib.util.automata.Automata;
@@ -93,7 +94,7 @@ public class ModelBasedTester {
 		if (specification == null) {
 			ExtractorResult result = extractModel(config);
 			// TODO not the nices way of making a conversion
-			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(InputDefinitions.));
+			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(result.getLearnedModel().generateDefinitions()));
 			FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(result.getLearnedModelFile().getPath()).get(0);
 			return new ModelBasedTestingTask( fastMealy, fastMealy.getInputAlphabet());
 		} else {

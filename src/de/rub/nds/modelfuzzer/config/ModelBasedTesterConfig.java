@@ -25,8 +25,8 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
     		+ "The definitions for the input names can be provided, otherwise they are taken from a default .xml file.")
     private List<String> inputs = null;
 	
-	@Parameter(names = "-inputDefinitions", required = false, description = "An .xml file containing the definitions for each input name ")
-    private String inputDefinitions = null;
+	@Parameter(names = "-definitions", required = false, description = "An .xml file containing the definitions for each input in the specification ")
+    private String definitions = null;
 	
 	@Parameter(names = "-alphabet", required = false, description = "An .xml file with a custom alphabet. "
     		+ "If given, fuzzing/learning will be restricted to these inputs. Otherwise fuzzing will be applied to all inputs in the specification, while " 

@@ -5,10 +5,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.List;
 import java.util.logging.Logger;
 
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
+import de.rub.nds.modelfuzzer.sut.io.definitions.Definitions;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
@@ -40,6 +42,14 @@ public class StateMachine {
 
 	public void setAlphabet(Alphabet<TlsInput> alphabet) {
 		this.alphabet = alphabet;
+	}
+	
+	public Definitions generateDefinitions() {
+		Definitions defs = new Definitions();
+		for (TlsInput input : this.alphabet) {
+			defs.addInputDefinition(input.toString(), input);
+		}
+		return defs;
 	}
 	
 	/**

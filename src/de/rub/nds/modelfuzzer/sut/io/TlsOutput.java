@@ -1,14 +1,19 @@
 package de.rub.nds.modelfuzzer.sut.io;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 
-// TODO we should split TlsSpecificationOutput from the regular output. That way we can get the full output, plus the
-// specification output.
+
+/**
+ * The outputs used in learning comprise message strings obtained by compacting messages.
+ */
 public class TlsOutput {
-	private List<ProtocolMessage> messages;
+	private List<String> messageStrings;
 
 	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(new ArrayList<>());
 	
@@ -19,42 +24,30 @@ public class TlsOutput {
 	public TlsOutput() {
 	}
 	
+	public TlsOutput(String [] messageStrings) {
+		this.messageStrings = Arrays.asList(messageStrings);
+	}
+	
 	public TlsOutput(List<ProtocolMessage> messages) {
-		this.messages = messages;
+		messageStrings = 
+				messages.stream()
+				.map(m -> m.toCompactString())
+				.collect(Collectors.toList());
 	}
 	
 	public String toString() {
 		// CLIENT_HELLO,SERVER_HELLO...
-		String messageString = messages
+		String messageString = messageStrings
 				.stream()
-				.map(m -> m.toCompactString())
 				.reduce((s1,s2) -> s1+","+s2)
 				.orElse("TIMEOUT");
 		return messageString;
 	}
 	
-	public List<ProtocolMessage> getMessages() {
-		return messages;
-	}
-
-	
-	/*
-	 * Currently we only look at basically the type of a message when comparing 
-	 */
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			TlsOutput that = (TlsOutput) obj;
-//			if (Objects.equals(that.getState(), this.getState())) {
-				if (that.messages.size() == messages.size()) {
-					for (int i=0; i<messages.size(); i++) {
-						if (!messages.get(i).toCompactString()
-								.equals(that.getMessages().get(i).toCompactString())) {
-							return false;
-						}
-					}
-					return true;
-				}
-//			}
+			return Objects.equals(this.messageStrings, that.messageStrings);
 		}
 		return false;
 	}
@@ -62,8 +55,8 @@ public class TlsOutput {
 
 	public int hashCode() {
 		int hashCode = 0;
-		for (ProtocolMessage message : messages) {
-			hashCode += message.toCompactString().hashCode() + hashCode*2; 
+		for (String message : messageStrings) {
+			hashCode += message.hashCode() + hashCode*2; 
 		}
 		return hashCode;
 	}

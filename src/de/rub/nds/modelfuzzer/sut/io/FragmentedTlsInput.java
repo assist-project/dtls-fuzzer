@@ -5,7 +5,7 @@ import de.rub.nds.modelfuzzer.fuzz.FragmentationGeneratorFactory;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationStrategy;
 import de.rub.nds.modelfuzzer.fuzz.FragmentingInputExecutor;
 
-public class FragmentedTlsInput extends FuzzedTlsInput{
+public class FragmentedTlsInput extends MutatedTlsInput{
 	
 	private int numFragments;
 	private FragmentationStrategy strategy;
