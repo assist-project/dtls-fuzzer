@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.learnlib.api.SUL;
-import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
+import de.rub.nds.modelfuzzer.config.ModelBasedTesterConfig;
 import de.rub.nds.modelfuzzer.fuzz.DtlsMessageFragmenter;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationGeneratorFactory;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationStrategy;
@@ -138,7 +138,7 @@ public class Trace {
 		String command = Command.localTinyDtls;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;
 		
-		ModelBasedFuzzerConfig modelFuzzConfig = new ModelBasedFuzzerConfig(new GeneralDelegate());
+		ModelBasedTesterConfig modelFuzzConfig = new ModelBasedTesterConfig(new GeneralDelegate());
 		modelFuzzConfig.getSulDelegate().setHost("localhost:20000");
 		modelFuzzConfig.getSulDelegate().setProtocolVersion(ProtocolVersion.DTLS12);
 		modelFuzzConfig.getSulDelegate().setTimeout(stepWait);

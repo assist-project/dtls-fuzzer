@@ -10,19 +10,22 @@ import java.util.Map;
 
 import com.pfg666.dotparser.fsm.mealy.MealyProcessor;
 
+import de.rub.nds.modelfuzzer.sut.io.definitions.Definitions;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 
 public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput>{
 	private Map<String, TlsInput> cache;
+	private Definitions definitions;
 	
-	public TlsProcessor() {
+	public TlsProcessor(Definitions definitions) {
 		cache = new HashMap<>();
+		this.definitions = definitions;
 	}
 
 	@Override
 	public TlsInput processInput(String input) {
 		if (!cache.containsKey(input)) {
-			cache.put(input, SymbolicAlphabet.createWord(TlsSymbol.valueOf(input.trim())));
+			cache.put(input, definitions.getInputWithDefinition(input));
 		}
 		return cache.get(input);
 	}
@@ -45,6 +48,6 @@ public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput>{
 			outputMessages.add(message);
 			
 		}
-		return new TlsOutput(outputMessages, Collections.emptyList(), null);
+		return new TlsOutput(outputMessages);
 	}
 }

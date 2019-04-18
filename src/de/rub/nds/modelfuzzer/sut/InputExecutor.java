@@ -100,9 +100,7 @@ public class InputExecutor {
     
     private TlsOutput extractOutput(State state, GenericReceiveAction action) {
     	
-    	return new TlsOutput(action.getReceivedMessages(),
-    			action.getReceivedRecords(),
-    			extractSocketState(state)
+    	return new TlsOutput(action.getReceivedMessages()
     			);
     			
     }

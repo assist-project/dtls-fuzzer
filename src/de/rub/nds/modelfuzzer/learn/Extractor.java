@@ -15,7 +15,7 @@ import de.learnlib.api.SUL;
 import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.oracles.ResetCounterSUL;
 import de.learnlib.oracles.SymbolCounterSUL;
-import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
+import de.rub.nds.modelfuzzer.config.ModelBasedTesterConfig;
 import de.rub.nds.modelfuzzer.sut.NonDeterminismRetryingSUL;
 import de.rub.nds.modelfuzzer.sut.ProcessHandler;
 import de.rub.nds.modelfuzzer.sut.SulProcessWrapper;
@@ -32,13 +32,13 @@ import net.automatalib.words.Word;
 public class Extractor {
 private static final Logger LOG = Logger.getLogger(Extractor.class
 		.getName());
-private final ModelBasedFuzzerConfig finderConfig;
+private final ModelBasedTesterConfig finderConfig;
 private final Alphabet<TlsInput> alphabet;
 public static final String LEARNED_MODEL_FILENAME = "learnedModel.dot";
 public static final String STATISTICS_FILENAME = "statistics.txt";
 
 
-public Extractor(ModelBasedFuzzerConfig finderConfig, Alphabet<TlsInput> alphabet) {
+public Extractor(ModelBasedTesterConfig finderConfig, Alphabet<TlsInput> alphabet) {
 	this.finderConfig = finderConfig;
 	this.alphabet = alphabet;
 }
@@ -65,7 +65,7 @@ public ExtractorResult extractStateMachine() {
 	try {
 		tlsSystemUnderTest = new NonDeterminismRetryingSUL<TlsInput, TlsOutput>(
 				tlsSystemUnderTest, 5, new FileWriter(new File(folder,
-						System.currentTimeMillis() + "nondet.log")));
+						"nondet.log")));
 	} catch (IOException e) {
 		e.printStackTrace();
 	}

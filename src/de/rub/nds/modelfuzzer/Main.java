@@ -9,7 +9,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
+import de.rub.nds.modelfuzzer.config.ModelBasedTesterConfig;
 import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 
@@ -19,7 +19,7 @@ public class Main {
     public static void main(String args[]) {
         UnlimitedStrengthEnabler.enable();
         Security.addProvider(new BouncyCastleProvider());
-        ModelBasedFuzzerConfig config = new ModelBasedFuzzerConfig(new GeneralDelegate());
+        ModelBasedTesterConfig config = new ModelBasedTesterConfig(new GeneralDelegate());
         JCommander commander = new JCommander(config);
         try {
             commander.parse(args);

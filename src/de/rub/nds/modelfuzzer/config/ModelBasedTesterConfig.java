@@ -10,7 +10,7 @@ import de.rub.nds.modelfuzzer.sut.io.TlsSymbol;
 import de.rub.nds.tlsattacker.core.config.TLSDelegateConfig;
 import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 
-public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
+public class ModelBasedTesterConfig extends TLSDelegateConfig{
 	
 	@Parameter(names = "-specification", required = false, description = "A model of the specification. For examples, look at './models/'. "
 			+ "If no specification is given, active learning is run with the provided alphabet")
@@ -19,15 +19,19 @@ public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
 	@Parameter(names = "-onlyLearn", required = false, description = "Only generates a model of the specification. Does not do conformance testing")
 	private boolean onlyLearn = false; 
 	
-	@Parameter(names = "-alphabet", required = false, description = "A list of comma separated strings from which a custom alphabet is constructed. "
-    		+ "If given, fuzzing/learning will be restricted to these inputs. Otherwise fuzzing will be applied to all inputs in the specification, while "
-    		+ "learning will be done on a set of pre-selected inputs. ")
-    private List<TlsSymbol> alphabet = null;
+	@Parameter(names = "-inputs", required = false, description = "A list of comma separated input names from which a alphabet is constructed. "
+    		+ "If given, fuzzing/learning will be restricted to these inputs. "
+    		+ "Otherwise fuzzing will be applied to all inputs in the specification, while learning will be done on a set of pre-selected inputs. "
+    		+ "The definitions for the input names can be provided, otherwise they are taken from a default .xml file.")
+    private List<String> inputs = null;
 	
-	@Parameter(names = "-alphabetXml", required = false, description = "XML file with a custom alphabet. "
+	@Parameter(names = "-inputDefinitions", required = false, description = "An .xml file containing the definitions for each input name ")
+    private String inputDefinitions = null;
+	
+	@Parameter(names = "-alphabet", required = false, description = "An .xml file with a custom alphabet. "
     		+ "If given, fuzzing/learning will be restricted to these inputs. Otherwise fuzzing will be applied to all inputs in the specification, while " 
     		+ "learning will be done on a set of pre-selected inputs. " )
-	private String alphabetXml = null;
+	private String alphabet = null;
 
 	@Parameter(names = "-output", required = false, description = "The file in which results should be saved")
     private String output = "output";
@@ -45,7 +49,7 @@ public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
 	@ParametersDelegate 
 	private LearningConfig learningConfig;
     
-    public ModelBasedFuzzerConfig(GeneralDelegate delegate) {
+    public ModelBasedTesterConfig(GeneralDelegate delegate) {
         super(delegate);
         sulDelegate = new SulDelegate();
         addDelegate(sulDelegate);
@@ -64,9 +68,6 @@ public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
     	return specification;
     }
     
-    public List<TlsSymbol> getAlphabet() {
-    	return alphabet;
-    }
     
     public String getOutput() {
     	return output;
@@ -80,8 +81,8 @@ public class ModelBasedFuzzerConfig extends TLSDelegateConfig{
     	return exhaustive;
     }
 
-	public String getAlphabetXml() {
-		return alphabetXml;
+	public String getAlphabet() {
+		return alphabet;
 	}
 	
 	public boolean isOnlyLearn() {

@@ -7,7 +7,7 @@ import java.io.IOException;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
-import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
+import de.rub.nds.modelfuzzer.config.ModelBasedTesterConfig;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.ListAlphabet;
 
@@ -15,13 +15,13 @@ public class AlphabetFactory {
 	
 	public static final String DEFAULT_ALPHABET = "/default_alphabet.xml";
 	
-	public static Alphabet<TlsInput> buildConfiguredAlphabet(ModelBasedFuzzerConfig config) throws FileNotFoundException, JAXBException, IOException, XMLStreamException {
+	public static Alphabet<TlsInput> buildConfiguredAlphabet(ModelBasedTesterConfig config) throws FileNotFoundException, JAXBException, IOException, XMLStreamException {
 		Alphabet<TlsInput> alphabet = null;
 		if (config.getAlphabet() != null) {
-			alphabet =  new ListAlphabet<TlsInput> (SymbolicAlphabet.createWords(config.getAlphabet()));
+//			alphabet =  new ListAlphabet<TlsInput> (SymbolicAlphabet.createWords(config.getAlphabet()));
 		} else {
-			if (config.getAlphabetXml() != null) {
-				alphabet = AlphabetSerializer.read(new FileInputStream(config.getAlphabetXml()));
+			if (config.getAlphabet() != null) {
+				alphabet = AlphabetSerializer.read(new FileInputStream(config.getAlphabet()));
 			} 
 		}
 		return alphabet;

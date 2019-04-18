@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.statistics.Counter;
-import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
+import de.rub.nds.modelfuzzer.config.ModelBasedTesterConfig;
 import net.automatalib.words.Alphabet;
 
 public class StatisticsTracker {
@@ -27,7 +27,7 @@ public class StatisticsTracker {
 	long lastResets;
 
 	// learning inputs and results
-	private ModelBasedFuzzerConfig config;
+	private ModelBasedTesterConfig config;
 	private Alphabet<?> alphabet;
 	private List<DefaultQuery<?, ?>> counterexamples;
 	private StateMachine learnedModel;
@@ -52,7 +52,7 @@ public class StatisticsTracker {
 	/**
 	 * Should be called before starting learning.
 	 */
-	public void startLearning(ModelBasedFuzzerConfig config,
+	public void startLearning(ModelBasedTesterConfig config,
 			Alphabet<?> alphabet) {
 		learnInputs = 0;
 		learnResets = 0;

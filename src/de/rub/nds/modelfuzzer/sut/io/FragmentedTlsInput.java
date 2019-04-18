@@ -22,7 +22,7 @@ public class FragmentedTlsInput extends FuzzedTlsInput{
 		this.numFragments = numFragments;
 		this.strategy = strategy;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "FRAG_"+strategy.name()+"_"+numFragments+"_"+super.getInput().toString();

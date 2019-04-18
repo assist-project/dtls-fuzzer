@@ -7,7 +7,7 @@ import java.util.List;
 
 import de.learnlib.oracles.DefaultQuery;
 import de.rub.nds.modelfuzzer.config.LearningConfig;
-import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
+import de.rub.nds.modelfuzzer.config.ModelBasedTesterConfig;
 import de.rub.nds.modelfuzzer.config.SulDelegate;
 import net.automatalib.words.Alphabet;
 
@@ -59,7 +59,7 @@ public class Statistics {
 		out.close();
 	}
 
-	protected void generateRunDescription(ModelBasedFuzzerConfig config,
+	protected void generateRunDescription(ModelBasedTesterConfig config,
 			Alphabet<?> alphabet) {
 		StringWriter sw = new StringWriter();
 		PrintWriter out = new PrintWriter(sw);

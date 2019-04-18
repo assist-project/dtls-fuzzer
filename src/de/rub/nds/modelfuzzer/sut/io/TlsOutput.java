@@ -4,27 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
-import de.rub.nds.tlsattacker.core.record.AbstractRecord;
-import de.rub.nds.tlsattacker.transport.socket.SocketState;
 
 // TODO we should split TlsSpecificationOutput from the regular output. That way we can get the full output, plus the
 // specification output.
 public class TlsOutput {
 	private List<ProtocolMessage> messages;
-	private List<AbstractRecord> records;
 
-	private SocketState state;
-	
-	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(new ArrayList<>(), new ArrayList<>(), SocketState.CLOSED);
+	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(new ArrayList<>());
 	
 	public static TlsOutput socketClosed() {
 		return SOCKET_CLOSED;
 	}
 	
-	public TlsOutput(List<ProtocolMessage> messages, List<AbstractRecord> records, SocketState state) {
+	public TlsOutput() {
+	}
+	
+	public TlsOutput(List<ProtocolMessage> messages) {
 		this.messages = messages;
-		this.records = records;
-		this.state = state;
 	}
 	
 	public String toString() {
@@ -41,14 +37,6 @@ public class TlsOutput {
 		return messages;
 	}
 
-	public List<AbstractRecord> getRecords() {
-		return records;
-	}
-
-	public SocketState getState() {
-		return state;
-	}
-	
 	
 	/*
 	 * Currently we only look at basically the type of a message when comparing 

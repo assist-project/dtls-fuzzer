@@ -1,5 +1,6 @@
 package de.rub.nds.modelfuzzer.sut.io;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,5 +34,5 @@ public class AlphabetPojo {
 	public List<TlsInput> getWords() {
 		return inputs;
 	}
-
+	
 }

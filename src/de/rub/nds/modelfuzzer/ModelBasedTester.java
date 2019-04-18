@@ -18,7 +18,7 @@ import com.pfg666.dotparser.fsm.mealy.MealyDotParser;
 
 import de.learnlib.api.SUL;
 import de.learnlib.oracles.SULOracle;
-import de.rub.nds.modelfuzzer.config.ModelBasedFuzzerConfig;
+import de.rub.nds.modelfuzzer.config.ModelBasedTesterConfig;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationBug;
 import de.rub.nds.modelfuzzer.fuzz.FragmentationStrategy;
 import de.rub.nds.modelfuzzer.fuzz.SpecificationBug;
@@ -42,9 +42,9 @@ import net.automatalib.words.WordBuilder;
 
 public class ModelBasedTester {
 	private static final Logger LOGGER = LogManager.getLogger(ModelBasedTester.class);
-	private ModelBasedFuzzerConfig config;
+	private ModelBasedTesterConfig config;
 
-	public ModelBasedTester(ModelBasedFuzzerConfig config) {
+	public ModelBasedTester(ModelBasedTesterConfig config) {
 		this.config = config;
 	}
 	
@@ -62,7 +62,7 @@ public class ModelBasedTester {
 		}
 	}
 	
-	private void logResult(TestingReport report, ModelBasedFuzzerConfig config) throws IOException {
+	private void logResult(TestingReport report, ModelBasedTesterConfig config) throws IOException {
 		if (config.getOutput() == null) {
 			report.printReport(System.out);
 		} else {
@@ -72,7 +72,7 @@ public class ModelBasedTester {
 	}
 
 
-	public SULOracle<TlsInput, TlsOutput> createOracle(ModelBasedFuzzerConfig config) {
+	public SULOracle<TlsInput, TlsOutput> createOracle(ModelBasedTesterConfig config) {
 		SUL<TlsInput, TlsOutput> tlsSut = new TlsSUL(config.getSulDelegate());
 		if (config.getSulDelegate().getCommand() != null) {
 			tlsSut = new SulProcessWrapper<>(tlsSut, 
@@ -87,13 +87,13 @@ public class ModelBasedTester {
 	 * Generates a model based testing task, that is, a specification and an alphabet to focus model based testing on.
 	 * If a specification is not provided, it is created using active learning. 
 	 */
-	public ModelBasedTestingTask generateModelBasedTestingTask(ModelBasedFuzzerConfig config) throws FileNotFoundException, ParseException {
+	public ModelBasedTestingTask generateModelBasedTestingTask(ModelBasedTesterConfig config) throws FileNotFoundException, ParseException {
 		
-		MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor());
 		String specification = config.getSpecification(); 
 		if (specification == null) {
 			ExtractorResult result = extractModel(config);
 			// TODO not the nices way of making a conversion
+			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(InputDefinitions.));
 			FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(result.getLearnedModelFile().getPath()).get(0);
 			return new ModelBasedTestingTask( fastMealy, fastMealy.getInputAlphabet());
 		} else {
@@ -112,7 +112,7 @@ public class ModelBasedTester {
 		}
 	}
 	
-	private ExtractorResult extractModel(ModelBasedFuzzerConfig config) {
+	private ExtractorResult extractModel(ModelBasedTesterConfig config) {
 		Alphabet<TlsInput> alphabet = null;
 		try {
 			alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
