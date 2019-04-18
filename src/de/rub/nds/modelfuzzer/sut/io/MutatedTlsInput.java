@@ -9,7 +9,7 @@ public class MutatedTlsInput extends TlsInput{
 	private TlsInput input;
 
 	public MutatedTlsInput(TlsInput input, InputExecutor executor) {
-		super(executor);
+		super(executor, "MUTATED_"+input.toString());
 		this.input = input;
 	}
 	

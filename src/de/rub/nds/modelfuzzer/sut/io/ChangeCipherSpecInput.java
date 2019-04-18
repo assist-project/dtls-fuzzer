@@ -8,7 +8,7 @@ import de.rub.nds.tlsattacker.core.state.State;
 public class ChangeCipherSpecInput extends TlsInput {
 	
 	public ChangeCipherSpecInput() {
-		super(new InputExecutor() );
+		super(new InputExecutor(), new ChangeCipherSpecMessage().toCompactString() );
 	}
 
 	public ProtocolMessage generateMessage(State state) {
@@ -16,12 +16,6 @@ public class ChangeCipherSpecInput extends TlsInput {
 		return ccs;
 	}
 
-	@Override
-	public String toString() {
-		return new ChangeCipherSpecMessage().toCompactString();
-	}
-
-	
 	@Override
 	public void preUpdate(State state) {
 		state.getTlsContext().getRecordLayer().updateEncryptionCipher();

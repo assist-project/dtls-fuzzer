@@ -2,6 +2,7 @@ package de.rub.nds.modelfuzzer.sut.io;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import de.rub.nds.modelfuzzer.sut.InputExecutor;
@@ -14,8 +15,15 @@ public abstract class TlsInput {
 	@XmlTransient
 	private InputExecutor inputExecutor;
 	
-	TlsInput(InputExecutor executor) {
+	/**
+	 * The name with which the input can be referred 
+	 */
+	@XmlAttribute(name = "name", required = true)
+	private String name;
+	
+	TlsInput(InputExecutor executor, String name) {
 		this.inputExecutor = executor;
+		this.name = name;
 	}
 	
 
@@ -46,6 +54,8 @@ public abstract class TlsInput {
 	/**
 	 * Prints an input string corresponding to the message. Input strings should be unique for each input.
 	 */
-	public abstract String toString();
+	public String toString() {
+		return name;
+	}
 	
 }

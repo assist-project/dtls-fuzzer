@@ -95,17 +95,17 @@ public class GenericTlsInput extends TlsInput{
 			@XmlElement(type = EncryptedExtensionsMessage.class, name = "EncryptedExtensions"),
 			@XmlElement(type = HelloRetryRequestMessage.class, name = "HelloRetryRequest")})
 	private ProtocolMessage message;
+	
+	public GenericTlsInput() {
+		super(new InputExecutor(), "GENERIC_MESSAGE");
+	}
 
 	public GenericTlsInput(ProtocolMessage protocolMessage) {
-		super(new InputExecutor());
-		message = protocolMessage;
+		super(new InputExecutor(), protocolMessage.toCompactString());
 	}
 
 	public ProtocolMessage generateMessage(State state) {
 		return message;
 	}
 	
-	public String toString() {
-		return message.toCompactString(); 
-	}
 }

@@ -7,10 +7,15 @@ import java.io.IOException;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.rub.nds.modelfuzzer.ModelBasedTester;
 import de.rub.nds.modelfuzzer.config.ModelBasedTesterConfig;
 import net.automatalib.words.Alphabet;
 
 public class AlphabetFactory {
+	private static final Logger LOGGER = LogManager.getLogger(AlphabetFactory.class);
 	
 	public static final String DEFAULT_ALPHABET = "/default_alphabet.xml";
 	
@@ -19,6 +24,27 @@ public class AlphabetFactory {
 		if (config.getAlphabet() != null) {
 			alphabet = AlphabetSerializer.read(new FileInputStream(config.getAlphabet()));
 		} 
+		return alphabet;
+	}
+	
+	public static Alphabet<TlsInput> buildAlphabet(ModelBasedTesterConfig config) {
+		Alphabet<TlsInput> alphabet = null;
+		if (config.getAlphabet() != null) {
+			try {
+				alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
+			} catch (JAXBException | IOException | XMLStreamException e) {
+				LOGGER.fatal("Failed to instantiate alphabet");
+				System.exit(0);
+			}
+		} else {
+			try {
+				alphabet = AlphabetFactory.buildDefaultAlphabet();
+			} catch (JAXBException | IOException | XMLStreamException e) {
+				LOGGER.fatal("Failed to instantiate default alphabet");
+				System.exit(0);
+			}
+		}
+		
 		return alphabet;
 	}
 	

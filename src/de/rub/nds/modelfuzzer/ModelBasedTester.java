@@ -7,9 +7,6 @@ import java.io.PrintStream;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,6 +31,7 @@ import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
 import de.rub.nds.modelfuzzer.sut.io.TlsProcessor;
 import de.rub.nds.modelfuzzer.sut.io.definitions.Definitions;
+import de.rub.nds.modelfuzzer.sut.io.definitions.DefinitionsFactory;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.automata.transout.impl.FastMealyState;
 import net.automatalib.util.automata.Automata;
@@ -98,37 +96,16 @@ public class ModelBasedTester {
 			FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(result.getLearnedModelFile().getPath()).get(0);
 			return new ModelBasedTestingTask( fastMealy, fastMealy.getInputAlphabet());
 		} else {
+			Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
+			Definitions definitions = DefinitionsFactory.generateDefinitions(alphabet);
+			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(definitions));
 			FastMealy<TlsInput, TlsOutput>  model = dotParser.parseAutomaton(specification).get(0);
-			Alphabet<TlsInput> alphabet = null;
-			try {
-				alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
-			} catch (JAXBException | IOException | XMLStreamException e) {
-				LOGGER.fatal("Failed to instantiate alphabet");
-				System.exit(0);
-			}
-			if (alphabet == null) {
-				alphabet = model.getInputAlphabet();
-			}
 			return new ModelBasedTestingTask(model, alphabet);
 		}
 	}
 	
 	private ExtractorResult extractModel(ModelBasedTesterConfig config) {
-		Alphabet<TlsInput> alphabet = null;
-		try {
-			alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
-		} catch (JAXBException | IOException | XMLStreamException e) {
-			LOGGER.fatal("Failed to instantiate alphabet");
-			System.exit(0);
-		}
-		if (alphabet == null) {
-			try {
-				alphabet = AlphabetFactory.buildDefaultAlphabet();
-			} catch (JAXBException | IOException | XMLStreamException e) {
-				LOGGER.fatal("Failed to instantiate default alphabet");
-				System.exit(0);
-			}
-		}
+		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 		Extractor extractor = new Extractor(config, alphabet);
 		ExtractorResult result = extractor.extractStateMachine();
 		return result;

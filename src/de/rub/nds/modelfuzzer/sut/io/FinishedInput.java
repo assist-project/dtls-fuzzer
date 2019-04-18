@@ -8,18 +8,13 @@ import de.rub.nds.tlsattacker.core.state.State;
 public class FinishedInput extends TlsInput{
 	
 	public FinishedInput() {
-		super(new InputExecutor());
+		super(new InputExecutor(), "FINISHED");
 	}
 
 	@Override
 	public ProtocolMessage generateMessage(State state) {
 		FinishedMessage message = new FinishedMessage();
 		return message;
-	}
-
-	@Override
-	public String toString() {
-		return "FINISHED";
 	}
 
 	@Override

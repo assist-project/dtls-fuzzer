@@ -17,11 +17,11 @@ public class ClientHelloInput extends TlsInput{
 	
 	
 	public ClientHelloInput() {
-		super(new InputExecutor());
+		super(new InputExecutor(), "CLIENT_HELLO");
 	}
 
 	public ClientHelloInput(CipherSuite cipherSuite) {
-		super(new InputExecutor());
+		super(new InputExecutor(), "CLIENT_HELLO_"+cipherSuite.toString());
 		this.suite = cipherSuite;
 	}
 
@@ -43,8 +43,4 @@ public class ClientHelloInput extends TlsInput{
 		return message;
 	}
 
-	@Override
-	public String toString() {
-		return "CLIENT_HELLO_"+suite.toString();
-	}
 }

@@ -6,31 +6,30 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParametersDelegate;
 
-import de.rub.nds.modelfuzzer.sut.io.TlsSymbol;
 import de.rub.nds.tlsattacker.core.config.TLSDelegateConfig;
 import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 
 public class ModelBasedTesterConfig extends TLSDelegateConfig{
 	
 	@Parameter(names = "-specification", required = false, description = "A model of the specification. For examples, look at './models/'. "
-			+ "If no specification is given, active learning is run with the provided alphabet")
+			+ "If no specification is given, active learning is run with the provided alphabet."
+			+ "Inputs in the specification are defined in the alphabet, outputs are parsed as strings. "
+			+ "Outputs are capitalized snake case of the messages involved. ")
     private String specification = null;
 	
 	@Parameter(names = "-onlyLearn", required = false, description = "Only generates a model of the specification. Does not do conformance testing")
 	private boolean onlyLearn = false; 
 	
-	@Parameter(names = "-inputs", required = false, description = "A list of comma separated input names from which a alphabet is constructed. "
-    		+ "If given, fuzzing/learning will be restricted to these inputs. "
-    		+ "Otherwise fuzzing will be applied to all inputs in the specification, while learning will be done on a set of pre-selected inputs. "
-    		+ "The definitions for the input names can be provided, otherwise they are taken from a default .xml file.")
+	@Parameter(names = "-inputs", required = false, description = "A list of comma separated input names. "
+    		+ "If given, testing will be restricted to these inputs. ")
     private List<String> inputs = null;
 	
-	@Parameter(names = "-definitions", required = false, description = "An .xml file containing the definitions for each input in the specification ")
-    private String definitions = null;
-	
-	@Parameter(names = "-alphabet", required = false, description = "An .xml file with a custom alphabet. "
-    		+ "If given, fuzzing/learning will be restricted to these inputs. Otherwise fuzzing will be applied to all inputs in the specification, while " 
-    		+ "learning will be done on a set of pre-selected inputs. " )
+	@Parameter(names = "-alphabet", required = false, description = "An .xml file defining the input alphabet. "
+    		+ "The alphabet is used to interpret inputs from a given specification, as well as to learn. "
+			+ "Each input in the alphabet has a name under which it appears in the specification."
+    		+ "The name is defaulted mostly to the capitalized snake case of the message involved."
+    		+ "For example, for <FinishedInput/> the name is FINISHED."
+    		+ "The name can be changed by setting the 'name' attribute" )
 	private String alphabet = null;
 
 	@Parameter(names = "-output", required = false, description = "The file in which results should be saved")

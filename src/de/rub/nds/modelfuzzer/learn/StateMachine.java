@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import de.rub.nds.modelfuzzer.sut.io.TlsInput;
 import de.rub.nds.modelfuzzer.sut.io.TlsOutput;
 import de.rub.nds.modelfuzzer.sut.io.definitions.Definitions;
+import de.rub.nds.modelfuzzer.sut.io.definitions.DefinitionsFactory;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
@@ -44,14 +45,6 @@ public class StateMachine {
 		this.alphabet = alphabet;
 	}
 	
-	public Definitions generateDefinitions() {
-		Definitions defs = new Definitions();
-		for (TlsInput input : this.alphabet) {
-			defs.addInputDefinition(input.toString(), input);
-		}
-		return defs;
-	}
-	
 	/**
 	 * Exports the hypothesis to the supplied file and generates a corresponding
 	 * viewable .pdf model.
@@ -82,5 +75,9 @@ public class StateMachine {
 		StringWriter sw = new StringWriter();
 		export(sw);
 		return sw.toString();
+	}
+
+	public Definitions generateDefinitions() {
+		return DefinitionsFactory.generateDefinitions(alphabet);
 	}
 }
