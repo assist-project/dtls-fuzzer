@@ -108,8 +108,4 @@ public class GenericTlsInput extends TlsInput{
 	public String toString() {
 		return message.toCompactString(); 
 	}
-
-	public void postUpdate(TlsOutput output, State state) {
-	}
-
 }

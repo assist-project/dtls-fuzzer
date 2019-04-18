@@ -21,6 +21,10 @@ public class FuzzedTlsInput extends TlsInput{
 	public String toString() {
 		return "FUZZED_"+input.toString();
 	}
+	
+	public void preUpdate(State state) {
+		input.preUpdate(state);
+	}
 
 	public void postUpdate(TlsOutput output, State state) {
 		input.postUpdate(output, state);

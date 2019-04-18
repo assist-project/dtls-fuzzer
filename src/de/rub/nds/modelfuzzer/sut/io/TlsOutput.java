@@ -2,12 +2,13 @@ package de.rub.nds.modelfuzzer.sut.io;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.transport.socket.SocketState;
 
+// TODO we should split TlsSpecificationOutput from the regular output. That way we can get the full output, plus the
+// specification output.
 public class TlsOutput {
 	private List<ProtocolMessage> messages;
 	private List<AbstractRecord> records;
@@ -48,6 +49,7 @@ public class TlsOutput {
 		return state;
 	}
 	
+	
 	/*
 	 * Currently we only look at basically the type of a message when comparing 
 	 */
@@ -68,4 +70,14 @@ public class TlsOutput {
 		}
 		return false;
 	}
+	
+
+	public int hashCode() {
+		int hashCode = 0;
+		for (ProtocolMessage message : messages) {
+			hashCode += message.toCompactString().hashCode() + hashCode*2; 
+		}
+		return hashCode;
+	}
+	
 }

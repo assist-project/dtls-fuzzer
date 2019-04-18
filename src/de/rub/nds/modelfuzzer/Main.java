@@ -29,8 +29,8 @@ public class Main {
             }
             
             try {
-            	ModelBasedTester fuzzer = new ModelBasedTester(config);
-                fuzzer.startFuzzing();
+            	ModelBasedTester tester = new ModelBasedTester(config);
+                tester.startTesting();
             } catch (Exception E) {
                 LOGGER.error("Encountered an exception. See debug for more info.");
                 E.printStackTrace();

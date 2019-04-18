@@ -32,9 +32,16 @@ public abstract class TlsInput {
 	public abstract ProtocolMessage generateMessage(State state);
 	
 	/**
+	 * Updates the context after sending the input.
+	 */
+	public void preUpdate(State state) {
+	}
+	
+	/**
 	 * Updates the context after receiving an output.
 	 */
-	public abstract void postUpdate(TlsOutput output, State state);
+	public void postUpdate(TlsOutput output, State state) {
+	}
 	
 	/**
 	 * Prints an input string corresponding to the message. Input strings should be unique for each input.

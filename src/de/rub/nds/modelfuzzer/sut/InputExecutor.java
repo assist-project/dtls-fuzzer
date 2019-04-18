@@ -24,8 +24,9 @@ public class InputExecutor {
 	public TlsOutput execute(TlsInput input, State state) {
 		ProtocolMessage message = input.generateMessage(state);
 		sendMessage(message, state);
-		input.postUpdate(null, state);
+		input.preUpdate(state);
 		TlsOutput output = readOutput(state);
+		input.postUpdate(output, state);
 		return output;
 	}
 	

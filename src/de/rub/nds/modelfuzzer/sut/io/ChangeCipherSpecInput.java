@@ -21,8 +21,9 @@ public class ChangeCipherSpecInput extends TlsInput {
 		return new ChangeCipherSpecMessage().toCompactString();
 	}
 
+	
 	@Override
-	public void postUpdate(TlsOutput output, State state) {
+	public void preUpdate(State state) {
 		state.getTlsContext().getRecordLayer().updateEncryptionCipher();
 	    state.getTlsContext().setWriteSequenceNumber(0);
 	}

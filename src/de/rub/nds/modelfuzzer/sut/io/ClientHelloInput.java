@@ -47,9 +47,4 @@ public class ClientHelloInput extends TlsInput{
 	public String toString() {
 		return "CLIENT_HELLO_"+suite.toString();
 	}
-
-	@Override
-	public void postUpdate(TlsOutput output, State state) {
-	}
-	
 }

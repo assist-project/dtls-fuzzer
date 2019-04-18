@@ -98,9 +98,9 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
                 closed = true;
                 return TlsOutput.socketClosed();
             }
-            LOG.info("sent:" + in.toString());
+            LOG.debug("sent:" + in.toString());
             output = executor.execute(in, state);
-            LOG.info("received:" + output);
+            LOG.debug("received:" + output);
             return output;
         } catch (IOException ex) {
             ex.printStackTrace();

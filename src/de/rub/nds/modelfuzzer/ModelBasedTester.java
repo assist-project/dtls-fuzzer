@@ -49,12 +49,17 @@ public class ModelBasedTester {
 	}
 	
 
-	public TestingReport startFuzzing() throws ParseException, IOException {
+	public TestingReport startTesting() throws ParseException, IOException {
 		SULOracle<TlsInput, TlsOutput> sutOracle = createOracle(config);
-		ModelBasedTestingTask task = generateModelBasedTestingTask(config);
-		TestingReport report = testModel(sutOracle, task);
-		logResult(report, config);
-		return report;
+		if (config.isOnlyLearn()) {
+			extractModel(config);
+			return null;
+		} else {
+			ModelBasedTestingTask task = generateModelBasedTestingTask(config);
+			TestingReport report = testModel(sutOracle, task);
+			logResult(report, config);
+			return report;
+		}
 	}
 	
 	private void logResult(TestingReport report, ModelBasedFuzzerConfig config) throws IOException {
@@ -83,6 +88,31 @@ public class ModelBasedTester {
 	 * If a specification is not provided, it is created using active learning. 
 	 */
 	public ModelBasedTestingTask generateModelBasedTestingTask(ModelBasedFuzzerConfig config) throws FileNotFoundException, ParseException {
+		
+		MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor());
+		String specification = config.getSpecification(); 
+		if (specification == null) {
+			ExtractorResult result = extractModel(config);
+			// TODO not the nices way of making a conversion
+			FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(result.getLearnedModelFile().getPath()).get(0);
+			return new ModelBasedTestingTask( fastMealy, fastMealy.getInputAlphabet());
+		} else {
+			FastMealy<TlsInput, TlsOutput>  model = dotParser.parseAutomaton(specification).get(0);
+			Alphabet<TlsInput> alphabet = null;
+			try {
+				alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
+			} catch (JAXBException | IOException | XMLStreamException e) {
+				LOGGER.fatal("Failed to instantiate alphabet");
+				System.exit(0);
+			}
+			if (alphabet == null) {
+				alphabet = model.getInputAlphabet();
+			}
+			return new ModelBasedTestingTask(model, alphabet);
+		}
+	}
+	
+	private ExtractorResult extractModel(ModelBasedFuzzerConfig config) {
 		Alphabet<TlsInput> alphabet = null;
 		try {
 			alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
@@ -90,27 +120,17 @@ public class ModelBasedTester {
 			LOGGER.fatal("Failed to instantiate alphabet");
 			System.exit(0);
 		}
-		String specification = config.getSpecification(); 
-		if (specification == null || config.isOnlyLearn()) {
-			if (alphabet == null) {
-				try {
-					alphabet = AlphabetFactory.buildDefaultAlphabet();
-				} catch (JAXBException | IOException | XMLStreamException e) {
-					LOGGER.fatal("Failed to instantiate default alphabet");
-					System.exit(0);
-				}
-			}
-			Extractor extractor = new Extractor(config, alphabet);
-			ExtractorResult result = extractor.extractStateMachine();
-			specification = result.getLearnedModelFile().getAbsolutePath();
-		}
-		
-		MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor());
-		FastMealy<TlsInput, TlsOutput>  model = dotParser.parseAutomaton(config.getSpecification()).get(0);
 		if (alphabet == null) {
-			alphabet = model.getInputAlphabet();
+			try {
+				alphabet = AlphabetFactory.buildDefaultAlphabet();
+			} catch (JAXBException | IOException | XMLStreamException e) {
+				LOGGER.fatal("Failed to instantiate default alphabet");
+				System.exit(0);
+			}
 		}
-		return new ModelBasedTestingTask(model, alphabet);
+		Extractor extractor = new Extractor(config, alphabet);
+		ExtractorResult result = extractor.extractStateMachine();
+		return result;
 	}
 	
 	private TestingReport testModel(SULOracle<TlsInput, TlsOutput> tlsOracle, ModelBasedTestingTask task) {
