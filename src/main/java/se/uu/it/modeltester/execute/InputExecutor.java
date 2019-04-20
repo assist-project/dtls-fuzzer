@@ -17,8 +17,8 @@ public abstract class InputExecutor {
 	public TlsOutput execute(TlsInput input, State state) {
 		ProtocolMessage message = input.generateMessage(state);
 		stripFields(message);
-		input.preUpdate(state);
 		sendMessage(message, state);
+		input.preUpdate(state);
 		TlsOutput output = receiveOutput(state);
 		input.postUpdate(output, state);
 		return output;
