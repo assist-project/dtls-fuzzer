@@ -7,13 +7,13 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.modeltester.sut.InputExecutor;
+import se.uu.it.modeltester.execute.BasicInputExecutor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class TlsInput {
 	
 	@XmlTransient
-	private InputExecutor inputExecutor;
+	private BasicInputExecutor inputExecutor;
 	
 	/**
 	 * The name with which the input can be referred 
@@ -21,7 +21,7 @@ public abstract class TlsInput {
 	@XmlAttribute(name = "name", required = true)
 	private String name;
 	
-	TlsInput(InputExecutor executor, String name) {
+	TlsInput(BasicInputExecutor executor, String name) {
 		this.inputExecutor = executor;
 		this.name = name;
 	}
@@ -30,7 +30,7 @@ public abstract class TlsInput {
 	/**
 	 * Gets the executor for this input.
 	 */
-	public InputExecutor getExecutor() {
+	public BasicInputExecutor getExecutor() {
 		return inputExecutor;
 	}
 	

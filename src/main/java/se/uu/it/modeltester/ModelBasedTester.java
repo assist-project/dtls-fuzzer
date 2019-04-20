@@ -22,10 +22,6 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
-import se.uu.it.modeltester.fuzz.FragmentationBug;
-import se.uu.it.modeltester.fuzz.FragmentationStrategy;
-import se.uu.it.modeltester.fuzz.SpecificationBug;
-import se.uu.it.modeltester.fuzz.TestingReport;
 import se.uu.it.modeltester.learn.Extractor;
 import se.uu.it.modeltester.learn.Extractor.ExtractorResult;
 import se.uu.it.modeltester.sut.ProcessHandler;
@@ -38,6 +34,10 @@ import se.uu.it.modeltester.sut.io.TlsOutput;
 import se.uu.it.modeltester.sut.io.TlsProcessor;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
 import se.uu.it.modeltester.sut.io.definitions.DefinitionsFactory;
+import se.uu.it.modeltester.test.FragmentationBug;
+import se.uu.it.modeltester.test.FragmentationStrategy;
+import se.uu.it.modeltester.test.SpecificationBug;
+import se.uu.it.modeltester.test.TestingReport;
 
 public class ModelBasedTester {
 	private static final Logger LOGGER = LogManager.getLogger(ModelBasedTester.class);

@@ -8,7 +8,7 @@ import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.modeltester.sut.InputExecutor;
+import se.uu.it.modeltester.execute.BasicInputExecutor;
 
 public class ClientHelloInput extends TlsInput{
 
@@ -17,11 +17,11 @@ public class ClientHelloInput extends TlsInput{
 	
 	
 	public ClientHelloInput() {
-		super(new InputExecutor(), "CLIENT_HELLO");
+		super(new BasicInputExecutor(), "CLIENT_HELLO");
 	}
 
 	public ClientHelloInput(CipherSuite cipherSuite) {
-		super(new InputExecutor(), "CLIENT_HELLO_"+cipherSuite.toString());
+		super(new BasicInputExecutor(), "CLIENT_HELLO_"+cipherSuite.toString());
 		this.suite = cipherSuite;
 	}
 

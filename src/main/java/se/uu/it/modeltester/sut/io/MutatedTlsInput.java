@@ -2,13 +2,13 @@ package se.uu.it.modeltester.sut.io;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.modeltester.sut.InputExecutor;
+import se.uu.it.modeltester.execute.BasicInputExecutor;
 
 public class MutatedTlsInput extends TlsInput{
 
 	private TlsInput input;
 
-	public MutatedTlsInput(TlsInput input, InputExecutor executor) {
+	public MutatedTlsInput(TlsInput input, BasicInputExecutor executor) {
 		super(executor, "MUTATED_"+input.toString());
 		this.input = input;
 	}

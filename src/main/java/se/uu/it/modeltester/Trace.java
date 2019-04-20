@@ -20,10 +20,6 @@ import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
-import se.uu.it.modeltester.fuzz.DtlsMessageFragmenter;
-import se.uu.it.modeltester.fuzz.FragmentationGeneratorFactory;
-import se.uu.it.modeltester.fuzz.FragmentationStrategy;
-import se.uu.it.modeltester.fuzz.FragmentingInputExecutor;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
@@ -34,6 +30,10 @@ import se.uu.it.modeltester.sut.io.GenericTlsInput;
 import se.uu.it.modeltester.sut.io.MutatedTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
+import se.uu.it.modeltester.test.DtlsMessageFragmenter;
+import se.uu.it.modeltester.test.FragmentationGeneratorFactory;
+import se.uu.it.modeltester.test.FragmentationStrategy;
+import se.uu.it.modeltester.test.FragmentingInputExecutor;
 
 public class Trace {
 

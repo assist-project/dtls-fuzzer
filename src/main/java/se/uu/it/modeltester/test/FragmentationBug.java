@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.fuzz;
+package se.uu.it.modeltester.test;
 
 import net.automatalib.words.Word;
 import se.uu.it.modeltester.sut.io.TlsInput;

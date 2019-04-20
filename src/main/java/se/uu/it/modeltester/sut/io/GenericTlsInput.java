@@ -46,7 +46,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.SupplementalDataMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownHandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.modeltester.sut.InputExecutor;
+import se.uu.it.modeltester.execute.BasicInputExecutor;
 
 public class GenericTlsInput extends TlsInput{
 	@XmlElements(value = {
@@ -97,11 +97,11 @@ public class GenericTlsInput extends TlsInput{
 	private ProtocolMessage message;
 	
 	public GenericTlsInput() {
-		super(new InputExecutor(), "GENERIC_MESSAGE");
+		super(new BasicInputExecutor(), "GENERIC_MESSAGE");
 	}
 
 	public GenericTlsInput(ProtocolMessage protocolMessage) {
-		super(new InputExecutor(), protocolMessage.toCompactString());
+		super(new BasicInputExecutor(), protocolMessage.toCompactString());
 	}
 
 	public ProtocolMessage generateMessage(State state) {

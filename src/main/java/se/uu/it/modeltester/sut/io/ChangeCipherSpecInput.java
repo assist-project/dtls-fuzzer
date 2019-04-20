@@ -3,12 +3,12 @@ package se.uu.it.modeltester.sut.io;
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.modeltester.sut.InputExecutor;
+import se.uu.it.modeltester.execute.BasicInputExecutor;
 
 public class ChangeCipherSpecInput extends TlsInput {
 	
 	public ChangeCipherSpecInput() {
-		super(new InputExecutor(), new ChangeCipherSpecMessage().toCompactString() );
+		super(new BasicInputExecutor(), new ChangeCipherSpecMessage().toCompactString() );
 	}
 
 	public ProtocolMessage generateMessage(State state) {

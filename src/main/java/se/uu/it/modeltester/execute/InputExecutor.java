@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.sut;
+package se.uu.it.modeltester.execute;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -8,48 +8,25 @@ import java.util.List;
 import de.rub.nds.modifiablevariable.ModifiableVariable;
 import de.rub.nds.tlsattacker.core.protocol.ModifiableVariableHolder;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
-import de.rub.nds.tlsattacker.core.record.AbstractRecord;
-import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.GenericReceiveAction;
-import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
-import de.rub.nds.tlsattacker.transport.exception.InvalidTransportHandlerStateException;
-import de.rub.nds.tlsattacker.transport.socket.SocketState;
-import de.rub.nds.tlsattacker.transport.tcp.ClientTcpTransportHandler;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public class InputExecutor {
-	
+public abstract class InputExecutor {
 	public TlsOutput execute(TlsInput input, State state) {
 		ProtocolMessage message = input.generateMessage(state);
-		sendMessage(message, state);
+		stripFields(message);
 		input.preUpdate(state);
-		TlsOutput output = readOutput(state);
+		sendMessage(message, state);
+		TlsOutput output = receiveOutput(state);
 		input.postUpdate(output, state);
 		return output;
 	}
 	
-    protected void sendMessage(ProtocolMessage message, State state) {
-    	Record record = new Record();
-        List<ProtocolMessage> messages = new LinkedList<>();
-        List<AbstractRecord> records = new LinkedList<>();
-        records.add(record);
-        messages.add(message);
-        stripFields(message);
-        SendMessageHelper helper = new SendMessageHelper();
-        try {
-            helper.sendMessages(messages, records, state.getTlsContext());
-        } catch (IOException ex) {
-            try {
-                state.getTlsContext().getTransportHandler().closeConnection();
-            } catch (IOException E) {
-                E.printStackTrace();
-            }
-        }
-    }
-
-    protected void stripFields(ProtocolMessage message) {
+	protected abstract void sendMessage(ProtocolMessage message, State state);
+	
+	protected void stripFields(ProtocolMessage message) {
         List<ModifiableVariableHolder> holders = new LinkedList<>();
         holders.addAll(message.getAllModifiableVariableHolders());
         for (ModifiableVariableHolder holder : holders) {
@@ -78,7 +55,7 @@ public class InputExecutor {
         }
     }
 
-    protected TlsOutput readOutput(State state) {
+    protected TlsOutput receiveOutput(State state) {
         try {
             if (state.getTlsContext().getTransportHandler().isClosed()) {
                 return TlsOutput.socketClosed();
@@ -99,23 +76,6 @@ public class InputExecutor {
     }
     
     private TlsOutput extractOutput(State state, GenericReceiveAction action) {
-    	
-    	return new TlsOutput(action.getReceivedMessages()
-    			);
-    			
-    }
-    
-    private SocketState extractSocketState(State state) {
-        try {
-            if (state.getTlsContext().getTransportHandler() instanceof ClientTcpTransportHandler) {
-                SocketState socketState = (((ClientTcpTransportHandler) (state.getTlsContext().getTransportHandler()))
-                        .getSocketState());
-                return socketState;
-            } else {
-                return null;
-            }
-        } catch (InvalidTransportHandlerStateException ex) {
-            return null;
-        }
+    	return new TlsOutput(action.getReceivedMessages());
     }
 }

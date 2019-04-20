@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.fuzz;
+package se.uu.it.modeltester.test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,9 +18,9 @@ import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
-import se.uu.it.modeltester.sut.InputExecutor;
+import se.uu.it.modeltester.execute.BasicInputExecutor;
 
-public class FragmentingInputExecutor extends InputExecutor {
+public class FragmentingInputExecutor extends BasicInputExecutor {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	private DtlsMessageFragmenter dtlsMessageFragmenter;

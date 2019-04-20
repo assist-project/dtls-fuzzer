@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.fuzz;
+package se.uu.it.modeltester.test;
 
 public class Fragment {
 	private final int offset;

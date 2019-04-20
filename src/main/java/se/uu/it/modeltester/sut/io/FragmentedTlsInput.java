@@ -1,9 +1,9 @@
 package se.uu.it.modeltester.sut.io;
 
-import se.uu.it.modeltester.fuzz.DtlsMessageFragmenter;
-import se.uu.it.modeltester.fuzz.FragmentationGeneratorFactory;
-import se.uu.it.modeltester.fuzz.FragmentationStrategy;
-import se.uu.it.modeltester.fuzz.FragmentingInputExecutor;
+import se.uu.it.modeltester.test.DtlsMessageFragmenter;
+import se.uu.it.modeltester.test.FragmentationGeneratorFactory;
+import se.uu.it.modeltester.test.FragmentationStrategy;
+import se.uu.it.modeltester.test.FragmentingInputExecutor;
 
 public class FragmentedTlsInput extends MutatedTlsInput{
 	
