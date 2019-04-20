@@ -1,16 +1,16 @@
 <alphabet>
-    <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA"/>
-    <GenericMessageInput>
+    <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_KEY_EXCHANGE"/>
+    <GenericMessageInput name="RSA_CLIENT_KEY_EXCHANGE">
         <RSAClientKeyExchange/>
     </GenericMessageInput>
-    <ChangeCipherSpecInput/>
-    <FinishedInput/>
-    <GenericMessageInput>
+    <ChangeCipherSpecInput name="CHANGE_CIPHER_SPEC"/>
+    <FinishedInput name="FINISHED"/>
+    <GenerictTlsInput name="APPLICATION">
         <Application>
             <data>0x5468697320697320612068656c6c6f206d65737361676521</data>
         </Application>
-    </GenericMessageInput>
-    <GenericMessageInput>
+    </GenericTlsInput>
+    <GenericTlsInput name="ALERT(FATAL,UNEXPECTED_MESSAGE)">
         <Alert>
             <level>
                 <originalValue>1</originalValue>
@@ -20,7 +20,7 @@
             </description>
         </Alert>
     </GenericMessageInput>
-    <GenericMessageInput>
+    <GenericMessageInput name="ALERT(WARNING,CLOSE_NOTIFY)">
         <Alert>
             <level>
                 <originalValue>2</originalValue>
