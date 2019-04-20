@@ -31,7 +31,6 @@ import se.uu.it.modeltester.sut.io.AlphabetFactory;
 import se.uu.it.modeltester.sut.io.FragmentedTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
-import se.uu.it.modeltester.sut.io.TlsProcessor;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
 import se.uu.it.modeltester.sut.io.definitions.DefinitionsFactory;
 import se.uu.it.modeltester.test.FragmentationBug;

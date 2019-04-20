@@ -9,4 +9,7 @@ public abstract class FragmentationMutator implements Mutator<FragmentationResul
 	 */
 	public abstract FragmentationResult mutate(FragmentationResult result, TlsContext context);
 	
+	public MutatorType getType() {
+		return MutatorType.FRAGMENTATION;
+	}
 }

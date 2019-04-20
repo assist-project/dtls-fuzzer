@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.sut.io;
+package se.uu.it.modeltester;
 
 
 import java.util.Arrays;
@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.pfg666.dotparser.fsm.mealy.MealyProcessor;
 
+import se.uu.it.modeltester.sut.io.TlsInput;
+import se.uu.it.modeltester.sut.io.TlsOutput;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
 
 public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput>{

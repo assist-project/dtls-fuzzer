@@ -37,7 +37,10 @@ public class MutatingInputExecutor extends InputExecutor {
 
 	@Override
 	protected void sendMessage(ProtocolMessage message, State state) {
-		message.getHandler(state.getTlsContext()).prepareMessage(message);
+		state.getTlsContext().setTalkingConnectionEndType(state.getTlsContext().getChooser().getConnectionEndType());
+		message
+		.getHandler(state.getTlsContext())
+		.prepareMessage(message);
 		
 		List<ProtocolMessage> messagesToSend = new LinkedList<>();
 
@@ -50,6 +53,7 @@ public class MutatingInputExecutor extends InputExecutor {
 		}
 		
 		PackingResult result = packMessages(messagesToSend, state);
+		message.getHandler(state.getTlsContext()).adjustTlsContextAfterSerialize(message);
 		applyMutators(MutatorType.PACKING, result, state);
 		SendMessageHelper helper = new SendMessageHelper();
 		List<AbstractRecord> recordsToSend = result.getRecords();
@@ -86,7 +90,7 @@ public class MutatingInputExecutor extends InputExecutor {
 	}
 
 	private <R> R applyMutators(MutatorType mutatorType, R currentResult, State state) {
-		List<Mutator<?>> mutatorsOfType = mutators.get(mutatorType);
+		List<Mutator<?>> mutatorsOfType = mutators.getOrDefault(mutatorType, Collections.emptyList());
 		R result = currentResult;
 		for (Mutator<?> mutator : mutatorsOfType) {
 			// this can definitely be made safe with some more work;
@@ -96,6 +100,9 @@ public class MutatingInputExecutor extends InputExecutor {
 		return result;
 	}
 	
+	/**
+	 * Adds a mutator
+	 */
 	public <M extends Mutator<?>> boolean addMutator(M mutator) {
 		mutators.putIfAbsent(mutator.getType(), new LinkedList<>());
 		List<Mutator<?>> mutOfSameType = mutators.get(mutator.getType());

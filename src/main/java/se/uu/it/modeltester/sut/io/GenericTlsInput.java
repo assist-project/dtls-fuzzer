@@ -100,8 +100,9 @@ public class GenericTlsInput extends TlsInput{
 		super(new BasicInputExecutor(), "GENERIC_MESSAGE");
 	}
 
-	public GenericTlsInput(ProtocolMessage protocolMessage) {
-		super(new BasicInputExecutor(), protocolMessage.toCompactString());
+	public GenericTlsInput(ProtocolMessage message) {
+		super(new BasicInputExecutor(), message.toCompactString());
+		this.message = message;
 	}
 
 	public ProtocolMessage generateMessage(State state) {

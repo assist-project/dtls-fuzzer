@@ -20,6 +20,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
+import se.uu.it.modeltester.execute.NonMutatingInputExecutor;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
@@ -116,6 +117,11 @@ public class Trace {
 		}
 	}
 	
+	public static TlsInput nonmut(TlsInput input) {
+		input.setExecutor(new NonMutatingInputExecutor());
+		return input;
+	}
+	
 	public static void main(String[] args) throws Exception {
 
 		init();
@@ -126,13 +132,20 @@ public class Trace {
 		int iterations = 1;
 		int stepWait = 200;
 		long runWait = 100;
+//		TlsInput [] inputs = new TlsInput [] {
+//				fuzz(new ClientHelloInput(cs), 0),
+//				fuzz(new ClientHelloInput(cs), 0),
+//				fuzz(new GenericTlsInput(new PskClientKeyExchangeMessage()), 0),
+//				new ChangeCipherSpecInput(),
+//				fuzz(new FinishedInput(), 0),
+//				fuzz(new ClientHelloInput(cs), 1)				
+//		};
 		TlsInput [] inputs = new TlsInput [] {
-				fuzz(new ClientHelloInput(cs), 0),
-				fuzz(new ClientHelloInput(cs), 0),
-				fuzz(new GenericTlsInput(new PskClientKeyExchangeMessage()), 0),
-				new ChangeCipherSpecInput(),
-				fuzz(new FinishedInput(), 0),
-				fuzz(new ClientHelloInput(cs), 1)				
+			nonmut(new ClientHelloInput(cs)),
+			nonmut(new ClientHelloInput(cs)),
+			nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
+			nonmut(new ChangeCipherSpecInput()),
+			nonmut(new FinishedInput()),
 		};
 		
 		String command = Command.localTinyDtls;

@@ -20,6 +20,7 @@ import de.rub.nds.tlsattacker.transport.tcp.ClientTcpTransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ClientUdpTransportHandler;
 import se.uu.it.modeltester.config.SulDelegate;
 import se.uu.it.modeltester.execute.BasicInputExecutor;
+import se.uu.it.modeltester.execute.InputExecutor;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
@@ -90,7 +91,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
     @Override
     public TlsOutput step(TlsInput in) throws SULException {
-    	BasicInputExecutor executor = in.getExecutor();
+    	InputExecutor executor = in.getExecutor();
     	TlsOutput output = null;
         try {
             if (state == null) {

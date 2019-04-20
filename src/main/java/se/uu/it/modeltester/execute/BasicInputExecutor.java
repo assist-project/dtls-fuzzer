@@ -10,6 +10,10 @@ import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
 
+/**
+ * An input executor which sends messages by calling the sendMessages functionality on 
+ * the SendMessageHelper. 
+ */
 public class BasicInputExecutor extends InputExecutor {
 	
     protected void sendMessage(ProtocolMessage message, State state) {
