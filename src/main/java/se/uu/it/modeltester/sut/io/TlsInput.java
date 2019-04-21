@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.modeltester.execute.BasicInputExecutor;
 import se.uu.it.modeltester.execute.InputExecutor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,4 +62,8 @@ public abstract class TlsInput {
 		return name;
 	}
 	
+	
+	protected String getName() {
+		return name;
+	}
 }

@@ -15,10 +15,8 @@ import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
-import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
-import se.uu.it.modeltester.execute.mutate.FragmentationMutator;
 import se.uu.it.modeltester.execute.mutate.Mutator;
 import se.uu.it.modeltester.execute.mutate.MutatorType;
 

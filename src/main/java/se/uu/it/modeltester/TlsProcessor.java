@@ -21,11 +21,16 @@ public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput>{
 	}
 
 	@Override
-	public TlsInput processInput(String input) {
-		if (!cache.containsKey(input)) {
-			cache.put(input, definitions.getInputWithDefinition(input));
+	public TlsInput processInput(String inputName) {
+		inputName = inputName.trim();
+		if (!cache.containsKey(inputName)) {
+			TlsInput tlsInput = definitions.getInputWithDefinition(inputName);
+			if (tlsInput == null) {
+				throw new RuntimeException("Input " + inputName + " could not be found in the given definitions.\n " + definitions.toString());
+			}
+			cache.put(inputName, definitions.getInputWithDefinition(inputName));
 		}
-		return cache.get(input);
+		return cache.get(inputName);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package se.uu.it.modeltester.sut.io;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;

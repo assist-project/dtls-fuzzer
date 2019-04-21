@@ -152,22 +152,22 @@ public class ModelBasedTester {
 					}
 					
 					boolean bugsFound = false;
-					for (int numFrags=initNumFrag; numFrags<maxNumFrags; numFrags ++) {
-						TlsInput fuzzedInput = new FragmentedTlsInput(input, initNumFrag, FragmentationStrategy.EVEN);
-						Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
-								.append(statePrefix)
-								.append(fuzzedInput)
-								.append(suffix)
-								.toWord();
-						Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
-						
-						if (!fuzzedOutput.equals(regularOutput)) {
-							FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
-							report.addItem(bug);
-							bugsFound = true;
-							break;
-						}
-					}
+//					for (int numFrags=initNumFrag; numFrags<maxNumFrags; numFrags ++) {
+//						TlsInput fuzzedInput = new FragmentedTlsInput(input, initNumFrag, FragmentationStrategy.EVEN);
+//						Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
+//								.append(statePrefix)
+//								.append(fuzzedInput)
+//								.append(suffix)
+//								.toWord();
+//						Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
+//						
+//						if (!fuzzedOutput.equals(regularOutput)) {
+//							FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
+//							report.addItem(bug);
+//							bugsFound = true;
+//							break;
+//						}
+//					}
 					
 					if (bugsFound && !config.isExhaustive()) {
 						break;

@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.automatalib.words.Alphabet;
-import se.uu.it.modeltester.ModelBasedTester;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 
 public class AlphabetFactory {

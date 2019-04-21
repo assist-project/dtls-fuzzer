@@ -44,4 +44,13 @@ public class Definitions {
 		}
 		return null;
 	}
+	
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Definitions: \n");
+		for (InputDefinition def : inputDefinitions) {
+			builder.append("   ").append(def.getName()).append(":").append(def.getInput()).append("\n");
+		}
+		return builder.toString();
+	}
 }

@@ -1,7 +1,9 @@
 package se.uu.it.modeltester;
 
 
+import java.io.FileInputStream;
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,11 +21,13 @@ import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
+import net.automatalib.words.Alphabet;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.NonMutatingInputExecutor;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
+import se.uu.it.modeltester.sut.io.AlphabetSerializer;
 import se.uu.it.modeltester.sut.io.ChangeCipherSpecInput;
 import se.uu.it.modeltester.sut.io.ClientHelloInput;
 import se.uu.it.modeltester.sut.io.FinishedInput;
@@ -31,6 +35,8 @@ import se.uu.it.modeltester.sut.io.GenericTlsInput;
 import se.uu.it.modeltester.sut.io.MutatedTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
+import se.uu.it.modeltester.sut.io.definitions.Definitions;
+import se.uu.it.modeltester.sut.io.definitions.DefinitionsFactory;
 import se.uu.it.modeltester.test.DtlsMessageFragmenter;
 import se.uu.it.modeltester.test.FragmentationGeneratorFactory;
 import se.uu.it.modeltester.test.FragmentationStrategy;
@@ -122,6 +128,39 @@ public class Trace {
 		return input;
 	}
 	
+	public static Definitions loadDefinitions(String alphabetFile) throws Exception{
+		Alphabet<TlsInput> alpha = AlphabetSerializer.read(new FileInputStream(alphabetFile));
+		System.out.println("Alphabet: " + Arrays.asList(alpha.toArray()));
+		Definitions def = DefinitionsFactory.generateDefinitions(alpha);
+		return def;
+	}
+	
+	public static TlsInput [] buildTest(String testString, Definitions def) {
+		List<TlsInput> inputs = new ArrayList<>();
+		for (String s : testString.split("\\s")) {
+			TlsInput input = def.getInputWithDefinition(s.trim());
+//			input.setExecutor(new NonMutatingInputExecutor());
+			inputs.add(input);
+		}
+		return inputs.toArray(new TlsInput[inputs.size()]); 
+	}
+	
+	public static TlsInput [] buildTest(String testString, String alphaFile) throws Exception {
+		Definitions def = loadDefinitions(alphaFile);
+		TlsInput [] inputs =  buildTest(testString, def);
+		return inputs;
+	}
+	
+	public static String [] tests = {
+			//generates malloc failure on openssl
+			"CLIENT_HELLO_RSA CLIENT_HELLO_RSA FINISHED APPLICATION",
+			// non-det
+			"CLIENT_HELLO_RSA CLIENT_HELLO_RSA FINISHED APPLICATION Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) CLIENT_HELLO_RSA APPLICATION CHANGE_CIPHER_SPEC FINISHED Alert(WARNING,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC APPLICATION CLIENT_HELLO_RSA",
+//			 Alert(UNDEFINED,CLOSE_NOTIFY) Alert(UNDEFINED,CLOSE_NOTIFY) CLIENT_HELLO_RSA APPLICATION CHANGE_CIPHER_SPEC FINISHED Alert(UNDEFINED,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA Alert(UNDEFINED,CLOSE_NOTIFY) Alert(UNDEFINED,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC APPLICATION CLIENT_HELLO_RSA
+			"FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC FINISHED Alert(WARNING,CLOSE_NOTIFY) APPLICATION FINISHED Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC CLIENT_HELLO_RSA FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA",
+			"CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY)"
+	};
+	
 	public static void main(String[] args) throws Exception {
 
 		init();
@@ -130,8 +169,8 @@ public class Trace {
 //				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
 				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
 		int iterations = 1;
-		int stepWait = 200;
-		long runWait = 100;
+		int stepWait = 30;
+		long runWait = 50;
 //		TlsInput [] inputs = new TlsInput [] {
 //				fuzz(new ClientHelloInput(cs), 0),
 //				fuzz(new ClientHelloInput(cs), 0),
@@ -140,15 +179,17 @@ public class Trace {
 //				fuzz(new FinishedInput(), 0),
 //				fuzz(new ClientHelloInput(cs), 1)				
 //		};
-		TlsInput [] inputs = new TlsInput [] {
-			nonmut(new ClientHelloInput(cs)),
-			nonmut(new ClientHelloInput(cs)),
-			nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
-			nonmut(new ChangeCipherSpecInput()),
-			nonmut(new FinishedInput()),
-		};
+//		TlsInput [] inputs = new TlsInput [] {
+//			nonmut(new ClientHelloInput(cs)),
+//			nonmut(new ClientHelloInput(cs)),
+//			nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
+//			nonmut(new ChangeCipherSpecInput()),
+//			nonmut(new FinishedInput()),
+//		};
 		
-		String command = Command.localTinyDtls;
+		TlsInput [] inputs = buildTest("CLIENT_HELLO_RSA Alert(FATAL,UNEXPECTED_MESSAGE)", "alphabet.xml");
+		
+		String command = Command.opensslDtlsRsa;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;
 		
 		ModelBasedTesterConfig modelFuzzConfig = new ModelBasedTesterConfig(new GeneralDelegate());
@@ -184,6 +225,7 @@ public class Trace {
 			}
 		}
 
+		System.out.println("Test: " + Arrays.asList(inputs));
 		for (Entry<List<TlsOutput>, Integer> res : allResponses.entrySet()) {
 			System.out.println(res.getValue() + " times:" + res.getKey());
 		}

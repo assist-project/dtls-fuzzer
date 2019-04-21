@@ -16,7 +16,7 @@ import se.uu.it.modeltester.sut.io.TlsOutput;
 public abstract class InputExecutor {
 	public TlsOutput execute(TlsInput input, State state) {
 		ProtocolMessage message = input.generateMessage(state);
-		stripFields(message);
+//		stripFields(message);
 		sendMessage(message, state);
 		input.preUpdate(state);
 		TlsOutput output = receiveOutput(state);
@@ -26,6 +26,31 @@ public abstract class InputExecutor {
 	
 	protected abstract void sendMessage(ProtocolMessage message, State state);
 	
+    protected TlsOutput receiveOutput(State state) {
+        try {
+            if (state.getTlsContext().getTransportHandler().isClosed()) {
+                return TlsOutput.socketClosed();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return TlsOutput.socketClosed();
+        }
+        try {
+            GenericReceiveAction action = new GenericReceiveAction("client");
+            action.execute(state);
+            
+            return extractOutput(state, action);
+        } catch (Exception E) {
+            E.printStackTrace();
+            return TlsOutput.socketClosed();
+        }
+    }
+    
+    private TlsOutput extractOutput(State state, GenericReceiveAction action) {
+    	return new TlsOutput(action.getReceivedMessages());
+    }
+    
+
 	protected void stripFields(ProtocolMessage message) {
         List<ModifiableVariableHolder> holders = new LinkedList<>();
         holders.addAll(message.getAllModifiableVariableHolders());
@@ -53,29 +78,5 @@ public abstract class InputExecutor {
                 }
             }
         }
-    }
-
-    protected TlsOutput receiveOutput(State state) {
-        try {
-            if (state.getTlsContext().getTransportHandler().isClosed()) {
-                return TlsOutput.socketClosed();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return TlsOutput.socketClosed();
-        }
-        try {
-            GenericReceiveAction action = new GenericReceiveAction("client");
-            action.execute(state);
-            
-            return extractOutput(state, action);
-        } catch (Exception E) {
-            E.printStackTrace();
-            return TlsOutput.socketClosed();
-        }
-    }
-    
-    private TlsOutput extractOutput(State state, GenericReceiveAction action) {
-    	return new TlsOutput(action.getReceivedMessages());
     }
 }
