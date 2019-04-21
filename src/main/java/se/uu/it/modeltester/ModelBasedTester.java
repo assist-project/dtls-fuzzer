@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class ModelBasedTester {
 		if (config.getOutput() == null) {
 			report.printReport(System.out);
 		} else {
-			PrintStream ps = new PrintStream(new FileOutputStream(config.getOutput()));
+			PrintStream ps = new PrintStream(new FileOutputStream(Paths.get(config.getOutput(), "testReport.txt").toFile()));
 			report.printReport(ps);
 		}
 	}

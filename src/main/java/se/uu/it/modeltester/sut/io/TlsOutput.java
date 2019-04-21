@@ -2,6 +2,7 @@ package se.uu.it.modeltester.sut.io;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,7 +48,8 @@ public class TlsOutput {
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			TlsOutput that = (TlsOutput) obj;
-			return Objects.equals(this.messageStrings, that.messageStrings);
+			// TODO not the proper way of comparing outputs but whatever
+			return Objects.equals(this.toString(), that.toString());
 		}
 		return false;
 	}
