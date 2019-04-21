@@ -126,6 +126,11 @@ public class GenericTlsInput extends TlsInput{
 		return message;
 	}
 	
+	// this is only useful for deserializing once learning is done
+	public void postUpdate(TlsOutput output, State state) {
+		stripFields(message);
+	}
+	
 	// if the name is not set, we use the compact string of a message as a name
 	public String toString() {
 		String name = getName();

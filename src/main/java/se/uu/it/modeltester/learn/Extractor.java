@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.common.io.Files;
+
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.api.SUL;
@@ -23,6 +25,7 @@ import se.uu.it.modeltester.sut.NonDeterminismRetryingSUL;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
+import se.uu.it.modeltester.sut.io.AlphabetFactory;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
@@ -36,6 +39,7 @@ private final ModelBasedTesterConfig finderConfig;
 private final Alphabet<TlsInput> alphabet;
 public static final String LEARNED_MODEL_FILENAME = "learnedModel.dot";
 public static final String STATISTICS_FILENAME = "statistics.txt";
+public static final String ALPHABET_FILENAME = "alphabet.xml";
 
 
 public Extractor(ModelBasedTesterConfig finderConfig, Alphabet<TlsInput> alphabet) {
@@ -131,7 +135,13 @@ public ExtractorResult extractStateMachine() {
 	extractorResult.setLearnedModel(stateMachine);
 	extractorResult.setStatistics(statistics);
 	extractorResult.setLearnedModelFile(new File(folder, LEARNED_MODEL_FILENAME));
-
+	
+	try {
+		Files.copy(AlphabetFactory.getAlphabetFile(finderConfig), new File(folder, ALPHABET_FILENAME));
+	} catch (IOException e) {
+		LOG.log(Level.SEVERE, "Could not copy alphabet to output folder");
+	}
+	
 	return extractorResult;
 }
 

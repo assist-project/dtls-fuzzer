@@ -1,5 +1,6 @@
 package se.uu.it.modeltester.sut.io;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,14 +18,6 @@ public class AlphabetFactory {
 	private static final Logger LOGGER = LogManager.getLogger(AlphabetFactory.class);
 	
 	public static final String DEFAULT_ALPHABET = "/default_alphabet.xml";
-	
-	public static Alphabet<TlsInput> buildConfiguredAlphabet(ModelBasedTesterConfig config) throws FileNotFoundException, JAXBException, IOException, XMLStreamException {
-		Alphabet<TlsInput> alphabet = null;
-		if (config.getAlphabet() != null) {
-			alphabet = AlphabetSerializer.read(new FileInputStream(config.getAlphabet()));
-		} 
-		return alphabet;
-	}
 	
 	public static Alphabet<TlsInput> buildAlphabet(ModelBasedTesterConfig config) {
 		Alphabet<TlsInput> alphabet = null;
@@ -47,7 +40,24 @@ public class AlphabetFactory {
 		return alphabet;
 	}
 	
+	public static File getAlphabetFile(ModelBasedTesterConfig config) {
+		if (config.getAlphabet() != null) {
+			return new File(config.getAlphabet());
+		} else {
+			return new File(AlphabetFactory.class.getResource(DEFAULT_ALPHABET).getFile());
+		}
+	}
+	
 	public static Alphabet<TlsInput> buildDefaultAlphabet() throws JAXBException, IOException, XMLStreamException {
 		return AlphabetSerializer.read(AlphabetFactory.class.getResourceAsStream(DEFAULT_ALPHABET));
 	}
+	
+	public static Alphabet<TlsInput> buildConfiguredAlphabet(ModelBasedTesterConfig config) throws FileNotFoundException, JAXBException, IOException, XMLStreamException {
+		Alphabet<TlsInput> alphabet = null;
+		if (config.getAlphabet() != null) {
+			alphabet = AlphabetSerializer.read(new FileInputStream(config.getAlphabet()));
+		} 
+		return alphabet;
+	}
+	
 }

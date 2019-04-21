@@ -2,7 +2,6 @@ package se.uu.it.modeltester.sut.io;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -56,10 +55,7 @@ public class TlsOutput {
 	
 
 	public int hashCode() {
-		int hashCode = 0;
-		for (String message : messageStrings) {
-			hashCode += message.hashCode() + hashCode*2; 
-		}
+		int hashCode = toString().hashCode();
 		return hashCode;
 	}
 	
