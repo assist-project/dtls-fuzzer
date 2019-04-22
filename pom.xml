@@ -136,7 +136,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>de.rub.nds.modelfuzzer.Main</mainClass>
+							<mainClass>se.uu.it.modeltester.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
