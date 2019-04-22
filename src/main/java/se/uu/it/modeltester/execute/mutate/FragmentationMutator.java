@@ -5,7 +5,7 @@ import se.uu.it.modeltester.execute.FragmentationResult;
 
 public abstract class FragmentationMutator implements Mutator<FragmentationResult>{
 	/**
-	 * Mutates the fragmentation result (by for example, replacing a strategy of fragmenting by another).
+	 * Mutates the fragmentation result (for example, by splitting fragments evenly or randomly).
 	 */
 	public abstract FragmentationResult mutate(FragmentationResult result, TlsContext context);
 	

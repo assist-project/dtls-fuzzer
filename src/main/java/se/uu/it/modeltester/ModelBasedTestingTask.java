@@ -5,7 +5,7 @@ import net.automatalib.words.Alphabet;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-// the only reason we are using FastMealy is to simplify the generics, any Mealy machine implementations
+// the only reason we are using FastMealy is to simplify the generics, any Mealy machine implementation
 // would do just fine
 public class ModelBasedTestingTask {
 	private FastMealy<TlsInput, TlsOutput>  specification;

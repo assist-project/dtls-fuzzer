@@ -1,3 +1,4 @@
+<!-- Example of a basic DTLS client alphabet using an RSA-based cipher-suite-->
 <alphabet>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
     <GenericTlsInput name="RSA_CLIENT_KEY_EXCHANGE">
