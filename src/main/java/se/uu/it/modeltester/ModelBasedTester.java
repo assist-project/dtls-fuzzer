@@ -67,7 +67,9 @@ public class ModelBasedTester {
 		if (config.getOutput() == null) {
 			report.printReport(System.out);
 		} else {
-			PrintStream ps = new PrintStream(new FileOutputStream(Paths.get(config.getOutput(), "testReport.txt").toFile()));
+			File testReport = Paths.get(config.getOutput(), "testReport.txt").toFile();
+			testReport.createNewFile();
+			PrintStream ps = new PrintStream(new FileOutputStream(testReport));
 			report.printReport(ps);
 		}
 	}
