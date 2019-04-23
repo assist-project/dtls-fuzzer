@@ -1,8 +1,8 @@
 package se.uu.it.modeltester.sut.io;
 
-import se.uu.it.modeltester.test.DtlsMessageFragmenter;
-import se.uu.it.modeltester.test.FragmentationGeneratorFactory;
-import se.uu.it.modeltester.test.FragmentationStrategy;
+import se.uu.it.modeltester.mutate.HandshakeMessageFragmenter;
+import se.uu.it.modeltester.mutate.FragmentationGeneratorFactory;
+import se.uu.it.modeltester.mutate.FragmentationStrategy;
 import se.uu.it.modeltester.test.FragmentingInputExecutor;
 
 public class FragmentedTlsInput extends MutatedTlsInput{
@@ -11,7 +11,7 @@ public class FragmentedTlsInput extends MutatedTlsInput{
 	private FragmentationStrategy strategy;
 
 	private static FragmentingInputExecutor buildFragmenter(int numFragments, FragmentationStrategy strategy) {
-		DtlsMessageFragmenter fragmenter = new DtlsMessageFragmenter(numFragments);
+		HandshakeMessageFragmenter fragmenter = new HandshakeMessageFragmenter(numFragments);
 		FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(fragmenter, 
 				FragmentationGeneratorFactory.buildGenerator(strategy));
 		return fragmentingExecutor;

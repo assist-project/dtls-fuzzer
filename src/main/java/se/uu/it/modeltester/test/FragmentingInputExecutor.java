@@ -19,16 +19,19 @@ import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
 import se.uu.it.modeltester.execute.BasicInputExecutor;
+import se.uu.it.modeltester.mutate.DtlsFragmentationResult;
+import se.uu.it.modeltester.mutate.HandshakeMessageFragmenter;
+import se.uu.it.modeltester.mutate.FragmentationGenerator;
 
 public class FragmentingInputExecutor extends BasicInputExecutor {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
-	private DtlsMessageFragmenter dtlsMessageFragmenter;
+	private HandshakeMessageFragmenter dtlsMessageFragmenter;
 	private FragmentationGenerator fragmentationGenerator;
 	
-	private DtlsMessageFragmenter oneFragmentFragmenter = new DtlsMessageFragmenter(1);
+	private HandshakeMessageFragmenter oneFragmentFragmenter = new HandshakeMessageFragmenter(1);
 
-	public FragmentingInputExecutor(DtlsMessageFragmenter fragmenter, FragmentationGenerator fragmentationGenerator) {
+	public FragmentingInputExecutor(HandshakeMessageFragmenter fragmenter, FragmentationGenerator fragmentationGenerator) {
 		this.dtlsMessageFragmenter = fragmenter;
 		this.fragmentationGenerator = fragmentationGenerator;
 	}

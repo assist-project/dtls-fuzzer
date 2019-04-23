@@ -17,8 +17,9 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
-import se.uu.it.modeltester.execute.mutate.Mutator;
-import se.uu.it.modeltester.execute.mutate.MutatorType;
+import se.uu.it.modeltester.mutate.Mutation;
+import se.uu.it.modeltester.mutate.Mutator;
+import se.uu.it.modeltester.mutate.MutatorType;
 
 /**
  * An input executor which can accept mutators at different points in 
@@ -93,7 +94,8 @@ public class MutatingInputExecutor extends InputExecutor {
 		for (Mutator<?> mutator : mutatorsOfType) {
 			// this can definitely be made safe with some more work;
 			Mutator<R> castMutator = (Mutator<R>) mutator;
-			result = castMutator.mutate(result, state.getTlsContext());
+			Mutation<R> mutation = castMutator.generateMutation(result, state.getTlsContext());
+			result = mutation.mutate(result, state.getTlsContext());
 		}
 		return result;
 	}

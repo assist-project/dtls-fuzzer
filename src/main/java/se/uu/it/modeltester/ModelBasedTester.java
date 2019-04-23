@@ -27,6 +27,7 @@ import net.automatalib.words.WordBuilder;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.learn.Extractor;
 import se.uu.it.modeltester.learn.Extractor.ExtractorResult;
+import se.uu.it.modeltester.mutate.FragmentationStrategy;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
@@ -37,7 +38,6 @@ import se.uu.it.modeltester.sut.io.TlsOutput;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
 import se.uu.it.modeltester.sut.io.definitions.DefinitionsFactory;
 import se.uu.it.modeltester.test.FragmentationBug;
-import se.uu.it.modeltester.test.FragmentationStrategy;
 import se.uu.it.modeltester.test.SpecificationBug;
 import se.uu.it.modeltester.test.TestingReport;
 
@@ -51,6 +51,9 @@ public class ModelBasedTester {
 	
 
 	public TestingReport startTesting() throws ParseException, IOException {
+		// setting up our output directory
+		File folder = new File(config.getOutput());
+		folder.mkdirs();
 		SULOracle<TlsInput, TlsOutput> sutOracle = createOracle(config);
 		if (config.isOnlyLearn()) {
 			extractModel(config);

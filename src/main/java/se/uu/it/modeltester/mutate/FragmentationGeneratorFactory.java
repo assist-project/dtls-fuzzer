@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.test;
+package se.uu.it.modeltester.mutate;
 
 import java.util.ArrayList;
 import java.util.Arrays;

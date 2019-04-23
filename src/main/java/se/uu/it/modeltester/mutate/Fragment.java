@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.test;
+package se.uu.it.modeltester.mutate;
 
 public class Fragment {
 	private final int offset;

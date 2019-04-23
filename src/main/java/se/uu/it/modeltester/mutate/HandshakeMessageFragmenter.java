@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.test;
+package se.uu.it.modeltester.mutate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,28 +8,37 @@ import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.serializer.HandshakeMessageSerializer;
 import de.rub.nds.tlsattacker.core.state.State;
+import de.rub.nds.tlsattacker.core.state.TlsContext;
 
-public class DtlsMessageFragmenter {
+public class HandshakeMessageFragmenter {
 	
 	private int numFragments;
 
-	public DtlsMessageFragmenter(int numFragments) {
+	public HandshakeMessageFragmenter(int numFragments) {
 		this.numFragments = numFragments;
 	}
 	
 	public DtlsFragmentationResult generateDtlsFragments(HandshakeMessage message, State state, FragmentationGenerator generator) {
-		byte [] content = serializeMessage(message, state);
+		byte [] content = serializeMessage(message, state.getTlsContext());
 		Fragmentation fragmentation = generator.generateFragmentation(numFragments, content.length);
 		List<byte[]> fragmentedContent = fragmentContent(content, fragmentation);
-		List<DtlsHandshakeMessageFragment> dtlsFragments = generateDtlsFragments(fragmentedContent, message, state);
+		List<DtlsHandshakeMessageFragment> dtlsFragments = generateDtlsFragments(fragmentedContent, message, state.getTlsContext());
 		return new DtlsFragmentationResult(dtlsFragments, fragmentation);
 	}
 	
-	private byte [] serializeMessage(HandshakeMessage message, State state) {
+	public List<DtlsHandshakeMessageFragment> generateDtlsFragments(Fragmentation fragmentation, HandshakeMessage message, TlsContext context) {
+		byte [] content = serializeMessage(message, context);
+		List<byte[]> fragmentedContent = fragmentContent(content, fragmentation);
+		List<DtlsHandshakeMessageFragment> dtlsFragments = generateDtlsFragments(fragmentedContent, message, context);
+		return dtlsFragments;
+	}
+	
+	
+	private byte [] serializeMessage(HandshakeMessage message, TlsContext context) {
 
     	HandshakeMessageSerializer serializer = 
     			(HandshakeMessageSerializer)message
-    			.getHandler(state.getTlsContext())
+    			.getHandler(context)
     			.getSerializer(message);
 
     	byte[] content = serializer
@@ -39,7 +48,7 @@ public class DtlsMessageFragmenter {
 	}
 	
 	
-	private List<DtlsHandshakeMessageFragment> generateDtlsFragments(List<byte []> fragments, HandshakeMessage message, State state) {
+	private List<DtlsHandshakeMessageFragment> generateDtlsFragments(List<byte []> fragments, HandshakeMessage message, TlsContext context) {
 		List<DtlsHandshakeMessageFragment> dtlsFragments = new ArrayList<>();
 		int fragmentOffset = 0;
     	for (byte [] fragment : fragments) {
@@ -49,7 +58,7 @@ public class DtlsMessageFragmenter {
     		dtlsFragment.setLength(message.getLength().getValue());
     		dtlsFragment.setFragmentLength(fragment.length);
     		dtlsFragment.setFragmentOffset(fragmentOffset);
-    		dtlsFragment.setCompleteResultingMessage(dtlsFragment.getHandler(state.getTlsContext()).getSerializer(dtlsFragment).serialize());
+    		dtlsFragment.setCompleteResultingMessage(dtlsFragment.getHandler(context).getSerializer(dtlsFragment).serialize());
     		dtlsFragments.add(dtlsFragment);
     		fragmentOffset += fragment.length;
     	}

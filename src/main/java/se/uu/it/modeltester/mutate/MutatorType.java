@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.execute.mutate;
+package se.uu.it.modeltester.mutate;
 
 public enum MutatorType {
 	FRAGMENTATION,

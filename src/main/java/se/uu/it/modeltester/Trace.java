@@ -24,6 +24,9 @@ import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import net.automatalib.words.Alphabet;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.NonMutatingInputExecutor;
+import se.uu.it.modeltester.mutate.HandshakeMessageFragmenter;
+import se.uu.it.modeltester.mutate.FragmentationGeneratorFactory;
+import se.uu.it.modeltester.mutate.FragmentationStrategy;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
@@ -37,9 +40,6 @@ import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
 import se.uu.it.modeltester.sut.io.definitions.DefinitionsFactory;
-import se.uu.it.modeltester.test.DtlsMessageFragmenter;
-import se.uu.it.modeltester.test.FragmentationGeneratorFactory;
-import se.uu.it.modeltester.test.FragmentationStrategy;
 import se.uu.it.modeltester.test.FragmentingInputExecutor;
 
 public class Trace {
@@ -107,7 +107,7 @@ public class Trace {
 	
 	private static TlsInput fuzz(TlsInput input) {
 		FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
-				new DtlsMessageFragmenter(NUM_FRAGS), 
+				new HandshakeMessageFragmenter(NUM_FRAGS), 
 				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
 		return new MutatedTlsInput(input, fragmentingExecutor);
 	}
@@ -117,7 +117,7 @@ public class Trace {
 			return input;
 		else  {
 			FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
-					new DtlsMessageFragmenter(numFrags), 
+					new HandshakeMessageFragmenter(numFrags), 
 					FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
 			return new MutatedTlsInput(input, fragmentingExecutor);
 		}
@@ -158,7 +158,9 @@ public class Trace {
 			"CLIENT_HELLO_RSA CLIENT_HELLO_RSA FINISHED APPLICATION Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) CLIENT_HELLO_RSA APPLICATION CHANGE_CIPHER_SPEC FINISHED Alert(WARNING,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC APPLICATION CLIENT_HELLO_RSA",
 //			 Alert(UNDEFINED,CLOSE_NOTIFY) Alert(UNDEFINED,CLOSE_NOTIFY) CLIENT_HELLO_RSA APPLICATION CHANGE_CIPHER_SPEC FINISHED Alert(UNDEFINED,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA Alert(UNDEFINED,CLOSE_NOTIFY) Alert(UNDEFINED,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC APPLICATION CLIENT_HELLO_RSA
 			"FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC FINISHED Alert(WARNING,CLOSE_NOTIFY) APPLICATION FINISHED Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC CLIENT_HELLO_RSA FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA",
-			"CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY)"
+			"CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY)",
+			// openssl non-det
+			"RSA_CLIENT_HELLO RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC FINISHED CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED APPLICATION Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE Alert(WARNING,CLOSE_NOTIFY) FINISHED FINISHED RSA_CLIENT_KEY_EXCHANGE FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE APPLICATION RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) APPLICATION RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(WARNING,CLOSE_NOTIFY) RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO"
 	};
 	
 	public static void main(String[] args) throws Exception {
@@ -168,8 +170,8 @@ public class Trace {
 //				CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256;
 //				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
 				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
-		int iterations = 1;
-		int stepWait = 30;
+		int iterations = 10;
+		int stepWait = 10;
 		long runWait = 50;
 //		TlsInput [] inputs = new TlsInput [] {
 //				fuzz(new ClientHelloInput(cs), 0),
@@ -187,7 +189,7 @@ public class Trace {
 //			nonmut(new FinishedInput()),
 //		};
 		
-		TlsInput [] inputs = buildTest("CLIENT_HELLO_RSA Alert(FATAL,UNEXPECTED_MESSAGE)", "alphabet.xml");
+		TlsInput [] inputs = buildTest(tests[4], "alphabet.xml");
 		
 		String command = Command.opensslDtlsRsa;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;

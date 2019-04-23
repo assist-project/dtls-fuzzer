@@ -1,6 +1,6 @@
 package se.uu.it.modeltester.execute;
 
-import se.uu.it.modeltester.execute.mutate.Mutator;
+import se.uu.it.modeltester.mutate.Mutator;
 
 /**
  * Builds on the MutatingInputExecutor, but applies no mutation.
