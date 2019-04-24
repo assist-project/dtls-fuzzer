@@ -14,7 +14,7 @@ public class BasicFragmentationMutator extends FragmentationMutator{
 	
 	@Override
 	public Mutation<FragmentationResult> generateMutation(FragmentationResult result, TlsContext context) {
-		int length = result.getMessage().getCompleteResultingMessage().getValue().length;
+		int length = result.getMessage().getLength().getValue();
 		Fragmentation fragmentation = generator.generateFragmentation(numFragments, length);
 		return new FragmentationMutation(fragmentation);
 	}

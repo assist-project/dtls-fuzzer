@@ -21,7 +21,7 @@ public abstract class TlsInput {
 	@XmlAttribute(name = "name", required = true)
 	private String name;
 	
-	TlsInput(InputExecutor executor, String name) {
+	protected TlsInput(InputExecutor executor, String name) {
 		this.inputExecutor = executor;
 		this.name = name;
 	}

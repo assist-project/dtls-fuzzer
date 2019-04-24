@@ -109,4 +109,8 @@ public class MutatingInputExecutor extends InputExecutor {
 		mutOfSameType.add(mutator);
 		return true;
 	}
+	
+	public String getCompactMutatorDescription() {
+		return mutators.values().stream().flatMap(l -> l.stream()).map(m -> m.getClass().getSimpleName()).reduce((s1,s2) -> s1 + "_" + s2).get();
+	}
 }

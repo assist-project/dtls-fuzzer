@@ -91,7 +91,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
     @Override
     public TlsOutput step(TlsInput in) throws SULException {
-    	InputExecutor executor = new NonMutatingInputExecutor();
+    	InputExecutor executor = in.getExecutor();
     	TlsOutput output = null;
         try {
             if (state == null) {

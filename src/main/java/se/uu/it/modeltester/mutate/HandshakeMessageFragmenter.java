@@ -53,8 +53,7 @@ public class HandshakeMessageFragmenter {
 		int fragmentOffset = 0;
     	for (byte [] fragment : fragments) {
     		DtlsHandshakeMessageFragment dtlsFragment = new DtlsHandshakeMessageFragment(message.getHandshakeMessageType(), fragment);
-    		dtlsFragment.setType(message.getType());
-    		dtlsFragment.setContent(fragment);
+    		dtlsFragment.getHandler(context).prepareMessage(dtlsFragment);
     		dtlsFragment.setLength(message.getLength().getValue());
     		dtlsFragment.setFragmentLength(fragment.length);
     		dtlsFragment.setFragmentOffset(fragmentOffset);

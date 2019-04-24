@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +28,11 @@ import net.automatalib.words.WordBuilder;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.learn.Extractor;
 import se.uu.it.modeltester.learn.Extractor.ExtractorResult;
+import se.uu.it.modeltester.mutate.BasicFragmentationMutator;
+import se.uu.it.modeltester.mutate.FragmentationGenerator;
+import se.uu.it.modeltester.mutate.FragmentationGeneratorFactory;
 import se.uu.it.modeltester.mutate.FragmentationStrategy;
+import se.uu.it.modeltester.mutate.MutatedTlsInput;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
@@ -128,7 +133,7 @@ public class ModelBasedTester {
 
 		int testNumber = 0;
 		int initNumFrag = 2;
-		int maxNumFrags = 3;
+		int maxNumFrags = 5;
 		
 		for (Word<TlsInput> statePrefix : stateCover) {
 			FastMealyState<TlsOutput> state = model.getState(statePrefix);
@@ -160,22 +165,28 @@ public class ModelBasedTester {
 					}
 					
 					boolean bugsFound = false;
-//					for (int numFrags=initNumFrag; numFrags<maxNumFrags; numFrags ++) {
-//						TlsInput fuzzedInput = new FragmentedTlsInput(input, initNumFrag, FragmentationStrategy.EVEN);
-//						Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
-//								.append(statePrefix)
-//								.append(fuzzedInput)
-//								.append(suffix)
-//								.toWord();
-//						Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
-//						
-//						if (!fuzzedOutput.equals(regularOutput)) {
-//							FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
-//							report.addItem(bug);
-//							bugsFound = true;
-//							break;
-//						}
-//					}
+					
+					
+					for (FragmentationStrategy strategy : new FragmentationStrategy [] {FragmentationStrategy.EVEN, FragmentationStrategy.RANDOM}) {
+						for (int numFrags=initNumFrag; numFrags<maxNumFrags; numFrags ++) {
+							TlsInput fuzzedInput = fragment(input, numFrags, strategy);
+							Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
+									.append(statePrefix)
+									.append(fuzzedInput)
+									.append(suffix)
+									.toWord();
+							Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
+							
+							if (!fuzzedOutput.equals(regularOutput)) {
+								FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
+								report.addItem(bug);
+								bugsFound = true;
+								break;
+							}
+						}
+						if (bugsFound)
+							break;
+					}
 					
 					if (bugsFound && !config.isExhaustive()) {
 						break;
@@ -185,5 +196,13 @@ public class ModelBasedTester {
 		}
 		
 		return report;
+	}
+	
+	private static TlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy) {
+		MutatedTlsInput mutatedInput = new MutatedTlsInput(input);
+		FragmentationGenerator generator = FragmentationGeneratorFactory.buildGenerator(strategy);
+		BasicFragmentationMutator fragmentationMutator = new BasicFragmentationMutator(generator, frags);
+		mutatedInput.addMutator(fragmentationMutator);
+		return mutatedInput;
 	}
 }

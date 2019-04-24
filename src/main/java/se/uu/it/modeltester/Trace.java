@@ -25,6 +25,9 @@ import net.automatalib.words.Alphabet;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.NonMutatingInputExecutor;
 import se.uu.it.modeltester.mutate.HandshakeMessageFragmenter;
+import se.uu.it.modeltester.mutate.MutatedTlsInput;
+import se.uu.it.modeltester.mutate.BasicFragmentationMutator;
+import se.uu.it.modeltester.mutate.FragmentationGenerator;
 import se.uu.it.modeltester.mutate.FragmentationGeneratorFactory;
 import se.uu.it.modeltester.mutate.FragmentationStrategy;
 import se.uu.it.modeltester.sut.ProcessHandler;
@@ -35,7 +38,6 @@ import se.uu.it.modeltester.sut.io.ChangeCipherSpecInput;
 import se.uu.it.modeltester.sut.io.ClientHelloInput;
 import se.uu.it.modeltester.sut.io.FinishedInput;
 import se.uu.it.modeltester.sut.io.GenericTlsInput;
-import se.uu.it.modeltester.sut.io.MutatedTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
@@ -52,8 +54,6 @@ public class Trace {
 	}
 
 	private static List<CipherSuite> DEFAULT_CIPHERS = Arrays.asList(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA);
-
-	
 
 	static class Command {
 		private static String opensslDtlsRsa = "openssl s_server -key /home/paul/Keys/RSA1024/server-key.pem -cert "
@@ -103,25 +103,16 @@ public class Trace {
 		private static String none = null;
 	}
 	
-	private static int NUM_FRAGS = 2;
+	private static int NUM_FRAGS = 5;
 	
 	private static TlsInput fuzz(TlsInput input) {
-		FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
-				new HandshakeMessageFragmenter(NUM_FRAGS), 
-				FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
-		return new MutatedTlsInput(input, fragmentingExecutor);
+		MutatedTlsInput mutatedInput = new MutatedTlsInput(input);
+		FragmentationGenerator generator = FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN);
+		BasicFragmentationMutator fragmentationMutator = new BasicFragmentationMutator(generator, NUM_FRAGS);
+		mutatedInput.addMutator(fragmentationMutator);
+		return mutatedInput;
 	}
 	
-	private static TlsInput fuzz(TlsInput input, int numFrags) {
-		if (numFrags == 0) 
-			return input;
-		else  {
-			FragmentingInputExecutor fragmentingExecutor = new FragmentingInputExecutor(
-					new HandshakeMessageFragmenter(numFrags), 
-					FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN));
-			return new MutatedTlsInput(input, fragmentingExecutor);
-		}
-	}
 	
 	public static TlsInput nonmut(TlsInput input) {
 		input.setExecutor(new NonMutatingInputExecutor());
@@ -167,11 +158,11 @@ public class Trace {
 
 		init();
 		CipherSuite cs = 
-//				CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256;
+				CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA;
 //				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
-				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
-		int iterations = 10;
-		int stepWait = 10;
+//				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
+		int iterations = 1;
+		int stepWait = 20;
 		long runWait = 50;
 //		TlsInput [] inputs = new TlsInput [] {
 //				fuzz(new ClientHelloInput(cs), 0),
@@ -181,15 +172,16 @@ public class Trace {
 //				fuzz(new FinishedInput(), 0),
 //				fuzz(new ClientHelloInput(cs), 1)				
 //		};
-//		TlsInput [] inputs = new TlsInput [] {
-//			nonmut(new ClientHelloInput(cs)),
-//			nonmut(new ClientHelloInput(cs)),
-//			nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
-//			nonmut(new ChangeCipherSpecInput()),
-//			nonmut(new FinishedInput()),
-//		};
+		TlsInput [] inputs = new TlsInput [] {
+			nonmut(new ClientHelloInput(cs)),
+			nonmut(new ClientHelloInput(cs)),
+			nonmut(new GenericTlsInput(new RSAClientKeyExchangeMessage())),
+			nonmut(new ChangeCipherSpecInput()),
+			fuzz(new FinishedInput()),
+		};
 		
-		TlsInput [] inputs = buildTest(tests[4], "alphabet.xml");
+//		TlsInput [] inputs = Global. 
+//				//buildTest(tests[4], "alphabet.xml");
 		
 		String command = Command.opensslDtlsRsa;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;
