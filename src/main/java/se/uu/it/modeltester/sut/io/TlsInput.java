@@ -63,7 +63,7 @@ public abstract class TlsInput {
 	}
 	
 	
-	protected String getName() {
+	public String getName() {
 		return name;
 	}
 }

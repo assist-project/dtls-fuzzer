@@ -31,8 +31,31 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
     		+ "For example, for <FinishedInput/> the name is FINISHED."
     		+ "The name can be changed by setting the 'name' attribute" )
 	private String alphabet = null;
+	
+	@Parameter(names = "-trace", required = false, description = "Debug option, runs the inputs in the given file and exits. ")
+    private String trace = null;
+	
+	@Parameter(names = "-times", required = false, description = "The number of times the inputs should be run")
+    private Integer times = 1;
 
-	@Parameter(names = "-output", required = false, description = "The file in which results should be saved")
+
+	public Integer getTimes() {
+		return times;
+	}
+
+	public void setTimes(Integer times) {
+		this.times = times;
+	}
+
+	public String getTrace() {
+		return trace;
+	}
+
+	public void setTrace(String trace) {
+		this.trace = trace;
+	}
+
+	@Parameter(names = "-output", required = false, description = "The folder in which results should be saved")
     private String output = "output";
 	
 	@Parameter(names = "-bound", required = false, description = "An optional bound on the total number of tests")

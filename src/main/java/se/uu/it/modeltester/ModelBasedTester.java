@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.alexmerz.graphviz.ParseException;
-import com.google.common.io.Files;
 import com.pfg666.dotparser.fsm.mealy.MealyDotParser;
 
 import de.learnlib.api.SUL;
@@ -33,11 +32,11 @@ import se.uu.it.modeltester.mutate.FragmentationGenerator;
 import se.uu.it.modeltester.mutate.FragmentationGeneratorFactory;
 import se.uu.it.modeltester.mutate.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.MutatedTlsInput;
+import se.uu.it.modeltester.mutate.RandomSwapFragmentationMutator;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
 import se.uu.it.modeltester.sut.io.AlphabetFactory;
-import se.uu.it.modeltester.sut.io.FragmentedTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
@@ -60,6 +59,10 @@ public class ModelBasedTester {
 		File folder = new File(config.getOutput());
 		folder.mkdirs();
 		SULOracle<TlsInput, TlsOutput> sutOracle = createOracle(config);
+		if (config.getTrace() != null) {
+			runTrace(config, sutOracle);
+			System.exit(0);
+		}
 		if (config.isOnlyLearn()) {
 			extractModel(config);
 			return null;
@@ -71,6 +74,13 @@ public class ModelBasedTester {
 		}
 	}
 	
+	private void runTrace(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException {
+		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
+		TraceRunner runner = new TraceRunner(config, alphabet, sutOracle);
+		runner.runTrace();
+	}
+
+
 	private void logResult(TestingReport report, ModelBasedTesterConfig config) throws IOException {
 		if (config.getOutput() == null) {
 			report.printReport(System.out);
@@ -103,7 +113,7 @@ public class ModelBasedTester {
 		String specification = config.getSpecification(); 
 		if (specification == null) {
 			ExtractorResult result = extractModel(config);
-			// TODO not the nices way of making a conversion
+			// TODO not the nicest way of making a conversion
 			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(result.getLearnedModel().generateDefinitions()));
 			FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(result.getLearnedModelFile().getPath()).get(0);
 			return new ModelBasedTestingTask( fastMealy, fastMealy.getInputAlphabet());
@@ -166,23 +176,26 @@ public class ModelBasedTester {
 					
 					boolean bugsFound = false;
 					
-					
-					for (FragmentationStrategy strategy : new FragmentationStrategy [] {FragmentationStrategy.EVEN, FragmentationStrategy.RANDOM}) {
-						for (int numFrags=initNumFrag; numFrags<maxNumFrags; numFrags ++) {
-							TlsInput fuzzedInput = fragment(input, numFrags, strategy);
-							Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
-									.append(statePrefix)
-									.append(fuzzedInput)
-									.append(suffix)
-									.toWord();
-							Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
-							
-							if (!fuzzedOutput.equals(regularOutput)) {
-								FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
-								report.addItem(bug);
-								bugsFound = true;
-								break;
+					for (boolean doShuffling : Arrays.asList(false, true)) { 
+						for (FragmentationStrategy strategy : new FragmentationStrategy [] {FragmentationStrategy.EVEN, FragmentationStrategy.RANDOM}) {
+							for (int numFrags=initNumFrag; numFrags<maxNumFrags; numFrags ++) {
+								TlsInput fuzzedInput = fragment(input, numFrags, strategy, doShuffling);
+								Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
+										.append(statePrefix)
+										.append(fuzzedInput)
+										.append(suffix)
+										.toWord();
+								Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
+								
+								if (!fuzzedOutput.equals(regularOutput)) {
+									FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
+									report.addItem(bug);
+									bugsFound = true;
+									break;
+								}
 							}
+							if (bugsFound)
+								break;
 						}
 						if (bugsFound)
 							break;
@@ -198,11 +211,14 @@ public class ModelBasedTester {
 		return report;
 	}
 	
-	private static TlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy) {
+	private static TlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean doShuffling) {
 		MutatedTlsInput mutatedInput = new MutatedTlsInput(input);
 		FragmentationGenerator generator = FragmentationGeneratorFactory.buildGenerator(strategy);
 		BasicFragmentationMutator fragmentationMutator = new BasicFragmentationMutator(generator, frags);
 		mutatedInput.addMutator(fragmentationMutator);
+		if (doShuffling) {
+			mutatedInput.addMutator(new RandomSwapFragmentationMutator(0));
+		}
 		return mutatedInput;
 	}
 }

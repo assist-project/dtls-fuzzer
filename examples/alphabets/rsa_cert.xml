@@ -1,21 +1,14 @@
-<!-- Example of a DTLS client alphabet comprising the messages necessary to perform handshakes 
-using PSK, RSA and DH key exchange mechanisms. -->
+<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes
+extended with certificate inputs. Useful for learning servers performing certificate-based 
+client authentication.-->
 <alphabet>
-    <ClientHelloWord suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO"/>
-    <ClientHelloWord suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
-    <ClientHelloWord suite="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" name="DHE_CLIENT_HELLO"/>
-    <GenericMessageWord>
-        <PskClientKeyExchange/>
-    </GenericMessageWord>
-    <GenericMessageWord>
-        <DHClientKeyExchange/>
-    </GenericMessageWord>
-    <GenericMessageWord>
+    <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
+    <GenericTlsInput name="RSA_CLIENT_KEY_EXCHANGE">
         <RSAClientKeyExchange/>
-    </GenericMessageWord>
-    <ChangeCipherSpecWord/>
-    <FinishedWord/>
-   <GenericTlsInput name="APPLICATION">
+    </GenericTlsInput>
+    <ChangeCipherSpecInput/>
+    <FinishedInput name="FINISHED"/>
+    <GenericTlsInput name="APPLICATION">
         <Application>
             <data>
                 <byteArrayExplicitValueModification>
@@ -24,6 +17,18 @@ using PSK, RSA and DH key exchange mechanisms. -->
                 </byteArrayExplicitValueModification>
             </data>
         </Application>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE">
+        <Certificate/>
+    </GenericTlsInput>
+    <GenericTlsInput name="EMPTY_CERTIFICATE">
+        <Certificate>
+            <certificatesList>
+            </certificatesList>
+        </Certificate>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE_VERIFY">
+        <CertificateVerify/>
     </GenericTlsInput>
     <!-- Alert(WARNING,CLOSE_NOTIFY) -->
     <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">

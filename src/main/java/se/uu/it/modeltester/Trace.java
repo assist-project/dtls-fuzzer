@@ -18,6 +18,7 @@ import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.CertificateVerifyMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
@@ -44,6 +45,7 @@ import se.uu.it.modeltester.sut.io.definitions.Definitions;
 import se.uu.it.modeltester.sut.io.definitions.DefinitionsFactory;
 import se.uu.it.modeltester.test.FragmentingInputExecutor;
 
+// an ugly test harness.
 public class Trace {
 
 	private static void init() {
@@ -162,7 +164,7 @@ public class Trace {
 //				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
 //				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
 		int iterations = 1;
-		int stepWait = 20;
+		int stepWait = 10;
 		long runWait = 50;
 //		TlsInput [] inputs = new TlsInput [] {
 //				fuzz(new ClientHelloInput(cs), 0),
@@ -175,15 +177,18 @@ public class Trace {
 		TlsInput [] inputs = new TlsInput [] {
 			nonmut(new ClientHelloInput(cs)),
 			nonmut(new ClientHelloInput(cs)),
+			nonmut(new GenericTlsInput(new CertificateMessage())),
 			nonmut(new GenericTlsInput(new RSAClientKeyExchangeMessage())),
+			nonmut(new GenericTlsInput(new CertificateVerifyMessage())),
+//			nonmut(new GenericTlsInput(new CertificateMessage())),
 			nonmut(new ChangeCipherSpecInput()),
-			fuzz(new FinishedInput()),
+			nonmut(new FinishedInput()),
 		};
 		
 //		TlsInput [] inputs = Global. 
 //				//buildTest(tests[4], "alphabet.xml");
 		
-		String command = Command.opensslDtlsRsa;
+		String command = Command.none;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;
 		
 		ModelBasedTesterConfig modelFuzzConfig = new ModelBasedTesterConfig(new GeneralDelegate());
