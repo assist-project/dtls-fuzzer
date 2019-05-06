@@ -126,7 +126,6 @@ public ExtractorResult extractStateMachine() {
 	StateMachine stateMachine = new StateMachine(hypothesis, alphabet);
 	tracker.finishedLearning(stateMachine);
 	Statistics statistics = tracker.generateStatistics();
-	serializeHypothesis(stateMachine, folder, LEARNED_MODEL_FILENAME, true);
 
 	LOG.log(Level.INFO, "Finished Learning");
 	LOG.log(Level.INFO, "Number of Rounds:" + rounds);
@@ -134,12 +133,19 @@ public ExtractorResult extractStateMachine() {
 
 	extractorResult.setLearnedModel(stateMachine);
 	extractorResult.setStatistics(statistics);
+
+	// exporting to output files
+	serializeHypothesis(stateMachine, folder, LEARNED_MODEL_FILENAME, true);
 	extractorResult.setLearnedModelFile(new File(folder, LEARNED_MODEL_FILENAME));
-	
 	try {
 		Files.copy(AlphabetFactory.getAlphabetFile(finderConfig), new File(folder, ALPHABET_FILENAME));
 	} catch (IOException e) {
 		LOG.log(Level.SEVERE, "Could not copy alphabet to output folder");
+	}
+	try {
+		statistics.export(new FileWriter(new File(folder, STATISTICS_FILENAME)));
+	} catch (IOException e) {
+		LOG.log(Level.SEVERE, "Could not copy statistics to output folder");
 	}
 	
 	return extractorResult;
