@@ -1,0 +1,13 @@
+diff --git a/lib/gnutls_int.h b/lib/gnutls_int.h
+index 53ca32b19..da851db26 100644
+--- a/lib/gnutls_int.h
++++ b/lib/gnutls_int.h
+@@ -131,7 +131,7 @@ typedef struct {
+ #define REAL_HSK_TYPE(t) ((t)==GNUTLS_HANDSHAKE_HELLO_RETRY_REQUEST?GNUTLS_HANDSHAKE_SERVER_HELLO:t)
+ 
+ /* DTLS */
+-#define DTLS_RETRANS_TIMEOUT 1000
++#define DTLS_RETRANS_TIMEOUT 100000
+ 
+ /* TLS Extensions */
+ /* we can receive up to MAX_EXT_TYPES extensions.
