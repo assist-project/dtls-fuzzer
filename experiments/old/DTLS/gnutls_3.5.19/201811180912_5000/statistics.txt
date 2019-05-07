@@ -1,0 +1,24 @@
+=== RUN DESCRIPTION ===
+Learning Parameters
+Alphabet: [ClientHelloWord{suite=TLS_RSA_WITH_AES_128_GCM_SHA256}, GenericMessageWord{message=RSA_CLIENT_KEY_EXCHANGE}, ChangeCipherSpecWord{}, GenericMessageWord{message=APPLICATION}, FinishedWord{}]
+Learning Algorithm: TTT
+Equivalence Algorithm: RANDOM_WP_METHOD
+Max Queries: 5000
+TLS SUL Parameters
+Transport Protocol: UDP
+ResetWait: 0
+Timeout: 200
+RunWait: 100
+Command: /home/paul/Modules/gnutls-3.5.19/src/gnutls-serv --udp --x509keyfile /home/paul/Keys/RSA2048/server-key.pem --x509certfile /home/paul/Keys/RSA2048/server-cert.pem --mtu 1500 -p 20000 --disable-client-cert
+
+=== STATISTICS ===
+Number of states: 22
+Number of counterexamples: 12
+Number of inputs: 166912
+Number of resets: 11397
+Number of learning inputs: 2675
+Number of learning resets: 429
+Number of inputs up to last hypothesis: 94542
+Number of resets up to last hypothesis: 6641
+Time it took to learn model: 86271014
+Counterexamples:

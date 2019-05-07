@@ -1,0 +1,10 @@
+=== STATISTICS ===
+Number of states: 21
+Number of counterexamples/hypotheses: 10
+Number of inputs: 0
+Number of resets: 0
+Number of learning inputs: 0
+Number of learning resets: 0
+Number of learning inputs up to last hypothesis: 0
+Number of learning resets up to last hypothesis: 0
+Time it took to learn model: 18246660

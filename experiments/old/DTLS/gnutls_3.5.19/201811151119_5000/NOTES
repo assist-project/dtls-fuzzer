@@ -1,0 +1,7 @@
+Command Parameters: 
+-equivalenceAlgorithm RANDOM_WP_METHOD -searchPattern SHORT -queries 5000 -cmd "/home/paul/Modules/gnutls-3.5.19/src/gnutls-serv --udp --x509keyfile /home/paul/Keys/RSA2048/server-key.pem --x509certfile /home/paul/Keys/RSA2048/server-cert.pem --mtu 1500 -p 20000 --disable-client-cert" -transport UDP -connect localhost:20000 -runWait 100 -timeout  120 -alphabet "RSA_CLIENT_HELLO,RSA_CLIENT_KEY_EXCHANGE,CHANGE_CIPHER_SPEC,APPLICATION_MESSAGE,FINISHED"
+
+Hence, 5000 tests. Something went wrong with exporting statistics. 
+
+Also note that we didn't use the (apparently broken) SULCache provided by LearnLib. This is because the cache generated exceptions
+in several previous learning runs. The logs/models of one of these runs are found in the folder FAILED_PREV_RUN.

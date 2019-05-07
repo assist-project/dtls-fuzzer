@@ -1,0 +1,3 @@
+-equivalenceAlgorithm RANDOM_WP_METHOD -searchPattern SHORT -queries 1000 -cmd "/home/paul/Modules/gnutls-3.5.19/src/gnutls-serv --udp --x509keyfile /home/paul/Keys/RSA2048/server-key.pem --x509certfile /home/paul/Keys/RSA2048/server-cert.pem --mtu 1500 -p 20000 --disable-client-cert" -transport UDP -connect localhost:20000 -runWait 100 -timeout  100 -alphabet "RSA_CLIENT_HELLO,RSA_CLIENT_KEY_EXCHANGE,CHANGE_CIPHER_SPEC,HELLO_APPLICATION_MESSAGE,HEARTBEAT"
+
+NOTE: missing the FINISHED message. 
