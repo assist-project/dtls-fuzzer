@@ -74,10 +74,17 @@ public class ModelBasedTester {
 		}
 	}
 	
-	private void runTrace(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException {
+	private void runTrace(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException, ParseException {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 		TraceRunner runner = new TraceRunner(config, alphabet, sutOracle);
-		runner.runTrace();
+		TraceRunnerResult result = runner.runTrace();
+		if (config.getSpecification() != null) {
+			Definitions definitions = DefinitionsFactory.generateDefinitions(alphabet);
+			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(definitions));
+			FastMealy<TlsInput, TlsOutput> machine = dotParser.parseAutomaton(config.getSpecification()).get(0);
+			Word<TlsOutput> outputWord = machine.computeOutput(result.getInputWord());
+			LOGGER.error("Expected output: " + outputWord);
+		}
 	}
 
 

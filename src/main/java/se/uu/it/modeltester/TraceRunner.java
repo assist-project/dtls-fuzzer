@@ -35,18 +35,18 @@ public class TraceRunner {
 		repeats = config.getTimes();
 	}
 	
-	public void runTrace() throws IOException {
+	public TraceRunnerResult runTrace() throws IOException {
 		List<String> inputStrings = readTraceStrings(path);
-		Word<TlsInput> trace = Word.epsilon();
+		Word<TlsInput> inputWord = Word.epsilon();
 		for (String inputString : inputStrings) {
 			if (!inputs.containsKey(inputString)) {
 				throw new RuntimeException("Input is missing from the alphabet "+ inputString);
 			}
-			trace = trace.append(inputs.get(inputString));
+			inputWord = inputWord.append(inputs.get(inputString));
 		}
 		Map<Word<TlsOutput>, Integer> answerMap = new LinkedHashMap<>();
 		for (int i=0; i<repeats; i++) {
-			Word<TlsOutput> answer = sulOracle.answerQuery(trace);
+			Word<TlsOutput> answer = sulOracle.answerQuery(inputWord);
 			if (!answerMap.containsKey(answer)) {
 				answerMap.put(answer, 1);
 			}
@@ -54,10 +54,12 @@ public class TraceRunner {
 				answerMap.put(answer, answerMap.get(answer)+1);
 			}
 		}
-		LOGGER.error("Inputs: " + trace + "\n");
+		LOGGER.error("Inputs: " + inputWord + "\n");
 		for (Word<TlsOutput> answer : answerMap.keySet()) {
 			LOGGER.error(answerMap.get(answer) + " times outputs: " + answer.toString() + "\n");
 		}
+		
+		return new TraceRunnerResult(inputWord, answerMap);
 	}
 	
 	private List<String> readTraceStrings(String PATH) throws IOException {

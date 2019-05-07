@@ -1,0 +1,13 @@
+diff --git a/tests/dtls-server.c b/tests/dtls-server.c
+index ebc9c84..41a2a78 100644
+--- a/tests/dtls-server.c
++++ b/tests/dtls-server.c
+@@ -67,7 +67,7 @@ get_psk_info(struct dtls_context_t *ctx, const session_t *session,
+     size_t key_length;
+   } psk[3] = {
+     { (unsigned char *)"Client_identity", 15,
+-      (unsigned char *)"secretPSK", 9 },
++      (unsigned char *)"\x12\x34", 2 },
+     { (unsigned char *)"default identity", 16,
+       (unsigned char *)"\x11\x22\x33", 3 },
+     { (unsigned char *)"\0", 2,
