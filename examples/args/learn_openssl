@@ -2,6 +2,8 @@
 DTLS12
 -connect
 localhost:20000
+-alphabet 
+alphabet.xml
 -runWait 
 200
 -timeout
@@ -9,13 +11,11 @@ localhost:20000
 -randLength
 5
 -queries
-10
+20000
 -equivalenceAlgorithm 
 RANDOM_WP_METHOD 
--alphabet 
-alphabet.xml
 -output 
-temp
+openssl
 -trace
 trace.txt
 -times
