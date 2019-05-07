@@ -1,0 +1,10 @@
+# an example of a trace which can be executed using the TraceRunner functionality
+# inputs of this trace are defined in the 'rsa_cert.xml' alphabet from the 'alphabets'
+# directory
+RSA_CLIENT_HELLO
+RSA_CLIENT_HELLO
+CERTIFICATE
+RSA_CLIENT_KEY_EXCHANGE
+CERTIFICATE_VERIFY
+CHANGE_CIPHER_SPEC
+FINISHED

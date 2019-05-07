@@ -1,0 +1,24 @@
+-protocol
+DTLS12
+-connect
+localhost:20000
+-runWait 
+200
+-timeout
+10
+-randLength
+5
+-queries
+10
+-equivalenceAlgorithm 
+RANDOM_WP_METHOD 
+-alphabet 
+alphabet.xml
+-output 
+temp
+-trace
+trace.txt
+-times
+1
+-cmd 
+"/home/paul/Modules/openssl-1.1.1a/apps/openssl s_server -key /home/paul/Keys/RSA1024/server-key.pem -cert /home/paul/Keys/RSA1024/server-cert.pem -CAfile /home/paul/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa1024_cert.pem -Verify 1 -accept 20000 -dtls1_2 -timeout 5000 -mtu 5000"
