@@ -5,7 +5,7 @@ RSA handshakes extended with certificate inputs. -->
     <GenericTlsInput name="RSA_CLIENT_KEY_EXCHANGE">
         <RSAClientKeyExchange/>
     </GenericTlsInput>
-    <ClientHelloWord suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO"/>
+    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO"/>
     <GenericTlsInput name="PSK_CLIENT_KEY_EXCHANGE">
         <PskClientKeyExchange/>
     </GenericTlsInput>
