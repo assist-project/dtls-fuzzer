@@ -1,9 +1,13 @@
-<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes. 
-client authentication.-->
+<!-- DTLS alphabet comprising the messages necessary to perform PSK handshakes and 
+RSA handshakes extended with certificate inputs. -->
 <alphabet>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
     <GenericTlsInput name="RSA_CLIENT_KEY_EXCHANGE">
         <RSAClientKeyExchange/>
+    </GenericTlsInput>
+    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO"/>
+    <GenericTlsInput name="PSK_CLIENT_KEY_EXCHANGE">
+        <PskClientKeyExchange/>
     </GenericTlsInput>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED"/>

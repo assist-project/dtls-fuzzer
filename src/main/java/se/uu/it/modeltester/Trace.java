@@ -19,6 +19,7 @@ import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateVerifyMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.DHClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
@@ -85,7 +86,12 @@ public class Trace {
 		
 		private static String gnutlsTlsRsa = "gnutls-serv --x509keyfile /home/paul/Keys/RSA2048/server-key.pem "
 				+ "--x509certfile /home/paul/Keys/RSA2048/server-cert.pem -p 20000 --disable-client-cert";
-
+		
+		private static String gnutlsDtlsAll = "gnutls-serv --udp --x509keyfile /home/paul/Keys/RSA2048/server-key.pem "
+				+ "--x509certfile /home/paul/Keys/RSA2048/server-cert.pem --mtu 1500 -p 20000 "
+				+ "--x509cafile /home/paul/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa1024_cert.pem "
+				+ " --pskpasswd /home/paul/Scripts/gnutls/keys.psk --priority NORMAL:+PSK:+SRP";
+		
 		private static String localGnutlsDtlsRsa = "/home/paul/Modules/gnutls-3.5.19/src/gnutls-serv --udp --x509keyfile /home/paul/Keys/RSA2048/server-key.pem "
 				+ "--x509certfile /home/paul/Keys/RSA2048/server-cert.pem --mtu 1500 -p 20000 --disable-client-cert";
 		
@@ -160,27 +166,16 @@ public class Trace {
 
 		init();
 		CipherSuite cs = 
-				CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA;
+//				CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8;
 //				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
-//				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
+				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
 		int iterations = 1;
 		int stepWait = 10;
-		long runWait = 50;
-//		TlsInput [] inputs = new TlsInput [] {
-//				fuzz(new ClientHelloInput(cs), 0),
-//				fuzz(new ClientHelloInput(cs), 0),
-//				fuzz(new GenericTlsInput(new PskClientKeyExchangeMessage()), 0),
-//				new ChangeCipherSpecInput(),
-//				fuzz(new FinishedInput(), 0),
-//				fuzz(new ClientHelloInput(cs), 1)				
-//		};
+		long runWait = 100;
 		TlsInput [] inputs = new TlsInput [] {
 			nonmut(new ClientHelloInput(cs)),
 			nonmut(new ClientHelloInput(cs)),
-			nonmut(new GenericTlsInput(new CertificateMessage())),
-			nonmut(new GenericTlsInput(new RSAClientKeyExchangeMessage())),
-			nonmut(new GenericTlsInput(new CertificateVerifyMessage())),
-//			nonmut(new GenericTlsInput(new CertificateMessage())),
+			nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
 			nonmut(new ChangeCipherSpecInput()),
 			nonmut(new FinishedInput()),
 		};
@@ -188,7 +183,7 @@ public class Trace {
 //		TlsInput [] inputs = Global. 
 //				//buildTest(tests[4], "alphabet.xml");
 		
-		String command = Command.none;
+		String command = Command.localTinyDtls;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;
 		
 		ModelBasedTesterConfig modelFuzzConfig = new ModelBasedTesterConfig(new GeneralDelegate());
