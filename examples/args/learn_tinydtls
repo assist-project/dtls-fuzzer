@@ -10,9 +10,5 @@ experiments/alphabets/psk8.xml
 DTLS12 
 -output 
 tinydtls_psk
--trace
-trace.txt
--times
-1
 -cmd 
 "/home/paul/GitHub/tinydtls/tests/dtls-server -p 20000"

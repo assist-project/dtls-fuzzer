@@ -16,9 +16,5 @@ alphabet.xml
 RANDOM_WP_METHOD
 -output
 gnutls
--trace 
-"trace.txt"  
--times 
-1 
 -cmd 
 "/home/paul/Modules/gnutls-3.5.19/src/gnutls-serv  --udp --x509keyfile /home/paul/Keys/RSA2048/server-key.pem --x509certfile /home/paul/Keys/RSA2048/server-cert.pem --x509cafile /home/paul/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa1024_cert.pem --mtu 1500 -p 20000"
