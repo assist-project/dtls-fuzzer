@@ -1,6 +1,7 @@
 package se.uu.it.modeltester.test;
 
 import net.automatalib.words.Word;
+import se.uu.it.modeltester.mutate.MutatedTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
@@ -19,5 +20,7 @@ public class FragmentationBug extends Bug{
 		this.actual = actual;
 	}
 	
-	
+	public MutatedTlsInput getFragmentedInput() {
+		return (MutatedTlsInput) inputs.getSymbol(accessSequence.size());
+	}
 }

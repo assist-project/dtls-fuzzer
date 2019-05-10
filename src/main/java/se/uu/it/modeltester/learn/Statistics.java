@@ -70,6 +70,16 @@ public class Statistics {
 		out.println("Learning Algorithm: " + learningConfig.getLearningAlgorithm());
 		out.println("Equivalence Algorithm: "
 				+ learningConfig.getEquivalenceAlgorithm());
+		out.println("Min Length: "
+				+ learningConfig.getMinLength());
+		out.println("Max Length: "
+				+ learningConfig.getMaxLength());
+		out.println("Random Length: "
+				+ learningConfig.getRandLength());
+		out.println("Max Depth: "
+				+ learningConfig.getMaxDepth());
+		out.println("Prob Reset: "
+				+ learningConfig.getProbReset());
 		out.println("Max Queries: " + learningConfig.getNumberOfQueries());
 		out.println("TLS SUL Parameters");
 		SulDelegate sulDelegate = config.getSulDelegate();

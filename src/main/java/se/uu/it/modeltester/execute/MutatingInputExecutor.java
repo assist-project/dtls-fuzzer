@@ -54,13 +54,7 @@ public class MutatingInputExecutor extends InputExecutor {
 		PackingResult result = packMessages(messagesToSend, state);
 		message.getHandler(state.getTlsContext()).adjustTlsContextAfterSerialize(message);
 		applyMutators(MutatorType.PACKING, result, state);
-		SendMessageHelper helper = new SendMessageHelper();
-		List<AbstractRecord> recordsToSend = result.getRecords();
-		try {
-			helper.sendRecords(recordsToSend, state.getTlsContext());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		sendRecords(result.getRecords(), state);
 	}
 
 	/**
@@ -87,7 +81,19 @@ public class MutatingInputExecutor extends InputExecutor {
 		}
 		return new PackingResult(messages, records);
 	}
-
+	
+	/**
+	 * Send records over the network.
+	 */
+	private void sendRecords(List<AbstractRecord> records, State state) {
+		SendMessageHelper helper = new SendMessageHelper();
+		try {
+			helper.sendRecords(records, state.getTlsContext());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private <R> R applyMutators(MutatorType mutatorType, R currentResult, State state) {
 		List<Mutator<?>> mutatorsOfType = mutators.getOrDefault(mutatorType, Collections.emptyList());
 		R result = currentResult;

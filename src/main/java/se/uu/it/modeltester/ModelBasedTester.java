@@ -175,7 +175,7 @@ public class ModelBasedTester {
 					
 					if (!specificationOutput.equals(regularOutput)) {
 						SpecificationBug bug = new SpecificationBug(state, statePrefix, regularWord, specificationOutput, regularOutput);
-						report.addItem(bug);
+						report.addBug(bug);
 						if (!config.isExhaustive())
 							break;
 						continue;
@@ -196,7 +196,7 @@ public class ModelBasedTester {
 								
 								if (!fuzzedOutput.equals(regularOutput)) {
 									FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
-									report.addItem(bug);
+									report.addBug(bug);
 									bugsFound = true;
 									break;
 								}
