@@ -19,7 +19,7 @@ import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.transport.tcp.ClientTcpTransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ClientUdpTransportHandler;
 import se.uu.it.modeltester.config.SulDelegate;
-import se.uu.it.modeltester.execute.InputExecutor;
+import se.uu.it.modeltester.execute.AbstractInputExecutor;
 import se.uu.it.modeltester.execute.NonMutatingInputExecutor;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
@@ -68,6 +68,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     	
         state.getTlsContext().initTransportHandler();
         state.getTlsContext().initRecordLayer();
+        state.getTlsContext().setTalkingConnectionEndType(state.getTlsContext().getChooser().getConnectionEndType());
         closed = false;
         resetWait = delegate.getResetWait();
         LOG.error("Start " + count++);
@@ -91,7 +92,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
     @Override
     public TlsOutput step(TlsInput in) throws SULException {
-    	InputExecutor executor = in.getExecutor();
+    	AbstractInputExecutor executor = in.getExecutor();
     	TlsOutput output = null;
         try {
             if (state == null) {

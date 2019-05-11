@@ -16,7 +16,7 @@ public class FragmentationMutation implements Mutation<FragmentationResult>{
 
 	public FragmentationMutation(Fragmentation fragmentation) {
 		this.fragmentation = fragmentation;
-		this.dtlsMessageFragmenter = new HandshakeMessageFragmenter(0);
+		this.dtlsMessageFragmenter = new HandshakeMessageFragmenter();
 	}
 
 	@Override

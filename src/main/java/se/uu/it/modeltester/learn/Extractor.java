@@ -33,13 +33,22 @@ import se.uu.it.modeltester.sut.io.TlsOutput;
  * Taken/adapted from StateVulnFinder tool.
  */
 public class Extractor {
+	
+	public static final String LEARNED_MODEL_FILENAME = "learnedModel.dot";
+	public static final String STATISTICS_FILENAME = "statistics.txt";
+	public static final String ALPHABET_FILENAME = "alphabet.xml";
+	public static final String NON_DET_FILENAME = "nondet.log";
+	/*
+	 * In case of non-determinism, the number of times the causing sequence of 
+	 * inputs (to confirm/infirm non-determinism)
+	 */
+	private static final Integer NON_DET_ATTEMPTS = 5;
+	
+	
 private static final Logger LOG = Logger.getLogger(Extractor.class
 		.getName());
 private final ModelBasedTesterConfig finderConfig;
 private final Alphabet<TlsInput> alphabet;
-public static final String LEARNED_MODEL_FILENAME = "learnedModel.dot";
-public static final String STATISTICS_FILENAME = "statistics.txt";
-public static final String ALPHABET_FILENAME = "alphabet.xml";
 
 
 public Extractor(ModelBasedTesterConfig finderConfig, Alphabet<TlsInput> alphabet) {
@@ -68,7 +77,7 @@ public ExtractorResult extractStateMachine() {
 	// observation tree as cache
 	try {
 		tlsSystemUnderTest = new NonDeterminismRetryingSUL<TlsInput, TlsOutput>(
-				tlsSystemUnderTest, 5, new FileWriter(new File(folder,
+				tlsSystemUnderTest, NON_DET_ATTEMPTS, new FileWriter(new File(folder,
 						"nondet.log")));
 	} catch (IOException e) {
 		e.printStackTrace();

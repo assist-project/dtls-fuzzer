@@ -8,7 +8,7 @@ import de.rub.nds.tlsattacker.core.workflow.action.GenericReceiveAction;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public abstract class InputExecutor {
+public abstract class AbstractInputExecutor {
 	
 	public TlsOutput execute(TlsInput input, State state) {
 		ProtocolMessage message = input.generateMessage(state);

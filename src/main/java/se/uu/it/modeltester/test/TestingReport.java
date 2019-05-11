@@ -29,11 +29,11 @@ public class TestingReport {
 	public <T extends Bug> List<T> getBugs(Class<T> bugType) {
 		return reportedBugs.stream().filter( b -> bugType.isInstance(b)).map(b -> bugType.cast(b)).collect(Collectors.toList());
 	}
- 	
 	
 	public void printReport(PrintStream ps) {
 //		PrintWriter pw = new PrintWriter(writer);
 		ps.println("Testing Report");
+		ps.print("");
 		for (Object bug : reportedBugs) {
 			ps.println(bug);
 		}

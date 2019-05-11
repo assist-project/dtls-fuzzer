@@ -13,6 +13,7 @@ public class FragmentationBug extends Bug{
 	private final Word<TlsOutput> actual;
 	
 	public FragmentationBug(Object state, Word<TlsInput> accessSequence, Word<TlsInput> inputs, Word<TlsOutput> expected, Word<TlsOutput> actual) {
+		super(BugType.FRAGMENTATION, inputs, expected, actual);
 		this.state = state;
 		this.accessSequence = accessSequence;
 		this.inputs = inputs;

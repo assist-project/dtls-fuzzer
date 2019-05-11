@@ -59,7 +59,7 @@ public class ModelBasedTester {
 		File folder = new File(config.getOutput());
 		folder.mkdirs();
 		SULOracle<TlsInput, TlsOutput> sutOracle = createOracle(config);
-		if (config.getTrace() != null) {
+		if (config.getTraceRunnerConfig().getTrace() != null) {
 			runTrace(config, sutOracle);
 			System.exit(0);
 		}
@@ -76,7 +76,7 @@ public class ModelBasedTester {
 	
 	private void runTrace(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException, ParseException {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
-		TraceRunner runner = new TraceRunner(config, alphabet, sutOracle);
+		TraceRunner runner = new TraceRunner(config.getTraceRunnerConfig(), alphabet, sutOracle);
 		TraceRunnerResult result = runner.runTrace();
 		if (config.getSpecification() != null) {
 			Definitions definitions = DefinitionsFactory.generateDefinitions(alphabet);

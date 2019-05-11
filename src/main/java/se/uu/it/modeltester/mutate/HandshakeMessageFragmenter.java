@@ -7,23 +7,11 @@ import java.util.List;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.serializer.HandshakeMessageSerializer;
-import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 
 public class HandshakeMessageFragmenter {
 	
-	private int numFragments;
-
-	public HandshakeMessageFragmenter(int numFragments) {
-		this.numFragments = numFragments;
-	}
-	
-	public DtlsFragmentationResult generateDtlsFragments(HandshakeMessage message, State state, FragmentationGenerator generator) {
-		byte [] content = serializeMessage(message, state.getTlsContext());
-		Fragmentation fragmentation = generator.generateFragmentation(numFragments, content.length);
-		List<byte[]> fragmentedContent = fragmentContent(content, fragmentation);
-		List<DtlsHandshakeMessageFragment> dtlsFragments = generateDtlsFragments(fragmentedContent, message, state.getTlsContext());
-		return new DtlsFragmentationResult(dtlsFragments, fragmentation);
+	public HandshakeMessageFragmenter() {
 	}
 	
 	public List<DtlsHandshakeMessageFragment> generateDtlsFragments(Fragmentation fragmentation, HandshakeMessage message, TlsContext context) {

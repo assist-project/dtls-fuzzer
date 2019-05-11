@@ -17,6 +17,7 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
+import se.uu.it.modeltester.config.TraceRunnerConfig;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
@@ -27,7 +28,7 @@ public class TraceRunner {
 	private int repeats;
 	private SULOracle<TlsInput, TlsOutput> sulOracle;
 	
-	public TraceRunner(ModelBasedTesterConfig config, Alphabet<TlsInput> alphabet, SULOracle<TlsInput, TlsOutput> sutOracle) {
+	public TraceRunner(TraceRunnerConfig config, Alphabet<TlsInput> alphabet, SULOracle<TlsInput, TlsOutput> sutOracle) {
 		inputs = new HashMap<>();
 		alphabet.stream().forEach(i -> this.inputs.put(i.getName(), i));
 		path = config.getTrace();
