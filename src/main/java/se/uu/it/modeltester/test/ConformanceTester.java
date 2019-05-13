@@ -14,14 +14,14 @@ import net.automatalib.util.automata.Automata;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
-import se.uu.it.modeltester.ModelBasedTestingTask;
+import se.uu.it.modeltester.ConformanceTestingTask;
 import se.uu.it.modeltester.config.TestingConfig;
-import se.uu.it.modeltester.mutate.BasicFragmentationMutator;
+import se.uu.it.modeltester.mutate.SplittingMutator;
 import se.uu.it.modeltester.mutate.FragmentationGenerator;
 import se.uu.it.modeltester.mutate.FragmentationGeneratorFactory;
 import se.uu.it.modeltester.mutate.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.MutatedTlsInput;
-import se.uu.it.modeltester.mutate.RandomSwapFragmentationMutator;
+import se.uu.it.modeltester.mutate.RandomSwapMutator;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
@@ -38,7 +38,7 @@ public class ConformanceTester {
 	 * checks that valid mutations of inputs (fragmentation) prompt the desired behavior
 	 * on the SUT.  
 	 */
-	public TestingReport testModel(SULOracle<TlsInput, TlsOutput> tlsOracle, ModelBasedTestingTask task) {
+	public TestingReport testModel(SULOracle<TlsInput, TlsOutput> tlsOracle, ConformanceTestingTask task) {
 		LOGGER.info("Starting conformance testing");
 		TestingReport report = new TestingReport();
 		FastMealy<TlsInput, TlsOutput> model = task.getSpecification();
@@ -118,11 +118,10 @@ public class ConformanceTester {
 	
 	private static TlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean doShuffling) {
 		MutatedTlsInput mutatedInput = new MutatedTlsInput(input);
-		FragmentationGenerator generator = FragmentationGeneratorFactory.buildGenerator(strategy);
-		BasicFragmentationMutator fragmentationMutator = new BasicFragmentationMutator(generator, frags);
+		SplittingMutator fragmentationMutator = new SplittingMutator(strategy, frags);
 		mutatedInput.addMutator(fragmentationMutator);
 		if (doShuffling) {
-			mutatedInput.addMutator(new RandomSwapFragmentationMutator(0));
+			mutatedInput.addMutator(new RandomSwapMutator(0));
 		}
 		return mutatedInput;
 	}

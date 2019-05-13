@@ -9,11 +9,11 @@ import java.util.stream.IntStream;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
 
-public class RandomSwapFragmentationMutator extends FragmentationMutator{
+public class RandomSwapMutator extends FragmentationMutator{
 	
 	private Random rand;
 
-	public RandomSwapFragmentationMutator(long seed) {
+	public RandomSwapMutator(long seed) {
 		rand = new Random(seed);
 	}
 
@@ -24,4 +24,7 @@ public class RandomSwapFragmentationMutator extends FragmentationMutator{
 		return new MappingFragmentationMutation(mapping.toArray(new Integer[mapping.size()]));
 	}
 	
+	public String toString() {
+		return "RandomSwapMutator";
+	}
 }

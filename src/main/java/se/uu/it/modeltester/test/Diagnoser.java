@@ -1,17 +1,67 @@
 package se.uu.it.modeltester.test;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import net.automatalib.automata.transout.impl.FastMealy;
+import net.automatalib.automata.transout.impl.FastMealyState;
+import net.automatalib.words.Alphabet;
+import se.uu.it.modeltester.DiagnosisTask;
+import se.uu.it.modeltester.config.DiagnosisConfig;
+import se.uu.it.modeltester.mutate.MutatedTlsInput;
+import se.uu.it.modeltester.sut.io.TlsInput;
+import se.uu.it.modeltester.sut.io.TlsOutput;
 
 public class Diagnoser {
-//	
-//	
-//	public Diagnoser() {
-//	}
-//	
-//	public Diagnosis diagnoze(TestingReport report) {
-//		List<FragmentationBug> fragmentationBugs = report.getBugs(FragmentationBug.class);
-//		for (FragmentationBug bug : fragmentationBugs) {
-//		}
-//	}
+	
+	/*
+	 * For each input stores 
+	 */
+	private Map<TlsInput,List<FastMealyState<TlsOutput>>> supportMap;
+	private double unsupportedStateRatio = 0.3;
+	private DiagnosisConfig config;
+	
+	public Diagnoser(DiagnosisConfig config) {
+		this.config = config;
+	}
+	
+	public Diagnosis diagnoze(DiagnosisTask task, TestingReport report) {
+		List<FragmentationBug> fragBugs = report.getBugs(FragmentationBug.class);
+		Alphabet<TlsInput> alphabet = task.getSpecification().getInputAlphabet();
+		for (TlsInput input : alphabet) {
+			Stream<FragmentationBug> bugStream = fragBugs.stream().filter(bug -> bug.getFragmentedInput().getInput().equals(input));
+			List<FastMealyState<TlsOutput>> unsupportedStates = bugStream.map(s -> s.getState()).distinct().collect(Collectors.toList());
+			if (unsupportedStates.size() / task.getSpecification().getStates().size() >= config.getUnsupportedStateRatio()) {
+				
+			}
+		}
+		return null;
+	}
+	
+	
+	static class FragmentationSupport {
+		private static MutatedTlsInput mutatingInput;
+		private static TlsInput input;
+		private List<FastMealyState<TlsOutput>> unsupportedStates;
+		
+
+		public FragmentationSupport(List<FastMealyState<TlsOutput>> unsupportedStates) {
+			super();
+			this.unsupportedStates = unsupportedStates;
+		}
+		
+		
+		public static MutatedTlsInput getMutatingInput() {
+			return mutatingInput;
+		}
+		public static TlsInput getInput() {
+			return input;
+		}
+		public List<FastMealyState<TlsOutput>> getUnsupportedStates() {
+			return unsupportedStates;
+		}
+	}
 	
 }

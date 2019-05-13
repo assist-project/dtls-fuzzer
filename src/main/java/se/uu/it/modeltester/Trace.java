@@ -22,7 +22,7 @@ import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import net.automatalib.words.Alphabet;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.NonMutatingInputExecutor;
-import se.uu.it.modeltester.mutate.BasicFragmentationMutator;
+import se.uu.it.modeltester.mutate.SplittingMutator;
 import se.uu.it.modeltester.mutate.FragmentationGenerator;
 import se.uu.it.modeltester.mutate.FragmentationGeneratorFactory;
 import se.uu.it.modeltester.mutate.FragmentationStrategy;
@@ -109,8 +109,7 @@ public class Trace {
 	
 	private static TlsInput fuzz(TlsInput input) {
 		MutatedTlsInput mutatedInput = new MutatedTlsInput(input);
-		FragmentationGenerator generator = FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN);
-		BasicFragmentationMutator fragmentationMutator = new BasicFragmentationMutator(generator, NUM_FRAGS);
+		SplittingMutator fragmentationMutator = new SplittingMutator(FragmentationStrategy.EVEN, NUM_FRAGS);
 		mutatedInput.addMutator(fragmentationMutator);
 		return mutatedInput;
 	}

@@ -1,12 +1,10 @@
 package se.uu.it.modeltester.test;
 
-import java.lang.reflect.Field;
-
 import net.automatalib.words.Word;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public abstract class Bug {
+public abstract class Bug extends AutoLoggable{
 	private final BugType type;
 	private Word<TlsInput> inputs;
 	private Word<TlsOutput> expected;
@@ -43,25 +41,5 @@ public abstract class Bug {
 		this.inputs = inputs.prefix(commonPrefix.size()+1);
 		this.actual = commonPrefix.append(actual.getSymbol(commonPrefix.size()));
 	}
-	
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.getClass().getSimpleName()).append(": {");
-		for (Field f : this.getClass().getDeclaredFields() ) {
-			f.setAccessible(true);
-			try {
-				sb.append("   ").append(f.getName())
-				.append(": ").append(f.get(this)).append("\n");
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-		sb.append("}");
-		return sb.toString();
-	}
-	
-	
 	
 }

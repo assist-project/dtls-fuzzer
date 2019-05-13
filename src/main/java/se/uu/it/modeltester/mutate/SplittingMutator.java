@@ -3,13 +3,15 @@ package se.uu.it.modeltester.mutate;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
 
-public class BasicFragmentationMutator extends FragmentationMutator{
+public class SplittingMutator extends FragmentationMutator{
 	private FragmentationGenerator generator;
+	private FragmentationStrategy strategy;
 	private int numFragments;
 
-	public BasicFragmentationMutator(FragmentationGenerator generator, int numFragments) {
-		this.generator = generator;
+	public SplittingMutator(FragmentationStrategy strategy, int numFragments) {
 		this.numFragments = numFragments;
+		this.strategy = strategy;
+		this.generator = FragmentationGeneratorFactory.buildGenerator(strategy);
 	}
 	
 	@Override
@@ -17,6 +19,10 @@ public class BasicFragmentationMutator extends FragmentationMutator{
 		int length = result.getMessage().getLength().getValue();
 		Fragmentation fragmentation = generator.generateFragmentation(numFragments, length);
 		return new FragmentationMutation(fragmentation);
+	}
+	
+	public String toString() {
+		return "SplittingMutator(" + strategy.name() + "," + numFragments + ")";
 	}
 
 }

@@ -56,7 +56,7 @@ public class ModelBasedTester {
 			extractModel(config);
 			return null;
 		} else {
-			ModelBasedTestingTask task = generateModelBasedTestingTask(config);
+			ConformanceTestingTask task = generateModelBasedTestingTask(config);
 			TestingReport report = testModel(config, sutOracle, task);
 			logResult(report, config);
 			return report;
@@ -105,7 +105,7 @@ public class ModelBasedTester {
 	 * Generates a model based testing task, that is, a specification and an alphabet to focus model based testing on.
 	 * If a specification is not provided, it is created using active learning. 
 	 */
-	public ModelBasedTestingTask generateModelBasedTestingTask(ModelBasedTesterConfig config) throws FileNotFoundException, ParseException {
+	public ConformanceTestingTask generateModelBasedTestingTask(ModelBasedTesterConfig config) throws FileNotFoundException, ParseException {
 		
 		String specification = config.getSpecification(); 
 		if (specification == null) {
@@ -113,13 +113,13 @@ public class ModelBasedTester {
 			// TODO not the nicest way of making a conversion
 			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(result.getLearnedModel().generateDefinitions()));
 			FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(result.getLearnedModelFile().getPath()).get(0);
-			return new ModelBasedTestingTask( fastMealy, fastMealy.getInputAlphabet());
+			return new ConformanceTestingTask( fastMealy, fastMealy.getInputAlphabet());
 		} else {
 			Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 			Definitions definitions = DefinitionsFactory.generateDefinitions(alphabet);
 			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(definitions));
 			FastMealy<TlsInput, TlsOutput>  model = dotParser.parseAutomaton(specification).get(0);
-			return new ModelBasedTestingTask(model, alphabet);
+			return new ConformanceTestingTask(model, alphabet);
 		}
 	}
 	
@@ -130,7 +130,7 @@ public class ModelBasedTester {
 		return result;
 	}
 	
-	private TestingReport testModel(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle, ModelBasedTestingTask task) {
+	private TestingReport testModel(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle, ConformanceTestingTask task) {
 		ConformanceTester tester = new ConformanceTester(config.getTestingConfig());
 		return tester.testModel(sutOracle, task);
 	}
