@@ -49,6 +49,9 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
 	private LearningConfig learningConfig;
 	
 	@ParametersDelegate
+	private TestingConfig testingConfig;
+	
+	@ParametersDelegate
 	private TraceRunnerConfig traceRunnerConfig;
     
     public ModelBasedTesterConfig(GeneralDelegate delegate) {
@@ -56,6 +59,7 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
         sulDelegate = new SulDelegate();
         addDelegate(sulDelegate);
         learningConfig = new LearningConfig();
+        testingConfig = new TestingConfig(); 
         traceRunnerConfig = new TraceRunnerConfig();
     }
 
@@ -65,6 +69,10 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
     
     public LearningConfig getLearningConfig() {
     	return learningConfig;
+    }
+    
+    public TestingConfig getTestingConfig() {
+    	return testingConfig;
     }
     
     public TraceRunnerConfig getTraceRunnerConfig() {
