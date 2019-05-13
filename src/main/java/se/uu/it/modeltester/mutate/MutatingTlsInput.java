@@ -6,11 +6,11 @@ import se.uu.it.modeltester.execute.MutatingInputExecutor;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public class MutatedTlsInput extends TlsInput{
+public class MutatingTlsInput extends TlsInput{
 
 	private TlsInput input;
 
-	public MutatedTlsInput(TlsInput input) {
+	public MutatingTlsInput(TlsInput input) {
 		super(new MutatingInputExecutor(), "MUTATED_"+input.toString());
 		this.input = input;
 	}
@@ -21,7 +21,7 @@ public class MutatedTlsInput extends TlsInput{
 	}
 	
 	public String toString() {
-		return "MUTATED_"+((MutatingInputExecutor) super.getExecutor()).getCompactMutatorDescription() + "_"+input.toString();
+		return "MUTATING_"+((MutatingInputExecutor) super.getExecutor()).getCompactMutatorDescription() + "_"+input.toString();
 	}
 	
 	public void preUpdate(State state) {

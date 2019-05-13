@@ -1,4 +1,4 @@
-# an example of a trace which can be executed using the TraceRunner functionality
+# an example of a single test which can be executed using the TestRunner functionality
 # inputs of this trace are defined in the 'rsa_cert.xml' alphabet from the 'alphabets'
 # directory
 RSA_CLIENT_HELLO

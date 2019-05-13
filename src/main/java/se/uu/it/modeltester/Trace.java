@@ -26,7 +26,7 @@ import se.uu.it.modeltester.mutate.SplittingMutator;
 import se.uu.it.modeltester.mutate.FragmentationGenerator;
 import se.uu.it.modeltester.mutate.FragmentationGeneratorFactory;
 import se.uu.it.modeltester.mutate.FragmentationStrategy;
-import se.uu.it.modeltester.mutate.MutatedTlsInput;
+import se.uu.it.modeltester.mutate.MutatingTlsInput;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
@@ -108,7 +108,7 @@ public class Trace {
 	private static int NUM_FRAGS = 5;
 	
 	private static TlsInput fuzz(TlsInput input) {
-		MutatedTlsInput mutatedInput = new MutatedTlsInput(input);
+		MutatingTlsInput mutatedInput = new MutatingTlsInput(input);
 		SplittingMutator fragmentationMutator = new SplittingMutator(FragmentationStrategy.EVEN, NUM_FRAGS);
 		mutatedInput.addMutator(fragmentationMutator);
 		return mutatedInput;
@@ -116,7 +116,6 @@ public class Trace {
 	
 	
 	public static TlsInput nonmut(TlsInput input) {
-		input.setExecutor(new NonMutatingInputExecutor());
 		return input;
 	}
 	

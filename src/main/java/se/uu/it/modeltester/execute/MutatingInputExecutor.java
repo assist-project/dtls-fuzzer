@@ -1,5 +1,6 @@
 package se.uu.it.modeltester.execute;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -29,9 +30,14 @@ public class MutatingInputExecutor extends ConcreteInputExecutor {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private Map<MutatorType, List<Mutator<?>>> mutators;
 	
+	private List<Mutation<FragmentationResult>> fragmentationMutations;
+	private List<Mutation<PackingResult>> packingMutations;
+	
 	public MutatingInputExecutor() {
 		super();
 		mutators = new LinkedHashMap<>();
+		fragmentationMutations = Collections.emptyList();
+		packingMutations = Collections.emptyList();
 	}
 
 	@Override
@@ -45,6 +51,7 @@ public class MutatingInputExecutor extends ConcreteInputExecutor {
 			FragmentationResult result = helper.fragmentMessage((HandshakeMessage) message, state);
 			MutatorApplicationResult<FragmentationResult> fragmentationMutationResult 
 			= applyMutators(MutatorType.FRAGMENTATION, result, state);
+			fragmentationMutations = fragmentationMutationResult.getAppliedMutations();
 			result = fragmentationMutationResult.getResult();
 			messagesToSend.addAll(result.getFragments());
 		} else {
@@ -54,6 +61,7 @@ public class MutatingInputExecutor extends ConcreteInputExecutor {
 		PackingResult result = helper.packMessages(messagesToSend, state);
 		message.getHandler(state.getTlsContext()).adjustTlsContextAfterSerialize(message);
 		MutatorApplicationResult<PackingResult> packingMutationResult = applyMutators(MutatorType.PACKING, result, state);
+		packingMutations = packingMutationResult.getAppliedMutations();
 		result = packingMutationResult.getResult();
 		helper.sendRecords(result.getRecords(), state);
 	}
@@ -83,7 +91,7 @@ public class MutatingInputExecutor extends ConcreteInputExecutor {
 	}
 	
 	public String getCompactMutatorDescription() {
-		return mutators.values().stream().flatMap(l -> l.stream()).map(m -> m.getClass().getSimpleName()).reduce((s1,s2) -> s1 + "_" + s2).get();
+		return mutators.values().stream().flatMap(l -> l.stream()).map(m -> m.toString()).reduce((s1,s2) -> s1 + "_" + s2).get();
 	}
 	
 	static class MutatorApplicationResult<R> {

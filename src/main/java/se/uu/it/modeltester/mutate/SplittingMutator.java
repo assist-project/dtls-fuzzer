@@ -18,7 +18,7 @@ public class SplittingMutator extends FragmentationMutator{
 	public Mutation<FragmentationResult> generateMutation(FragmentationResult result, TlsContext context) {
 		int length = result.getMessage().getLength().getValue();
 		Fragmentation fragmentation = generator.generateFragmentation(numFragments, length);
-		return new FragmentationMutation(fragmentation);
+		return new SplittingMutation(fragmentation);
 	}
 	
 	public String toString() {

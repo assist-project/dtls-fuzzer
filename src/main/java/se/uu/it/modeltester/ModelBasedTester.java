@@ -48,7 +48,7 @@ public class ModelBasedTester {
 		File folder = new File(config.getOutput());
 		folder.mkdirs();
 		SULOracle<TlsInput, TlsOutput> sutOracle = createOracle(config);
-		if (config.getTraceRunnerConfig().getTrace() != null) {
+		if (config.getTraceRunnerConfig().getTest() != null) {
 			runTrace(config, sutOracle);
 			System.exit(0);
 		}
@@ -66,8 +66,8 @@ public class ModelBasedTester {
 
 	private void runTrace(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException, ParseException {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
-		TraceRunner runner = new TraceRunner(config.getTraceRunnerConfig(), alphabet, sutOracle);
-		TraceRunnerResult result = runner.runTrace();
+		TestRunner runner = new TestRunner(config.getTraceRunnerConfig(), alphabet, sutOracle);
+		TestRunnerResult result = runner.runTrace();
 		if (config.getSpecification() != null) {
 			Definitions definitions = DefinitionsFactory.generateDefinitions(alphabet);
 			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(definitions));

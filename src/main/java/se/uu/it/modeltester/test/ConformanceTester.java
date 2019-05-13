@@ -17,10 +17,8 @@ import net.automatalib.words.WordBuilder;
 import se.uu.it.modeltester.ConformanceTestingTask;
 import se.uu.it.modeltester.config.TestingConfig;
 import se.uu.it.modeltester.mutate.SplittingMutator;
-import se.uu.it.modeltester.mutate.FragmentationGenerator;
-import se.uu.it.modeltester.mutate.FragmentationGeneratorFactory;
 import se.uu.it.modeltester.mutate.FragmentationStrategy;
-import se.uu.it.modeltester.mutate.MutatedTlsInput;
+import se.uu.it.modeltester.mutate.MutatingTlsInput;
 import se.uu.it.modeltester.mutate.RandomSwapMutator;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
@@ -117,7 +115,7 @@ public class ConformanceTester {
 	}
 	
 	private static TlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean doShuffling) {
-		MutatedTlsInput mutatedInput = new MutatedTlsInput(input);
+		MutatingTlsInput mutatedInput = new MutatingTlsInput(input);
 		SplittingMutator fragmentationMutator = new SplittingMutator(strategy, frags);
 		mutatedInput.addMutator(fragmentationMutator);
 		if (doShuffling) {

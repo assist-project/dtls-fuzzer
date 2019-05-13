@@ -21,7 +21,7 @@ public class RandomSwapMutator extends FragmentationMutator{
 	public Mutation<FragmentationResult> generateMutation(FragmentationResult result, TlsContext context) {
 		List<Integer> mapping = IntStream.range(0, result.getFragments().size()).boxed().collect(Collectors.toList());
 		Collections.shuffle(mapping, rand);
-		return new MappingFragmentationMutation(mapping.toArray(new Integer[mapping.size()]));
+		return new ReorderingMutation(mapping.toArray(new Integer[mapping.size()]));
 	}
 	
 	public String toString() {

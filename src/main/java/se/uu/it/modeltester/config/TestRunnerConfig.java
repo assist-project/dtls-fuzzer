@@ -2,9 +2,9 @@ package se.uu.it.modeltester.config;
 
 import com.beust.jcommander.Parameter;
 
-public class TraceRunnerConfig {
-	@Parameter(names = "-trace", required = false, description = "Debug option, runs the inputs in the given file and exits. ")
-    private String trace = null;
+public class TestRunnerConfig {
+	@Parameter(names = "-test", required = false, description = "Debug option, runs the inputs in the given file and exits. ")
+    private String test = null;
 	
 	@Parameter(names = "-times", required = false, description = "The number of times the inputs should be run")
     private Integer times = 1;
@@ -18,11 +18,11 @@ public class TraceRunnerConfig {
 		this.times = times;
 	}
 
-	public String getTrace() {
-		return trace;
+	public String getTest() {
+		return test;
 	}
 
-	public void setTrace(String trace) {
-		this.trace = trace;
+	public void setTest(String test) {
+		this.test = test;
 	}
 }

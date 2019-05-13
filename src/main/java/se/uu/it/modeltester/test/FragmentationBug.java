@@ -2,7 +2,7 @@ package se.uu.it.modeltester.test;
 
 import net.automatalib.automata.transout.impl.FastMealyState;
 import net.automatalib.words.Word;
-import se.uu.it.modeltester.mutate.MutatedTlsInput;
+import se.uu.it.modeltester.mutate.MutatingTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
@@ -30,7 +30,7 @@ public class FragmentationBug extends Bug{
 		return state;
 	}
 	
-	public MutatedTlsInput getFragmentedInput() {
-		return (MutatedTlsInput) inputs.getSymbol(accessSequence.size());
+	public MutatingTlsInput getFragmentedInput() {
+		return (MutatingTlsInput) inputs.getSymbol(accessSequence.size());
 	}
 }

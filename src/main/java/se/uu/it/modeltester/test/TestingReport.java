@@ -33,7 +33,7 @@ public class TestingReport {
 	public void printReport(PrintStream ps) {
 //		PrintWriter pw = new PrintWriter(writer);
 		ps.println("Testing Report");
-		ps.print("");
+		ps.println("");
 		for (Object bug : reportedBugs) {
 			ps.println(bug);
 		}

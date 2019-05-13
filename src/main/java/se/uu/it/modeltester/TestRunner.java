@@ -17,33 +17,46 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
-import se.uu.it.modeltester.config.TraceRunnerConfig;
+import se.uu.it.modeltester.config.TestRunnerConfig;
+import se.uu.it.modeltester.mutate.JsonMutationParser;
+import se.uu.it.modeltester.mutate.Mutation;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public class TraceRunner {
-	private static final Logger LOGGER = LogManager.getLogger(TraceRunner.class);
+public class TestRunner {
+	private static final Logger LOGGER = LogManager.getLogger(TestRunner.class);
 	private Map<String, TlsInput> inputs;
 	private String path;
 	private int repeats;
 	private SULOracle<TlsInput, TlsOutput> sulOracle;
 	
-	public TraceRunner(TraceRunnerConfig config, Alphabet<TlsInput> alphabet, SULOracle<TlsInput, TlsOutput> sutOracle) {
+	public TestRunner(TestRunnerConfig config, Alphabet<TlsInput> alphabet, SULOracle<TlsInput, TlsOutput> sutOracle) {
 		inputs = new HashMap<>();
 		alphabet.stream().forEach(i -> this.inputs.put(i.getName(), i));
-		path = config.getTrace();
+		path = config.getTest();
 		this.sulOracle = sutOracle;
 		repeats = config.getTimes();
 	}
 	
-	public TraceRunnerResult runTrace() throws IOException {
-		List<String> inputStrings = readTraceStrings(path);
+	public TestRunnerResult runTrace() throws IOException {
+		List<String> inputStrings = readTestStrings(path);
 		Word<TlsInput> inputWord = Word.epsilon();
 		for (String inputString : inputStrings) {
-			if (!inputs.containsKey(inputString)) {
-				throw new RuntimeException("Input is missing from the alphabet "+ inputString);
+			if (inputString.startsWith("@")) {
+				String mutatedInputString = inputString.substring(1, inputString.indexOf("["));
+				if (!inputs.containsKey(mutatedInputString)) {
+					throw new RuntimeException("Input is missing from the alphabet "+ inputString);
+				}
+				String mutationsJsonString = inputString.substring(inputString.indexOf("["), inputString.length());
+				Mutation [] mutation = JsonMutationParser.getInstance().deserialize(mutationsJsonString);
+				
+				
+			} else {
+				if (!inputs.containsKey(inputString)) {
+					throw new RuntimeException("Input is missing from the alphabet "+ inputString);
+				}
+				inputWord = inputWord.append(inputs.get(inputString));
 			}
-			inputWord = inputWord.append(inputs.get(inputString));
 		}
 		Map<Word<TlsOutput>, Integer> answerMap = new LinkedHashMap<>();
 		for (int i=0; i<repeats; i++) {
@@ -60,10 +73,10 @@ public class TraceRunner {
 			LOGGER.error(answerMap.get(answer) + " times outputs: " + answer.toString() + "\n");
 		}
 		
-		return new TraceRunnerResult(inputWord, answerMap);
+		return new TestRunnerResult(inputWord, answerMap);
 	}
 	
-	private List<String> readTraceStrings(String PATH) throws IOException {
+	private List<String> readTestStrings(String PATH) throws IOException {
 		List<String> trace;
 		trace = Files.readAllLines(Paths.get(PATH), StandardCharsets.US_ASCII);
 		ListIterator<String> it = trace.listIterator();
@@ -79,7 +92,6 @@ public class TraceRunner {
 						 it.remove();
 					 } 
 				 } else {
-					 System.out.println();
 				 }
 			}
 		}

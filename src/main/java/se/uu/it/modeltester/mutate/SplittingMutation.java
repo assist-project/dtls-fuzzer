@@ -7,14 +7,15 @@ import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
 
 /**
- * Mutates the message by applying a given fragmentation.
+ * Mutates the fragmentation result by splitting the original message according to a given fragmentation.
+ * Ignores the current fragment configuration.
  */
-public class FragmentationMutation implements Mutation<FragmentationResult>{
+public class SplittingMutation implements Mutation<FragmentationResult>{
 	
 	private Fragmentation fragmentation;
-	private HandshakeMessageFragmenter dtlsMessageFragmenter;
+	private transient HandshakeMessageFragmenter dtlsMessageFragmenter;
 
-	public FragmentationMutation(Fragmentation fragmentation) {
+	public SplittingMutation(Fragmentation fragmentation) {
 		this.fragmentation = fragmentation;
 		this.dtlsMessageFragmenter = new HandshakeMessageFragmenter();
 	}
@@ -23,6 +24,11 @@ public class FragmentationMutation implements Mutation<FragmentationResult>{
 	public FragmentationResult mutate(FragmentationResult result, TlsContext context) {
 		List<DtlsHandshakeMessageFragment> newDtlsFragments = dtlsMessageFragmenter.generateDtlsFragments(fragmentation, result.getMessage(), context);
 		return new FragmentationResult(result.getMessage(), newDtlsFragments);
+	}
+
+	@Override
+	public MutationType getType() {
+		return MutationType.MESSAGE_SPLITTING;
 	}
 
 }

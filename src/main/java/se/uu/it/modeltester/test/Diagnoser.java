@@ -10,7 +10,7 @@ import net.automatalib.automata.transout.impl.FastMealyState;
 import net.automatalib.words.Alphabet;
 import se.uu.it.modeltester.DiagnosisTask;
 import se.uu.it.modeltester.config.DiagnosisConfig;
-import se.uu.it.modeltester.mutate.MutatedTlsInput;
+import se.uu.it.modeltester.mutate.MutatingTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
@@ -42,7 +42,7 @@ public class Diagnoser {
 	
 	
 	static class FragmentationSupport {
-		private static MutatedTlsInput mutatingInput;
+		private static MutatingTlsInput mutatingInput;
 		private static TlsInput input;
 		private List<FastMealyState<TlsOutput>> unsupportedStates;
 		
@@ -53,7 +53,7 @@ public class Diagnoser {
 		}
 		
 		
-		public static MutatedTlsInput getMutatingInput() {
+		public static MutatingTlsInput getMutatingInput() {
 			return mutatingInput;
 		}
 		public static TlsInput getInput() {

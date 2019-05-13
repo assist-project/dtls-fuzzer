@@ -34,10 +34,6 @@ public abstract class TlsInput {
 		return inputExecutor;
 	}
 	
-	public void setExecutor(AbstractInputExecutor executor) {
-		this.inputExecutor = executor;
-	}
-	
 	/**
 	 * Generates a fresh message and updates the context.
 	 */
