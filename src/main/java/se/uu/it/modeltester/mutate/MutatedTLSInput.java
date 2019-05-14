@@ -4,16 +4,16 @@ import java.util.List;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.modeltester.execute.MutatingInputExecutor;
+import se.uu.it.modeltester.execute.MutatedInputExecutor;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public class MutatingTlsInput extends TlsInput{
-
+public class MutatedTLSInput extends TlsInput {
+	
 	private TlsInput input;
 
-	public MutatingTlsInput(TlsInput input, List<Mutator<?>> mutators) {
-		super(new MutatingInputExecutor(mutators));
+	public MutatedTLSInput(TlsInput input, List<Mutation<?>> mutations) {
+		super(new MutatedInputExecutor(mutations));
 		this.input = input;
 	}
 	
@@ -23,7 +23,7 @@ public class MutatingTlsInput extends TlsInput{
 	}
 	
 	public String toString() {
-		return "MUTATING_" + input.toString() + "_" + ((MutatingInputExecutor) super.getExecutor()).getCompactMutatorDescription();
+		return "MUTATED_" + input.toString() + "_" + ((MutatedInputExecutor) super.getExecutor()).getCompactMutationDescription();
 	}
 	
 	public void preUpdate(State state) {
@@ -38,4 +38,5 @@ public class MutatingTlsInput extends TlsInput{
 	public TlsInput getInput() {
 		return input;
 	}
+
 }

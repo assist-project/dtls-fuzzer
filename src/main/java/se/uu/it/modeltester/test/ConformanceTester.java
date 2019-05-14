@@ -1,5 +1,6 @@
 package se.uu.it.modeltester.test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,7 @@ import se.uu.it.modeltester.config.TestingConfig;
 import se.uu.it.modeltester.mutate.SplittingMutator;
 import se.uu.it.modeltester.mutate.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.MutatingTlsInput;
+import se.uu.it.modeltester.mutate.Mutator;
 import se.uu.it.modeltester.mutate.RandomSwapMutator;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
@@ -115,12 +117,14 @@ public class ConformanceTester {
 	}
 	
 	private static TlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean doShuffling) {
-		MutatingTlsInput mutatedInput = new MutatingTlsInput(input);
-		SplittingMutator fragmentationMutator = new SplittingMutator(strategy, frags);
-		mutatedInput.addMutator(fragmentationMutator);
-		if (doShuffling) {
-			mutatedInput.addMutator(new RandomSwapMutator(0));
+		List<Mutator<?>> mutators = new ArrayList<>();
+		if (frags > 1) {
+			SplittingMutator fragmentationMutator = new SplittingMutator(strategy, frags);
+			mutators.add(fragmentationMutator);
 		}
-		return mutatedInput;
+		if (doShuffling) {
+			mutators.add(new RandomSwapMutator(0));
+		}
+		return new MutatingTlsInput(input, mutators);
 	}
 }

@@ -5,7 +5,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.modeltester.execute.BasicInputExecutor;
 
-public class FinishedInput extends TlsInput{
+public class FinishedInput extends NamedTlsInput{
 	
 	public FinishedInput() {
 		super(new BasicInputExecutor(), "FINISHED");

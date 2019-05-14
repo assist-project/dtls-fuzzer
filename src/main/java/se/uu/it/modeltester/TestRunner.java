@@ -32,7 +32,7 @@ public class TestRunner {
 	
 	public TestRunner(TestRunnerConfig config, Alphabet<TlsInput> alphabet, SULOracle<TlsInput, TlsOutput> sutOracle) {
 		inputs = new HashMap<>();
-		alphabet.stream().forEach(i -> this.inputs.put(i.getName(), i));
+		alphabet.stream().forEach(i -> this.inputs.put(i.toString(), i));
 		path = config.getTest();
 		this.sulOracle = sutOracle;
 		repeats = config.getTimes();

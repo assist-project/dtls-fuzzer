@@ -2,6 +2,7 @@ package se.uu.it.modeltester.execute;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
@@ -21,7 +22,7 @@ public class MutatedInputExecutor extends AbstractInputExecutor{
 	private List<Mutation<PackingResult>> packingMutations;
 	
 	public MutatedInputExecutor(List<Mutation<?>> mutations) {
-		// TODO bad design
+		// TODO bad design, we should at least make Mutated and Mutating Input Executor implementations be consistent
 		for (Mutation<?> mutation : mutations) {
 			switch(mutation.getType()) {
 			case FRAGMENT_REORDERING:
@@ -60,6 +61,12 @@ public class MutatedInputExecutor extends AbstractInputExecutor{
 			mutatedResult = mutation.mutate(result, state.getTlsContext());
 		}
 		return mutatedResult; 
+	}
+	
+	public String getCompactMutationDescription() {
+		return Stream.of(fragmentationMutations.stream(), packingMutations.stream())
+				.map(m -> m.toString())
+				.reduce((s1,s2) -> s1 + "_" + s2).get();
 	}
 
 }

@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,20 +27,29 @@ import se.uu.it.modeltester.mutate.MutatorType;
  * <br/>
  * Mutators at each point are called to generate mutations, which are
  * applied in a chained fashion on the fragmentation/packing result.
+ * The mutations generated/applied for the last execution can be retrieved.
  */
 public class MutatingInputExecutor extends ConcreteInputExecutor {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger(MutatingInputExecutor.class);
 	private Map<MutatorType, List<Mutator<?>>> mutators;
 	
 	private List<Mutation<FragmentationResult>> fragmentationMutations;
 	private List<Mutation<PackingResult>> packingMutations;
 	
-	public MutatingInputExecutor() {
+	private MutatingInputExecutor() {
 		super();
 		mutators = new LinkedHashMap<>();
 		fragmentationMutations = Collections.emptyList();
 		packingMutations = Collections.emptyList();
 	}
+	
+	public MutatingInputExecutor(List<Mutator<?>> mutators) {
+		this();
+		for (Mutator<?> mutator : mutators) {
+			addMutator(mutator);
+		}
+	}
+	
 
 	@Override
 	protected void sendMessage(ProtocolMessage message, State state) {
@@ -83,15 +94,22 @@ public class MutatingInputExecutor extends ConcreteInputExecutor {
 	/**
 	 * Adds a mutator
 	 */
-	public <M extends Mutator<?>> boolean addMutator(M mutator) {
+	private <M extends Mutator<?>> boolean addMutator(M mutator) {
 		mutators.putIfAbsent(mutator.getType(), new LinkedList<>());
 		List<Mutator<?>> mutOfSameType = mutators.get(mutator.getType());
 		mutOfSameType.add(mutator);
 		return true;
 	}
 	
+	public List<Mutation<?>> getLastAppliedMutations() {
+		return Stream.concat(fragmentationMutations.stream(), packingMutations.stream())
+				.collect(Collectors.toList());
+	}
+	
 	public String getCompactMutatorDescription() {
-		return mutators.values().stream().flatMap(l -> l.stream()).map(m -> m.toString()).reduce((s1,s2) -> s1 + "_" + s2).get();
+		return mutators.values().stream()
+				.flatMap(l -> l.stream()).map(m -> m.toString())
+				.reduce((s1,s2) -> s1 + "_" + s2).get();
 	}
 	
 	static class MutatorApplicationResult<R> {

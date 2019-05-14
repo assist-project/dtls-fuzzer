@@ -24,7 +24,7 @@ public class TestParser {
 
 	public TestParser(Alphabet<TlsInput> alphabet) {
 		inputs = new LinkedHashMap<>();
-		alphabet.stream().forEach(i -> this.inputs.put(i.getName(), i));
+		alphabet.stream().forEach(i -> this.inputs.put(i.toString(), i));
 	}
 	
 	public void writeTest(Word<TlsInput> test, String PATH) throws IOException {

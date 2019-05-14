@@ -2,7 +2,6 @@ package se.uu.it.modeltester.sut.io;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
@@ -15,15 +14,8 @@ public abstract class TlsInput {
 	@XmlTransient
 	private AbstractInputExecutor inputExecutor;
 	
-	/**
-	 * The name with which the input can be referred 
-	 */
-	@XmlAttribute(name = "name", required = true)
-	private String name;
-	
-	protected TlsInput(AbstractInputExecutor executor, String name) {
+	protected TlsInput(AbstractInputExecutor executor) {
 		this.inputExecutor = executor;
-		this.name = name;
 	}
 	
 
@@ -52,14 +44,7 @@ public abstract class TlsInput {
 	}
 	
 	/**
-	 * Generates an input string which should be unique for the input.
+	 * Generates an input string which is assumed to uniquely identify the input.
 	 */
-	public String toString() {
-		return name;
-	}
-	
-	
-	public String getName() {
-		return name;
-	}
+	public abstract String toString();
 }

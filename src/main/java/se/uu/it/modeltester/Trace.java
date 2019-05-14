@@ -108,10 +108,8 @@ public class Trace {
 	private static int NUM_FRAGS = 5;
 	
 	private static TlsInput fuzz(TlsInput input) {
-		MutatingTlsInput mutatedInput = new MutatingTlsInput(input);
 		SplittingMutator fragmentationMutator = new SplittingMutator(FragmentationStrategy.EVEN, NUM_FRAGS);
-		mutatedInput.addMutator(fragmentationMutator);
-		return mutatedInput;
+		return new MutatingTlsInput(input, Arrays.asList(fragmentationMutator));
 	}
 	
 	

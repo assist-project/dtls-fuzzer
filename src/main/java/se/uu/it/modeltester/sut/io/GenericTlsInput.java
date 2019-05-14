@@ -60,7 +60,7 @@ import se.uu.it.modeltester.execute.BasicInputExecutor;
 /**
  * 
  */
-public class GenericTlsInput extends TlsInput{
+public class GenericTlsInput extends NamedTlsInput{
 	@XmlElements(value = {
 			@XmlElement(type = ProtocolMessage.class, name = "ProtocolMessage"),
 			@XmlElement(type = CertificateMessage.class, name = "Certificate"),
