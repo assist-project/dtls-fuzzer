@@ -8,11 +8,11 @@ import se.uu.it.modeltester.execute.MutatedInputExecutor;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public class MutatedTLSInput extends TlsInput {
+public class MutatedTlsInput extends TlsInput {
 	
 	private TlsInput input;
 
-	public MutatedTLSInput(TlsInput input, List<Mutation<?>> mutations) {
+	public MutatedTlsInput(TlsInput input, List<Mutation<?>> mutations) {
 		super(new MutatedInputExecutor(mutations));
 		this.input = input;
 	}
@@ -34,6 +34,9 @@ public class MutatedTLSInput extends TlsInput {
 		input.postUpdate(output, state);
 	}
 	
+	public List<Mutation<?>> getMutations() {
+		return ((MutatedInputExecutor) super.getExecutor()).getMutations();
+	}
 	
 	public TlsInput getInput() {
 		return input;

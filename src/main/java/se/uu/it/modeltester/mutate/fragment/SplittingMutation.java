@@ -1,10 +1,12 @@
-package se.uu.it.modeltester.mutate;
+package se.uu.it.modeltester.mutate.fragment;
 
 import java.util.List;
 
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
+import se.uu.it.modeltester.mutate.Mutation;
+import se.uu.it.modeltester.mutate.MutationType;
 
 /**
  * Mutates the fragmentation result by splitting the original message according to a given fragmentation.

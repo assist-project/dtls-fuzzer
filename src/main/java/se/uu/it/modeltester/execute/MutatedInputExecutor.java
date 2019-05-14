@@ -2,6 +2,7 @@ package se.uu.it.modeltester.execute;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
@@ -63,8 +64,13 @@ public class MutatedInputExecutor extends AbstractInputExecutor{
 		return mutatedResult; 
 	}
 	
+	public List<Mutation<?>> getMutations() {
+		return Stream.concat(fragmentationMutations.stream(), packingMutations.stream())
+				.collect(Collectors.toList());
+	}
+	
 	public String getCompactMutationDescription() {
-		return Stream.of(fragmentationMutations.stream(), packingMutations.stream())
+		return Stream.concat(fragmentationMutations.stream(), packingMutations.stream())
 				.map(m -> m.toString())
 				.reduce((s1,s2) -> s1 + "_" + s2).get();
 	}

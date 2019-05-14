@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.mutate;
+package se.uu.it.modeltester.mutate.fragment;
 
 import java.util.List;
 

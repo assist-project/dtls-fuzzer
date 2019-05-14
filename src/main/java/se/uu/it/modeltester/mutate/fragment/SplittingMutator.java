@@ -1,7 +1,9 @@
-package se.uu.it.modeltester.mutate;
+package se.uu.it.modeltester.mutate.fragment;
 
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
+import se.uu.it.modeltester.mutate.FragmentationMutator;
+import se.uu.it.modeltester.mutate.Mutation;
 
 public class SplittingMutator extends FragmentationMutator{
 	private FragmentationGenerator generator;

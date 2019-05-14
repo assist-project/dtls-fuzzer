@@ -17,11 +17,11 @@ import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
 import se.uu.it.modeltester.ConformanceTestingTask;
 import se.uu.it.modeltester.config.TestingConfig;
-import se.uu.it.modeltester.mutate.SplittingMutator;
-import se.uu.it.modeltester.mutate.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.MutatingTlsInput;
 import se.uu.it.modeltester.mutate.Mutator;
-import se.uu.it.modeltester.mutate.RandomSwapMutator;
+import se.uu.it.modeltester.mutate.fragment.FragmentationStrategy;
+import se.uu.it.modeltester.mutate.fragment.RandomSwapMutator;
+import se.uu.it.modeltester.mutate.fragment.SplittingMutator;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 

@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.mutate;
+package se.uu.it.modeltester.mutate.fragment;
 
 public class FragmentationMutationException extends RuntimeException {
 	public FragmentationMutationException(String cause) {

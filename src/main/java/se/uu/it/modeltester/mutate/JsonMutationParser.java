@@ -13,6 +13,9 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import se.uu.it.modeltester.mutate.fragment.ReorderingMutation;
+import se.uu.it.modeltester.mutate.fragment.SplittingMutation;
+
 /**
  * A class for parsing mutations from Json strings/serialiazing them to Json strings.
  */
@@ -37,14 +40,14 @@ public class JsonMutationParser {
 	/**
 	 * Serializes mutations into an one line json string
 	 */
-	public String serialize(Mutation [] mutations) {
+	public String serialize(Mutation<?> [] mutations) {
 		return gson.toJson(mutations, Mutation [].class);
 	}
 	
 	/**
 	 * Deserializes mutations from a json String
 	 */
-	public Mutation [] deserialize(String mutationsJsonString) {
+	public Mutation<?> [] deserialize(String mutationsJsonString) {
 		return gson.fromJson(mutationsJsonString, Mutation [].class);
 	}
 	

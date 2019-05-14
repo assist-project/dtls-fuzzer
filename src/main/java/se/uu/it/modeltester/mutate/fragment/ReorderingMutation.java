@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.mutate;
+package se.uu.it.modeltester.mutate.fragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +7,8 @@ import java.util.List;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
+import se.uu.it.modeltester.mutate.Mutation;
+import se.uu.it.modeltester.mutate.MutationType;
 
 /**
  * Mutates the fragmentation result by re-ordering fragments according to the given mapping.
