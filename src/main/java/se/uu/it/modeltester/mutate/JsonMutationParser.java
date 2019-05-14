@@ -13,7 +13,9 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-
+/**
+ * A class for parsing mutations from Json strings/serialiazing them to Json strings.
+ */
 public class JsonMutationParser {
 	
 	private static JsonMutationParser INSTANCE = null;

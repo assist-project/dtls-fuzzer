@@ -19,12 +19,19 @@ public class MutatedInputExecutor extends AbstractInputExecutor{
 	
 	private List<Mutation<FragmentationResult>> fragmentationMutations;
 	private List<Mutation<PackingResult>> packingMutations;
-
-	public MutatedInputExecutor(List<Mutation<FragmentationResult>> fragmentationMutations, 
-			List<Mutation<PackingResult>> packingMutations) {
-		super();
-		this.fragmentationMutations = fragmentationMutations;
-		this.packingMutations = packingMutations;
+	
+	public MutatedInputExecutor(List<Mutation<?>> mutations) {
+		// TODO bad design
+		for (Mutation<?> mutation : mutations) {
+			switch(mutation.getType()) {
+			case FRAGMENT_REORDERING:
+				fragmentationMutations.add((Mutation<FragmentationResult>) mutation);
+				break;
+			case MESSAGE_SPLITTING:
+				fragmentationMutations.add((Mutation<FragmentationResult>) mutation);
+				break;
+			}
+		}
 	}
 
 	@Override

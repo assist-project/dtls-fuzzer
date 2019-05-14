@@ -11,7 +11,7 @@ public class MutatingTlsInput extends TlsInput{
 	private TlsInput input;
 
 	public MutatingTlsInput(TlsInput input) {
-		super(new MutatingInputExecutor(), "MUTATED_"+input.toString());
+		super(new MutatingInputExecutor(), "MUTATING_"+input.toString());
 		this.input = input;
 	}
 	

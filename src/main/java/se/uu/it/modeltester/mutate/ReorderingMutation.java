@@ -1,6 +1,7 @@
 package se.uu.it.modeltester.mutate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
@@ -49,6 +50,10 @@ public class ReorderingMutation implements Mutation<FragmentationResult>{
 	@Override
 	public MutationType getType() {
 		return MutationType.FRAGMENT_REORDERING;
+	}
+	
+	public String toString() {
+		return "ReorderingMutation(" + Arrays.asList(mapping) + ")";
 	}
 	
 }

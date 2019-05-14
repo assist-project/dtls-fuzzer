@@ -30,5 +30,9 @@ public class SplittingMutation implements Mutation<FragmentationResult>{
 	public MutationType getType() {
 		return MutationType.MESSAGE_SPLITTING;
 	}
+	
+	public String toString() {
+		return "SplittingMutation(" + fragmentation.toString()+")"; 
+	}
 
 }
