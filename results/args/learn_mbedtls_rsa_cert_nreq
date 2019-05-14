@@ -1,0 +1,20 @@
+-protocol 
+DTLS12 
+-connect 
+localhost:60000 
+-alphabet 
+../examples/alphabets/rsa_cert.xml 
+-runWait 
+100 
+-timeout  
+50 
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithm 
+RANDOM_WP_METHOD
+-output
+mbedtls_rsa_cert_nreq
+-cmd 
+"/home/pfg666/Modules/mbedtls-2.16.1/programs/ssl/ssl_server2 dtls=1 psk=1234 mtu=5000 key_file=/home/pfg666/Keys/RSA2048/server-key.pem crt_file=/home/pfg666/Keys/RSA2048/server-cert.pem server_port=60000 exchanges=100 hs_timeout=20000-120000 ca_file=/home/pfg666/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa1024_cert.pem auth_mode=optional"

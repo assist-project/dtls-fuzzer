@@ -1,0 +1,18 @@
+-connect 
+localhost:50001
+-runWait 
+100
+-alphabet
+../examples/alphabets/psk8.xml
+-timeout  
+10  
+-randLength
+10
+-queries
+20000
+-protocol 
+DTLS12 
+-output 
+tinydtls_psk_fast
+-cmd 
+"/home/pfg666/GitHub/tinydtls/tests/dtls-server -p 50001"
