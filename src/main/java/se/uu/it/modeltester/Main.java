@@ -21,6 +21,7 @@ public class Main {
         Security.addProvider(new BouncyCastleProvider());
         ModelBasedTesterConfig config = new ModelBasedTesterConfig(new GeneralDelegate());
         JCommander commander = new JCommander(config);
+        commander.setAllowParameterOverwriting(true);
         try {
             commander.parse(args);
             if (config.getGeneralDelegate().isHelp()) {

@@ -1,17 +1,23 @@
-package se.uu.it.modeltester.mutate;
+package se.uu.it.modeltester.mutate.fragment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
+import se.uu.it.modeltester.mutate.Mutation;
+import se.uu.it.modeltester.mutate.MutationType;
 
-public class MappingFragmentationMutation implements Mutation<FragmentationResult>{
+/**
+ * Mutates the fragmentation result by re-ordering fragments according to the given mapping.
+ */
+public class ReorderingMutation implements Mutation<FragmentationResult>{
 	
 	private Integer [] mapping;
 	
-	public MappingFragmentationMutation(Integer [] mapping) {
+	public ReorderingMutation(Integer [] mapping) {
 		this.mapping = mapping;
 	}
 	
@@ -42,6 +48,14 @@ public class MappingFragmentationMutation implements Mutation<FragmentationResul
 		
 		return new FragmentationResult(result.getMessage(), fragments);
 	}
-	
 
+	@Override
+	public MutationType getType() {
+		return MutationType.FRAGMENT_REORDERING;
+	}
+	
+	public String toString() {
+		return "ReorderingMutation(" + Arrays.asList(mapping) + ")";
+	}
+	
 }

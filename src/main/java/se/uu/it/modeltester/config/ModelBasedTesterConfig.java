@@ -32,29 +32,6 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
     		+ "The name can be changed by setting the 'name' attribute" )
 	private String alphabet = null;
 	
-	@Parameter(names = "-trace", required = false, description = "Debug option, runs the inputs in the given file and exits. ")
-    private String trace = null;
-	
-	@Parameter(names = "-times", required = false, description = "The number of times the inputs should be run")
-    private Integer times = 1;
-
-
-	public Integer getTimes() {
-		return times;
-	}
-
-	public void setTimes(Integer times) {
-		this.times = times;
-	}
-
-	public String getTrace() {
-		return trace;
-	}
-
-	public void setTrace(String trace) {
-		this.trace = trace;
-	}
-
 	@Parameter(names = "-output", required = false, description = "The folder in which results should be saved")
     private String output = "output";
 	
@@ -70,12 +47,20 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
 	
 	@ParametersDelegate 
 	private LearningConfig learningConfig;
+	
+	@ParametersDelegate
+	private TestingConfig testingConfig;
+	
+	@ParametersDelegate
+	private TestRunnerConfig traceRunnerConfig;
     
     public ModelBasedTesterConfig(GeneralDelegate delegate) {
         super(delegate);
         sulDelegate = new SulDelegate();
         addDelegate(sulDelegate);
         learningConfig = new LearningConfig();
+        testingConfig = new TestingConfig(); 
+        traceRunnerConfig = new TestRunnerConfig();
     }
 
     public SulDelegate getSulDelegate() {
@@ -84,6 +69,14 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
     
     public LearningConfig getLearningConfig() {
     	return learningConfig;
+    }
+    
+    public TestingConfig getTestingConfig() {
+    	return testingConfig;
+    }
+    
+    public TestRunnerConfig getTraceRunnerConfig() {
+    	return traceRunnerConfig;
     }
     
     public String getSpecification() {

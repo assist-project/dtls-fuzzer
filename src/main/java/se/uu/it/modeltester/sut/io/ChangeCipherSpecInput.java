@@ -5,7 +5,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.modeltester.execute.BasicInputExecutor;
 
-public class ChangeCipherSpecInput extends TlsInput {
+public class ChangeCipherSpecInput extends NamedTlsInput {
 	
 	public ChangeCipherSpecInput() {
 		super(new BasicInputExecutor(), new ChangeCipherSpecMessage().toCompactString() );

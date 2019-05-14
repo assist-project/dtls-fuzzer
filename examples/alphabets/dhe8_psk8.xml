@@ -1,9 +1,13 @@
-<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes. 
-client authentication.-->
+<!-- DTLS alphabet comprising the messages necessary to perform PSK and ECDHE handshakes 
+using CCM_8 ciphersuites. -->
 <alphabet>
-    <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
-    <GenericTlsInput name="RSA_CLIENT_KEY_EXCHANGE">
-        <RSAClientKeyExchange/>
+    <ClientHelloInput suite="TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8" name="DHE_CLIENT_HELLO"/>
+    <GenericTlsInput name="DH_CLIENT_KEY_EXCHANGE">
+        <DHClientKeyExchange/>
+    </GenericTlsInput>
+    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_CLIENT_HELLO"/>
+    <GenericTlsInput name="PSK_CLIENT_KEY_EXCHANGE">
+        <PskClientKeyExchange/>
     </GenericTlsInput>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED"/>
@@ -16,6 +20,18 @@ client authentication.-->
                 </byteArrayExplicitValueModification>
             </data>
         </Application>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE">
+        <Certificate/>
+    </GenericTlsInput>
+    <GenericTlsInput name="EMPTY_CERTIFICATE">
+        <Certificate>
+            <certificatesList>
+            </certificatesList>
+        </Certificate>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE_VERIFY">
+        <CertificateVerify/>
     </GenericTlsInput>
     <!-- Alert(WARNING,CLOSE_NOTIFY) -->
     <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">

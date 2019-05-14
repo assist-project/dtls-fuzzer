@@ -1,8 +1,6 @@
 package se.uu.it.modeltester;
 
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +38,7 @@ public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput>{
 //				Arrays.stream(output.split(","))
 //				.map(o -> o.trim())
 //				.toArray(String []::new);
-		// TODO This is a quick hack, we don't split the string because it can get messy with some outputs which already contain comas
+		// TODO This is a quick hack, we don't split the string because it can get messy with some outputs which already contain commas
 		// the best solution here would be to store actual messages in the output or message classes.
 		
 		return new TlsOutput(new String [] {output.trim()});

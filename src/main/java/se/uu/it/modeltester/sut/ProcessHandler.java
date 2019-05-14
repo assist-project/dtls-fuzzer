@@ -30,8 +30,8 @@ public class ProcessHandler {
 		// '+' after \\s takes care of multiple consecutive spaces so that they don't result in empty arguments
 		pb = new ProcessBuilder(command.split("\\s+"));
 		this.runWait = runWait;
-//		output = System.out;
-//		error = System.err;
+		output = System.out;
+		error = System.err;
 	}
 	
 	public ProcessHandler(SulDelegate sulConfig) {

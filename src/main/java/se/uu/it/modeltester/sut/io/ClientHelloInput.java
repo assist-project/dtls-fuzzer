@@ -10,7 +10,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.modeltester.execute.BasicInputExecutor;
 
-public class ClientHelloInput extends TlsInput{
+public class ClientHelloInput extends NamedTlsInput{
 
 	@XmlAttribute(name = "suite", required = true)
 	private CipherSuite suite;

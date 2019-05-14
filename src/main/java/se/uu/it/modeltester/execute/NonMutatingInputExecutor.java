@@ -1,6 +1,6 @@
 package se.uu.it.modeltester.execute;
 
-import se.uu.it.modeltester.mutate.Mutator;
+import java.util.Collections;
 
 /**
  * Builds on the MutatingInputExecutor, but applies no mutation.
@@ -8,7 +8,8 @@ import se.uu.it.modeltester.mutate.Mutator;
  */
 public final class NonMutatingInputExecutor extends MutatingInputExecutor{
 
-	public final <M extends Mutator<?>> boolean addMutator(M mutator) {
-		return false;
+	public NonMutatingInputExecutor() {
+		super(Collections.emptyList());
 	}
+
 }

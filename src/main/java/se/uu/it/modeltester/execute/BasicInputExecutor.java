@@ -14,7 +14,7 @@ import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
  * An input executor which sends messages by calling the sendMessages functionality on 
  * the SendMessageHelper. 
  */
-public class BasicInputExecutor extends InputExecutor {
+public class BasicInputExecutor extends AbstractInputExecutor {
 	
     protected void sendMessage(ProtocolMessage message, State state) {
     	Record record = new Record();
