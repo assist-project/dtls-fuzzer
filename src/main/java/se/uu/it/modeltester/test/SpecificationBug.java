@@ -9,7 +9,17 @@ public class SpecificationBug extends Bug{
 	private Object state;
 
 	public SpecificationBug(Object state, Word<TlsInput> accessSequence, Word<TlsInput> inputs, Word<TlsOutput> expected, Word<TlsOutput> actual) {
-		super(BugType.SPECIFICATION, inputs, expected, actual);
+		super(inputs, expected, actual);
 		this.state = state;
+	}
+
+	@Override
+	public Word<TlsInput> getReproducibleTest() {
+		return this.getInputs();
+	}
+
+	@Override
+	public BugType getType() {
+		return BugType.SPECIFICATION;
 	} 
 }

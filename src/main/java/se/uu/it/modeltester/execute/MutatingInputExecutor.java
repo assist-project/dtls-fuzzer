@@ -1,6 +1,5 @@
 package se.uu.it.modeltester.execute;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -109,7 +108,7 @@ public class MutatingInputExecutor extends ConcreteInputExecutor {
 	public String getCompactMutatorDescription() {
 		return mutators.values().stream()
 				.flatMap(l -> l.stream()).map(m -> m.toString())
-				.reduce((s1,s2) -> s1 + "_" + s2).get();
+				.reduce((s1,s2) -> s1 + "_" + s2).orElse("");
 	}
 	
 	static class MutatorApplicationResult<R> {

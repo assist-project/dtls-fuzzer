@@ -43,4 +43,9 @@ public class ClientHelloInput extends NamedTlsInput{
 		return message;
 	}
 
+	@Override
+	public TlsInputType getInputType() {
+		return TlsInputType.HANDSHAKE;
+	}
+
 }

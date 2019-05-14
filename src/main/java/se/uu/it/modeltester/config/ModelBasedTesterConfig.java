@@ -35,13 +35,6 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
 	@Parameter(names = "-output", required = false, description = "The folder in which results should be saved")
     private String output = "output";
 	
-	@Parameter(names = "-bound", required = false, description = "An optional bound on the total number of tests")
-    private Integer bound = null;
-	
-	@Parameter(names = "-exhaustive", required = false, arity=0, description = "If provided, testing a state is performed for all suffixes, "
-			+ "and is not stopped once non-conformance is detected in a suffix")
-	private Boolean exhaustive = Boolean.FALSE;
-	
 	@ParametersDelegate
     private SulDelegate sulDelegate;
 	
@@ -86,14 +79,6 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
     
     public String getOutput() {
     	return output;
-    }
-    
-    public Integer getBound() {
-    	return bound;
-    }
-    
-    public Boolean isExhaustive() {
-    	return exhaustive;
     }
 
 	public String getAlphabet() {

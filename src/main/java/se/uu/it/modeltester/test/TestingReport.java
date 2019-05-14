@@ -34,7 +34,7 @@ public class TestingReport {
 //		PrintWriter pw = new PrintWriter(writer);
 		ps.println("Testing Report");
 		ps.println("");
-		for (Object bug : reportedBugs) {
+		for (Bug bug : reportedBugs) {
 			ps.println(bug);
 		}
 	}

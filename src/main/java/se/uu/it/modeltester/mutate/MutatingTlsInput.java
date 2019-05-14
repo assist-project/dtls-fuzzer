@@ -6,6 +6,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.modeltester.execute.MutatingInputExecutor;
 import se.uu.it.modeltester.sut.io.TlsInput;
+import se.uu.it.modeltester.sut.io.TlsInputType;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
 public class MutatingTlsInput extends TlsInput{
@@ -16,14 +17,14 @@ public class MutatingTlsInput extends TlsInput{
 		super(new MutatingInputExecutor(mutators));
 		this.input = input;
 	}
-	
+
 	@Override
 	public ProtocolMessage generateMessage(State state) {
 		return input.generateMessage(state);
 	}
 	
 	public String toString() {
-		return "MUTATING_" + input.toString() + "_" + ((MutatingInputExecutor) super.getExecutor()).getCompactMutatorDescription();
+		return "MUTATING_" + input.toString() + "_" + getExecutorAsMutating().getCompactMutatorDescription();
 	}
 	
 	public void preUpdate(State state) {
@@ -34,8 +35,16 @@ public class MutatingTlsInput extends TlsInput{
 		input.postUpdate(output, state);
 	}
 	
+	public MutatingInputExecutor getExecutorAsMutating() {
+		return ((MutatingInputExecutor) super.getExecutor());
+	}
 	
 	public TlsInput getInput() {
 		return input;
+	}
+	
+	@Override
+	public TlsInputType getInputType() {
+		return input.getInputType();
 	}
 }

@@ -25,7 +25,7 @@ public class FragmentationGeneratorFactory {
 				throw new RuntimeException("Invalid number of fragments");
 			} else {
 				List<Fragment> fragments = new ArrayList<Fragment>();
-				int step = Math.max((int)Math.ceil(length/numFragments), 1);
+				int step = Math.max((int)Math.ceil(((double)length/numFragments)), 1);
 				
 		    	for (int i=0; i<length; i+=step) {
 		    		int fragLen = i+step > length ? length-i : step;
@@ -64,5 +64,11 @@ public class FragmentationGeneratorFactory {
 			return new Fragmentation(fragments);
 		}
 		
+	}
+	
+	public static void main(String args[]) {
+		FragmentationGenerator generator = FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN);
+		Fragmentation frag = generator.generateFragmentation(2, 135);
+		System.out.println(frag);
 	}
 }

@@ -24,6 +24,8 @@ public class MutatedInputExecutor extends AbstractInputExecutor{
 	
 	public MutatedInputExecutor(List<Mutation<?>> mutations) {
 		// TODO bad design, we should at least make Mutated and Mutating Input Executor implementations be consistent
+		fragmentationMutations = new LinkedList<>();
+		packingMutations = new LinkedList<>();
 		for (Mutation<?> mutation : mutations) {
 			switch(mutation.getType()) {
 			case FRAGMENT_REORDERING:
@@ -72,7 +74,6 @@ public class MutatedInputExecutor extends AbstractInputExecutor{
 	public String getCompactMutationDescription() {
 		return Stream.concat(fragmentationMutations.stream(), packingMutations.stream())
 				.map(m -> m.toString())
-				.reduce((s1,s2) -> s1 + "_" + s2).get();
+				.reduce((s1,s2) -> s1 + "_" + s2).orElse("");
 	}
-
 }

@@ -23,4 +23,9 @@ public class FinishedInput extends NamedTlsInput{
 		// we have to make this change for learning to scale
 		state.getTlsContext().setDtlsNextSendSequenceNumber(state.getTlsContext().getDtlsCurrentSendSequenceNumber() + 1);
 	}
+
+	@Override
+	public TlsInputType getInputType() {
+		return TlsInputType.HANDSHAKE;
+	}
 }

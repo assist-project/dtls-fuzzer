@@ -31,7 +31,7 @@ public class Diagnoser {
 		List<FragmentationBug> fragBugs = report.getBugs(FragmentationBug.class);
 		Alphabet<TlsInput> alphabet = task.getSpecification().getInputAlphabet();
 		for (TlsInput input : alphabet) {
-			Stream<FragmentationBug> bugStream = fragBugs.stream().filter(bug -> bug.getFragmentedInput().getInput().equals(input));
+			Stream<FragmentationBug> bugStream = fragBugs.stream().filter(bug -> bug.getFragmentingInput().getInput().equals(input));
 			List<FastMealyState<TlsOutput>> unsupportedStates = bugStream.map(s -> s.getState()).distinct().collect(Collectors.toList());
 			if (unsupportedStates.size() / task.getSpecification().getStates().size() >= config.getUnsupportedStateRatio()) {
 				

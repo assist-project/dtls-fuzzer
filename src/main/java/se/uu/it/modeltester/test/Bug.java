@@ -5,21 +5,24 @@ import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
 public abstract class Bug extends AutoLoggable{
-	private final BugType type;
+	private static int idCount = 1;
+	private int bugId;
 	private Word<TlsInput> inputs;
 	private Word<TlsOutput> expected;
 	private Word<TlsOutput> actual;
 	
-	public Bug(BugType type, Word<TlsInput> inputs, Word<TlsOutput> expected, Word<TlsOutput> actual) {
+	public Bug(Word<TlsInput> inputs, Word<TlsOutput> expected, Word<TlsOutput> actual) {
+		this.bugId = idCount++;
 		this.inputs = inputs;
 		this.expected = expected;
 		this.actual = actual;
-		this.type = type;
 	}
 	
 	public Word<TlsInput> getInputs() {
 		return inputs;
 	}
+	
+	public abstract Word<TlsInput> getReproducibleTest();
 
 	public Word<TlsOutput> getExpected() {
 		return expected;
@@ -29,10 +32,11 @@ public abstract class Bug extends AutoLoggable{
 		return actual;
 	}
 
-	public BugType getType() {
-		return type;
-	}
+	public abstract BugType getType();
 	
+	public int getBugId() {
+		return bugId;
+	}
 	
 	public void minimize() {
 		Word<TlsOutput> commonPrefix = expected.longestCommonPrefix(actual);

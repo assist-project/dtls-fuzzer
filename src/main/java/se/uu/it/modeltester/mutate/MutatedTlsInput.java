@@ -6,6 +6,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.modeltester.execute.MutatedInputExecutor;
 import se.uu.it.modeltester.sut.io.TlsInput;
+import se.uu.it.modeltester.sut.io.TlsInputType;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
 public class MutatedTlsInput extends TlsInput {
@@ -40,6 +41,11 @@ public class MutatedTlsInput extends TlsInput {
 	
 	public TlsInput getInput() {
 		return input;
+	}
+
+	@Override
+	public TlsInputType getInputType() {
+		return input.getInputType();
 	}
 
 }

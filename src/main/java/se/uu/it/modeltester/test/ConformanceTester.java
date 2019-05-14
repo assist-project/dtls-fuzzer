@@ -17,12 +17,13 @@ import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
 import se.uu.it.modeltester.ConformanceTestingTask;
 import se.uu.it.modeltester.config.TestingConfig;
-import se.uu.it.modeltester.mutate.MutatingTlsInput;
-import se.uu.it.modeltester.mutate.Mutator;
+import se.uu.it.modeltester.mutate.FragmentationMutator;
+import se.uu.it.modeltester.mutate.FragmentingTlsInput;
 import se.uu.it.modeltester.mutate.fragment.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.fragment.RandomSwapMutator;
 import se.uu.it.modeltester.mutate.fragment.SplittingMutator;
 import se.uu.it.modeltester.sut.io.TlsInput;
+import se.uu.it.modeltester.sut.io.TlsInputType;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
 public class ConformanceTester {
@@ -81,19 +82,20 @@ public class ConformanceTester {
 					
 					boolean bugsFound = false;
 					
+					if (input.getInputType() == TlsInputType.HANDSHAKE) {
 					for (boolean doShuffling : Arrays.asList(false, true)) { 
 						for (FragmentationStrategy strategy : new FragmentationStrategy [] {FragmentationStrategy.EVEN, FragmentationStrategy.RANDOM}) {
 							for (int numFrags=initNumFrag; numFrags<maxNumFrags; numFrags ++) {
-								TlsInput fuzzedInput = fragment(input, numFrags, strategy, doShuffling);
+								FragmentingTlsInput fragmentingInput = fragment(input, numFrags, strategy, doShuffling);
 								Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
 										.append(statePrefix)
-										.append(fuzzedInput)
+										.append(fragmentingInput)
 										.append(suffix)
 										.toWord();
 								Word<TlsOutput> fuzzedOutput = tlsOracle.answerQuery(fuzzedWord);
 								
 								if (!fuzzedOutput.equals(regularOutput)) {
-									FragmentationBug bug = new FragmentationBug(state, statePrefix, fuzzedWord, regularOutput, fuzzedOutput);
+									FragmentationBug bug = new FragmentationBug(state, statePrefix, fragmentingInput, suffix, regularOutput, fuzzedOutput);
 									report.addBug(bug);
 									bugsFound = true;
 									break;
@@ -110,14 +112,15 @@ public class ConformanceTester {
 						break;
 					}
 				}
+					}
 			}
 		}
 		
 		return report;
 	}
 	
-	private static TlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean doShuffling) {
-		List<Mutator<?>> mutators = new ArrayList<>();
+	private static FragmentingTlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean doShuffling) {
+		List<FragmentationMutator> mutators = new ArrayList<>();
 		if (frags > 1) {
 			SplittingMutator fragmentationMutator = new SplittingMutator(strategy, frags);
 			mutators.add(fragmentationMutator);
@@ -125,6 +128,6 @@ public class ConformanceTester {
 		if (doShuffling) {
 			mutators.add(new RandomSwapMutator(0));
 		}
-		return new MutatingTlsInput(input, mutators);
+		return new FragmentingTlsInput(input, mutators);
 	}
 }

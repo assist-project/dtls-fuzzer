@@ -22,4 +22,9 @@ public class ChangeCipherSpecInput extends NamedTlsInput {
 	    state.getTlsContext().setWriteSequenceNumber(0);
 	}
 
+	@Override
+	public TlsInputType getInputType() {
+		return TlsInputType.CCS;
+	}
+
 }

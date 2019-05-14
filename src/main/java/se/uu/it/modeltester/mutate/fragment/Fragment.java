@@ -18,6 +18,6 @@ public class Fragment {
 	}
 	
 	public String toString() {
-		return "F[" + offset + "," + length + ">";
+		return "F<" + offset + "," + length + ">";
 	}
 }

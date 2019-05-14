@@ -47,4 +47,9 @@ public abstract class TlsInput {
 	 * Generates an input string which is assumed to uniquely identify the input.
 	 */
 	public abstract String toString();
+	
+	/**
+	 * The type of the input should correspond to the type of the message the input generates.
+	 */
+	public abstract TlsInputType getInputType();
 }
