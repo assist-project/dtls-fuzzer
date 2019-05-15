@@ -36,7 +36,7 @@ public class FragmentationBug extends Bug{
 	/*
 	 * A reproducible test will expose the fragmentation mutations that were generated while executing the input.
 	 */
-	public Word<TlsInput> getReproducibleTest() {
+	public Word<TlsInput> getReproducingTest() {
 		return accessSequence.append(fragmentedInput).concat(getInputs().suffix(getInputs().length() - accessSequence.length() - 1));
 	}
 	

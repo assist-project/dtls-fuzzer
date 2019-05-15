@@ -26,7 +26,7 @@ public class TestRunner {
 		this.sulOracle = sutOracle;
 	}
 	
-	public TestRunnerResult runTrace() throws IOException {
+	public TestRunnerResult runTest() throws IOException {
 		TestParser testParser = new TestParser();
 		Word<TlsInput> test = testParser.readTest(alphabet, config.getTest());
 		

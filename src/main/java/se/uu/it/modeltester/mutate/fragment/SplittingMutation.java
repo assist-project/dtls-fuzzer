@@ -16,10 +16,14 @@ public class SplittingMutation implements Mutation<FragmentationResult>{
 	
 	private Fragmentation fragmentation;
 	private transient HandshakeMessageFragmenter dtlsMessageFragmenter;
+	
+	private SplittingMutation() {
+		this.dtlsMessageFragmenter = new HandshakeMessageFragmenter();
+	}
 
 	public SplittingMutation(Fragmentation fragmentation) {
+		this();
 		this.fragmentation = fragmentation;
-		this.dtlsMessageFragmenter = new HandshakeMessageFragmenter();
 	}
 
 	@Override

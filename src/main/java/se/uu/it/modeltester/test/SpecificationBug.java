@@ -14,7 +14,7 @@ public class SpecificationBug extends Bug{
 	}
 
 	@Override
-	public Word<TlsInput> getReproducibleTest() {
+	public Word<TlsInput> getReproducingTest() {
 		return this.getInputs();
 	}
 

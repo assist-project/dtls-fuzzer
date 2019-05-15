@@ -42,9 +42,7 @@ public class TestParser {
 		file.createNewFile();
 		try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
 			for (TlsInput input : test) {
-				if (input instanceof NamedTlsInput)
-					pw.println(((NamedTlsInput) input).getName());
-				else if (input instanceof MutatedTlsInput) {
+				if (input instanceof MutatedTlsInput) {
 					StringBuilder builder = new StringBuilder();
 					TlsInput originalInput = ((MutatedTlsInput)input).getInput();
 					List<Mutation<?>> mutations = ((MutatedTlsInput)input).getMutations();
@@ -54,6 +52,9 @@ public class TestParser {
 					.append("@")
 					.append(originalInput.toString())
 					.append(jsonMutations);
+					pw.println(builder.toString());
+				} else {
+					pw.println(input.toString());
 				}
 			}
 		} 
@@ -72,7 +73,7 @@ public class TestParser {
 				}
 				String mutationsJsonString = inputString.substring(inputString.indexOf("["), inputString.length());
 				Mutation<?> [] mutations = JsonMutationParser.getInstance().deserialize(mutationsJsonString);
-				MutatedTlsInput mutatedInput = new MutatedTlsInput(inputs.get(inputString), Arrays.asList(mutations));
+				MutatedTlsInput mutatedInput = new MutatedTlsInput(inputs.get(mutatedInputString), Arrays.asList(mutations));
 				inputWord = inputWord.append(mutatedInput);
 			} else {
 				if (!inputs.containsKey(inputString)) {

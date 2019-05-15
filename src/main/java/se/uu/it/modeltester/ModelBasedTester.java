@@ -34,7 +34,6 @@ import se.uu.it.modeltester.test.TestingReport;
 
 public class ModelBasedTester {
 	private static final Logger LOGGER = LogManager.getLogger(ModelBasedTester.class);
-	public static final String TEST_REPORT_FILENAME = "testingReport.txt";
 	
 	private ModelBasedTesterConfig config;
 
@@ -48,8 +47,8 @@ public class ModelBasedTester {
 		File folder = new File(config.getOutput());
 		folder.mkdirs();
 		SULOracle<TlsInput, TlsOutput> sutOracle = createOracle(config);
-		if (config.getTraceRunnerConfig().getTest() != null) {
-			runTrace(config, sutOracle);
+		if (config.getTestRunnerConfig().getTest() != null) {
+			runTest(config, sutOracle);
 			System.exit(0);
 		}
 		if (config.isOnlyLearn()) {
@@ -58,16 +57,15 @@ public class ModelBasedTester {
 		} else {
 			ConformanceTestingTask task = generateModelBasedTestingTask(config);
 			TestingReport report = testModel(config, sutOracle, task);
-			logResult(report, config);
 			return report;
 		}
 	}
 	
 
-	private void runTrace(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException, ParseException {
+	private void runTest(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException, ParseException {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
-		TestRunner runner = new TestRunner(config.getTraceRunnerConfig(), alphabet, sutOracle);
-		TestRunnerResult result = runner.runTrace();
+		TestRunner runner = new TestRunner(config.getTestRunnerConfig(), alphabet, sutOracle);
+		TestRunnerResult result = runner.runTest();
 		if (config.getSpecification() != null) {
 			Definitions definitions = DefinitionsFactory.generateDefinitions(alphabet);
 			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(definitions));
@@ -76,19 +74,6 @@ public class ModelBasedTester {
 			LOGGER.error("Expected output: " + outputWord);
 		}
 	}
-
-
-	private void logResult(TestingReport report, ModelBasedTesterConfig config) throws IOException {
-		if (config.getOutput() == null) {
-			report.printReport(System.out);
-		} else {
-			File testReport = Paths.get(config.getOutput(), TEST_REPORT_FILENAME).toFile();
-			testReport.createNewFile();
-			PrintStream ps = new PrintStream(new FileOutputStream(testReport));
-			report.printReport(ps);
-		}
-	}
-
 
 	public SULOracle<TlsInput, TlsOutput> createOracle(ModelBasedTesterConfig config) {
 		SUL<TlsInput, TlsOutput> tlsSut = new TlsSUL(config.getSulDelegate());
@@ -130,8 +115,8 @@ public class ModelBasedTester {
 		return result;
 	}
 	
-	private TestingReport testModel(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle, ConformanceTestingTask task) {
-		ConformanceTester tester = new ConformanceTester(config.getTestingConfig());
+	private TestingReport testModel(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle, ConformanceTestingTask task) throws IOException {
+		ConformanceTester tester = new ConformanceTester(config);
 		return tester.testModel(sutOracle, task);
 	}
 }

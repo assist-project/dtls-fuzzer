@@ -45,7 +45,7 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
 	private TestingConfig testingConfig;
 	
 	@ParametersDelegate
-	private TestRunnerConfig traceRunnerConfig;
+	private TestRunnerConfig testRunnerConfig;
     
     public ModelBasedTesterConfig(GeneralDelegate delegate) {
         super(delegate);
@@ -53,7 +53,7 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
         addDelegate(sulDelegate);
         learningConfig = new LearningConfig();
         testingConfig = new TestingConfig(); 
-        traceRunnerConfig = new TestRunnerConfig();
+        testRunnerConfig = new TestRunnerConfig();
     }
 
     public SulDelegate getSulDelegate() {
@@ -68,8 +68,8 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig{
     	return testingConfig;
     }
     
-    public TestRunnerConfig getTraceRunnerConfig() {
-    	return traceRunnerConfig;
+    public TestRunnerConfig getTestRunnerConfig() {
+    	return testRunnerConfig;
     }
     
     public String getSpecification() {

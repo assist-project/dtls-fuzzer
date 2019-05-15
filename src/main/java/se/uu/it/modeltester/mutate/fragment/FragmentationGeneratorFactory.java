@@ -65,10 +65,4 @@ public class FragmentationGeneratorFactory {
 		}
 		
 	}
-	
-	public static void main(String args[]) {
-		FragmentationGenerator generator = FragmentationGeneratorFactory.buildGenerator(FragmentationStrategy.EVEN);
-		Fragmentation frag = generator.generateFragmentation(2, 135);
-		System.out.println(frag);
-	}
 }

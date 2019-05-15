@@ -22,7 +22,7 @@ public abstract class Bug extends AutoLoggable{
 		return inputs;
 	}
 	
-	public abstract Word<TlsInput> getReproducibleTest();
+	public abstract Word<TlsInput> getReproducingTest();
 
 	public Word<TlsOutput> getExpected() {
 		return expected;
