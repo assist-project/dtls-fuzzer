@@ -12,12 +12,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.TypeAdapter;
 
 import se.uu.it.modeltester.mutate.fragment.ReorderingMutation;
 import se.uu.it.modeltester.mutate.fragment.SplittingMutation;
 
 /**
- * A class for parsing mutations from Json strings/serialiazing them to Json strings.
+ * A class for parsing mutations from Json strings/serializing them to Json strings.
  */
 public class JsonMutationParser {
 	
@@ -59,33 +60,13 @@ public class JsonMutationParser {
 				throws JsonParseException {
 			JsonObject jsonObject = json.getAsJsonObject();
 			MutationType mType = MutationType.valueOf(jsonObject.get(TYPE_FIELD).getAsString());
-			switch(mType) {
-			case FRAGMENT_REORDERING:
-				return context.deserialize(jsonObject, ReorderingMutation.class);
-			case MESSAGE_SPLITTING:
-				return context.deserialize(jsonObject, SplittingMutation.class);
-			default:
-				return null;
-			}
+			return context.deserialize(jsonObject, mType.getMutationClass());
 		}
 		
 		@Override
 		public JsonElement serialize(Mutation<?> src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonElement element;
-			switch(src.getType()) {
-			case FRAGMENT_REORDERING:
-				element = context.serialize(src, ReorderingMutation.class);
-				break;
-			case MESSAGE_SPLITTING:
-				element = context.serialize(src, SplittingMutation.class);
-				break;
-			default:
-				element = JsonNull.INSTANCE;
-				break;
-			}
-			if (element != JsonNull.INSTANCE) {
-				element.getAsJsonObject().addProperty(TYPE_FIELD, src.getType().name());
-			}
+			element = context.serialize(src, src.getType().getClass());
 			return element;
 		}
 	} 

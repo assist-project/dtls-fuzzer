@@ -88,6 +88,10 @@ public class ProcessHandler {
 		}
 	}
 	
+	public boolean isAlive() {
+		return currentProcess != null && currentProcess.isAlive();
+	}
+	
 	private void inheritIO(final InputStream src, final PrintStream dest) {
 	    new Thread(new Runnable() {
 	        public void run() {

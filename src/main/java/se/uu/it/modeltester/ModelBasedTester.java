@@ -23,6 +23,7 @@ import se.uu.it.modeltester.learn.Extractor;
 import se.uu.it.modeltester.learn.Extractor.ExtractorResult;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
+import se.uu.it.modeltester.sut.TlsProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
 import se.uu.it.modeltester.sut.io.AlphabetFactory;
 import se.uu.it.modeltester.sut.io.TlsInput;
@@ -30,7 +31,7 @@ import se.uu.it.modeltester.sut.io.TlsOutput;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
 import se.uu.it.modeltester.sut.io.definitions.DefinitionsFactory;
 import se.uu.it.modeltester.test.ConformanceTester;
-import se.uu.it.modeltester.test.TestingReport;
+import se.uu.it.modeltester.test.TestReport;
 
 public class ModelBasedTester {
 	private static final Logger LOGGER = LogManager.getLogger(ModelBasedTester.class);
@@ -42,7 +43,7 @@ public class ModelBasedTester {
 	}
 	
 
-	public TestingReport startTesting() throws ParseException, IOException {
+	public TestReport startTesting() throws ParseException, IOException {
 		// setting up our output directory
 		File folder = new File(config.getOutput());
 		folder.mkdirs();
@@ -56,7 +57,7 @@ public class ModelBasedTester {
 			return null;
 		} else {
 			ConformanceTestingTask task = generateModelBasedTestingTask(config);
-			TestingReport report = testModel(config, sutOracle, task);
+			TestReport report = testModel(config, sutOracle, task);
 			return report;
 		}
 	}
@@ -78,7 +79,8 @@ public class ModelBasedTester {
 	public SULOracle<TlsInput, TlsOutput> createOracle(ModelBasedTesterConfig config) {
 		SUL<TlsInput, TlsOutput> tlsSut = new TlsSUL(config.getSulDelegate());
 		if (config.getSulDelegate().getCommand() != null) {
-			tlsSut = new SulProcessWrapper<>(tlsSut, 
+			
+			tlsSut = new TlsProcessWrapper(tlsSut, 
 					new ProcessHandler(config.getSulDelegate().getCommand(), 
 							config.getSulDelegate().getRunWait()));
 		}
@@ -115,7 +117,7 @@ public class ModelBasedTester {
 		return result;
 	}
 	
-	private TestingReport testModel(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle, ConformanceTestingTask task) throws IOException {
+	private TestReport testModel(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle, ConformanceTestingTask task) throws IOException {
 		ConformanceTester tester = new ConformanceTester(config);
 		return tester.testModel(sutOracle, task);
 	}

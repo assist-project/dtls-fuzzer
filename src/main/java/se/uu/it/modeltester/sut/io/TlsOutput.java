@@ -14,6 +14,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
  */
 public class TlsOutput {
 	private List<String> messageStrings;
+	private boolean isAlive = true;
 
 	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(new ArrayList<>());
 	
@@ -41,21 +42,34 @@ public class TlsOutput {
 				.stream()
 				.reduce((s1,s2) -> s1+","+s2)
 				.orElse("TIMEOUT");
+
+		if (!isAlive) {
+			messageString = messageString.concat("[crashed]");
+		}
 		return messageString;
+	}
+	
+	public void setIsAlive(boolean isAlive) {
+		this.isAlive = isAlive;
+	}
+	
+	public boolean isAlive() {
+		return isAlive;
 	}
 	
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			TlsOutput that = (TlsOutput) obj;
 			// TODO not the proper way of comparing outputs but whatever
-			return Objects.equals(this.toString(), that.toString());
+			return Objects.equals(this.toString(), that.toString()) 
+					&& Objects.equals(this.isAlive, that.isAlive);
 		}
 		return false;
 	}
 	
 
 	public int hashCode() {
-		int hashCode = toString().hashCode();
+		int hashCode = 2*toString().hashCode() + (isAlive?1:0);
 		return hashCode;
 	}
 	

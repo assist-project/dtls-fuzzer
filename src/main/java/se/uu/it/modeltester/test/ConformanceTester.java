@@ -7,9 +7,7 @@ import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +27,7 @@ import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.config.TestingConfig;
 import se.uu.it.modeltester.mutate.FragmentationMutator;
 import se.uu.it.modeltester.mutate.FragmentingTlsInput;
+import se.uu.it.modeltester.mutate.fragment.EmptyFragmentAdditionMutator;
 import se.uu.it.modeltester.mutate.fragment.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.fragment.RandomSwapMutator;
 import se.uu.it.modeltester.mutate.fragment.SplittingMutator;
@@ -38,7 +37,7 @@ import se.uu.it.modeltester.sut.io.TlsOutput;
 
 public class ConformanceTester {
 	private static final Logger LOGGER = LogManager.getLogger(ConformanceTester.class);
-	public static final String TEST_REPORT_FILENAME = "testingReport.txt";
+	public static final String TEST_REPORT_FILENAME = "testReport.txt";
 	public static final String TESTS_DIRNAME = "tests";
 	
 	private TestingConfig config;
@@ -55,15 +54,16 @@ public class ConformanceTester {
 	 * on the SUT.  
 	 * @throws IOException 
 	 */
-	public TestingReport testModel(SULOracle<TlsInput, TlsOutput> tlsOracle, ConformanceTestingTask task) throws IOException {
+	public TestReport testModel(SULOracle<TlsInput, TlsOutput> tlsOracle, ConformanceTestingTask task) throws IOException {
 		LOGGER.info("Starting conformance testing");
-		TestingReport report = doModelBasedTesting(tlsOracle, task);
+		TestReport report = doModelBasedTesting(tlsOracle, task);
 		logResult(report);
 		return report;
 	}
 	
-	private TestingReport doModelBasedTesting(SULOracle<TlsInput, TlsOutput> tlsOracle, final ConformanceTestingTask task) {
-		TestingReport report = new TestingReport();
+	
+	private TestReport doModelBasedTesting(SULOracle<TlsInput, TlsOutput> tlsOracle, final ConformanceTestingTask task) {
+		TestReport report = new TestReport();
 		final MealyCounterOracle<TlsInput,TlsOutput>  testOracle = new CounterOracle.MealyCounterOracle<>(tlsOracle, "tests");
 		FastMealy<TlsInput, TlsOutput> model = task.getSpecification();
 		Alphabet<TlsInput> inputs = task.getAlphabet();
@@ -71,9 +71,6 @@ public class ConformanceTester {
 
 		List<Word<TlsInput>> stateCover = Automata.stateCover(model, inputs);
 
-		int initNumFrag = config.getFromNumFrag();
-		int maxNumFrags = config.getToNumFrag();
-		
 		for (Word<TlsInput> statePrefix : stateCover) {
 			FastMealyState<TlsOutput> state = model.getState(statePrefix);
 			for (TlsInput input : inputs) {
@@ -105,35 +102,26 @@ public class ConformanceTester {
 					boolean bugsFound = false;
 					
 					if (input.getInputType() == TlsInputType.HANDSHAKE) {
-					for (boolean doShuffling : Arrays.asList(false, true)) { 
-						for (FragmentationStrategy strategy : new FragmentationStrategy [] {FragmentationStrategy.EVEN, FragmentationStrategy.RANDOM}) {
-							for (int numFrags=initNumFrag; numFrags<maxNumFrags; numFrags ++) {
-								if ( shouldStop.get() ) {
-									return report;
-								}
-								
-								FragmentingTlsInput fragmentingInput = fragment(input, numFrags, strategy, doShuffling);
-								Word<TlsInput> fuzzedWord = new WordBuilder<TlsInput>()
-										.append(statePrefix)
-										.append(fragmentingInput)
-										.append(suffix)
-										.toWord();
-								Word<TlsOutput> fuzzedOutput = testOracle.answerQuery(fuzzedWord);
-								
-								if (!fuzzedOutput.equals(regularOutput)) {
-									FragmentationBug bug = new FragmentationBug(state, statePrefix, fragmentingInput, suffix, regularOutput, fuzzedOutput);
-									report.addBug(bug);
-									bugsFound = true;
-									break;
-								}
-								
-							}
-							if (bugsFound)
+						List<FragmentingTlsInput> fragmentingInputs = generateFragmentingInputs(input);
+						for (FragmentingTlsInput fragmentingInput : fragmentingInputs) {
+							Word<TlsInput> fragmentingWord = new WordBuilder<TlsInput>()
+									.append(statePrefix)
+									.append(fragmentingInput)
+									.append(suffix)
+									.toWord();
+							Word<TlsOutput> fuzzedOutput = testOracle.answerQuery(fragmentingWord);
+							
+							if (!fuzzedOutput.equals(regularOutput)) {
+								FragmentationBug bug = new FragmentationBug(state, statePrefix, fragmentingInput, suffix, regularOutput, fuzzedOutput);
+								report.addBug(bug);
+								bugsFound = true;
 								break;
+							}
+							
+							if ( shouldStop.get() ) {
+								return report;
+							}
 						}
-						if (bugsFound)
-							break;
-					}
 					
 					if (bugsFound && !config.isExhaustive()) {
 						break;
@@ -146,12 +134,28 @@ public class ConformanceTester {
 		return report;
 	}
 	
+	private List<FragmentingTlsInput> generateFragmentingInputs(TlsInput input) {
+		List<FragmentingTlsInput> fragmentingInputs = new ArrayList<>();
+		for (boolean doShuffling : Arrays.asList(false, true)) 
+			for (boolean addEmpty : Arrays.asList(false, true)) 
+				for (FragmentationStrategy strategy : new FragmentationStrategy [] {FragmentationStrategy.EVEN, FragmentationStrategy.RANDOM}) 
+					for (int numFrags=config.getFromNumFrag(); numFrags<config.getToNumFrag(); numFrags ++) {
+						FragmentingTlsInput fragmentingInput = fragment(input, numFrags, strategy, addEmpty, doShuffling);
+						fragmentingInputs.add(fragmentingInput);
+					} 
+	
+		return fragmentingInputs;
+	}
+	
 
-	private static FragmentingTlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean doShuffling) {
+	private FragmentingTlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean addEmptyFragment, boolean doShuffling) {
 		List<FragmentationMutator> mutators = new ArrayList<>();
 		if (frags > 1) {
 			SplittingMutator fragmentationMutator = new SplittingMutator(strategy, frags);
 			mutators.add(fragmentationMutator);
+		}
+		if (addEmptyFragment) {
+			mutators.add(new EmptyFragmentAdditionMutator(0));
 		}
 		if (doShuffling) {
 			mutators.add(new RandomSwapMutator(0));
@@ -159,7 +163,7 @@ public class ConformanceTester {
 		return new FragmentingTlsInput(input, mutators);
 	}
 	
-	private void logResult(TestingReport report) throws IOException {
+	private void logResult(TestReport report) throws IOException {
 		if (output == null) {
 			report.printReport(System.out);
 		} else {

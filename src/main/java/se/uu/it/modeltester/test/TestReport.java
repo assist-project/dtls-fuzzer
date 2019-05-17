@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class TestingReport {
-	private static final Logger LOG = LogManager.getLogger(TestingReport.class);
+public class TestReport {
+	private static final Logger LOG = LogManager.getLogger(TestReport.class);
 	
 	private List<Bug> reportedBugs;
 	
-	public TestingReport() {
+	public TestReport() {
 		reportedBugs = new LinkedList<>();
 	}
 	

@@ -33,4 +33,8 @@ public class SulProcessWrapper<I,O> implements SUL<I,O> {
 		return sul.step(in);
 	}
 	
+	public boolean isAlive() {
+		return handler.isAlive();
+	}
+	
 }

@@ -27,7 +27,7 @@ public class Diagnoser {
 		this.config = config;
 	}
 	
-	public Diagnosis diagnoze(DiagnosisTask task, TestingReport report) {
+	public Diagnosis diagnoze(DiagnosisTask task, TestReport report) {
 		List<FragmentationBug> fragBugs = report.getBugs(FragmentationBug.class);
 		Alphabet<TlsInput> alphabet = task.getSpecification().getInputAlphabet();
 		for (TlsInput input : alphabet) {
