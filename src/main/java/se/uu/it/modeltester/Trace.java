@@ -21,6 +21,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import net.automatalib.words.Alphabet;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
+import se.uu.it.modeltester.execute.TestingInputExecutor;
 import se.uu.it.modeltester.mutate.MutatingTlsInput;
 import se.uu.it.modeltester.mutate.fragment.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.fragment.SplittingMutator;
@@ -150,7 +151,7 @@ public class Trace {
 	};
 	
 	public static void main(String[] args) throws Exception {
-
+		
 		init();
 		CipherSuite cs = 
 //				CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8;
@@ -181,7 +182,7 @@ public class Trace {
 		modelFuzzConfig.getSulDelegate().setCommand(command);
 
 		// vulnerabilityConfig.getClientDelegate().setHost("192.168.56.101:20001");
-		SUL<TlsInput, TlsOutput> sut = new TlsSUL(modelFuzzConfig.getSulDelegate());
+		SUL<TlsInput, TlsOutput> sut = new TlsSUL(modelFuzzConfig.getSulDelegate(), new TestingInputExecutor());
 		if (command != Command.none) {
 			ProcessHandler phandler = new ProcessHandler(modelFuzzConfig.getSulDelegate());
 			phandler.redirectOutput(System.err);

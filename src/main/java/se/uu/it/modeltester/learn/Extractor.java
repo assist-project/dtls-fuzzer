@@ -21,6 +21,7 @@ import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
+import se.uu.it.modeltester.execute.BasicInputExecutor;
 import se.uu.it.modeltester.sut.NonDeterminismRetryingSUL;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
@@ -65,7 +66,7 @@ public ExtractorResult extractStateMachine() {
 
 	// setting up SUL/T (System Under Learning/Test)
 	SUL<TlsInput, TlsOutput> tlsSystemUnderTest = new TlsSUL(
-			finderConfig.getSulDelegate());
+			finderConfig.getSulDelegate(), new BasicInputExecutor());
 	
 	if (finderConfig.getSulDelegate().getCommand() != null) {
 		tlsSystemUnderTest = new SulProcessWrapper<TlsInput, TlsOutput>(

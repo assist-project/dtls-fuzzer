@@ -16,7 +16,7 @@ import se.uu.it.modeltester.mutate.Mutation;
  * It server as a "replayer" for already generated mutations which produced 
  * interesting results.
  */
-public class MutatedInputExecutor extends ConcreteInputExecutor{
+public class MutatedInputExecutor extends TestingInputExecutor{
 	
 	private List<Mutation<FragmentationResult>> fragmentationMutations;
 	private List<Mutation<PackingResult>> packingMutations;

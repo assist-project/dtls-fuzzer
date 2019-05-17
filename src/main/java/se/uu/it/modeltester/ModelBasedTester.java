@@ -19,6 +19,7 @@ import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
+import se.uu.it.modeltester.execute.TestingInputExecutor;
 import se.uu.it.modeltester.learn.Extractor;
 import se.uu.it.modeltester.learn.Extractor.ExtractorResult;
 import se.uu.it.modeltester.sut.ProcessHandler;
@@ -47,7 +48,7 @@ public class ModelBasedTester {
 		// setting up our output directory
 		File folder = new File(config.getOutput());
 		folder.mkdirs();
-		SULOracle<TlsInput, TlsOutput> sutOracle = createOracle(config);
+		SULOracle<TlsInput, TlsOutput> sutOracle = createTestOracle(config);
 		if (config.getTestRunnerConfig().getTest() != null) {
 			runTest(config, sutOracle);
 			System.exit(0);
@@ -76,8 +77,8 @@ public class ModelBasedTester {
 		}
 	}
 
-	public SULOracle<TlsInput, TlsOutput> createOracle(ModelBasedTesterConfig config) {
-		SUL<TlsInput, TlsOutput> tlsSut = new TlsSUL(config.getSulDelegate());
+	public SULOracle<TlsInput, TlsOutput> createTestOracle(ModelBasedTesterConfig config) {
+		SUL<TlsInput, TlsOutput> tlsSut = new TlsSUL(config.getSulDelegate(), new TestingInputExecutor());
 		if (config.getSulDelegate().getCommand() != null) {
 			
 			tlsSut = new TlsProcessWrapper(tlsSut, 

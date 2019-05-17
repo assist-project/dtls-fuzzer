@@ -48,9 +48,12 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     private int count = 0;
 
     private SulDelegate delegate;
+    
+	private AbstractInputExecutor defaultExecutor;
 
-    public TlsSUL(SulDelegate delegate) {
+    public TlsSUL(SulDelegate delegate, AbstractInputExecutor defaultExecutor) {
         this.delegate = delegate;
+        this.defaultExecutor = defaultExecutor;
     }
     
     @Override
@@ -97,6 +100,9 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     public TlsOutput step(TlsInput in) throws SULException {
     	context.addStepContext();
     	AbstractInputExecutor executor = in.getExecutor();
+    	if (executor == null) {
+    		executor = defaultExecutor;
+    	}
     	TlsOutput output = null;
         try {
             if (state == null) {

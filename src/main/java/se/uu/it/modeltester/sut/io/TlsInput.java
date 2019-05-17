@@ -1,5 +1,6 @@
 package se.uu.it.modeltester.sut.io;
 
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -12,7 +13,7 @@ import se.uu.it.modeltester.execute.AbstractInputExecutor;
 public abstract class TlsInput {
 	
 	@XmlTransient
-	private AbstractInputExecutor inputExecutor;
+	private AbstractInputExecutor inputExecutor = null;
 	
 	protected TlsInput(AbstractInputExecutor executor) {
 		this.inputExecutor = executor;
@@ -20,11 +21,12 @@ public abstract class TlsInput {
 	
 
 	/**
-	 * Gets the executor for this input.
+	 * Returns the preferred executor for this input, or null, if there isn't one.
 	 */
 	public AbstractInputExecutor getExecutor() {
 		return inputExecutor;
 	}
+	
 	
 	/**
 	 * Generates a fresh message and updates the context.

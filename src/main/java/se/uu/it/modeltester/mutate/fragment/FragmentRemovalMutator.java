@@ -11,12 +11,12 @@ import se.uu.it.modeltester.execute.FragmentationResult;
 import se.uu.it.modeltester.mutate.FragmentationMutator;
 import se.uu.it.modeltester.mutate.Mutation;
 
-public class RemovingMutator extends FragmentationMutator {
+public class FragmentRemovalMutator extends FragmentationMutator {
 	
 	private Random rand;
 	private int numFrags;
 
-	public RemovingMutator(int seed, int numFrags) {
+	public FragmentRemovalMutator(int seed, int numFrags) {
 		this.rand = new Random(seed);
 		this.numFrags = numFrags;
 	}

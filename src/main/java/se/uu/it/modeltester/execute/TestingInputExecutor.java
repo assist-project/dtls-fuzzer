@@ -11,13 +11,13 @@ import de.rub.nds.tlsattacker.core.state.State;
  * A concrete input executor which implements the regular/non-altered way
  * of sending messages. 
  * 
- * It provides over-writable methods for every stage of the message sending process.
+ * It provides over-writable methods for every stage of the message sending process, and updates the execution context.
  */
-public class ConcreteInputExecutor extends AbstractInputExecutor{
+public class TestingInputExecutor extends AbstractInputExecutor{
 
 	private ExecuteInputHelper helper;
 	
-	public ConcreteInputExecutor() {
+	public TestingInputExecutor() {
 		helper = new ExecuteInputHelper();
 	}
 	

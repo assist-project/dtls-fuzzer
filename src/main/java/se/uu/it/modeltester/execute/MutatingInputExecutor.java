@@ -27,7 +27,7 @@ import se.uu.it.modeltester.mutate.MutatorType;
  * applied in a chained fashion on the fragmentation/packing result.
  * The mutations generated/applied for the last execution can be retrieved.
  */
-public class MutatingInputExecutor extends ConcreteInputExecutor {
+public class MutatingInputExecutor extends TestingInputExecutor {
 	private static final Logger LOGGER = LogManager.getLogger(MutatingInputExecutor.class);
 	private Map<MutatorType, List<Mutator<?>>> mutators;
 	
