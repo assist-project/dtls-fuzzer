@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
+import se.uu.it.modeltester.execute.ExecutionContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
 import se.uu.it.modeltester.mutate.Mutation;
 import se.uu.it.modeltester.mutate.MutationType;
@@ -18,7 +19,7 @@ public class EmptyFragmentAdditionMutation implements Mutation<FragmentationResu
 	}
 
 	@Override
-	public FragmentationResult mutate(FragmentationResult result, TlsContext context) {
+	public FragmentationResult mutate(FragmentationResult result, TlsContext context, ExecutionContext exContext) {
 		DtlsHandshakeMessageFragment currentFragment = result.getFragments().get(index);
 		HandshakeMessage message = result.getMessage();
 		DtlsHandshakeMessageFragment emptyFragment = new DtlsHandshakeMessageFragment(message.getHandshakeMessageType(), new byte [] {});

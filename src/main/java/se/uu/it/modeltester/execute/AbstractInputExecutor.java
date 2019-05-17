@@ -10,18 +10,18 @@ import se.uu.it.modeltester.sut.io.TlsOutput;
 
 public abstract class AbstractInputExecutor {
 	
-	public TlsOutput execute(TlsInput input, State state) {
+	public TlsOutput execute(TlsInput input, State state, ExecutionContext context) {
 		ProtocolMessage message = input.generateMessage(state);
-		sendMessage(message, state);
+		sendMessage(message, state, context);
 		input.preUpdate(state);
-		TlsOutput output = receiveOutput(state);
+		TlsOutput output = receiveOutput(state, context);
 		input.postUpdate(output, state);
 		return output;
 	}
 	
-	protected abstract void sendMessage(ProtocolMessage message, State state);
+	protected abstract void sendMessage(ProtocolMessage message, State state, ExecutionContext context);
 	
-    protected TlsOutput receiveOutput(State state) {
+    protected TlsOutput receiveOutput(State state, ExecutionContext context) {
         try {
             if (state.getTlsContext().getTransportHandler().isClosed()) {
                 return TlsOutput.socketClosed();
@@ -33,7 +33,7 @@ public abstract class AbstractInputExecutor {
         try {
             GenericReceiveAction action = new GenericReceiveAction("client");
             action.execute(state);
-            
+            context.getStepContext().setReceivedOutputMessages(action.getMessages());
             return extractOutput(state, action);
         } catch (Exception E) {
             E.printStackTrace();

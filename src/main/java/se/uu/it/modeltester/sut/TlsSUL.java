@@ -20,6 +20,7 @@ import de.rub.nds.tlsattacker.transport.tcp.ClientTcpTransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ClientUdpTransportHandler;
 import se.uu.it.modeltester.config.SulDelegate;
 import se.uu.it.modeltester.execute.AbstractInputExecutor;
+import se.uu.it.modeltester.execute.ExecutionContext;
 import se.uu.it.modeltester.execute.NonMutatingInputExecutor;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
@@ -36,7 +37,8 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     private static final Logger LOG = LogManager.getLogger();
     public static final String SUL_CONFIG = "/sul.config";
     private State state = null;
-
+    private ExecutionContext context = null;
+    
     private Config config;
 
     private boolean closed = false;
@@ -71,6 +73,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
         state.getTlsContext().setTalkingConnectionEndType(state.getTlsContext().getChooser().getConnectionEndType());
         closed = false;
         resetWait = delegate.getResetWait();
+        context = new ExecutionContext();
         LOG.error("Start " + count++);
     }
 
@@ -92,6 +95,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
     @Override
     public TlsOutput step(TlsInput in) throws SULException {
+    	context.addStepContext();
     	AbstractInputExecutor executor = in.getExecutor();
     	TlsOutput output = null;
         try {
@@ -102,7 +106,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
                 return TlsOutput.socketClosed();
             }
             LOG.debug("sent:" + in.toString());
-            output = executor.execute(in, state);
+            output = executor.execute(in, state, context);
             LOG.debug("received:" + output);
             return output;
         } catch (IOException ex) {

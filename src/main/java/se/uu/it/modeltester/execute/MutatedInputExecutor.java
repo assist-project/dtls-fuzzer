@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.modeltester.mutate.Mutation;
@@ -17,7 +16,7 @@ import se.uu.it.modeltester.mutate.Mutation;
  * It server as a "replayer" for already generated mutations which produced 
  * interesting results.
  */
-public class MutatedInputExecutor extends AbstractInputExecutor{
+public class MutatedInputExecutor extends ConcreteInputExecutor{
 	
 	private List<Mutation<FragmentationResult>> fragmentationMutations;
 	private List<Mutation<PackingResult>> packingMutations;
@@ -26,42 +25,35 @@ public class MutatedInputExecutor extends AbstractInputExecutor{
 		// TODO bad design, we should at least make Mutated and Mutating Input Executor implementations be consistent
 		fragmentationMutations = new LinkedList<>();
 		packingMutations = new LinkedList<>();
+		
+		
 		for (Mutation<?> mutation : mutations) {
-			switch(mutation.getType()) {
-			case FRAGMENT_REORDERING:
+			if (mutation.getType().isFragmenting()) {
 				fragmentationMutations.add((Mutation<FragmentationResult>) mutation);
-				break;
-			case MESSAGE_SPLITTING:
-				fragmentationMutations.add((Mutation<FragmentationResult>) mutation);
-				break;
+			} 
+			if (mutation.getType().isPacking()) {
+				packingMutations.add((Mutation<PackingResult>) mutation);
 			}
 		}
 	}
 
-	@Override
-	protected void sendMessage(ProtocolMessage message, State state) {
-		ExecuteInputHelper helper = new ExecuteInputHelper();
-		helper.prepareMessage(message, state);
-		List<ProtocolMessage> messagesToSend = new LinkedList<>();
-
-		if (message.isHandshakeMessage() && state.getTlsContext().getConfig().getDefaultSelectedProtocolVersion().isDTLS()) {
-			FragmentationResult result = helper.fragmentMessage((HandshakeMessage) message, state);
-			result = applyMutations(fragmentationMutations, result, state);
-			messagesToSend.addAll(result.getFragments());
-		} else {
-			messagesToSend.add(message);
-		}
-		
-		PackingResult result = helper.packMessages(messagesToSend, state);
-		applyMutations(packingMutations, result, state);
-		message.getHandler(state.getTlsContext()).adjustTlsContextAfterSerialize(message);
-		helper.sendRecords(result.getRecords(), state);
+	
+	protected FragmentationResult fragmentMessage(ProtocolMessage message, State state, ExecutionContext context) {
+		FragmentationResult result = super.fragmentMessage(message, state, context);
+		result = applyMutations(fragmentationMutations, result, state);
+		return result;
+	}
+	
+	protected PackingResult packMessages(List<ProtocolMessage> messagesToSend, State state, ExecutionContext context) {
+		PackingResult result = super.packMessages(messagesToSend, state, context);
+		result = applyMutations(packingMutations, result, state);
+		return result;
 	}
 	
 	private <R> R applyMutations(List<Mutation<R>> mutations, R result, State state)  {
 		R mutatedResult = result;
 		for (Mutation<R> mutation : mutations) {
-			mutatedResult = mutation.mutate(result, state.getTlsContext());
+			mutatedResult = mutation.mutate(result, state.getTlsContext(), null);
 		}
 		return mutatedResult; 
 	}

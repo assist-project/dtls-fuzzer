@@ -1,6 +1,7 @@
 package se.uu.it.modeltester.mutate.fragment;
 
 import de.rub.nds.tlsattacker.core.state.TlsContext;
+import se.uu.it.modeltester.execute.ExecutionContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
 import se.uu.it.modeltester.mutate.FragmentationMutator;
 import se.uu.it.modeltester.mutate.Mutation;
@@ -17,7 +18,7 @@ public class SplittingMutator extends FragmentationMutator{
 	}
 	
 	@Override
-	public Mutation<FragmentationResult> generateMutation(FragmentationResult result, TlsContext context) {
+	public Mutation<FragmentationResult> generateMutation(FragmentationResult result, TlsContext context, ExecutionContext exContext) {
 		int length = result.getMessage().getLength().getValue();
 		Fragmentation fragmentation = generator.generateFragmentation(numFragments, length);
 		return new SplittingMutation(fragmentation);

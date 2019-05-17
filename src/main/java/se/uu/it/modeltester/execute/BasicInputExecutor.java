@@ -16,7 +16,7 @@ import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
  */
 public class BasicInputExecutor extends AbstractInputExecutor {
 	
-    protected void sendMessage(ProtocolMessage message, State state) {
+    protected void sendMessage(ProtocolMessage message, State state, ExecutionContext context) {
     	Record record = new Record();
         List<ProtocolMessage> messages = new LinkedList<>();
         List<AbstractRecord> records = new LinkedList<>();

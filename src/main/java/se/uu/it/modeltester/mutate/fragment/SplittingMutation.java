@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
+import se.uu.it.modeltester.execute.ExecutionContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
 import se.uu.it.modeltester.mutate.Mutation;
 import se.uu.it.modeltester.mutate.MutationType;
@@ -27,7 +28,7 @@ public class SplittingMutation implements Mutation<FragmentationResult>{
 	}
 
 	@Override
-	public FragmentationResult mutate(FragmentationResult result, TlsContext context) {
+	public FragmentationResult mutate(FragmentationResult result, TlsContext context, ExecutionContext exContext) {
 		List<DtlsHandshakeMessageFragment> newDtlsFragments = dtlsMessageFragmenter.generateDtlsFragments(fragmentation, result.getMessage(), context);
 		return new FragmentationResult(result.getMessage(), newDtlsFragments);
 	}

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import de.rub.nds.tlsattacker.core.state.TlsContext;
+import se.uu.it.modeltester.execute.ExecutionContext;
 import se.uu.it.modeltester.execute.FragmentationResult;
 import se.uu.it.modeltester.mutate.FragmentationMutator;
 import se.uu.it.modeltester.mutate.Mutation;
@@ -20,7 +21,7 @@ public class RandomSwapMutator extends FragmentationMutator{
 	}
 
 	@Override
-	public Mutation<FragmentationResult> generateMutation(FragmentationResult result, TlsContext context) {
+	public Mutation<FragmentationResult> generateMutation(FragmentationResult result, TlsContext context, ExecutionContext exContext) {
 		List<Integer> mapping = IntStream.range(0, result.getFragments().size()).boxed().collect(Collectors.toList());
 		Collections.shuffle(mapping, rand);
 		return new ReorderingMutation(mapping.toArray(new Integer[mapping.size()]));

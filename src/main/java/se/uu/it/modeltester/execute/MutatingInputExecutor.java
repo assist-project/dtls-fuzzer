@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.modeltester.mutate.Mutation;
@@ -49,31 +48,19 @@ public class MutatingInputExecutor extends ConcreteInputExecutor {
 		}
 	}
 	
-
-	@Override
-	protected void sendMessage(ProtocolMessage message, State state) {
-		ExecuteInputHelper helper = new ExecuteInputHelper();
-		helper.prepareMessage(message, state);
-		List<ProtocolMessage> messagesToSend = new LinkedList<>();
-
-		if (message.isHandshakeMessage() && 
-				state.getTlsContext().getConfig().getDefaultSelectedProtocolVersion().isDTLS()) {
-			FragmentationResult result = helper.fragmentMessage((HandshakeMessage) message, state);
-			MutatorApplicationResult<FragmentationResult> fragmentationMutationResult 
-			= applyMutators(MutatorType.FRAGMENTATION, result, state);
-			fragmentationMutations = fragmentationMutationResult.getAppliedMutations();
-			result = fragmentationMutationResult.getResult();
-			messagesToSend.addAll(result.getFragments());
-		} else {
-			messagesToSend.add(message);
-		}
-		
-		PackingResult result = helper.packMessages(messagesToSend, state);
-		message.getHandler(state.getTlsContext()).adjustTlsContextAfterSerialize(message);
+	protected FragmentationResult fragmentMessage(ProtocolMessage message, State state, ExecutionContext context) {
+		FragmentationResult result = super.fragmentMessage(message, state, context);
+		MutatorApplicationResult<FragmentationResult> fragmentationMutationResult 
+		= applyMutators(MutatorType.FRAGMENTATION, result, state);
+		fragmentationMutations = fragmentationMutationResult.getAppliedMutations();
+		return result;
+	}
+	
+	protected PackingResult packMessages(List<ProtocolMessage> messagesToSend, State state, ExecutionContext context) {
+		PackingResult result = super.packMessages(messagesToSend, state, context);
 		MutatorApplicationResult<PackingResult> packingMutationResult = applyMutators(MutatorType.PACKING, result, state);
 		packingMutations = packingMutationResult.getAppliedMutations();
-		result = packingMutationResult.getResult();
-		helper.sendRecords(result.getRecords(), state);
+		return result;
 	}
 	
 	private <R> MutatorApplicationResult<R> applyMutators(MutatorType mutatorType, R currentResult, State state) {
@@ -83,8 +70,8 @@ public class MutatingInputExecutor extends ConcreteInputExecutor {
 		for (Mutator<?> mutator : mutatorsOfType) {
 			// this can definitely be made safe with some more work;
 			Mutator<R> castMutator = (Mutator<R>) mutator;
-			Mutation<R> mutation = castMutator.generateMutation(result, state.getTlsContext());
-			result = mutation.mutate(result, state.getTlsContext());
+			Mutation<R> mutation = castMutator.generateMutation(result, state.getTlsContext(), null);
+			result = mutation.mutate(result, state.getTlsContext(), null);
 			appliedMutations.add(mutation);
 		}
 		return new MutatorApplicationResult<R>(result, appliedMutations);
