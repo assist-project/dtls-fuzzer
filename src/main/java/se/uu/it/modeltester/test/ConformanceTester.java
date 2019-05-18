@@ -28,6 +28,7 @@ import se.uu.it.modeltester.config.TestingConfig;
 import se.uu.it.modeltester.mutate.FragmentationMutator;
 import se.uu.it.modeltester.mutate.FragmentingTlsInput;
 import se.uu.it.modeltester.mutate.fragment.EmptyFragmentAdditionMutator;
+import se.uu.it.modeltester.mutate.fragment.FragmentOverlapMutator;
 import se.uu.it.modeltester.mutate.fragment.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.fragment.RandomSwapMutator;
 import se.uu.it.modeltester.mutate.fragment.SplittingMutator;
@@ -136,19 +137,24 @@ public class ConformanceTester {
 	
 	private List<FragmentingTlsInput> generateFragmentingInputs(TlsInput input) {
 		List<FragmentingTlsInput> fragmentingInputs = new ArrayList<>();
-		for (boolean doShuffling : Arrays.asList(false, true)) 
-			for (boolean addEmpty : Arrays.asList(false, true)) 
+		
+
+		for (boolean addOverlap : Arrays.asList(false, true)) 
+			for (boolean doShuffling : Arrays.asList(false, true))
 				for (FragmentationStrategy strategy : new FragmentationStrategy [] {FragmentationStrategy.EVEN, FragmentationStrategy.RANDOM}) 
 					for (int numFrags=config.getFromNumFrag(); numFrags<config.getToNumFrag(); numFrags ++) {
-						FragmentingTlsInput fragmentingInput = fragment(input, numFrags, strategy, addEmpty, doShuffling);
+						FragmentingTlsInput fragmentingInput = fragment(input, numFrags, strategy, false, doShuffling, addOverlap);
 						fragmentingInputs.add(fragmentingInput);
 					} 
+		
+		// empty fragment test
+		fragmentingInputs.add(fragment(input, 2, FragmentationStrategy.EVEN, true, false, false));
 	
 		return fragmentingInputs;
 	}
 	
 
-	private FragmentingTlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean addEmptyFragment, boolean doShuffling) {
+	private FragmentingTlsInput fragment(TlsInput input, int frags, FragmentationStrategy strategy, boolean addEmptyFragment, boolean doShuffling, boolean addOverlap) {
 		List<FragmentationMutator> mutators = new ArrayList<>();
 		if (frags > 1) {
 			SplittingMutator fragmentationMutator = new SplittingMutator(strategy, frags);
@@ -159,6 +165,9 @@ public class ConformanceTester {
 		}
 		if (doShuffling) {
 			mutators.add(new RandomSwapMutator(0));
+		} 
+		if (addOverlap && frags > 1) {
+			mutators.add(new FragmentOverlapMutator(0));
 		}
 		return new FragmentingTlsInput(input, mutators);
 	}

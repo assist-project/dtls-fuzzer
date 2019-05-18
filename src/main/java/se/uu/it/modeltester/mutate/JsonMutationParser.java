@@ -66,7 +66,7 @@ public class JsonMutationParser {
 		@Override
 		public JsonElement serialize(Mutation<?> src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonElement element;
-			element = context.serialize(src, src.getType().getClass());
+			element = context.serialize(src, src.getType().getMutationClass());
 			return element;
 		}
 	} 

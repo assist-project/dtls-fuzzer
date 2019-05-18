@@ -103,6 +103,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     	if (executor == null) {
     		executor = defaultExecutor;
     	}
+    	
     	TlsOutput output = null;
         try {
             if (state == null) {

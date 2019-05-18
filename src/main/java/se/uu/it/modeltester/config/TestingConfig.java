@@ -14,7 +14,7 @@ public class TestingConfig {
 	private int fromNumFrag = 2;
 	
 	@Parameter(names = "-toNumFrag", required = false, arity=0, description = "Indicates the number to which (non-inclusive) to fragment messages.")
-	private int toNumFrag = 5;
+	private int toNumFrag = 4;
 	
 	@Parameter(names = "-generateTests", required = false, arity=0, description = "For every bug generate a test file which can be executed via the TestRunner utility.")
 	private boolean isTestGenerationEnabled = false;
