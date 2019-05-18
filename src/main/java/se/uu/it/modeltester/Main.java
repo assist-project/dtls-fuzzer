@@ -1,6 +1,13 @@
 package se.uu.it.modeltester;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.security.Security;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +22,7 @@ import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 
 public class Main {
     private static final Logger LOGGER = LogManager.getLogger(Main.class.getName());
+    private static String ARGS_FILE = "command.args";
 
     public static void main(String args[]) {
         UnlimitedStrengthEnabler.enable();
@@ -32,6 +40,10 @@ public class Main {
             try {
             	ModelBasedTester tester = new ModelBasedTester(config);
                 tester.startTesting();
+                // this is an extra step done to store the running arguments
+                if (config.getOutput() != null && new File(config.getOutput()).exists()) {
+                	copyArgsToOutDir(args, config.getOutput());
+                }
             } catch (Exception E) {
                 LOGGER.error("Encountered an exception. See debug for more info.");
                 E.printStackTrace();
@@ -44,4 +56,25 @@ public class Main {
             commander.usage();
         }
     }
+
+	private static void copyArgsToOutDir(String[] args, String outDir) throws IOException{
+		File file = Paths.get(outDir, ARGS_FILE).toFile();
+		try (FileWriter fw = new FileWriter(file)) {
+			PrintWriter pw = new PrintWriter(fw);
+			for(String arg : args) {
+				if (arg.startsWith("@")) {
+					String argsFile = arg.substring(1);
+					try (FileReader fr = new FileReader(argsFile)) {
+						char [] charBuf = new char [10000];
+						while (fr.read(charBuf) != -1) {
+							pw.write(charBuf);
+						}
+					}
+				} else {
+					pw.println(arg);
+				}
+			}
+			pw.close();
+		}
+	}
 }

@@ -1,3 +1,3 @@
-These are examples of command line arguments that can be provided.
-To execute the tester using an arguments file, run:
-$tester @args_file_path
+The folder contains examples of files comprising command line arguments used to run the test tool.
+To execute the tester using the arguments in a file, run:
+$tester @arguments_filepath [..overwriting arguments]

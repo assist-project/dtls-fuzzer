@@ -2,10 +2,8 @@ package se.uu.it.modeltester;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,12 +16,12 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
+import net.automatalib.words.impl.ListAlphabet;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.TestingInputExecutor;
 import se.uu.it.modeltester.learn.Extractor;
 import se.uu.it.modeltester.learn.Extractor.ExtractorResult;
 import se.uu.it.modeltester.sut.ProcessHandler;
-import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
 import se.uu.it.modeltester.sut.io.AlphabetFactory;
@@ -107,6 +105,13 @@ public class ModelBasedTester {
 			Definitions definitions = DefinitionsFactory.generateDefinitions(alphabet);
 			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(definitions));
 			FastMealy<TlsInput, TlsOutput>  model = dotParser.parseAutomaton(specification).get(0);
+			if (!model.getInputAlphabet().containsAll(alphabet)) {
+				LOGGER.error("The configured alphabet contains inputs not included in the specification. "
+						+ "These inputs will be excluded from the testing alphabet.");
+				alphabet = new ListAlphabet<TlsInput>(alphabet.stream()
+						.filter(i -> model.getInputAlphabet().contains(i))
+						.collect(Collectors.toList()));
+			}
 			return new ConformanceTestingTask(model, alphabet);
 		}
 	}

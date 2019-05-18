@@ -116,7 +116,8 @@ public class ConformanceTester {
 								FragmentationBug bug = new FragmentationBug(state, statePrefix, fragmentingInput, suffix, regularOutput, fuzzedOutput);
 								report.addBug(bug);
 								bugsFound = true;
-								break;
+								if (fragmentingInputs.indexOf(fragmentingInput) == 0)
+									break;
 							}
 							
 							if ( shouldStop.get() ) {
