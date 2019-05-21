@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -75,9 +77,8 @@ public class ConformanceTester {
 		for (Word<TlsInput> statePrefix : stateCover) {
 			FastMealyState<TlsOutput> state = model.getState(statePrefix);
 			for (TlsInput input : inputs) {
-				FastMealyState<TlsOutput> nextState = model.getState(statePrefix.append(input));
-				List<Word<TlsInput>> charSuffixes = Automata.stateCharacterizingSet(model, inputs, nextState);
-				for (Word<TlsInput> suffix : charSuffixes) {
+				List<Word<TlsInput>> suffixes = generateSuffixes(statePrefix, input, inputs, model); 
+				for (Word<TlsInput> suffix : suffixes) {
 					if ( shouldStop.get() ) {
 						return report;
 					}
@@ -136,6 +137,20 @@ public class ConformanceTester {
 		return report;
 	}
 	
+	private List<Word<TlsInput>> generateSuffixes(Word<TlsInput> statePrefix, TlsInput input, 
+			Alphabet<TlsInput> inputs, FastMealy<TlsInput, TlsOutput> model) {
+		FastMealyState<TlsOutput> nextState = model.getState(statePrefix.append(input));
+		List<Word<TlsInput>> charSuffixes = Automata.stateCharacterizingSet(model, inputs, nextState);
+		Stream<Word<TlsInput>> stream = charSuffixes.stream();
+		for (int i=0; i<config.getMidLength(); i++) {
+			stream = stream.flatMap(word -> inputs.stream().map(inp -> Word.fromSymbols(inp).concat(word)));
+		}
+		
+		return stream.distinct().collect(Collectors.toList());
+	}
+	
+	
+	
 	private List<FragmentingTlsInput> generateFragmentingInputs(TlsInput input) {
 		List<FragmentingTlsInput> fragmentingInputs = new ArrayList<>();
 		
@@ -162,13 +177,13 @@ public class ConformanceTester {
 			mutators.add(fragmentationMutator);
 		}
 		if (addEmptyFragment) {
-			mutators.add(new EmptyFragmentAdditionMutator(0));
+			mutators.add(new EmptyFragmentAdditionMutator(config.getTestSeed()));
 		}
 		if (doShuffling) {
-			mutators.add(new RandomSwapMutator(0));
+			mutators.add(new RandomSwapMutator(config.getTestSeed()));
 		} 
 		if (addOverlap && frags > 1) {
-			mutators.add(new FragmentOverlapMutator(0));
+			mutators.add(new FragmentOverlapMutator(config.getTestSeed()));
 		}
 		return new FragmentingTlsInput(input, mutators);
 	}
