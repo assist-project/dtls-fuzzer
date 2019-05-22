@@ -1,0 +1,4 @@
+
+
+#Preparing OpenSSL
+#wget 
