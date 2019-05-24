@@ -6,5 +6,5 @@ package se.uu.it.modeltester.learn;
  * smarter. 
  */
 public enum EquivalenceAlgorithmName { 
-	W_METHOD, MODIFIED_W_METHOD, WP_METHOD, RANDOM_WORDS, RANDOM_WALK, RANDOM_WP_METHOD 
+	W_METHOD, MODIFIED_W_METHOD, WP_METHOD, RANDOM_WORDS, RANDOM_WALK, RANDOM_WP_METHOD, SAMPLED_TESTS;
 }

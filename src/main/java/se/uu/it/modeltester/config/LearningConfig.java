@@ -1,5 +1,8 @@
 package se.uu.it.modeltester.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.beust.jcommander.Parameter;
 
 import se.uu.it.modeltester.learn.EquivalenceAlgorithmName;
@@ -10,11 +13,11 @@ public class LearningConfig {
 	@Parameter(names = "-learningAlgorithm", description = "Which algorithm shold be used for learning")
 	private LearningAlgorithmName learningAlgorithm = LearningAlgorithmName.TTT;
 
-	@Parameter(names = "-equivalenceAlgorithm", description = "Which algorithm shold be used for equivalance testing")
-	private EquivalenceAlgorithmName equivalenceAlgorithm = EquivalenceAlgorithmName.RANDOM_WP_METHOD;
+	@Parameter(names = "-equivalenceAlgorithms", description = "Which test algorithms should be used for equivalance testing")
+	private List<EquivalenceAlgorithmName> equivalenceAlgorithms = Arrays.asList(EquivalenceAlgorithmName.RANDOM_WP_METHOD);
 
 	@Parameter(names = "-depth", description = "Maximal depth ( W/WP Method)")
-	private int maxDepth = 4;
+	private int maxDepth = 1;
 
 	@Parameter(names = "-minLength", description = "Min length (random words, Random WP Method)")
 	private int minLength = 5;
@@ -30,14 +33,24 @@ public class LearningConfig {
 	
 	@Parameter(names = "-probReset", description = "Probability of stopping execution of a test after each input")
 	private int probReset = 0;
+	
+	@Parameter(names = "-testFile", description = "A file with tests to be run.")
+	private String testFile;
 
+	@Parameter(names = "-logQueries", description = "Log queries to an output failse")
+	private boolean logQueries = false;
+
+
+	public boolean doLogQueries() {
+		return logQueries;
+	}
 
 	public LearningAlgorithmName getLearningAlgorithm() {
 		return learningAlgorithm;
 	}
 
-	public EquivalenceAlgorithmName getEquivalenceAlgorithm() {
-		return equivalenceAlgorithm;
+	public List<EquivalenceAlgorithmName>  getEquivalenceAlgorithms() {
+		return equivalenceAlgorithms;
 	}
 
 	public int getMaxDepth() {
@@ -62,6 +75,10 @@ public class LearningConfig {
 
 	public int getRandLength() {
 		return randLength;
+	}
+	
+	public String getTestFile() {
+		return testFile;
 	}
 
 }

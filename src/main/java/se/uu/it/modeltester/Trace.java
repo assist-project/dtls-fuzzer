@@ -2,6 +2,8 @@ package se.uu.it.modeltester;
 
 
 import java.io.FileInputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,15 +15,27 @@ import java.util.stream.Collectors;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import com.pfg666.dotparser.fsm.mealy.MealyDotParser;
+
 import de.learnlib.api.SUL;
+import de.learnlib.eqtests.basic.WpMethodEQOracle;
+import de.learnlib.eqtests.basic.WpMethodEQOracle.MealyWpMethodEQOracle;
+import de.learnlib.oracles.CounterOracle;
+import de.learnlib.oracles.CounterOracle.MealyCounterOracle;
+import de.learnlib.oracles.DefaultQuery;
+import de.learnlib.oracles.SimulatorOracle;
+import de.learnlib.oracles.SimulatorOracle.MealySimulatorOracle;
 import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
+import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.TestingInputExecutor;
+import se.uu.it.modeltester.learn.RandomWpMethodEQOracle;
 import se.uu.it.modeltester.mutate.MutatingTlsInput;
 import se.uu.it.modeltester.mutate.fragment.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.fragment.SplittingMutator;
@@ -152,25 +166,29 @@ public class Trace {
 	
 	public static void main(String[] args) throws Exception {
 		
+//		
+//		CipherSuite cs = 
+////				CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8;
+////				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
+//				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
+//		int iterations = 1;
+//		int stepWait = 10;
+//		long runWait = 100;
+//		TlsInput [] inputs = new TlsInput [] {
+//			nonmut(new ClientHelloInput(cs)),
+//			nonmut(new ClientHelloInput(cs)),
+//			nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
+//			nonmut(new ChangeCipherSpecInput()),
+//			nonmut(new FinishedInput()),
+//		};
+		System.out.println(testSuiteSize(Paths.get("experiments", "models", "openssl-1.1.1b_psk_rsa_cert_req_20190508.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"), 1));
+	}
+	
+	
+	private static void runTest(TlsInput [] inputs, int iterations, Integer stepWait, Long runWait) {
+		//		TlsInput [] inputs = Global. 
+		//		//buildTest(tests[4], "alphabet.xml");
 		init();
-		CipherSuite cs = 
-//				CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8;
-//				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
-				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
-		int iterations = 1;
-		int stepWait = 10;
-		long runWait = 100;
-		TlsInput [] inputs = new TlsInput [] {
-			nonmut(new ClientHelloInput(cs)),
-			nonmut(new ClientHelloInput(cs)),
-			nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
-			nonmut(new ChangeCipherSpecInput()),
-			nonmut(new FinishedInput()),
-		};
-		
-//		TlsInput [] inputs = Global. 
-//				//buildTest(tests[4], "alphabet.xml");
-		
 		String command = Command.localTinyDtls;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;
 		
@@ -180,7 +198,7 @@ public class Trace {
 		modelFuzzConfig.getSulDelegate().setTimeout(stepWait);
 		modelFuzzConfig.getSulDelegate().setRunWait(runWait);
 		modelFuzzConfig.getSulDelegate().setCommand(command);
-
+		
 		// vulnerabilityConfig.getClientDelegate().setHost("192.168.56.101:20001");
 		SUL<TlsInput, TlsOutput> sut = new TlsSUL(modelFuzzConfig.getSulDelegate(), new TestingInputExecutor());
 		if (command != Command.none) {
@@ -189,7 +207,7 @@ public class Trace {
 			phandler.redirectError(System.err);
 			sut = new SulProcessWrapper<TlsInput, TlsOutput>(sut, phandler);
 		}
-
+		
 		Map<List<TlsOutput>, Integer> allResponses = new LinkedHashMap<>();
 		for (int i = 0; i < iterations; i++) {
 			TlsOutput[] responses = new TlsOutput[inputs.length];
@@ -206,16 +224,26 @@ public class Trace {
 				allResponses.put(resList, allResponses.get(resList) + 1);
 			}
 		}
-
+		
 		System.out.println("Test: " + Arrays.asList(inputs));
 		for (Entry<List<TlsOutput>, Integer> res : allResponses.entrySet()) {
 			System.out.println(res.getValue() + " times:" + res.getKey());
 		}
-
+		
 		for (Entry<List<TlsOutput>, Integer> res : allResponses.entrySet()) {
 			System.out.println(res.getValue() + " times:" + compact(res.getKey()));
 		}
-
+	}
+	
+	private static long testSuiteSize(Path automatonFile, Path alphabetFile, int depth) throws Exception{
+		Alphabet<TlsInput> alphabet = AlphabetSerializer.read(new FileInputStream(alphabetFile.toString()));
+		MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<TlsInput, TlsOutput>(new TlsProcessor(DefinitionsFactory.generateDefinitions(alphabet)));
+		FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(automatonFile.toString()).get(0);
+		MealySimulatorOracle<TlsInput, TlsOutput> sim = new SimulatorOracle.MealySimulatorOracle<>(fastMealy);
+		MealyCounterOracle<TlsInput, TlsOutput> counterOracle = new CounterOracle.MealyCounterOracle<>(sim, "counter");
+		MealyWpMethodEQOracle<TlsInput, TlsOutput> oracle = new WpMethodEQOracle.MealyWpMethodEQOracle<>(depth, counterOracle);
+		oracle.findCounterExample(fastMealy, fastMealy.getInputAlphabet());
+		return counterOracle.getStatisticalData().getCount();
 	}
 
 	private static String compact(List<TlsOutput> reses) {

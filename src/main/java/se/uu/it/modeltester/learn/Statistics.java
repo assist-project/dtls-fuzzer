@@ -68,8 +68,8 @@ public class Statistics {
 		out.println("Alphabet: " + alphabet);
 		LearningConfig learningConfig = config.getLearningConfig();
 		out.println("Learning Algorithm: " + learningConfig.getLearningAlgorithm());
-		out.println("Equivalence Algorithm: "
-				+ learningConfig.getEquivalenceAlgorithm());
+		out.println("Equivalence Algorithms: "
+				+ learningConfig.getEquivalenceAlgorithms());
 		out.println("Min Length: "
 				+ learningConfig.getMinLength());
 		out.println("Max Length: "

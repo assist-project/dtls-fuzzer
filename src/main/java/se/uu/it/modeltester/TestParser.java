@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -21,7 +22,6 @@ import net.automatalib.words.Word;
 import se.uu.it.modeltester.mutate.JsonMutationParser;
 import se.uu.it.modeltester.mutate.MutatedTlsInput;
 import se.uu.it.modeltester.mutate.Mutation;
-import se.uu.it.modeltester.sut.io.NamedTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 
 /**
@@ -61,11 +61,17 @@ public class TestParser {
 	}
 	
 	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH) throws IOException{
+		List<String> inputStrings = readTestStrings(PATH);
+		Word<TlsInput> test = readTest(alphabet, inputStrings);
+		return test;
+	}
+	
+	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, List<String> testInputStrings) {
 		Map<String, TlsInput> inputs = new LinkedHashMap<>();
 		alphabet.stream().forEach(i -> inputs.put(i.toString(), i));
-		List<String> inputStrings = readTestStrings(PATH);
 		Word<TlsInput> inputWord = Word.epsilon();
-		for (String inputString : inputStrings) {
+		for (String inputString : testInputStrings) {
+			inputString = inputString.trim();
 			if (inputString.startsWith("@")) {
 				String mutatedInputString = inputString.substring(1, inputString.indexOf("["));
 				if (!inputs.containsKey(mutatedInputString)) {
@@ -85,6 +91,23 @@ public class TestParser {
 		
 		return inputWord;
 	}
+	
+	public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet, String PATH) throws IOException{
+		List<String> inputStrings = readTestStrings(PATH);
+		List<Word<TlsInput>> tests = new LinkedList<>();
+		LinkedList<String> currentTestStrings = new LinkedList<>();
+		for (String inputString : inputStrings) {
+			if (inputString.equals("reset")) {
+				tests.add(readTest(alphabet, currentTestStrings));
+			} else {
+				currentTestStrings.add(inputString);
+			}
+		}
+		if (!inputStrings.isEmpty()) {
+			tests.add(readTest(alphabet, currentTestStrings));
+		}
+		return tests;
+	} 
 	
 	private List<String> readTestStrings(String PATH) throws IOException {
 		List<String> trace;
