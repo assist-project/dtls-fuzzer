@@ -21,7 +21,6 @@ import net.automatalib.words.Word;
 import se.uu.it.modeltester.mutate.JsonMutationParser;
 import se.uu.it.modeltester.mutate.MutatedTlsInput;
 import se.uu.it.modeltester.mutate.Mutation;
-import se.uu.it.modeltester.sut.io.NamedTlsInput;
 import se.uu.it.modeltester.sut.io.TlsInput;
 
 /**
@@ -61,11 +60,16 @@ public class TestParser {
 	}
 	
 	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH) throws IOException{
+		List<String> inputStrings = readTestStrings(PATH);
+		Word<TlsInput> test = readTest(alphabet, inputStrings);
+		return test;
+	}
+	
+	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, List<String> testInputStrings) {
 		Map<String, TlsInput> inputs = new LinkedHashMap<>();
 		alphabet.stream().forEach(i -> inputs.put(i.toString(), i));
-		List<String> inputStrings = readTestStrings(PATH);
 		Word<TlsInput> inputWord = Word.epsilon();
-		for (String inputString : inputStrings) {
+		for (String inputString : testInputStrings) {
 			if (inputString.startsWith("@")) {
 				String mutatedInputString = inputString.substring(1, inputString.indexOf("["));
 				if (!inputs.containsKey(mutatedInputString)) {

@@ -1,4 +1,4 @@
-package se.uu.it.modeltester.learn;
+package se.uu.it.modeltester.sut;
 
 import java.util.Collection;
 
@@ -14,7 +14,6 @@ import de.learnlib.api.SUL;
 import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
-import se.uu.it.modeltester.sut.ObservationTree;
 
 /**
  * This class is adapted from {@link SULOracle}. Unfortunately, the

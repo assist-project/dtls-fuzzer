@@ -14,7 +14,6 @@ public class TlsProcessWrapper extends SulProcessWrapper<TlsInput, TlsOutput>{
 	@Override
 	public TlsOutput step(TlsInput in) throws SULException {
 		TlsOutput output = super.step(in);
-		System.out.println("Is alive " + super.isAlive());
 		output.setIsAlive(super.isAlive());
 		return output;
 	}

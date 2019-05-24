@@ -22,6 +22,7 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.BasicInputExecutor;
+import se.uu.it.modeltester.sut.CachingSULOracle;
 import se.uu.it.modeltester.sut.NonDeterminismRetryingSUL;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
@@ -61,8 +62,8 @@ public ExtractorResult extractStateMachine() {
 	ExtractorResult extractorResult = new ExtractorResult();
 
 	// setting up our output directory
-	File folder = new File(finderConfig.getOutput());
-	folder.mkdirs();
+	File outputFolder = new File(finderConfig.getOutput());
+	outputFolder.mkdirs();
 
 	// setting up SUL/T (System Under Learning/Test)
 	SUL<TlsInput, TlsOutput> tlsSystemUnderTest = new TlsSUL(
@@ -78,7 +79,7 @@ public ExtractorResult extractStateMachine() {
 	// observation tree as cache
 	try {
 		tlsSystemUnderTest = new NonDeterminismRetryingSUL<TlsInput, TlsOutput>(
-				tlsSystemUnderTest, NON_DET_ATTEMPTS, new FileWriter(new File(folder,
+				tlsSystemUnderTest, NON_DET_ATTEMPTS, new FileWriter(new File(outputFolder,
 						"nondet.log")));
 	} catch (IOException e) {
 		e.printStackTrace();
@@ -103,7 +104,7 @@ public ExtractorResult extractStateMachine() {
 	MealyLearner<TlsInput,TlsOutput> algorithm = 
 			LearnerFactory.loadLearner(finderConfig.getLearningConfig(), sulOracle, alphabet);
 	EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm =
-			LearnerFactory.loadTester(finderConfig.getLearningConfig(), tlsSystemUnderTest, sulOracle);
+			LearnerFactory.loadTester(finderConfig.getLearningConfig(), tlsSystemUnderTest, sulOracle, alphabet);
 
 	// running learning and collecting important statistics
 	MealyMachine<?, TlsInput, ?, TlsOutput> hypothesis = null;
@@ -118,7 +119,7 @@ public ExtractorResult extractStateMachine() {
 		extractorResult.addHypothesis(stateMachine);
 		// it is useful to print intermediate hypothesis as learning is
 		// running
-		serializeHypothesis(stateMachine, folder, "hyp" + (rounds + 1)
+		serializeHypothesis(stateMachine, outputFolder, "hyp" + (rounds + 1)
 					+ ".dot", false);
 
 		tracker.newHypothesis(stateMachine);
@@ -145,15 +146,19 @@ public ExtractorResult extractStateMachine() {
 	extractorResult.setStatistics(statistics);
 
 	// exporting to output files
-	serializeHypothesis(stateMachine, folder, LEARNED_MODEL_FILENAME, true);
-	extractorResult.setLearnedModelFile(new File(folder, LEARNED_MODEL_FILENAME));
+	serializeHypothesis(stateMachine, outputFolder, LEARNED_MODEL_FILENAME, true);
+	extractorResult.setLearnedModelFile(new File(outputFolder, LEARNED_MODEL_FILENAME));
 	try {
-		Files.copy(AlphabetFactory.getAlphabetFile(finderConfig), new File(folder, ALPHABET_FILENAME));
+		Files.copy(AlphabetFactory.getAlphabetFile(finderConfig), new File(outputFolder, ALPHABET_FILENAME));
+		if (finderConfig.getLearningConfig().getEquivalenceAlgorithms().contains(EquivalenceAlgorithmName.SAMPLED_TESTS)) {
+			Files.copy(new File(finderConfig.getLearningConfig().getTestFile()), 
+					new File(outputFolder, finderConfig.getLearningConfig().getTestFile()));
+		}
 	} catch (IOException e) {
 		LOG.log(Level.SEVERE, "Could not copy alphabet to output folder");
 	}
 	try {
-		statistics.export(new FileWriter(new File(folder, STATISTICS_FILENAME)));
+		statistics.export(new FileWriter(new File(outputFolder, STATISTICS_FILENAME)));
 	} catch (IOException e) {
 		LOG.log(Level.SEVERE, "Could not copy statistics to output folder");
 	}
