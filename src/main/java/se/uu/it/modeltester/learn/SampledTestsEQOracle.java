@@ -30,6 +30,8 @@ EquivalenceOracle<A, I, D> {
 			DefaultQuery<I, D> query = new DefaultQuery<>(test);
 			D hypOutput = hypothesis.computeOutput(test);
 			sulOracle.processQueries(Collections.singleton(query));
+			System.out.println("SAMPLED TEST RESULT:");
+			System.out.println(query);
 			if (!Objects.equals(hypOutput, query.getOutput()))
 				return query;
 		}

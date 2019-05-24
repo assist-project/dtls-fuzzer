@@ -21,7 +21,6 @@ import de.rub.nds.tlsattacker.transport.udp.ClientUdpTransportHandler;
 import se.uu.it.modeltester.config.SulDelegate;
 import se.uu.it.modeltester.execute.AbstractInputExecutor;
 import se.uu.it.modeltester.execute.ExecutionContext;
-import se.uu.it.modeltester.execute.NonMutatingInputExecutor;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
@@ -59,6 +58,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     @Override
     public void pre() {
     	Config config = getSulConfig(delegate);
+    	config.setAutoSelectCertificate(false);
         delegate.applyDelegate(config);
         state = new State(config);
         state.getTlsContext().setRecordLayer(new TlsRecordLayer(state.getTlsContext()));
@@ -70,7 +70,6 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     	} else {
     		state.getTlsContext().setTransportHandler(new ClientTcpTransportHandler(state.getConfig().getDefaultClientConnection()));
     	}
-    	
         state.getTlsContext().initTransportHandler();
         state.getTlsContext().initRecordLayer();
         state.getTlsContext().setTalkingConnectionEndType(state.getTlsContext().getChooser().getConnectionEndType());
@@ -136,6 +135,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		
 		return config;
 	}
+    
     
     public State getState() {
     	return state;
