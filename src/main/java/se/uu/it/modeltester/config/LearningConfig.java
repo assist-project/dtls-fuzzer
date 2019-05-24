@@ -17,7 +17,7 @@ public class LearningConfig {
 	private List<EquivalenceAlgorithmName> equivalenceAlgorithms = Arrays.asList(EquivalenceAlgorithmName.RANDOM_WP_METHOD);
 
 	@Parameter(names = "-depth", description = "Maximal depth ( W/WP Method)")
-	private int maxDepth = 4;
+	private int maxDepth = 1;
 
 	@Parameter(names = "-minLength", description = "Min length (random words, Random WP Method)")
 	private int minLength = 5;
