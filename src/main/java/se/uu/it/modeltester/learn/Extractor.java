@@ -150,12 +150,16 @@ public ExtractorResult extractStateMachine() {
 	extractorResult.setLearnedModelFile(new File(outputFolder, LEARNED_MODEL_FILENAME));
 	try {
 		Files.copy(AlphabetFactory.getAlphabetFile(finderConfig), new File(outputFolder, ALPHABET_FILENAME));
-		if (finderConfig.getLearningConfig().getEquivalenceAlgorithms().contains(EquivalenceAlgorithmName.SAMPLED_TESTS)) {
-			Files.copy(new File(finderConfig.getLearningConfig().getTestFile()), 
-					new File(outputFolder, finderConfig.getLearningConfig().getTestFile()));
-		}
 	} catch (IOException e) {
 		LOG.log(Level.SEVERE, "Could not copy alphabet to output folder");
+	}
+	if (finderConfig.getLearningConfig().getEquivalenceAlgorithms().contains(EquivalenceAlgorithmName.SAMPLED_TESTS)) {
+		try {
+			Files.copy(new File(finderConfig.getLearningConfig().getTestFile()), 
+					new File(outputFolder, finderConfig.getLearningConfig().getTestFile()));
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Could not copy sampled tests file to output folder");
+		}
 	}
 	try {
 		statistics.export(new FileWriter(new File(outputFolder, STATISTICS_FILENAME)));

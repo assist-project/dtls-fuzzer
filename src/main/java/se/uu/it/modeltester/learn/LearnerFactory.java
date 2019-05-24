@@ -73,8 +73,9 @@ public class LearnerFactory {
 			} else {
 				List<EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>>> eqOracles = 
 						config.getEquivalenceAlgorithms()
-						.stream().map(a -> loadTesterForAlgorithm( config.getEquivalenceAlgorithms().get(0), config, sul, sulOracle, alphabet))
-						 .collect(Collectors.toList());
+						.stream()
+						.map(alg -> loadTesterForAlgorithm( alg, config, sul, sulOracle, alphabet))
+						.collect(Collectors.toList());
 				MealyEQOracleChain<TlsInput, TlsOutput> eqChain = new MealyEQOracleChain<>(eqOracles);
 				return eqChain;
 			}
@@ -106,11 +107,13 @@ public class LearnerFactory {
 	buildSampledTestsOracle(LearningConfig config, MealyMembershipOracle<TlsInput,TlsOutput> sulOracle, Alphabet<TlsInput> alphabet) {
 		TestParser parser = new TestParser();
 		try {
-			List<Word<TlsInput>> tests = Files.lines(Paths.get(config.getTestFile())).map( line -> {
-				List<String> inputStrings = Arrays.asList(line.split("\\s*"));
-				Word<TlsInput> test = parser.readTest(alphabet, inputStrings);
-				return test;
-			} ).collect(Collectors.toList());
+//			List<Word<TlsInput>> tests = Files.lines(Paths.get(config.getTestFile())).map( line -> {
+//				List<String> inputStrings = Arrays.asList(line.split("\\s*"));
+//				Word<TlsInput> test = parser.readTest(alphabet, inputStrings);
+//				return test;
+//			} ).collect(Collectors.toList());
+			// we use this method for now to stay consistent with the test runner tool
+			List<Word<TlsInput>> tests = parser.readTests(alphabet, config.getTestFile());
 			return new SampledTestsEQOracle<>(tests, sulOracle);
 		} catch (IOException e) {
 			throw new RuntimeException("Could not read tests from file "+ config.getTestFile());
