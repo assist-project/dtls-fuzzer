@@ -1,0 +1,30 @@
+digraph g {
+__start0 [label="" shape="none"];
+
+	s0 [shape="circle" label="s0"];
+	s1 [shape="circle" label="s1"];
+	s2 [shape="circle" label="s2"];
+	s0 -> s2 [label="RSA_CLIENT_HELLO / HELLO_VERIFY_REQUEST"];
+	s0 -> s0 [label="RSA_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s0 -> s2 [label="PSK_CLIENT_HELLO / HELLO_VERIFY_REQUEST"];
+	s0 -> s0 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s0 -> s1 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s0 -> s0 [label="FINISHED / TIMEOUT"];
+	s0 -> s0 [label="APPLICATION / TIMEOUT"];
+	s1 -> s1 [label="RSA_CLIENT_HELLO / TIMEOUT"];
+	s1 -> s1 [label="RSA_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s1 -> s1 [label="PSK_CLIENT_HELLO / TIMEOUT"];
+	s1 -> s1 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s1 -> s1 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s1 -> s1 [label="FINISHED / TIMEOUT"];
+	s1 -> s1 [label="APPLICATION / TIMEOUT"];
+	s2 -> s1 [label="RSA_CLIENT_HELLO / SERVER_HELLO,CERTIFICATE,SERVER_HELLO_DONE"];
+	s2 -> s2 [label="RSA_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s2 -> s1 [label="PSK_CLIENT_HELLO / SERVER_HELLO,SERVER_HELLO_DONE"];
+	s2 -> s2 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s2 -> s1 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s2 -> s2 [label="FINISHED / TIMEOUT"];
+	s2 -> s2 [label="APPLICATION / TIMEOUT"];
+
+__start0 -> s0;
+}
