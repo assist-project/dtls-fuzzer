@@ -1,0 +1,1 @@
+ls -1 results/*/learnedModel.dot | xargs -I {} sh -c 'DOTPATH=models/$(basename "$(dirname "{}")").dot;cp {} $DOTPATH'
