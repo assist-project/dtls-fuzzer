@@ -10,8 +10,8 @@ localhost:20000
 10
 -queries
 20000
--equivalenceAlgorithm 
-RANDOM_WP_METHOD 
+-equivalenceAlgorithms 
+RANDOM_WP_METHOD,WP_METHOD 
 -alphabet 
 ../examples/alphabets/psk_rsa_cert.xml
 -output 

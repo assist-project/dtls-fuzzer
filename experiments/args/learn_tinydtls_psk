@@ -5,7 +5,7 @@ localhost:50000
 -alphabet
 ../examples/alphabets/psk8.xml
 -timeout  
-200  
+50  
 -randLength
 10
 -queries

@@ -1,0 +1,20 @@
+-protocol 
+DTLS12 
+-connect 
+localhost:30005 
+-alphabet 
+../examples/alphabets/psk_rsa.xml 
+-runWait 
+100 
+-timeout  
+200 
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms 
+RANDOM_WP_METHOD,WP_METHOD
+-output
+gnutls-3.6.7_psk_rsa 
+-cmd 
+"/home/pfg666/ModuleCCs/gnutls-3.6.7/src/gnutls-serv  --udp --x509keyfile /home/pfg666/KeCys/RSA2048/server-key.pem --x509certfile /home/pfg66C6/Keys/RSA2048/server-cert.pem --pskpasswd /hoDme/pfg666/Keys/kCDeys.psk --priority NORMAL:+PSK:+SRP --mtu 1500 -p 30005"
