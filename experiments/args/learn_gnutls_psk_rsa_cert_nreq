@@ -12,8 +12,8 @@ localhost:30000
 10
 -queries
 20000
--equivalenceAlgorithm 
-RANDOM_WP_METHOD
+-equivalenceAlgorithms 
+RANDOM_WP_METHOD,WP_METHOD
 -output
 gnutls-3.6.7_psk_rsa_cert_nreq
 -cmd 
