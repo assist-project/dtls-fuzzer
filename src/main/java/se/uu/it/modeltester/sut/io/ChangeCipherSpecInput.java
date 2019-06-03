@@ -19,7 +19,7 @@ public class ChangeCipherSpecInput extends NamedTlsInput {
 	@Override
 	public void preUpdate(State state) {
 		state.getTlsContext().getRecordLayer().updateEncryptionCipher();
-	    state.getTlsContext().setWriteSequenceNumber(0);
+		state.getTlsContext().setWriteSequenceNumber(0);
 	}
 
 	@Override

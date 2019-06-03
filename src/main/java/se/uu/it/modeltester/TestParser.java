@@ -92,6 +92,9 @@ public class TestParser {
 		return inputWord;
 	}
 	
+	/**
+	 * Reads reset-seperated tests
+	 */
 	public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet, String PATH) throws IOException{
 		List<String> inputStrings = readTestStrings(PATH);
 		List<Word<TlsInput>> tests = new LinkedList<>();

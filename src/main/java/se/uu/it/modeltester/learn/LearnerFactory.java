@@ -97,28 +97,22 @@ public class LearnerFactory {
 					case RANDOM_WP_METHOD:
 						return new RandomWpMethodEQOracle<>(sulOracle, config.getMinLength(), config.getRandLength(), config.getNumberOfQueries());
 					case SAMPLED_TESTS:
-						return buildSampledTestsOracle(config, sulOracle, alphabet);
+						return new SampledTestsEQOracle<>(readTests(config, alphabet), sulOracle);
+					case WSAMPLED_TESTS:
+						return new WSampledTestsEQOracle<>(readTests(config, alphabet), sulOracle, 123456l, config.getNumberOfQueries());
 					default:
 						throw new RuntimeException("Equivalence algorithm not supported");
 		}
 	}
 	
-	private static EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>>  
-	buildSampledTestsOracle(LearningConfig config, MealyMembershipOracle<TlsInput,TlsOutput> sulOracle, Alphabet<TlsInput> alphabet) {
+	
+	private static List<Word<TlsInput>> readTests(LearningConfig config, Alphabet<TlsInput> alphabet) {
 		TestParser parser = new TestParser();
 		try {
-//			List<Word<TlsInput>> tests = Files.lines(Paths.get(config.getTestFile())).map( line -> {
-//				List<String> inputStrings = Arrays.asList(line.split("\\s*"));
-//				Word<TlsInput> test = parser.readTest(alphabet, inputStrings);
-//				return test;
-//			} ).collect(Collectors.toList());
-			// we use this method for now to stay consistent with the test runner tool
 			List<Word<TlsInput>> tests = parser.readTests(alphabet, config.getTestFile());
-			return new SampledTestsEQOracle<>(tests, sulOracle);
+			return tests;
 		} catch (IOException e) {
 			throw new RuntimeException("Could not read tests from file "+ config.getTestFile());
 		}
-		
 	}
-
 }
