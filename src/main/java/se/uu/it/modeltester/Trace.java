@@ -2,19 +2,27 @@ package se.uu.it.modeltester;
 
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import com.alexmerz.graphviz.ParseException;
 import com.pfg666.dotparser.fsm.mealy.MealyDotParser;
 
 import de.learnlib.api.SUL;
@@ -31,8 +39,12 @@ import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import net.automatalib.automata.transout.impl.FastMealy;
+import net.automatalib.automata.transout.impl.FastMealyState;
+import net.automatalib.commons.util.Pair;
+import net.automatalib.util.automata.Automata;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
+import net.automatalib.words.impl.ListAlphabet;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.TestingInputExecutor;
 import se.uu.it.modeltester.learn.RandomWpMethodEQOracle;
@@ -181,9 +193,26 @@ public class Trace {
 //			nonmut(new ChangeCipherSpecInput()),
 //			nonmut(new FinishedInput()),
 //		};
-		System.out.println(testSuiteSize(Paths.get("experiments", "models", "openssl-1.1.1b_psk_rsa_cert_req_20190508.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"), 1));
+		
+		FastMealy<TlsInput, TlsOutput> mealy = parseMealy(Paths.get("gnutls.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"));
+//				parseMealy(Paths.get("experiments", "models", "mbedtls_psk_rsa_cert_nreq_20190510.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"));
+		FastMealyState<TlsOutput> state = mealy.getStates().stream().findAny().get();
+		Map<String, Word<TlsInput>> map1 = stateMap(mealy, mealy.getInputAlphabet());
+		System.out.println(map1);
+		Map<String, Word<TlsInput>> map2 = stateMap(mealy, mealy.getInputAlphabet());
+		System.out.println(map2);
+		ArrayList<TlsInput> al = new ArrayList<>(mealy.getInputAlphabet());
+		Collections.shuffle(al);
+		Map<String, Word<TlsInput>> map3 = stateMap(mealy, new ListAlphabet<TlsInput>(al));
+		System.out.println(map3);
+//		System.out.println(testSuiteSize(Paths.get("experiments", "models", "openssl-1.1.1b_psk_rsa_cert_req_20190508.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"), 1));
 	}
 	
+	private static Map<String, Word<TlsInput>> stateMap(FastMealy<TlsInput, TlsOutput> mealy, Alphabet<TlsInput> a) {
+		TreeMap<String, Word<TlsInput>> map = new TreeMap<>();
+		Automata.stateCover(mealy, a).forEach(w -> map.put(mealy.getState(w).toString(), w));
+		return map;
+	}
 	
 	private static void runTest(TlsInput [] inputs, int iterations, Integer stepWait, Long runWait) {
 		//		TlsInput [] inputs = Global. 
@@ -236,14 +265,19 @@ public class Trace {
 	}
 	
 	private static long testSuiteSize(Path automatonFile, Path alphabetFile, int depth) throws Exception{
-		Alphabet<TlsInput> alphabet = AlphabetSerializer.read(new FileInputStream(alphabetFile.toString()));
-		MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<TlsInput, TlsOutput>(new TlsProcessor(DefinitionsFactory.generateDefinitions(alphabet)));
-		FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(automatonFile.toString()).get(0);
+		FastMealy<TlsInput, TlsOutput> fastMealy = parseMealy(automatonFile, alphabetFile);
 		MealySimulatorOracle<TlsInput, TlsOutput> sim = new SimulatorOracle.MealySimulatorOracle<>(fastMealy);
 		MealyCounterOracle<TlsInput, TlsOutput> counterOracle = new CounterOracle.MealyCounterOracle<>(sim, "counter");
 		MealyWpMethodEQOracle<TlsInput, TlsOutput> oracle = new WpMethodEQOracle.MealyWpMethodEQOracle<>(depth, counterOracle);
 		oracle.findCounterExample(fastMealy, fastMealy.getInputAlphabet());
 		return counterOracle.getStatisticalData().getCount();
+	}
+	
+	private static FastMealy<TlsInput, TlsOutput> parseMealy(Path automatonFile, Path alphabetFile) throws FileNotFoundException, JAXBException, IOException, XMLStreamException, ParseException {
+		Alphabet<TlsInput> alphabet = AlphabetSerializer.read(new FileInputStream(alphabetFile.toString()));
+		MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<TlsInput, TlsOutput>(new TlsProcessor(DefinitionsFactory.generateDefinitions(alphabet)));
+		FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(automatonFile.toString()).get(0);
+		return fastMealy;
 	}
 
 	private static String compact(List<TlsOutput> reses) {

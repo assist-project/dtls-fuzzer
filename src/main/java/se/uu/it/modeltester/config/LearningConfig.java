@@ -37,7 +37,7 @@ public class LearningConfig {
 	@Parameter(names = "-testFile", description = "A file with tests to be run.")
 	private String testFile;
 
-	@Parameter(names = "-logQueries", description = "Log queries to an output failse")
+	@Parameter(names = "-logQueries", description = "Log queries to an output false")
 	private boolean logQueries = false;
 
 
