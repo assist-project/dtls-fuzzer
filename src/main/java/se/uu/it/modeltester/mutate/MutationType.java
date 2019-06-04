@@ -1,6 +1,7 @@
 package se.uu.it.modeltester.mutate;
 
 import se.uu.it.modeltester.mutate.fragment.*;
+import se.uu.it.modeltester.mutate.record.*;
 import se.uu.it.modeltester.execute.FragmentationResult;
 import se.uu.it.modeltester.execute.PackingResult;
 
@@ -10,7 +11,9 @@ import se.uu.it.modeltester.execute.PackingResult;
 public enum MutationType {
 	FRAGMENT_REORDERING(ReorderingMutation.class, FragmentationResult.class),
 	MESSAGE_SPLITTING(SplittingMutation.class, FragmentationResult.class),
-	EMPTY_FRAGMENT_ADDITION(EmptyFragmentAdditionMutation.class, FragmentationResult.class);
+	EMPTY_FRAGMENT_ADDITION(EmptyFragmentAdditionMutation.class, FragmentationResult.class),
+	RECORD_REORDERING(RecordSwapMutation.class, PackingResult.class),
+	;
 	
 	private Class<? extends Mutation<?>> mutationClass;
 	private Class<?> resultType;
