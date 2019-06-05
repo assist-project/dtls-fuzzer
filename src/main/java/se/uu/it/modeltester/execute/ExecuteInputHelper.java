@@ -11,6 +11,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.state.State;
+import de.rub.nds.tlsattacker.core.state.TlsContext;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
 
 /**
@@ -47,6 +48,18 @@ public class ExecuteInputHelper {
 			records.add(record);
 			byte[] data = message.getCompleteResultingMessage().getValue();
 			state.getTlsContext().getRecordLayer().prepareRecords(data, message.getProtocolMessageType(),
+					Collections.singletonList(record));
+		}
+		return new PackingResult(messages, records);
+	}
+	
+	public final PackingResult packMessages(List<ProtocolMessage> messages, TlsContext state) {
+		List<AbstractRecord> records = new LinkedList<>();
+		for (ProtocolMessage message : messages) {
+			AbstractRecord record = state.getRecordLayer().getFreshRecord();
+			records.add(record);
+			byte[] data = message.getCompleteResultingMessage().getValue();
+			state.getRecordLayer().prepareRecords(data, message.getProtocolMessageType(),
 					Collections.singletonList(record));
 		}
 		return new PackingResult(messages, records);

@@ -40,20 +40,20 @@ public class MutatedInputExecutor extends TestingInputExecutor{
 	
 	protected FragmentationResult fragmentMessage(ProtocolMessage message, State state, ExecutionContext context) {
 		FragmentationResult result = super.fragmentMessage(message, state, context);
-		result = applyMutations(fragmentationMutations, result, state);
+		result = applyMutations(fragmentationMutations, result, state, context);
 		return result;
 	}
 	
 	protected PackingResult packMessages(List<ProtocolMessage> messagesToSend, State state, ExecutionContext context) {
 		PackingResult result = super.packMessages(messagesToSend, state, context);
-		result = applyMutations(packingMutations, result, state);
+		result = applyMutations(packingMutations, result, state, context);
 		return result;
 	}
 	
-	private <R> R applyMutations(List<Mutation<R>> mutations, R result, State state)  {
+	private <R> R applyMutations(List<Mutation<R>> mutations, R result, State state, ExecutionContext context)  {
 		R mutatedResult = result;
 		for (Mutation<R> mutation : mutations) {
-			mutatedResult = mutation.mutate(result, state.getTlsContext(), null);
+			mutatedResult = mutation.mutate(result, state.getTlsContext(), context);
 		}
 		return mutatedResult; 
 	}

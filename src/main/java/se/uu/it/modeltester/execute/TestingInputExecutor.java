@@ -1,5 +1,7 @@
 package se.uu.it.modeltester.execute;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,14 +30,17 @@ public class TestingInputExecutor extends AbstractInputExecutor{
 
 		if (message.isHandshakeMessage() && state.getTlsContext().getConfig().getDefaultSelectedProtocolVersion().isDTLS()) {
 			FragmentationResult result = fragmentMessage(message, state, context);
+			context.getStepContext().setFragmentationResult(result);
 			messagesToSend.addAll(result.getFragments());
 		} else {
 			messagesToSend.add(message);
 		}
 		
 		PackingResult result = packMessages(messagesToSend, state, context);
+		context.getStepContext().setPackingResult(result);
 		message.getHandler(state.getTlsContext()).adjustTlsContextAfterSerialize(message);
-		helper.sendRecords(result.getRecords(), state);
+		result.getRecords().forEach(r -> helper.sendRecords(Arrays.asList(r), state));
+//		helper.sendRecords(result.getRecords(), state);
 	}
 	
 	protected ProtocolMessage prepareMessage(ProtocolMessage message, State state, ExecutionContext context) {
@@ -45,13 +50,11 @@ public class TestingInputExecutor extends AbstractInputExecutor{
 	
 	protected FragmentationResult fragmentMessage(ProtocolMessage message, State state, ExecutionContext context) {
 		FragmentationResult result = helper.fragmentMessage((HandshakeMessage) message, state);
-		context.getStepContext().setFragmentationResult(result);
 		return result;
 	}
 	
 	protected PackingResult packMessages(List<ProtocolMessage> messagesToSend, State state, ExecutionContext context) {
 		PackingResult result = helper.packMessages(messagesToSend, state);
-		context.getStepContext().setPackingResult(result);
 		return result;
 	}
 }

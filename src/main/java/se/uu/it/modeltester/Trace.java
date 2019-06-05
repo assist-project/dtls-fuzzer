@@ -48,9 +48,16 @@ import net.automatalib.words.impl.ListAlphabet;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.TestingInputExecutor;
 import se.uu.it.modeltester.learn.RandomWpMethodEQOracle;
+import se.uu.it.modeltester.mutate.MutatedTlsInput;
 import se.uu.it.modeltester.mutate.MutatingTlsInput;
+import se.uu.it.modeltester.mutate.Mutation;
+import se.uu.it.modeltester.mutate.Mutator;
+import se.uu.it.modeltester.mutate.fragment.FragmentReplayMutation;
 import se.uu.it.modeltester.mutate.fragment.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.fragment.SplittingMutator;
+import se.uu.it.modeltester.mutate.record.MessageDupMutation;
+import se.uu.it.modeltester.mutate.record.RecordDeferMutation;
+import se.uu.it.modeltester.mutate.record.RecordFlushMutation;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
@@ -136,6 +143,14 @@ public class Trace {
 		return new MutatingTlsInput(input, Arrays.asList(fragmentationMutator));
 	}
 	
+	public static TlsInput mutating(TlsInput input, Mutator<?> ... mutators ) {
+		return new MutatingTlsInput(input, Arrays.asList(mutators));
+	}
+	
+	public static TlsInput mutated(TlsInput input, Mutation<?> ... mutations ) {
+		return new MutatedTlsInput(input, Arrays.asList(mutations));
+	}
+	
 	
 	public static TlsInput nonmut(TlsInput input) {
 		return input;
@@ -179,23 +194,28 @@ public class Trace {
 	public static void main(String[] args) throws Exception {
 		
 //		
-//		CipherSuite cs = 
-////				CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8;
-////				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
+		CipherSuite cs = 
+//				CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8;
+				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
 //				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
-//		int iterations = 1;
-//		int stepWait = 10;
-//		long runWait = 100;
-//		TlsInput [] inputs = new TlsInput [] {
-//			nonmut(new ClientHelloInput(cs)),
-//			nonmut(new ClientHelloInput(cs)),
+		int iterations = 1;
+		int stepWait = 10;
+		long runWait = 100;
+		TlsInput [] inputs = new TlsInput [] {
+			nonmut(new ClientHelloInput(cs)),
+			nonmut(new ClientHelloInput(cs)),
 //			nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
 //			nonmut(new ChangeCipherSpecInput()),
-//			nonmut(new FinishedInput()),
-//		};
-		
+			mutated(new GenericTlsInput(new PskClientKeyExchangeMessage()), new RecordDeferMutation()),
+			mutated(new ChangeCipherSpecInput(), new RecordFlushMutation()),
+			mutated(new FinishedInput(), new RecordDeferMutation(), new MessageDupMutation(-2), new RecordFlushMutation()),
+		};
+		runTest(Command.opensslDtlsPsk, inputs, iterations, stepWait, runWait);
+	}
+	
+	private static void compareStateMaps() throws Exception {
 		FastMealy<TlsInput, TlsOutput> mealy = parseMealy(Paths.get("gnutls.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"));
-//				parseMealy(Paths.get("experiments", "models", "mbedtls_psk_rsa_cert_nreq_20190510.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"));
+//		parseMealy(Paths.get("experiments", "models", "mbedtls_psk_rsa_cert_nreq_20190510.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"));
 		FastMealyState<TlsOutput> state = mealy.getStates().stream().findAny().get();
 		Map<String, Word<TlsInput>> map1 = stateMap(mealy, mealy.getInputAlphabet());
 		System.out.println(map1);
@@ -204,8 +224,6 @@ public class Trace {
 		ArrayList<TlsInput> al = new ArrayList<>(mealy.getInputAlphabet());
 		Collections.shuffle(al);
 		Map<String, Word<TlsInput>> map3 = stateMap(mealy, new ListAlphabet<TlsInput>(al));
-		System.out.println(map3);
-//		System.out.println(testSuiteSize(Paths.get("experiments", "models", "openssl-1.1.1b_psk_rsa_cert_req_20190508.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"), 1));
 	}
 	
 	private static Map<String, Word<TlsInput>> stateMap(FastMealy<TlsInput, TlsOutput> mealy, Alphabet<TlsInput> a) {
@@ -214,11 +232,10 @@ public class Trace {
 		return map;
 	}
 	
-	private static void runTest(TlsInput [] inputs, int iterations, Integer stepWait, Long runWait) {
+	private static void runTest(String command, TlsInput [] inputs, int iterations, Integer stepWait, Long runWait) throws InterruptedException {
 		//		TlsInput [] inputs = Global. 
 		//		//buildTest(tests[4], "alphabet.xml");
 		init();
-		String command = Command.localTinyDtls;
 				//"openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug"; //Command.openssl101dRsa;
 		
 		ModelBasedTesterConfig modelFuzzConfig = new ModelBasedTesterConfig(new GeneralDelegate());

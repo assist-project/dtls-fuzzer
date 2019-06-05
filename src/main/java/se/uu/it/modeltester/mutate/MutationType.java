@@ -10,9 +10,13 @@ import se.uu.it.modeltester.execute.PackingResult;
  */
 public enum MutationType {
 	FRAGMENT_REORDERING(ReorderingMutation.class, FragmentationResult.class),
+	FRAGMENT_REPLAY(FragmentReplayMutation.class, FragmentationResult.class),
 	MESSAGE_SPLITTING(SplittingMutation.class, FragmentationResult.class),
 	EMPTY_FRAGMENT_ADDITION(EmptyFragmentAdditionMutation.class, FragmentationResult.class),
 	RECORD_REORDERING(RecordSwapMutation.class, PackingResult.class),
+	RECORD_DEFERRAL(RecordDeferMutation.class, PackingResult.class),
+	RECORD_FLUSHING(RecordFlushMutation.class, PackingResult.class),
+	MESSAGE_SWAP(MessageDupMutation.class, PackingResult.class),
 	;
 	
 	private Class<? extends Mutation<?>> mutationClass;
