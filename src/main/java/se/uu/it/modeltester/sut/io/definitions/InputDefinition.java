@@ -19,13 +19,12 @@ public class InputDefinition {
 			@XmlElement(type = ClientHelloInput.class, name = "ClientHelloInput"),
 			@XmlElement(type = GenericTlsInput.class, name = "GenericTlsInput"),
 			@XmlElement(type = FinishedInput.class, name = "FinishedInput"),
-			@XmlElement(type = ChangeCipherSpecInput.class, name = "ChangeCipherSpecInput"),
-	})
+			@XmlElement(type = ChangeCipherSpecInput.class, name = "ChangeCipherSpecInput"),})
 	private TlsInput input;
-	
-	public InputDefinition(){
+
+	public InputDefinition() {
 	}
-	
+
 	public InputDefinition(String name, TlsInput input) {
 		super();
 		this.name = name;

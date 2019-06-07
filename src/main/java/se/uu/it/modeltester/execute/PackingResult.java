@@ -10,7 +10,8 @@ import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 public class PackingResult {
 	private List<ProtocolMessage> messages;
 	private List<AbstractRecord> records;
-	public PackingResult(List<ProtocolMessage> messages, List<AbstractRecord> records) {
+	public PackingResult(List<ProtocolMessage> messages,
+			List<AbstractRecord> records) {
 		super();
 		this.messages = messages;
 		this.records = records;

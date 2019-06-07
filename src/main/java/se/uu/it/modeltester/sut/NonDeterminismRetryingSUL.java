@@ -15,16 +15,17 @@ import de.learnlib.api.SULException;
  * @param <I>
  * @param <O>
  */
-public class NonDeterminismRetryingSUL<I,O> implements SUL<I,O> {
-	private final SUL<I,O> sul;
-	private final ObservationTree<I,O> root = new ObservationTree<I,O>();
+public class NonDeterminismRetryingSUL<I, O> implements SUL<I, O> {
+	private final SUL<I, O> sul;
+	private final ObservationTree<I, O> root = new ObservationTree<I, O>();
 	private final List<I> inputs = new ArrayList<>();
 	private final List<O> outputs = new ArrayList<>();
 	private int retries;
 	private PrintWriter log;
-	
+
 	// the number of confirmation retries should be high
-	public NonDeterminismRetryingSUL(SUL<I,O> sul, int confirmationRetries, Writer log) {
+	public NonDeterminismRetryingSUL(SUL<I, O> sul, int confirmationRetries,
+			Writer log) {
 		this.sul = sul;
 		this.retries = confirmationRetries;
 		this.log = new PrintWriter(log);
@@ -49,12 +50,15 @@ public class NonDeterminismRetryingSUL<I,O> implements SUL<I,O> {
 		List<O> outputs = new ArrayList<O>(this.outputs);
 		outputs.add(result);
 		try {
-			// check for non-determinism: crashes if outputs are inconsistent with previous ones
+			// check for non-determinism: crashes if outputs are inconsistent
+			// with previous ones
 			root.addObservation(inputs, outputs);
-		}catch(CacheInconsistencyException exc) {
+		} catch (CacheInconsistencyException exc) {
 			log.println(exc.toString());
-			log.println("Retrying inputs " + retries + " times to confirm non-determinism");
-			// ok, non determinism detected, could it be a blip? Does it occur at least once
+			log.println("Retrying inputs " + retries
+					+ " times to confirm non-determinism");
+			// ok, non determinism detected, could it be a blip? Does it occur
+			// at least once
 			// if we rerun the sequence $retries times?
 			result = retryInputs(inputs, retries);
 			log.println("Non-determinism could not be confirmed. Learning can continue");
@@ -65,17 +69,17 @@ public class NonDeterminismRetryingSUL<I,O> implements SUL<I,O> {
 
 	private O retryInputs(List<I> inputs, int numTimes) {
 		O result = null;
-		for (int i=0; i<numTimes; i++) {
+		for (int i = 0; i < numTimes; i++) {
 			List<O> outputs = new ArrayList<O>();
 			sul.post();
 			sul.pre();
 			for (I input : inputs) {
 				outputs.add(sul.step(input));
 			}
-			result = outputs.get(outputs.size()-1); //lazzyyyy
+			result = outputs.get(outputs.size() - 1); // lazzyyyy
 			root.addObservation(inputs, outputs);
 		}
 		return result;
 	}
-	
+
 }

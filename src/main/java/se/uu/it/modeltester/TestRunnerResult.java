@@ -9,8 +9,9 @@ import se.uu.it.modeltester.sut.io.TlsOutput;
 public class TestRunnerResult {
 	private Word<TlsInput> inputWord;
 	private Map<Word<TlsOutput>, Integer> generatedOutputs;
-	
-	public TestRunnerResult(Word<TlsInput> inputWord, Map<Word<TlsOutput>, Integer> generatedOutputs) {
+
+	public TestRunnerResult(Word<TlsInput> inputWord,
+			Map<Word<TlsOutput>, Integer> generatedOutputs) {
 		super();
 		this.inputWord = inputWord;
 		this.generatedOutputs = generatedOutputs;

@@ -10,62 +10,69 @@ import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.modeltester.mutate.Mutation;
 
 /**
- * A mutated input executor applies mutations at different stages in
- * sending an input. These stages coincide with those of the {@link MutatingInputExecutor}.
+ * A mutated input executor applies mutations at different stages in sending an
+ * input. These stages coincide with those of the {@link MutatingInputExecutor}.
  * 
- * It server as a "replayer" for already generated mutations which produced 
+ * It server as a "replayer" for already generated mutations which produced
  * interesting results.
  */
-public class MutatedInputExecutor extends TestingInputExecutor{
-	
+public class MutatedInputExecutor extends TestingInputExecutor {
+
 	private List<Mutation<FragmentationResult>> fragmentationMutations;
 	private List<Mutation<PackingResult>> packingMutations;
-	
+
 	public MutatedInputExecutor(List<Mutation<?>> mutations) {
-		// TODO bad design, we should at least make Mutated and Mutating Input Executor implementations be consistent
+		// TODO bad design, we should at least make Mutated and Mutating Input
+		// Executor implementations be consistent
 		fragmentationMutations = new LinkedList<>();
 		packingMutations = new LinkedList<>();
-		
-		
+
 		for (Mutation<?> mutation : mutations) {
 			if (mutation.getType().isFragmenting()) {
-				fragmentationMutations.add((Mutation<FragmentationResult>) mutation);
-			} 
+				fragmentationMutations
+						.add((Mutation<FragmentationResult>) mutation);
+			}
 			if (mutation.getType().isPacking()) {
 				packingMutations.add((Mutation<PackingResult>) mutation);
 			}
 		}
 	}
 
-	
-	protected FragmentationResult fragmentMessage(ProtocolMessage message, State state, ExecutionContext context) {
-		FragmentationResult result = super.fragmentMessage(message, state, context);
+	protected FragmentationResult fragmentMessage(ProtocolMessage message,
+			State state, ExecutionContext context) {
+		FragmentationResult result = super.fragmentMessage(message, state,
+				context);
 		result = applyMutations(fragmentationMutations, result, state, context);
 		return result;
 	}
-	
-	protected PackingResult packMessages(List<ProtocolMessage> messagesToSend, State state, ExecutionContext context) {
-		PackingResult result = super.packMessages(messagesToSend, state, context);
+
+	protected PackingResult packMessages(List<ProtocolMessage> messagesToSend,
+			State state, ExecutionContext context) {
+		PackingResult result = super.packMessages(messagesToSend, state,
+				context);
 		result = applyMutations(packingMutations, result, state, context);
 		return result;
 	}
-	
-	private <R> R applyMutations(List<Mutation<R>> mutations, R result, State state, ExecutionContext context)  {
+
+	private <R> R applyMutations(List<Mutation<R>> mutations, R result,
+			State state, ExecutionContext context) {
 		R mutatedResult = result;
 		for (Mutation<R> mutation : mutations) {
-			mutatedResult = mutation.mutate(result, state.getTlsContext(), context);
+			mutatedResult = mutation.mutate(mutatedResult,
+					state.getTlsContext(), context);
 		}
-		return mutatedResult; 
+		return mutatedResult;
 	}
-	
+
 	public List<Mutation<?>> getMutations() {
-		return Stream.concat(fragmentationMutations.stream(), packingMutations.stream())
-				.collect(Collectors.toList());
+		return Stream.concat(fragmentationMutations.stream(),
+				packingMutations.stream()).collect(Collectors.toList());
 	}
-	
+
 	public String getCompactMutationDescription() {
-		return Stream.concat(fragmentationMutations.stream(), packingMutations.stream())
-				.map(m -> m.toString())
-				.reduce((s1,s2) -> s1 + "_" + s2).orElse("");
+		return Stream
+				.concat(fragmentationMutations.stream(),
+						packingMutations.stream()).map(m -> m.toString())
+				.reduce((s1, s2) -> s1 + "_" + s2).orElse("");
 	}
 }

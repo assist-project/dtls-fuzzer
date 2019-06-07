@@ -33,14 +33,14 @@ import se.uu.it.modeltester.test.ConformanceTester;
 import se.uu.it.modeltester.test.TestReport;
 
 public class ModelBasedTester {
-	private static final Logger LOGGER = LogManager.getLogger(ModelBasedTester.class);
-	
+	private static final Logger LOGGER = LogManager
+			.getLogger(ModelBasedTester.class);
+
 	private ModelBasedTesterConfig config;
 
 	public ModelBasedTester(ModelBasedTesterConfig config) {
 		this.config = config;
 	}
-	
 
 	public TestReport startTesting() throws ParseException, IOException {
 		// setting up our output directory
@@ -60,51 +60,71 @@ public class ModelBasedTester {
 			return report;
 		}
 	}
-	
 
-	private void runTest(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException, ParseException {
+	private void runTest(ModelBasedTesterConfig config,
+			SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException,
+			ParseException {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
-		TestRunner runner = new TestRunner(config.getTestRunnerConfig(), alphabet, sutOracle);
+		TestRunner runner = new TestRunner(config.getTestRunnerConfig(),
+				alphabet, sutOracle);
 		TestRunnerResult result = runner.runTest();
 		if (config.getSpecification() != null) {
-			Definitions definitions = DefinitionsFactory.generateDefinitions(alphabet);
-			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(definitions));
-			FastMealy<TlsInput, TlsOutput> machine = dotParser.parseAutomaton(config.getSpecification()).get(0);
-			Word<TlsOutput> outputWord = machine.computeOutput(result.getInputWord());
+			Definitions definitions = DefinitionsFactory
+					.generateDefinitions(alphabet);
+			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(
+					new TlsProcessor(definitions));
+			FastMealy<TlsInput, TlsOutput> machine = dotParser.parseAutomaton(
+					config.getSpecification()).get(0);
+			Word<TlsOutput> outputWord = machine.computeOutput(result
+					.getInputWord());
 			LOGGER.error("Expected output: " + outputWord);
 		}
 	}
 
-	public SULOracle<TlsInput, TlsOutput> createTestOracle(ModelBasedTesterConfig config) {
-		SUL<TlsInput, TlsOutput> tlsSut = new TlsSUL(config.getSulDelegate(), new TestingInputExecutor());
+	public SULOracle<TlsInput, TlsOutput> createTestOracle(
+			ModelBasedTesterConfig config) {
+		SUL<TlsInput, TlsOutput> tlsSut = new TlsSUL(config.getSulDelegate(),
+				new TestingInputExecutor());
 		if (config.getSulDelegate().getCommand() != null) {
-			
-			tlsSut = new TlsProcessWrapper(tlsSut, 
-					new ProcessHandler(config.getSulDelegate().getCommand(), 
-							config.getSulDelegate().getRunWait()));
+
+			tlsSut = new TlsProcessWrapper(tlsSut, new ProcessHandler(config
+					.getSulDelegate().getCommand(), config.getSulDelegate()
+					.getRunWait()));
 		}
-		SULOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(tlsSut);
+		SULOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(
+				tlsSut);
 		return tlsOracle;
 	}
-	
+
 	/**
-	 * Generates a model based testing task, that is, a specification and an alphabet to focus model based testing on.
-	 * If a specification is not provided, it is created using active learning. 
+	 * Generates a model based testing task, that is, a specification and an
+	 * alphabet to focus model based testing on. If a specification is not
+	 * provided, it is created using active learning.
 	 */
-	public ConformanceTestingTask generateModelBasedTestingTask(ModelBasedTesterConfig config) throws FileNotFoundException, ParseException {
-		
-		String specification = config.getSpecification(); 
+	public ConformanceTestingTask generateModelBasedTestingTask(
+			ModelBasedTesterConfig config) throws FileNotFoundException,
+			ParseException {
+
+		String specification = config.getSpecification();
 		if (specification == null) {
 			ExtractorResult result = extractModel(config);
 			// TODO not the nicest way of making a conversion
-			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(result.getLearnedModel().generateDefinitions()));
-			FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(result.getLearnedModelFile().getPath()).get(0);
-			return new ConformanceTestingTask( fastMealy, fastMealy.getInputAlphabet());
+			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(
+					new TlsProcessor(result.getLearnedModel()
+							.generateDefinitions()));
+			FastMealy<TlsInput, TlsOutput> fastMealy = dotParser
+					.parseAutomaton(result.getLearnedModelFile().getPath())
+					.get(0);
+			return new ConformanceTestingTask(fastMealy,
+					fastMealy.getInputAlphabet());
 		} else {
 			Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
-			Definitions definitions = DefinitionsFactory.generateDefinitions(alphabet);
-			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(new TlsProcessor(definitions));
-			FastMealy<TlsInput, TlsOutput>  model = dotParser.parseAutomaton(specification).get(0);
+			Definitions definitions = DefinitionsFactory
+					.generateDefinitions(alphabet);
+			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(
+					new TlsProcessor(definitions));
+			FastMealy<TlsInput, TlsOutput> model = dotParser.parseAutomaton(
+					specification).get(0);
 			if (!model.getInputAlphabet().containsAll(alphabet)) {
 				LOGGER.error("The configured alphabet contains inputs not included in the specification. "
 						+ "These inputs will be excluded from the testing alphabet.");
@@ -115,15 +135,17 @@ public class ModelBasedTester {
 			return new ConformanceTestingTask(model, alphabet);
 		}
 	}
-	
+
 	private ExtractorResult extractModel(ModelBasedTesterConfig config) {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 		Extractor extractor = new Extractor(config, alphabet);
 		ExtractorResult result = extractor.extractStateMachine();
 		return result;
 	}
-	
-	private TestReport testModel(ModelBasedTesterConfig config, SULOracle<TlsInput, TlsOutput> sutOracle, ConformanceTestingTask task) throws IOException {
+
+	private TestReport testModel(ModelBasedTesterConfig config,
+			SULOracle<TlsInput, TlsOutput> sutOracle,
+			ConformanceTestingTask task) throws IOException {
 		ConformanceTester tester = new ConformanceTester(config);
 		return tester.testModel(sutOracle, task);
 	}

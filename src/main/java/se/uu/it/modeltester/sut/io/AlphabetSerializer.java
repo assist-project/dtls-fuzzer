@@ -50,7 +50,7 @@ public class AlphabetSerializer {
 
 	public static void write(OutputStream alphabetStream,
 			Alphabet<TlsInput> alphabet) throws JAXBException, IOException {
-		Marshaller m =  getJAXBContext().createMarshaller();
+		Marshaller m = getJAXBContext().createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		AlphabetPojo alphabetPojo = new AlphabetPojo(new ArrayList<>(alphabet));
 		m.marshal(alphabetPojo, alphabetStream);

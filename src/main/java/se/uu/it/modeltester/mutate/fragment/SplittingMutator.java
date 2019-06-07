@@ -6,7 +6,7 @@ import se.uu.it.modeltester.execute.FragmentationResult;
 import se.uu.it.modeltester.mutate.FragmentationMutator;
 import se.uu.it.modeltester.mutate.Mutation;
 
-public class SplittingMutator extends FragmentationMutator{
+public class SplittingMutator extends FragmentationMutator {
 	private FragmentationGenerator generator;
 	private FragmentationStrategy strategy;
 	private int numFragments;
@@ -16,14 +16,17 @@ public class SplittingMutator extends FragmentationMutator{
 		this.strategy = strategy;
 		this.generator = FragmentationGeneratorFactory.buildGenerator(strategy);
 	}
-	
+
 	@Override
-	public Mutation<FragmentationResult> generateMutation(FragmentationResult result, TlsContext context, ExecutionContext exContext) {
+	public Mutation<FragmentationResult> generateMutation(
+			FragmentationResult result, TlsContext context,
+			ExecutionContext exContext) {
 		int length = result.getMessage().getLength().getValue();
-		Fragmentation fragmentation = generator.generateFragmentation(numFragments, length);
+		Fragmentation fragmentation = generator.generateFragmentation(
+				numFragments, length);
 		return new SplittingMutation(fragmentation);
 	}
-	
+
 	public String toString() {
 		return "SplittingMutator(" + strategy.name() + "," + numFragments + ")";
 	}

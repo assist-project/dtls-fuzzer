@@ -8,10 +8,10 @@ public class DiagnosisTask {
 
 	private FastMealy<TlsInput, TlsOutput> specification;
 
-	DiagnosisTask(FastMealy<TlsInput, TlsOutput>  specification) {
+	DiagnosisTask(FastMealy<TlsInput, TlsOutput> specification) {
 		this.specification = specification;
 	}
-	
+
 	public FastMealy<TlsInput, TlsOutput> getSpecification() {
 		return specification;
 	}

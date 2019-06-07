@@ -15,10 +15,11 @@ import net.automatalib.words.Alphabet;
 import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 
 public class AlphabetFactory {
-	private static final Logger LOGGER = LogManager.getLogger(AlphabetFactory.class);
-	
+	private static final Logger LOGGER = LogManager
+			.getLogger(AlphabetFactory.class);
+
 	public static final String DEFAULT_ALPHABET = "/default_alphabet.xml";
-	
+
 	public static Alphabet<TlsInput> buildAlphabet(ModelBasedTesterConfig config) {
 		Alphabet<TlsInput> alphabet = null;
 		if (config.getAlphabet() != null) {
@@ -36,28 +37,34 @@ public class AlphabetFactory {
 				System.exit(0);
 			}
 		}
-		
+
 		return alphabet;
 	}
-	
+
 	public static File getAlphabetFile(ModelBasedTesterConfig config) {
 		if (config.getAlphabet() != null) {
 			return new File(config.getAlphabet());
 		} else {
-			return new File(AlphabetFactory.class.getResource(DEFAULT_ALPHABET).getFile());
+			return new File(AlphabetFactory.class.getResource(DEFAULT_ALPHABET)
+					.getFile());
 		}
 	}
-	
-	public static Alphabet<TlsInput> buildDefaultAlphabet() throws JAXBException, IOException, XMLStreamException {
-		return AlphabetSerializer.read(AlphabetFactory.class.getResourceAsStream(DEFAULT_ALPHABET));
+
+	public static Alphabet<TlsInput> buildDefaultAlphabet()
+			throws JAXBException, IOException, XMLStreamException {
+		return AlphabetSerializer.read(AlphabetFactory.class
+				.getResourceAsStream(DEFAULT_ALPHABET));
 	}
-	
-	public static Alphabet<TlsInput> buildConfiguredAlphabet(ModelBasedTesterConfig config) throws FileNotFoundException, JAXBException, IOException, XMLStreamException {
+
+	public static Alphabet<TlsInput> buildConfiguredAlphabet(
+			ModelBasedTesterConfig config) throws FileNotFoundException,
+			JAXBException, IOException, XMLStreamException {
 		Alphabet<TlsInput> alphabet = null;
 		if (config.getAlphabet() != null) {
-			alphabet = AlphabetSerializer.read(new FileInputStream(config.getAlphabet()));
-		} 
+			alphabet = AlphabetSerializer.read(new FileInputStream(config
+					.getAlphabet()));
+		}
 		return alphabet;
 	}
-	
+
 }

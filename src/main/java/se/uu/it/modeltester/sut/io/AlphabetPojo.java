@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 /**
  * POJO class used for .xml de-serialization.
  */
@@ -19,8 +18,7 @@ public class AlphabetPojo {
 			@XmlElement(type = GenericTlsInput.class, name = "GenericTlsInput"),
 			@XmlElement(type = ChangeCipherSpecInput.class, name = "ChangeCipherSpecInput"),
 			@XmlElement(type = ClientHelloInput.class, name = "ClientHelloInput"),
-			@XmlElement(type = FinishedInput.class, name = "FinishedInput"),
-	})
+			@XmlElement(type = FinishedInput.class, name = "FinishedInput"),})
 	private List<TlsInput> inputs;
 
 	public AlphabetPojo() {
@@ -33,5 +31,5 @@ public class AlphabetPojo {
 	public List<TlsInput> getWords() {
 		return inputs;
 	}
-	
+
 }

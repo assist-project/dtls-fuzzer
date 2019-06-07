@@ -8,10 +8,11 @@ import se.uu.it.modeltester.execute.PackingResult;
 import se.uu.it.modeltester.mutate.Mutation;
 import se.uu.it.modeltester.mutate.MutationType;
 
-public class RecordDeferMutation implements Mutation<PackingResult>{
+public class RecordDeferMutation implements Mutation<PackingResult> {
 
 	@Override
-	public PackingResult mutate(PackingResult result, TlsContext context, ExecutionContext exContext) {
+	public PackingResult mutate(PackingResult result, TlsContext context,
+			ExecutionContext exContext) {
 		exContext.getStepContext().setDeferredRecords(result.getRecords());
 		return new PackingResult(result.getMessages(), Collections.emptyList());
 	}

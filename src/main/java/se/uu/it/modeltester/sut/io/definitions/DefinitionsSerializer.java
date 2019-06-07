@@ -26,13 +26,11 @@ public class DefinitionsSerializer {
 	private static synchronized JAXBContext getJAXBContext()
 			throws JAXBException, IOException {
 		if (context == null) {
-			context = JAXBContext.newInstance(
-					Definitions.class,
-					InputDefinition.class,
-					TlsInput.class, ExtensionMessage.class,
-					ProtocolMessage.class, ModificationFilter.class,
-					VariableModification.class, ModifiableVariable.class
-					);
+			context = JAXBContext.newInstance(Definitions.class,
+					InputDefinition.class, TlsInput.class,
+					ExtensionMessage.class, ProtocolMessage.class,
+					ModificationFilter.class, VariableModification.class,
+					ModifiableVariable.class);
 		}
 		return context;
 	}
@@ -51,7 +49,7 @@ public class DefinitionsSerializer {
 
 	public static void write(OutputStream alphabetStream,
 			Definitions definitions) throws JAXBException, IOException {
-		Marshaller m =  getJAXBContext().createMarshaller();
+		Marshaller m = getJAXBContext().createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		m.marshal(definitions, alphabetStream);
 	}

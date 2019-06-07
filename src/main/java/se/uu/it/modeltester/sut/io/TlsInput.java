@@ -1,6 +1,5 @@
 package se.uu.it.modeltester.sut.io;
 
-import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -11,47 +10,51 @@ import se.uu.it.modeltester.execute.AbstractInputExecutor;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class TlsInput {
-	
+
 	@XmlTransient
-	private AbstractInputExecutor inputExecutor = null;
-	
-	protected TlsInput(AbstractInputExecutor executor) {
-		this.inputExecutor = executor;
+	private AbstractInputExecutor preferredExecutor = null;
+
+	protected TlsInput() {
 	}
-	
 
 	/**
-	 * Returns the preferred executor for this input, or null, if there isn't one.
+	 * Returns the preferred executor for this input, or null, if there isn't
+	 * one.
 	 */
-	public AbstractInputExecutor getExecutor() {
-		return inputExecutor;
+	public AbstractInputExecutor getPreferredExecutor() {
+		return preferredExecutor;
 	}
-	
-	
+
+	public void setPreferredExecutor(AbstractInputExecutor preferredExecutor) {
+		this.preferredExecutor = preferredExecutor;
+	}
+
 	/**
-	 * Generates a fresh message and updates the context.
+	 * Generates a fresh prepared message and updates the context.
 	 */
 	public abstract ProtocolMessage generateMessage(State state);
-	
+
 	/**
 	 * Updates the context after sending the input.
 	 */
-	public void preUpdate(State state) {
+	public void postSendUpdate(State state) {
 	}
-	
+
 	/**
 	 * Updates the context after receiving an output.
 	 */
-	public void postUpdate(TlsOutput output, State state) {
+	public void postReceiveUpdate(TlsOutput output, State state) {
 	}
-	
+
 	/**
-	 * Generates an input string which is assumed to uniquely identify the input.
+	 * Generates an input string which is assumed to uniquely identify the
+	 * input.
 	 */
 	public abstract String toString();
-	
+
 	/**
-	 * The type of the input should correspond to the type of the message the input generates.
+	 * The type of the input should correspond to the type of the message the
+	 * input generates.
 	 */
 	public abstract TlsInputType getInputType();
 }

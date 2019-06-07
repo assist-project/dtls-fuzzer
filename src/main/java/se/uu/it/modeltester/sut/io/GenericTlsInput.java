@@ -1,14 +1,11 @@
 package se.uu.it.modeltester.sut.io;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlTransient;
 
 import de.rub.nds.modifiablevariable.ModifiableVariable;
 import de.rub.nds.tlsattacker.core.https.HttpsRequestMessage;
@@ -55,12 +52,11 @@ import de.rub.nds.tlsattacker.core.protocol.message.SupplementalDataMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownHandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.modeltester.execute.BasicInputExecutor;
 
 /**
  * 
  */
-public class GenericTlsInput extends NamedTlsInput{
+public class GenericTlsInput extends NamedTlsInput {
 	@XmlElements(value = {
 			@XmlElement(type = ProtocolMessage.class, name = "ProtocolMessage"),
 			@XmlElement(type = CertificateMessage.class, name = "Certificate"),
@@ -107,75 +103,82 @@ public class GenericTlsInput extends NamedTlsInput{
 			@XmlElement(type = EncryptedExtensionsMessage.class, name = "EncryptedExtensions"),
 			@XmlElement(type = HelloRetryRequestMessage.class, name = "HelloRetryRequest")})
 	private ProtocolMessage message;
-	
-	@XmlTransient
-	private Map<Field, Object> initialValuation;
-	
+
+	private boolean prepare;
+
 	public GenericTlsInput() {
-		super(new BasicInputExecutor(), null);
-		initialValuation = Collections.emptyMap();
+		super(null);
 	}
 
 	public GenericTlsInput(ProtocolMessage message) {
-		super(new BasicInputExecutor(), message.toCompactString());
+		this(message, true);
+	}
+
+	public GenericTlsInput(ProtocolMessage message, boolean prepare) {
+		super(message.toCompactString());
 		this.message = message;
+		this.prepare = prepare;
 	}
 
 	public ProtocolMessage generateMessage(State state) {
 		stripFields(message);
+		// message.getHandler(state.getTlsContext()).prepareMessage(message,
+		// prepare);
 		return message;
 	}
-	
+
 	// this is only useful for deserializing once learning is done
-	public void postUpdate(TlsOutput output, State state) {
+	public void postReceiveUpdate(TlsOutput output, State state) {
 		stripFields(message);
 	}
-	
+
 	// if the name is not set, we use the compact string of a message as a name
 	public String toString() {
 		String name = getName();
-		if (name == null) 
+		if (name == null)
 			return message.toCompactString();
 		else
 			return name;
 	}
-	
 
 	/*
 	 * Sets the original value of all mvar fields to null.
 	 */
 	private void stripFields(ProtocolMessage message) {
-        List<ModifiableVariableHolder> holders = new LinkedList<>();
-        holders.addAll(message.getAllModifiableVariableHolders());
-        for (ModifiableVariableHolder holder : holders) {
-            List<Field> fields = holder.getAllModifiableVariableFields();
-            for (Field f : fields) {
-                f.setAccessible(true);
+		List<ModifiableVariableHolder> holders = new LinkedList<>();
+		holders.addAll(message.getAllModifiableVariableHolders());
+		for (ModifiableVariableHolder holder : holders) {
+			List<Field> fields = holder.getAllModifiableVariableFields();
+			for (Field f : fields) {
+				f.setAccessible(true);
 
-                ModifiableVariable mv = null;
-                try {
-                    mv = (ModifiableVariable) f.get(holder);
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
-                    ex.printStackTrace();
-                }
-                if (mv != null) {
-                    if (mv.getModification() != null || mv.isCreateRandomModification()) {
-                        mv.setOriginalValue(null);
-                    } else {
-                        try {
-                            f.set(holder, null);
-                        } catch (IllegalArgumentException | IllegalAccessException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-    }
+				ModifiableVariable mv = null;
+				try {
+					mv = (ModifiableVariable) f.get(holder);
+				} catch (IllegalArgumentException | IllegalAccessException ex) {
+					ex.printStackTrace();
+				}
+				if (mv != null) {
+					if (mv.getModification() != null
+							|| mv.isCreateRandomModification()) {
+						mv.setOriginalValue(null);
+					} else {
+						try {
+							f.set(holder, null);
+						} catch (IllegalArgumentException
+								| IllegalAccessException ex) {
+							ex.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public TlsInputType getInputType() {
-		return TlsInputType.fromProtocolMessageType(message.getProtocolMessageType());
+		return TlsInputType.fromProtocolMessageType(message
+				.getProtocolMessageType());
 	}
-	
+
 }

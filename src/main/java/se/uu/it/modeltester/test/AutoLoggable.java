@@ -9,25 +9,25 @@ public abstract class AutoLoggable {
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.getClass().getSimpleName()).append(": {");
 		Class<?> cls = this.getClass();
-		
+
 		// we print fields from the top down
 		Stack<Class<?>> clsStack = new Stack<>();
 		while (cls != AutoLoggable.class) {
 			clsStack.push(cls);
 			cls = cls.getSuperclass();
 		}
-		
-		while (!clsStack.isEmpty()) {	
+
+		while (!clsStack.isEmpty()) {
 			cls = clsStack.pop();
-			for (Field f : cls.getDeclaredFields() ) {
+			for (Field f : cls.getDeclaredFields()) {
 				// ignore java runtime-related fields or static fields
-				if (f.isSynthetic() || Modifier.isStatic(f.getModifiers()) ) {
+				if (f.isSynthetic() || Modifier.isStatic(f.getModifiers())) {
 					continue;
 				}
 				f.setAccessible(true);
 				try {
-					sb.append("   ").append(f.getName())
-					.append(": ").append(f.get(this)).append("\n");
+					sb.append("   ").append(f.getName()).append(": ")
+							.append(f.get(this)).append("\n");
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {

@@ -1,6 +1,5 @@
 package se.uu.it.modeltester;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,10 +9,10 @@ import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
 
-public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput>{
+public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput> {
 	private Map<String, TlsInput> cache;
 	private Definitions definitions;
-	
+
 	public TlsProcessor(Definitions definitions) {
 		cache = new HashMap<>();
 		this.definitions = definitions;
@@ -25,7 +24,9 @@ public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput>{
 		if (!cache.containsKey(inputName)) {
 			TlsInput tlsInput = definitions.getInputWithDefinition(inputName);
 			if (tlsInput == null) {
-				throw new RuntimeException("Input " + inputName + " could not be found in the given definitions.\n " + definitions.toString());
+				throw new RuntimeException("Input " + inputName
+						+ " could not be found in the given definitions.\n "
+						+ definitions.toString());
 			}
 			cache.put(inputName, definitions.getInputWithDefinition(inputName));
 		}
@@ -34,14 +35,16 @@ public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput>{
 
 	@Override
 	public TlsOutput processOutput(String output) {
-//		String[] trimmedOutputStrings = 
-//				Arrays.stream(output.split(","))
-//				.map(o -> o.trim())
-//				.toArray(String []::new);
-		// TODO This is a quick hack, we don't split the string because it can get messy with some outputs which already contain commas
-		// the best solution here would be to store actual messages in the output or message classes.
-		
-		return new TlsOutput(new String [] {output.trim()});
-				//new TlsOutput(trimmedOutputStrings);
+		// String[] trimmedOutputStrings =
+		// Arrays.stream(output.split(","))
+		// .map(o -> o.trim())
+		// .toArray(String []::new);
+		// TODO This is a quick hack, we don't split the string because it can
+		// get messy with some outputs which already contain commas
+		// the best solution here would be to store actual messages in the
+		// output or message classes.
+
+		return new TlsOutput(new String[]{output.trim()});
+		// new TlsOutput(trimmedOutputStrings);
 	}
 }

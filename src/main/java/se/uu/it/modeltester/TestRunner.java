@@ -19,32 +19,33 @@ public class TestRunner {
 	private SULOracle<TlsInput, TlsOutput> sulOracle;
 	private TestRunnerConfig config;
 	private Alphabet<TlsInput> alphabet;
-	
-	public TestRunner(TestRunnerConfig config, Alphabet<TlsInput> alphabet, SULOracle<TlsInput, TlsOutput> sutOracle) {
+
+	public TestRunner(TestRunnerConfig config, Alphabet<TlsInput> alphabet,
+			SULOracle<TlsInput, TlsOutput> sutOracle) {
 		this.alphabet = alphabet;
 		this.config = config;
 		this.sulOracle = sutOracle;
 	}
-	
+
 	public TestRunnerResult runTest() throws IOException {
 		TestParser testParser = new TestParser();
 		Word<TlsInput> test = testParser.readTest(alphabet, config.getTest());
-		
+
 		Map<Word<TlsOutput>, Integer> answerMap = new LinkedHashMap<>();
-		for (int i=0; i<config.getTimes(); i++) {
+		for (int i = 0; i < config.getTimes(); i++) {
 			Word<TlsOutput> answer = sulOracle.answerQuery(test);
 			if (!answerMap.containsKey(answer)) {
 				answerMap.put(answer, 1);
-			}
-			else {
-				answerMap.put(answer, answerMap.get(answer)+1);
+			} else {
+				answerMap.put(answer, answerMap.get(answer) + 1);
 			}
 		}
 		LOGGER.error("Inputs: " + test + "\n");
 		for (Word<TlsOutput> answer : answerMap.keySet()) {
-			LOGGER.error(answerMap.get(answer) + " times outputs: " + answer.toString() + "\n");
+			LOGGER.error(answerMap.get(answer) + " times outputs: "
+					+ answer.toString() + "\n");
 		}
-		
+
 		return new TestRunnerResult(test, answerMap);
 	}
 }

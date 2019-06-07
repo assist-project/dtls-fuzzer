@@ -35,7 +35,10 @@ import de.learnlib.oracles.SimulatorOracle.MealySimulatorOracle;
 import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
+import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.automata.transout.impl.FastMealyState;
@@ -54,8 +57,8 @@ import se.uu.it.modeltester.mutate.Mutator;
 import se.uu.it.modeltester.mutate.fragment.FragmentReplayMutation;
 import se.uu.it.modeltester.mutate.fragment.FragmentationStrategy;
 import se.uu.it.modeltester.mutate.fragment.SplittingMutator;
-import se.uu.it.modeltester.mutate.record.MessageDupMutation;
 import se.uu.it.modeltester.mutate.record.RecordDeferMutation;
+import se.uu.it.modeltester.mutate.record.RecordDupMutation;
 import se.uu.it.modeltester.mutate.record.RecordFlushMutation;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
@@ -80,7 +83,8 @@ public class Trace {
 		// Configurator.setAllLevels("de.rub.nds.tlsattacker", Level.ALL);
 	}
 
-	private static List<CipherSuite> DEFAULT_CIPHERS = Arrays.asList(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA);
+	private static List<CipherSuite> DEFAULT_CIPHERS = Arrays
+			.asList(CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA);
 
 	static class Command {
 		private static String opensslDtlsRsa = "openssl s_server -key /home/paul/Keys/RSA1024/server-key.pem -cert "
@@ -138,7 +142,8 @@ public class Trace {
 	private static int NUM_FRAGS = 5;
 
 	private static TlsInput fuzz(TlsInput input) {
-		SplittingMutator fragmentationMutator = new SplittingMutator(FragmentationStrategy.EVEN, NUM_FRAGS);
+		SplittingMutator fragmentationMutator = new SplittingMutator(
+				FragmentationStrategy.EVEN, NUM_FRAGS);
 		return new MutatingTlsInput(input, Arrays.asList(fragmentationMutator));
 	}
 
@@ -154,8 +159,10 @@ public class Trace {
 		return input;
 	}
 
-	public static Definitions loadDefinitions(String alphabetFile) throws Exception {
-		Alphabet<TlsInput> alpha = AlphabetSerializer.read(new FileInputStream(alphabetFile));
+	public static Definitions loadDefinitions(String alphabetFile)
+			throws Exception {
+		Alphabet<TlsInput> alpha = AlphabetSerializer.read(new FileInputStream(
+				alphabetFile));
 		System.out.println("Alphabet: " + Arrays.asList(alpha.toArray()));
 		Definitions def = DefinitionsFactory.generateDefinitions(alpha);
 		return def;
@@ -165,13 +172,14 @@ public class Trace {
 		List<TlsInput> inputs = new ArrayList<>();
 		for (String s : testString.split("\\s")) {
 			TlsInput input = def.getInputWithDefinition(s.trim());
-//			input.setExecutor(new NonMutatingInputExecutor());
+			// input.setExecutor(new NonMutatingInputExecutor());
 			inputs.add(input);
 		}
 		return inputs.toArray(new TlsInput[inputs.size()]);
 	}
 
-	public static TlsInput[] buildTest(String testString, String alphaFile) throws Exception {
+	public static TlsInput[] buildTest(String testString, String alphaFile)
+			throws Exception {
 		Definitions def = loadDefinitions(alphaFile);
 		TlsInput[] inputs = buildTest(testString, def);
 		return inputs;
@@ -182,52 +190,85 @@ public class Trace {
 			"CLIENT_HELLO_RSA CLIENT_HELLO_RSA FINISHED APPLICATION",
 			// non-det
 			"CLIENT_HELLO_RSA CLIENT_HELLO_RSA FINISHED APPLICATION Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) CLIENT_HELLO_RSA APPLICATION CHANGE_CIPHER_SPEC FINISHED Alert(WARNING,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC APPLICATION CLIENT_HELLO_RSA",
-//			 Alert(UNDEFINED,CLOSE_NOTIFY) Alert(UNDEFINED,CLOSE_NOTIFY) CLIENT_HELLO_RSA APPLICATION CHANGE_CIPHER_SPEC FINISHED Alert(UNDEFINED,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA Alert(UNDEFINED,CLOSE_NOTIFY) Alert(UNDEFINED,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC APPLICATION CLIENT_HELLO_RSA
+			// Alert(UNDEFINED,CLOSE_NOTIFY) Alert(UNDEFINED,CLOSE_NOTIFY)
+			// CLIENT_HELLO_RSA APPLICATION CHANGE_CIPHER_SPEC FINISHED
+			// Alert(UNDEFINED,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA
+			// Alert(UNDEFINED,CLOSE_NOTIFY) Alert(UNDEFINED,CLOSE_NOTIFY)
+			// CHANGE_CIPHER_SPEC APPLICATION CLIENT_HELLO_RSA
 			"FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC FINISHED Alert(WARNING,CLOSE_NOTIFY) APPLICATION FINISHED Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) CHANGE_CIPHER_SPEC CLIENT_HELLO_RSA FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) APPLICATION CLIENT_HELLO_RSA",
 			"CLIENT_HELLO_RSA Alert(WARNING,CLOSE_NOTIFY)",
 			// openssl non-det
-			"RSA_CLIENT_HELLO RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC FINISHED CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED APPLICATION Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE Alert(WARNING,CLOSE_NOTIFY) FINISHED FINISHED RSA_CLIENT_KEY_EXCHANGE FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE APPLICATION RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) APPLICATION RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(WARNING,CLOSE_NOTIFY) RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO" };
+			"RSA_CLIENT_HELLO RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC FINISHED CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED APPLICATION Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE Alert(WARNING,CLOSE_NOTIFY) FINISHED FINISHED RSA_CLIENT_KEY_EXCHANGE FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE APPLICATION RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) APPLICATION RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(WARNING,CLOSE_NOTIFY) RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO"};
+
+	public static TlsInput[] oooCcs = new TlsInput[]{
+			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
+			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
+			// new GenericTlsInput(new PskClientKeyExchangeMessage()),
+			mutated(new GenericTlsInput(new PskClientKeyExchangeMessage()),
+					new RecordDeferMutation()),
+			mutated(new ChangeCipherSpecInput(), new RecordFlushMutation(),
+					new RecordDupMutation(-2)), new FinishedInput()};
 
 	public static void main(String[] args) throws Exception {
 
-//		
+		//
 		CipherSuite cs =
-//				CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8;
-				CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
-//				CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
+		// CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8;
+		CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
+		// CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
 		int iterations = 1;
-		int stepWait = 10;
+		int stepWait = 150;
 		long runWait = 100;
-		TlsInput[] inputs = new TlsInput[] { nonmut(new ClientHelloInput(cs)), nonmut(new ClientHelloInput(cs)),
-//			nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
-//			nonmut(new ChangeCipherSpecInput()),
-				mutated(new GenericTlsInput(new PskClientKeyExchangeMessage()), new RecordDeferMutation()),
-				mutated(new ChangeCipherSpecInput(), new RecordFlushMutation()), mutated(new FinishedInput(),
-						new RecordDeferMutation(), new MessageDupMutation(-2), new RecordFlushMutation()), };
-		runTest(Command.opensslDtlsPsk, inputs, iterations, stepWait, runWait);
+
+		ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage();
+		ccs.setAdjustContext(false);
+		GenericTlsInput ccsInput = new GenericTlsInput(ccs);
+
+		ccs.setAdjustContext(false);
+
+		TlsInput[] inputs = new TlsInput[]{
+				nonmut(new ClientHelloInput(cs)),
+				nonmut(new ClientHelloInput(cs)),
+				// new GenericTlsInput(new PskClientKeyExchangeMessage()),
+				nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
+				mutated(new ChangeCipherSpecInput(), new RecordDeferMutation()),
+				mutated(new FinishedInput(), new RecordFlushMutation(),
+						new RecordDupMutation(-2))};
+
+		runTest(Command.localMbedDtls, inputs, iterations, stepWait, runWait);
 	}
 
 	private static void compareStateMaps() throws Exception {
-		FastMealy<TlsInput, TlsOutput> mealy = parseMealy(Paths.get("gnutls.dot"),
+		FastMealy<TlsInput, TlsOutput> mealy = parseMealy(
+				Paths.get("gnutls.dot"),
 				Paths.get("examples", "alphabets", "psk_rsa_cert.xml"));
-//		parseMealy(Paths.get("experiments", "models", "mbedtls_psk_rsa_cert_nreq_20190510.dot"), Paths.get("examples", "alphabets", "psk_rsa_cert.xml"));
-		FastMealyState<TlsOutput> state = mealy.getStates().stream().findAny().get();
-		Map<String, Word<TlsInput>> map1 = stateMap(mealy, mealy.getInputAlphabet());
+		// parseMealy(Paths.get("experiments", "models",
+		// "mbedtls_psk_rsa_cert_nreq_20190510.dot"), Paths.get("examples",
+		// "alphabets", "psk_rsa_cert.xml"));
+		FastMealyState<TlsOutput> state = mealy.getStates().stream().findAny()
+				.get();
+		Map<String, Word<TlsInput>> map1 = stateMap(mealy,
+				mealy.getInputAlphabet());
 		System.out.println(map1);
-		Map<String, Word<TlsInput>> map2 = stateMap(mealy, mealy.getInputAlphabet());
+		Map<String, Word<TlsInput>> map2 = stateMap(mealy,
+				mealy.getInputAlphabet());
 		System.out.println(map2);
 		ArrayList<TlsInput> al = new ArrayList<>(mealy.getInputAlphabet());
 		Collections.shuffle(al);
-		Map<String, Word<TlsInput>> map3 = stateMap(mealy, new ListAlphabet<TlsInput>(al));
+		Map<String, Word<TlsInput>> map3 = stateMap(mealy,
+				new ListAlphabet<TlsInput>(al));
 	}
 
-	private static Map<String, Word<TlsInput>> stateMap(FastMealy<TlsInput, TlsOutput> mealy, Alphabet<TlsInput> a) {
+	private static Map<String, Word<TlsInput>> stateMap(
+			FastMealy<TlsInput, TlsOutput> mealy, Alphabet<TlsInput> a) {
 		TreeMap<String, Word<TlsInput>> map = new TreeMap<>();
-		Automata.stateCover(mealy, a).forEach(w -> map.put(mealy.getState(w).toString(), w));
+		Automata.stateCover(mealy, a).forEach(
+				w -> map.put(mealy.getState(w).toString(), w));
 		return map;
 	}
 
-	private static void runTest(String command, TlsInput[] inputs, int iterations, Integer stepWait, Long runWait)
+	private static void runTest(String command, TlsInput[] inputs,
+			int iterations, Integer stepWait, Long runWait)
 			throws InterruptedException {
 		SUL<TlsInput, TlsOutput> sut = setupSut(command, stepWait, runWait);
 
@@ -254,26 +295,32 @@ public class Trace {
 		}
 
 		for (Entry<List<TlsOutput>, Integer> res : allResponses.entrySet()) {
-			System.out.println(res.getValue() + " times:" + compact(res.getKey()));
+			System.out.println(res.getValue() + " times:"
+					+ compact(res.getKey()));
 		}
 	}
 
-	private static SUL<TlsInput, TlsOutput> setupSut(String command, Integer stepWait, Long runWait) {
+	private static SUL<TlsInput, TlsOutput> setupSut(String command,
+			Integer stepWait, Long runWait) {
 		init();
 		// "openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug";
 		// //Command.openssl101dRsa;
 
-		ModelBasedTesterConfig modelFuzzConfig = new ModelBasedTesterConfig(new GeneralDelegate());
+		ModelBasedTesterConfig modelFuzzConfig = new ModelBasedTesterConfig(
+				new GeneralDelegate());
 		modelFuzzConfig.getSulDelegate().setHost("localhost:20000");
-		modelFuzzConfig.getSulDelegate().setProtocolVersion(ProtocolVersion.DTLS12);
+		modelFuzzConfig.getSulDelegate().setProtocolVersion(
+				ProtocolVersion.DTLS12);
 		modelFuzzConfig.getSulDelegate().setTimeout(stepWait);
 		modelFuzzConfig.getSulDelegate().setRunWait(runWait);
 		modelFuzzConfig.getSulDelegate().setCommand(command);
 
 		// vulnerabilityConfig.getClientDelegate().setHost("192.168.56.101:20001");
-		SUL<TlsInput, TlsOutput> sut = new TlsSUL(modelFuzzConfig.getSulDelegate(), new TestingInputExecutor());
+		SUL<TlsInput, TlsOutput> sut = new TlsSUL(
+				modelFuzzConfig.getSulDelegate(), new TestingInputExecutor());
 		if (command != Command.none) {
-			ProcessHandler phandler = new ProcessHandler(modelFuzzConfig.getSulDelegate());
+			ProcessHandler phandler = new ProcessHandler(
+					modelFuzzConfig.getSulDelegate());
 			phandler.redirectOutput(System.err);
 			phandler.redirectError(System.err);
 			sut = new SulProcessWrapper<TlsInput, TlsOutput>(sut, phandler);
@@ -281,27 +328,37 @@ public class Trace {
 		return sut;
 	}
 
-	private static long testSuiteSize(Path automatonFile, Path alphabetFile, int depth) throws Exception {
-		FastMealy<TlsInput, TlsOutput> fastMealy = parseMealy(automatonFile, alphabetFile);
-		MealySimulatorOracle<TlsInput, TlsOutput> sim = new SimulatorOracle.MealySimulatorOracle<>(fastMealy);
-		MealyCounterOracle<TlsInput, TlsOutput> counterOracle = new CounterOracle.MealyCounterOracle<>(sim, "counter");
-		MealyWpMethodEQOracle<TlsInput, TlsOutput> oracle = new WpMethodEQOracle.MealyWpMethodEQOracle<>(depth,
-				counterOracle);
+	private static long testSuiteSize(Path automatonFile, Path alphabetFile,
+			int depth) throws Exception {
+		FastMealy<TlsInput, TlsOutput> fastMealy = parseMealy(automatonFile,
+				alphabetFile);
+		MealySimulatorOracle<TlsInput, TlsOutput> sim = new SimulatorOracle.MealySimulatorOracle<>(
+				fastMealy);
+		MealyCounterOracle<TlsInput, TlsOutput> counterOracle = new CounterOracle.MealyCounterOracle<>(
+				sim, "counter");
+		MealyWpMethodEQOracle<TlsInput, TlsOutput> oracle = new WpMethodEQOracle.MealyWpMethodEQOracle<>(
+				depth, counterOracle);
 		oracle.findCounterExample(fastMealy, fastMealy.getInputAlphabet());
 		return counterOracle.getStatisticalData().getCount();
 	}
 
-	private static FastMealy<TlsInput, TlsOutput> parseMealy(Path automatonFile, Path alphabetFile)
-			throws FileNotFoundException, JAXBException, IOException, XMLStreamException, ParseException {
-		Alphabet<TlsInput> alphabet = AlphabetSerializer.read(new FileInputStream(alphabetFile.toString()));
+	private static FastMealy<TlsInput, TlsOutput> parseMealy(
+			Path automatonFile, Path alphabetFile)
+			throws FileNotFoundException, JAXBException, IOException,
+			XMLStreamException, ParseException {
+		Alphabet<TlsInput> alphabet = AlphabetSerializer
+				.read(new FileInputStream(alphabetFile.toString()));
 		MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<TlsInput, TlsOutput>(
-				new TlsProcessor(DefinitionsFactory.generateDefinitions(alphabet)));
-		FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(automatonFile.toString()).get(0);
+				new TlsProcessor(
+						DefinitionsFactory.generateDefinitions(alphabet)));
+		FastMealy<TlsInput, TlsOutput> fastMealy = dotParser.parseAutomaton(
+				automatonFile.toString()).get(0);
 		return fastMealy;
 	}
 
 	private static String compact(List<TlsOutput> reses) {
-		return reses.stream().map(r -> compact(r)).collect(Collectors.toList()).toString();
+		return reses.stream().map(r -> compact(r)).collect(Collectors.toList())
+				.toString();
 	}
 
 	private static String compact(TlsOutput res) {

@@ -8,11 +8,11 @@ import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.Query;
 import net.automatalib.words.Word;
 
-public class LoggingSULOracle<I, O> implements MealyMembershipOracle<I, O>  {
+public class LoggingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 	private MealyMembershipOracle<I, O> oracle;
 	private PrintWriter writer;
 
-	public LoggingSULOracle(MealyMembershipOracle<I,O> oracle, Writer writer) {
+	public LoggingSULOracle(MealyMembershipOracle<I, O> oracle, Writer writer) {
 		this.oracle = oracle;
 		this.writer = new PrintWriter(writer);
 	}

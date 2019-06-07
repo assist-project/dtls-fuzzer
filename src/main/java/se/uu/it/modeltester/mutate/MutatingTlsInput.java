@@ -9,12 +9,13 @@ import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsInputType;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public class MutatingTlsInput extends TlsInput{
+public class MutatingTlsInput extends TlsInput {
 
 	private TlsInput input;
 
 	public MutatingTlsInput(TlsInput input, List<Mutator<?>> mutators) {
-		super(new MutatingInputExecutor(mutators));
+		super();
+		this.setPreferredExecutor(new MutatingInputExecutor(mutators));
 		this.input = input;
 	}
 
@@ -22,27 +23,28 @@ public class MutatingTlsInput extends TlsInput{
 	public ProtocolMessage generateMessage(State state) {
 		return input.generateMessage(state);
 	}
-	
+
 	public String toString() {
-		return "MUTATING_" + input.toString() + "_" + getExecutorAsMutating().getCompactMutatorDescription();
-	}
-	
-	public void preUpdate(State state) {
-		input.preUpdate(state);
+		return "MUTATING_" + input.toString() + "_"
+				+ getExecutorAsMutating().getCompactMutatorDescription();
 	}
 
-	public void postUpdate(TlsOutput output, State state) {
-		input.postUpdate(output, state);
+	public void postSendUpdate(State state) {
+		input.postSendUpdate(state);
 	}
-	
+
+	public void postReceiveUpdate(TlsOutput output, State state) {
+		input.postReceiveUpdate(output, state);
+	}
+
 	public MutatingInputExecutor getExecutorAsMutating() {
-		return ((MutatingInputExecutor) super.getExecutor());
+		return ((MutatingInputExecutor) super.getPreferredExecutor());
 	}
-	
+
 	public TlsInput getInput() {
 		return input;
 	}
-	
+
 	@Override
 	public TlsInputType getInputType() {
 		return input.getInputType();

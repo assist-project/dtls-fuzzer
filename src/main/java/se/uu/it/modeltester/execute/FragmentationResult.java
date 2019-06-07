@@ -11,8 +11,9 @@ import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 public class FragmentationResult {
 	private final HandshakeMessage message;
 	private List<DtlsHandshakeMessageFragment> fragments;
-	
-	public FragmentationResult(HandshakeMessage message, List<DtlsHandshakeMessageFragment> fragments) {
+
+	public FragmentationResult(HandshakeMessage message,
+			List<DtlsHandshakeMessageFragment> fragments) {
 		super();
 		this.message = message;
 		this.fragments = fragments;
@@ -21,7 +22,7 @@ public class FragmentationResult {
 	public List<DtlsHandshakeMessageFragment> getFragments() {
 		return fragments;
 	}
-	
+
 	public HandshakeMessage getMessage() {
 		return message;
 	}

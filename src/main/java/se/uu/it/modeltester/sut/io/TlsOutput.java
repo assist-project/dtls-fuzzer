@@ -8,69 +8,65 @@ import java.util.stream.Collectors;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 
-
 /**
- * The outputs used in learning comprise message strings obtained by compacting messages.
+ * The outputs used in learning comprise message strings obtained by compacting
+ * messages.
  */
 public class TlsOutput {
 	private List<String> messageStrings;
 	private boolean isAlive = true;
 
-	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(new ArrayList<>());
-	
+	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(
+			new ArrayList<>());
+
 	public static TlsOutput socketClosed() {
 		return SOCKET_CLOSED;
 	}
-	
+
 	public TlsOutput() {
 	}
-	
-	public TlsOutput(String [] messageStrings) {
+
+	public TlsOutput(String[] messageStrings) {
 		this.messageStrings = Arrays.asList(messageStrings);
 	}
-	
+
 	public TlsOutput(List<ProtocolMessage> messages) {
-		messageStrings = 
-				messages.stream()
-				.map(m -> m.toCompactString())
+		messageStrings = messages.stream().map(m -> m.toCompactString())
 				.collect(Collectors.toList());
 	}
-	
+
 	public String toString() {
 		// CLIENT_HELLO,SERVER_HELLO...
-		String messageString = messageStrings
-				.stream()
-				.reduce((s1,s2) -> s1+","+s2)
-				.orElse("TIMEOUT");
+		String messageString = messageStrings.stream()
+				.reduce((s1, s2) -> s1 + "," + s2).orElse("TIMEOUT");
 
 		if (!isAlive) {
 			messageString = messageString.concat("[crashed]");
 		}
 		return messageString;
 	}
-	
+
 	public void setIsAlive(boolean isAlive) {
 		this.isAlive = isAlive;
 	}
-	
+
 	public boolean isAlive() {
 		return isAlive;
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			TlsOutput that = (TlsOutput) obj;
 			// TODO not the proper way of comparing outputs but whatever
-			return Objects.equals(this.toString(), that.toString()) 
+			return Objects.equals(this.toString(), that.toString())
 					&& Objects.equals(this.isAlive, that.isAlive);
 		}
 		return false;
 	}
-	
 
 	public int hashCode() {
-		int hashCode = 2*toString().hashCode() + (isAlive?1:0);
+		int hashCode = 2 * toString().hashCode() + (isAlive ? 1 : 0);
 		return hashCode;
 	}
-	
+
 }

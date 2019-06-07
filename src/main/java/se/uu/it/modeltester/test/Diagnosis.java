@@ -14,37 +14,38 @@ public class Diagnosis {
 	private List<TlsInput> fragmentationGloballyNotSupported;
 	private Map<TlsInput, List<?>> fragmentationNotSupportedInStates;
 	private List<List<Mutator<?>>> mutatorCombinationGloballyNotSupported;
-	
-	
+
 	public Diagnosis() {
 		fragmentationNotSupportedInStates = new LinkedHashMap<>();
 		fragmentationGloballyNotSupported = new LinkedList<>();
 		mutatorCombinationGloballyNotSupported = new LinkedList<>();
 	}
-	
+
 	public void addFragmentationGloballyNotSupported(TlsInput input) {
 		fragmentationGloballyNotSupported.add(input);
 	}
-	
-	public void addFragmentationNotSupportInStates(TlsInput input, List<?> states) {
+
+	public void addFragmentationNotSupportInStates(TlsInput input,
+			List<?> states) {
 		fragmentationNotSupportedInStates.put(input, states);
 	}
-	
-	public void addMutatorCombinationGloballyUnsupported(List<Mutator<?>> mutators) {
-		
+
+	public void addMutatorCombinationGloballyUnsupported(
+			List<Mutator<?>> mutators) {
+
 	}
-	
-	
+
 	public void printDiagnosis(PrintStream ps) {
 		ps.println("Diagnosis");
 		ps.println("");
 		if (!fragmentationGloballyNotSupported.isEmpty()) {
 			ps.println("Fragmentation is not supported globally for the following inputs");
-			fragmentationGloballyNotSupported.forEach(i -> ps.println(i.toString()));
-		} 
+			fragmentationGloballyNotSupported.forEach(i -> ps.println(i
+					.toString()));
+		}
 		if (!fragmentationNotSupportedInStates.isEmpty()) {
 			ps.println("Fragmentation is not supported for the following inputs");
 		}
-		
+
 	}
 }

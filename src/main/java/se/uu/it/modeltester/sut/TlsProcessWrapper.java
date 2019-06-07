@@ -5,9 +5,10 @@ import de.learnlib.api.SULException;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public class TlsProcessWrapper extends SulProcessWrapper<TlsInput, TlsOutput>{
+public class TlsProcessWrapper extends SulProcessWrapper<TlsInput, TlsOutput> {
 
-	public TlsProcessWrapper(SUL<TlsInput, TlsOutput> sul, ProcessHandler handler) {
+	public TlsProcessWrapper(SUL<TlsInput, TlsOutput> sul,
+			ProcessHandler handler) {
 		super(sul, handler);
 	}
 

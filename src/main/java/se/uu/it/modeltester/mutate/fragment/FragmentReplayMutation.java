@@ -1,7 +1,6 @@
 package se.uu.it.modeltester.mutate.fragment;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,29 +12,33 @@ import se.uu.it.modeltester.execute.FragmentationResult;
 import se.uu.it.modeltester.mutate.Mutation;
 import se.uu.it.modeltester.mutate.MutationType;
 
-public class FragmentReplayMutation  implements Mutation<FragmentationResult>{
+public class FragmentReplayMutation implements Mutation<FragmentationResult> {
 
-//	private int numFragments;
+	// private int numFragments;
 	private int[] fragIndexes;
 
-	public FragmentReplayMutation(int ... fragIndexes) {
+	public FragmentReplayMutation(int... fragIndexes) {
 		this.fragIndexes = fragIndexes;
 	}
-	
+
 	@Override
-	public FragmentationResult mutate(FragmentationResult result, TlsContext context, ExecutionContext exContext) {
-		List<DtlsHandshakeMessageFragment> fragmentsSent = exContext.getFragmentsSent();
-		List<DtlsHandshakeMessageFragment> fragments = 
-				Stream.concat(
-						fragmentsSent.stream(), 
-						result.getFragments().stream())
+	public FragmentationResult mutate(FragmentationResult result,
+			TlsContext context, ExecutionContext exContext) {
+		List<DtlsHandshakeMessageFragment> fragmentsSent = exContext
+				.getFragmentsSent();
+		List<DtlsHandshakeMessageFragment> fragments = Stream.concat(
+				fragmentsSent.stream(), result.getFragments().stream())
 				.collect(Collectors.toList());
-		List<DtlsHandshakeMessageFragment> replayedFragments = Arrays.stream(fragIndexes)
-				.mapToObj(ind -> ind >= 0 ? fragments.get(ind) : fragments.get(fragments.size() + ind))
+		List<DtlsHandshakeMessageFragment> replayedFragments = Arrays
+				.stream(fragIndexes)
+				.mapToObj(
+						ind -> ind >= 0 ? fragments.get(ind) : fragments
+								.get(fragments.size() + ind))
 				.collect(Collectors.toList());
-				
-//				fragments.subList( Math.max(fragments.size()- numFragments, 0), fragments.size());
-		List<DtlsHandshakeMessageFragment> newFragments = Stream.concat(result.getFragments().stream(), replayedFragments.stream()).collect(Collectors.toList());
+
+		List<DtlsHandshakeMessageFragment> newFragments = Stream.concat(
+				result.getFragments().stream(), replayedFragments.stream())
+				.collect(Collectors.toList());
 		return new FragmentationResult(result.getMessage(), newFragments);
 	}
 

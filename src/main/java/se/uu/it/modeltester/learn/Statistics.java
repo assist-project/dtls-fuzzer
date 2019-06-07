@@ -67,19 +67,15 @@ public class Statistics {
 		out.println("Learning Parameters");
 		out.println("Alphabet: " + alphabet);
 		LearningConfig learningConfig = config.getLearningConfig();
-		out.println("Learning Algorithm: " + learningConfig.getLearningAlgorithm());
+		out.println("Learning Algorithm: "
+				+ learningConfig.getLearningAlgorithm());
 		out.println("Equivalence Algorithms: "
 				+ learningConfig.getEquivalenceAlgorithms());
-		out.println("Min Length: "
-				+ learningConfig.getMinLength());
-		out.println("Max Length: "
-				+ learningConfig.getMaxLength());
-		out.println("Random Length: "
-				+ learningConfig.getRandLength());
-		out.println("Max Depth: "
-				+ learningConfig.getMaxDepth());
-		out.println("Prob Reset: "
-				+ learningConfig.getProbReset());
+		out.println("Min Length: " + learningConfig.getMinLength());
+		out.println("Max Length: " + learningConfig.getMaxLength());
+		out.println("Random Length: " + learningConfig.getRandLength());
+		out.println("Max Depth: " + learningConfig.getMaxDepth());
+		out.println("Prob Reset: " + learningConfig.getProbReset());
 		out.println("Max Queries: " + learningConfig.getNumberOfQueries());
 		out.println("TLS SUL Parameters");
 		SulDelegate sulDelegate = config.getSulDelegate();

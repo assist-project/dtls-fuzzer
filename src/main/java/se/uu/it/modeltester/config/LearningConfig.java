@@ -8,13 +8,13 @@ import com.beust.jcommander.Parameter;
 import se.uu.it.modeltester.learn.EquivalenceAlgorithmName;
 import se.uu.it.modeltester.learn.LearningAlgorithmName;
 
-
 public class LearningConfig {
 	@Parameter(names = "-learningAlgorithm", description = "Which algorithm shold be used for learning")
 	private LearningAlgorithmName learningAlgorithm = LearningAlgorithmName.TTT;
 
 	@Parameter(names = "-equivalenceAlgorithms", description = "Which test algorithms should be used for equivalance testing")
-	private List<EquivalenceAlgorithmName> equivalenceAlgorithms = Arrays.asList(EquivalenceAlgorithmName.RANDOM_WP_METHOD);
+	private List<EquivalenceAlgorithmName> equivalenceAlgorithms = Arrays
+			.asList(EquivalenceAlgorithmName.RANDOM_WP_METHOD);
 
 	@Parameter(names = "-depth", description = "Maximal depth ( W/WP Method)")
 	private int maxDepth = 1;
@@ -24,22 +24,21 @@ public class LearningConfig {
 
 	@Parameter(names = "-maxLength", description = "Max length (random words)")
 	private int maxLength = 15;
-	
+
 	@Parameter(names = "-randLength", description = "Size of the random part (Random WP Method)")
 	private int randLength = 5;
-	
+
 	@Parameter(names = "-queries", description = "Number of queries (all)")
 	private int numberOfQueries = 1000;
-	
+
 	@Parameter(names = "-probReset", description = "Probability of stopping execution of a test after each input")
 	private int probReset = 0;
-	
+
 	@Parameter(names = "-testFile", description = "A file with tests to be run.")
 	private String testFile;
 
 	@Parameter(names = "-logQueries", description = "Log queries to an output false")
 	private boolean logQueries = false;
-
 
 	public boolean doLogQueries() {
 		return logQueries;
@@ -49,7 +48,7 @@ public class LearningConfig {
 		return learningAlgorithm;
 	}
 
-	public List<EquivalenceAlgorithmName>  getEquivalenceAlgorithms() {
+	public List<EquivalenceAlgorithmName> getEquivalenceAlgorithms() {
 		return equivalenceAlgorithms;
 	}
 
@@ -68,7 +67,7 @@ public class LearningConfig {
 	public int getNumberOfQueries() {
 		return numberOfQueries;
 	}
-	
+
 	public int getProbReset() {
 		return probReset;
 	}
@@ -76,7 +75,7 @@ public class LearningConfig {
 	public int getRandLength() {
 		return randLength;
 	}
-	
+
 	public String getTestFile() {
 		return testFile;
 	}

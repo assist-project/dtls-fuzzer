@@ -18,10 +18,11 @@ import se.uu.it.modeltester.mutate.fragment.ReorderingMutation;
 import se.uu.it.modeltester.mutate.fragment.SplittingMutation;
 
 /**
- * A class for parsing mutations from Json strings/serializing them to Json strings.
+ * A class for parsing mutations from Json strings/serializing them to Json
+ * strings.
  */
 public class JsonMutationParser {
-	
+
 	private static JsonMutationParser INSTANCE = null;
 	public static JsonMutationParser getInstance() {
 		if (INSTANCE == null) {
@@ -29,46 +30,50 @@ public class JsonMutationParser {
 		}
 		return INSTANCE;
 	}
-	
+
 	private Gson gson;
 
 	public JsonMutationParser() {
-		gson = new GsonBuilder()
-				.registerTypeAdapter(Mutation.class, new MutationTypeAdapter())
-				.create();
+		gson = new GsonBuilder().registerTypeAdapter(Mutation.class,
+				new MutationTypeAdapter()).create();
 	}
-	
+
 	/**
 	 * Serializes mutations into an one line json string
 	 */
-	public String serialize(Mutation<?> [] mutations) {
-		return gson.toJson(mutations, Mutation [].class);
+	public String serialize(Mutation<?>[] mutations) {
+		return gson.toJson(mutations, Mutation[].class);
 	}
-	
+
 	/**
 	 * Deserializes mutations from a json String
 	 */
-	public Mutation<?> [] deserialize(String mutationsJsonString) {
-		return gson.fromJson(mutationsJsonString, Mutation [].class);
+	public Mutation<?>[] deserialize(String mutationsJsonString) {
+		return gson.fromJson(mutationsJsonString, Mutation[].class);
 	}
-	
-	
-	static class MutationTypeAdapter implements JsonSerializer<Mutation<?>>, JsonDeserializer<Mutation<?>> {
-		private static String TYPE_FIELD="@@type"; 
+
+	static class MutationTypeAdapter
+			implements
+				JsonSerializer<Mutation<?>>,
+				JsonDeserializer<Mutation<?>> {
+		private static String TYPE_FIELD = "@@type";
 		@Override
-		public Mutation<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-				throws JsonParseException {
+		public Mutation<?> deserialize(JsonElement json, Type typeOfT,
+				JsonDeserializationContext context) throws JsonParseException {
 			JsonObject jsonObject = json.getAsJsonObject();
-			MutationType mType = MutationType.valueOf(jsonObject.get(TYPE_FIELD).getAsString());
+			MutationType mType = MutationType.valueOf(jsonObject
+					.get(TYPE_FIELD).getAsString());
 			return context.deserialize(jsonObject, mType.getMutationClass());
 		}
-		
+
 		@Override
-		public JsonElement serialize(Mutation<?> src, Type typeOfSrc, JsonSerializationContext context) {
+		public JsonElement serialize(Mutation<?> src, Type typeOfSrc,
+				JsonSerializationContext context) {
 			JsonElement element;
 			element = context.serialize(src, src.getType().getMutationClass());
-			element.getAsJsonObject().addProperty(TYPE_FIELD, src.getType().name());
+			element.getAsJsonObject().addProperty(TYPE_FIELD,
+					src.getType().name());
 			return element;
 		}
-	} 
+	}
 }

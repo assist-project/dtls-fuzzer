@@ -4,14 +4,15 @@ import de.learnlib.api.SUL;
 import de.learnlib.api.SULException;
 
 /**
- * A SUL wrapper which joins the SUL with a handler for the process that launches/terminates it.
+ * A SUL wrapper which joins the SUL with a handler for the process that
+ * launches/terminates it.
  */
-public class SulProcessWrapper<I,O> implements SUL<I,O> {
-	
-	private SUL<I,O> sul;
+public class SulProcessWrapper<I, O> implements SUL<I, O> {
+
+	private SUL<I, O> sul;
 	private ProcessHandler handler;
 
-	public SulProcessWrapper(SUL<I,O> sul, ProcessHandler handler) {
+	public SulProcessWrapper(SUL<I, O> sul, ProcessHandler handler) {
 		this.sul = sul;
 		this.handler = handler;
 	}
@@ -32,9 +33,9 @@ public class SulProcessWrapper<I,O> implements SUL<I,O> {
 	public O step(I in) throws SULException {
 		return sul.step(in);
 	}
-	
+
 	public boolean isAlive() {
 		return handler.isAlive();
 	}
-	
+
 }

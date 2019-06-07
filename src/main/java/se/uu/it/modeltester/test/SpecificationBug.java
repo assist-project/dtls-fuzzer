@@ -4,11 +4,13 @@ import net.automatalib.words.Word;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public class SpecificationBug extends Bug{
-	
+public class SpecificationBug extends Bug {
+
 	private Object state;
 
-	public SpecificationBug(Object state, Word<TlsInput> accessSequence, Word<TlsInput> inputs, Word<TlsOutput> expected, Word<TlsOutput> actual) {
+	public SpecificationBug(Object state, Word<TlsInput> accessSequence,
+			Word<TlsInput> inputs, Word<TlsOutput> expected,
+			Word<TlsOutput> actual) {
 		super(inputs, expected, actual);
 		this.state = state;
 	}
@@ -21,5 +23,5 @@ public class SpecificationBug extends Bug{
 	@Override
 	public BugType getType() {
 		return BugType.SPECIFICATION;
-	} 
+	}
 }

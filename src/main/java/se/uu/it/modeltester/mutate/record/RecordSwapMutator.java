@@ -6,11 +6,11 @@ import se.uu.it.modeltester.execute.PackingResult;
 import se.uu.it.modeltester.mutate.Mutation;
 import se.uu.it.modeltester.mutate.PackingMutator;
 
-public class RecordSwapMutator extends PackingMutator{
+public class RecordSwapMutator extends PackingMutator {
 
 	@Override
-	public Mutation<PackingResult> generateMutation(PackingResult result, TlsContext context,
-			ExecutionContext exContext) {
+	public Mutation<PackingResult> generateMutation(PackingResult result,
+			TlsContext context, ExecutionContext exContext) {
 		return null;
 	}
 

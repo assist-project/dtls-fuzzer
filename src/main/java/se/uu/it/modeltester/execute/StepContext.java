@@ -10,13 +10,13 @@ public class StepContext {
 	private FragmentationResult fragmentationResult;
 	private PackingResult packingResult;
 	private List<ProtocolMessage> receivedOutputMessages;
-	
+
 	private List<AbstractRecord> deferredRecords;
-	
+
 	public StepContext() {
 		deferredRecords = Collections.emptyList();
 	}
-	
+
 	public FragmentationResult getFragmentationResult() {
 		return fragmentationResult;
 	}

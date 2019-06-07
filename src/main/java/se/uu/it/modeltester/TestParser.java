@@ -27,8 +27,8 @@ import se.uu.it.modeltester.sut.io.TlsInput;
 /**
  * Reads tests from a file and writes them to a file using an alphabet.
  * 
- * Mutations of an input are encoded in the following way:
- * {@literal @} + input name + JSON encoding of the mutations
+ * Mutations of an input are encoded in the following way: {@literal @} + input
+ * name + JSON encoding of the mutations
  */
 
 public class TestParser {
@@ -36,7 +36,7 @@ public class TestParser {
 
 	public TestParser() {
 	}
-	
+
 	public void writeTest(Word<TlsInput> test, String PATH) throws IOException {
 		File file = new File(PATH);
 		file.createNewFile();
@@ -44,58 +44,72 @@ public class TestParser {
 			for (TlsInput input : test) {
 				if (input instanceof MutatedTlsInput) {
 					StringBuilder builder = new StringBuilder();
-					TlsInput originalInput = ((MutatedTlsInput)input).getInput();
-					List<Mutation<?>> mutations = ((MutatedTlsInput)input).getMutations();
-					String jsonMutations = JsonMutationParser.getInstance().serialize(mutations.toArray(new Mutation[mutations.size()]));
-					((MutatedTlsInput)input).getInput();
-					builder
-					.append("@")
-					.append(originalInput.toString())
-					.append(jsonMutations);
+					TlsInput originalInput = ((MutatedTlsInput) input)
+							.getInput();
+					List<Mutation<?>> mutations = ((MutatedTlsInput) input)
+							.getMutations();
+					String jsonMutations = JsonMutationParser.getInstance()
+							.serialize(
+									mutations.toArray(new Mutation[mutations
+											.size()]));
+					((MutatedTlsInput) input).getInput();
+					builder.append("@").append(originalInput.toString())
+							.append(jsonMutations);
 					pw.println(builder.toString());
 				} else {
 					pw.println(input.toString());
 				}
 			}
-		} 
+		}
 	}
-	
-	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH) throws IOException{
+
+	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH)
+			throws IOException {
 		List<String> inputStrings = readTestStrings(PATH);
 		Word<TlsInput> test = readTest(alphabet, inputStrings);
 		return test;
 	}
-	
-	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, List<String> testInputStrings) {
+
+	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet,
+			List<String> testInputStrings) {
 		Map<String, TlsInput> inputs = new LinkedHashMap<>();
 		alphabet.stream().forEach(i -> inputs.put(i.toString(), i));
 		Word<TlsInput> inputWord = Word.epsilon();
 		for (String inputString : testInputStrings) {
 			inputString = inputString.trim();
 			if (inputString.startsWith("@")) {
-				String mutatedInputString = inputString.substring(1, inputString.indexOf("["));
+				String mutatedInputString = inputString.substring(1,
+						inputString.indexOf("["));
 				if (!inputs.containsKey(mutatedInputString)) {
-					throw new RuntimeException("Mutated input is missing from the alphabet "+ mutatedInputString);
+					throw new RuntimeException(
+							"Mutated input is missing from the alphabet "
+									+ mutatedInputString);
 				}
-				String mutationsJsonString = inputString.substring(inputString.indexOf("["), inputString.length());
-				Mutation<?> [] mutations = JsonMutationParser.getInstance().deserialize(mutationsJsonString);
-				MutatedTlsInput mutatedInput = new MutatedTlsInput(inputs.get(mutatedInputString), Arrays.asList(mutations));
+				String mutationsJsonString = inputString.substring(
+						inputString.indexOf("["), inputString.length());
+				Mutation<?>[] mutations = JsonMutationParser.getInstance()
+						.deserialize(mutationsJsonString);
+				MutatedTlsInput mutatedInput = new MutatedTlsInput(
+						inputs.get(mutatedInputString),
+						Arrays.asList(mutations));
 				inputWord = inputWord.append(mutatedInput);
 			} else {
 				if (!inputs.containsKey(inputString)) {
-					throw new RuntimeException("Input is missing from the alphabet "+ inputString);
+					throw new RuntimeException(
+							"Input is missing from the alphabet " + inputString);
 				}
 				inputWord = inputWord.append(inputs.get(inputString));
 			}
 		}
-		
+
 		return inputWord;
 	}
-	
+
 	/**
 	 * Reads reset-seperated tests
 	 */
-	public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet, String PATH) throws IOException{
+	public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet,
+			String PATH) throws IOException {
 		List<String> inputStrings = readTestStrings(PATH);
 		List<Word<TlsInput>> tests = new LinkedList<>();
 		LinkedList<String> currentTestStrings = new LinkedList<>();
@@ -110,25 +124,25 @@ public class TestParser {
 			tests.add(readTest(alphabet, currentTestStrings));
 		}
 		return tests;
-	} 
-	
+	}
+
 	private List<String> readTestStrings(String PATH) throws IOException {
 		List<String> trace;
 		trace = Files.readAllLines(Paths.get(PATH), StandardCharsets.US_ASCII);
 		ListIterator<String> it = trace.listIterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			String line = it.next();
 			if (line.startsWith("#") || line.startsWith("!")) {
 				it.remove();
 			} else {
-				 if ( line.isEmpty()) {
-					 it.remove();
-					 while (it.hasNext()) {
-						 it.next();
-						 it.remove();
-					 } 
-				 } else {
-				 }
+				if (line.isEmpty()) {
+					it.remove();
+					while (it.hasNext()) {
+						it.next();
+						it.remove();
+					}
+				} else {
+				}
 			}
 		}
 		return trace;

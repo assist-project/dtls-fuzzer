@@ -11,15 +11,16 @@ import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.modeltester.execute.ExecutionContext;
 import se.uu.it.modeltester.execute.PackingResult;
 
-public class RecordSwapMutation implements Mutation<PackingResult>{
+public class RecordSwapMutation implements Mutation<PackingResult> {
 	private Integer[] mapping;
 
-	public RecordSwapMutation(Integer [] mapping) {
+	public RecordSwapMutation(Integer[] mapping) {
 		this.mapping = mapping;
 	}
 
 	@Override
-	public PackingResult mutate(PackingResult result, TlsContext context, ExecutionContext exContext) {
+	public PackingResult mutate(PackingResult result, TlsContext context,
+			ExecutionContext exContext) {
 		List<AbstractRecord> records = result.getRecords();
 		List<AbstractRecord> newRecords = Helper.reorder(records, mapping);
 		return new PackingResult(result.getMessages(), newRecords);

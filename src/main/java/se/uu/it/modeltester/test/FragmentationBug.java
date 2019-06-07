@@ -10,36 +10,41 @@ import se.uu.it.modeltester.mutate.Mutation;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
-public class FragmentationBug extends Bug{
+public class FragmentationBug extends Bug {
 	private final FastMealyState<TlsOutput> state;
 	private final Word<TlsInput> accessSequence;
 	private final FragmentingTlsInput fragmentingInput;
 	private MutatedTlsInput fragmentedInput;
-	
-	public FragmentationBug(FastMealyState<TlsOutput> state, Word<TlsInput> accessSequence,
-			FragmentingTlsInput fragmentingInput,
-			Word<TlsInput> suffix, 
-			Word<TlsOutput> expected, 
-			Word<TlsOutput> actual) {
-		super(accessSequence.append(fragmentingInput).concat(suffix), expected, actual);
+
+	public FragmentationBug(FastMealyState<TlsOutput> state,
+			Word<TlsInput> accessSequence,
+			FragmentingTlsInput fragmentingInput, Word<TlsInput> suffix,
+			Word<TlsOutput> expected, Word<TlsOutput> actual) {
+		super(accessSequence.append(fragmentingInput).concat(suffix), expected,
+				actual);
 		this.state = state;
 		this.accessSequence = accessSequence;
 		this.fragmentingInput = fragmentingInput;
-		List<Mutation<?>> fragmentationMutations = fragmentingInput.getExecutorAsMutating().getLastAppliedMutations();
-		this.fragmentedInput = new MutatedTlsInput(fragmentingInput.getInput(), fragmentationMutations);
+		List<Mutation<?>> fragmentationMutations = fragmentingInput
+				.getExecutorAsMutating().getLastAppliedMutations();
+		this.fragmentedInput = new MutatedTlsInput(fragmentingInput.getInput(),
+				fragmentationMutations);
 	}
-	
+
 	public FastMealyState<TlsOutput> getState() {
 		return state;
 	}
-	
+
 	/*
-	 * A reproducible test will expose the fragmentation mutations that were generated while executing the input.
+	 * A reproducible test will expose the fragmentation mutations that were
+	 * generated while executing the input.
 	 */
 	public Word<TlsInput> getReproducingTest() {
-		return accessSequence.append(fragmentedInput).concat(getInputs().suffix(getInputs().length() - accessSequence.length() - 1));
+		return accessSequence.append(fragmentedInput).concat(
+				getInputs().suffix(
+						getInputs().length() - accessSequence.length() - 1));
 	}
-	
+
 	public FragmentingTlsInput getFragmentingInput() {
 		return fragmentingInput;
 	}

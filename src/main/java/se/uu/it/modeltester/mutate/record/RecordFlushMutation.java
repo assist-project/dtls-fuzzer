@@ -12,14 +12,18 @@ import se.uu.it.modeltester.execute.PackingResult;
 import se.uu.it.modeltester.mutate.Mutation;
 import se.uu.it.modeltester.mutate.MutationType;
 
-public class RecordFlushMutation implements Mutation<PackingResult>{
+public class RecordFlushMutation implements Mutation<PackingResult> {
 
 	@Override
-	public PackingResult mutate(PackingResult result, TlsContext context, ExecutionContext exContext) {
-		List<AbstractRecord> deferredRecords = 
-				exContext.getStepContexes().stream().map(s -> s.getDeferredRecords()).flatMap(recs -> recs.stream()).collect(Collectors.toList());
-		exContext.getStepContexes().stream().forEach(s -> s.setDeferredRecords(Collections.emptyList()));
-		List<AbstractRecord> sentRecords = new ArrayList<>(deferredRecords.size() + result.getRecords().size());
+	public PackingResult mutate(PackingResult result, TlsContext context,
+			ExecutionContext exContext) {
+		List<AbstractRecord> deferredRecords = exContext.getStepContexes()
+				.stream().map(s -> s.getDeferredRecords())
+				.flatMap(recs -> recs.stream()).collect(Collectors.toList());
+		exContext.getStepContexes().stream()
+				.forEach(s -> s.setDeferredRecords(Collections.emptyList()));
+		List<AbstractRecord> sentRecords = new ArrayList<>(
+				deferredRecords.size() + result.getRecords().size());
 		sentRecords.addAll(result.getRecords());
 		sentRecords.addAll(deferredRecords);
 		return new PackingResult(result.getMessages(), sentRecords);

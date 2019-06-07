@@ -14,29 +14,27 @@ import se.uu.it.modeltester.sut.io.TlsInput;
 @XmlRootElement(name = "Definitions")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Definitions {
-	
-	@XmlElements(value = {
-			@XmlElement(type = InputDefinition.class, name = "InputDefinition")
-	})
+
+	@XmlElements(value = {@XmlElement(type = InputDefinition.class, name = "InputDefinition")})
 	private List<InputDefinition> inputDefinitions;
-	
+
 	public Definitions() {
 		inputDefinitions = new LinkedList<>();
 	}
-	
+
 	public boolean addInputDefinition(String name, TlsInput input) {
-		 TlsInput existingInput = getInputWithDefinition(name);
-		 if (existingInput == null) {
-			 inputDefinitions.add(new InputDefinition(name, input));
-			 return true;
-		 }
-		 return false;
+		TlsInput existingInput = getInputWithDefinition(name);
+		if (existingInput == null) {
+			inputDefinitions.add(new InputDefinition(name, input));
+			return true;
+		}
+		return false;
 	}
- 	
-	public List<InputDefinition>  getInputDefinitions() {
+
+	public List<InputDefinition> getInputDefinitions() {
 		return inputDefinitions;
 	}
-	
+
 	public TlsInput getInputWithDefinition(String name) {
 		for (InputDefinition def : inputDefinitions) {
 			if (def.getName().equals(name))
@@ -44,12 +42,13 @@ public class Definitions {
 		}
 		return null;
 	}
-	
+
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Definitions: \n");
 		for (InputDefinition def : inputDefinitions) {
-			builder.append("   ").append(def.getName()).append(":").append(def.getInput()).append("\n");
+			builder.append("   ").append(def.getName()).append(":")
+					.append(def.getInput()).append("\n");
 		}
 		return builder.toString();
 	}

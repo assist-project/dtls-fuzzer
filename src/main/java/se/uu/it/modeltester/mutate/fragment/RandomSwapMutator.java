@@ -12,8 +12,8 @@ import se.uu.it.modeltester.execute.FragmentationResult;
 import se.uu.it.modeltester.mutate.FragmentationMutator;
 import se.uu.it.modeltester.mutate.Mutation;
 
-public class RandomSwapMutator extends FragmentationMutator{
-	
+public class RandomSwapMutator extends FragmentationMutator {
+
 	private Random rand;
 
 	public RandomSwapMutator(long seed) {
@@ -21,12 +21,17 @@ public class RandomSwapMutator extends FragmentationMutator{
 	}
 
 	@Override
-	public Mutation<FragmentationResult> generateMutation(FragmentationResult result, TlsContext context, ExecutionContext exContext) {
-		List<Integer> mapping = IntStream.range(0, result.getFragments().size()).boxed().collect(Collectors.toList());
+	public Mutation<FragmentationResult> generateMutation(
+			FragmentationResult result, TlsContext context,
+			ExecutionContext exContext) {
+		List<Integer> mapping = IntStream
+				.range(0, result.getFragments().size()).boxed()
+				.collect(Collectors.toList());
 		Collections.shuffle(mapping, rand);
-		return new ReorderingMutation(mapping.toArray(new Integer[mapping.size()]));
+		return new ReorderingMutation(mapping.toArray(new Integer[mapping
+				.size()]));
 	}
-	
+
 	public String toString() {
 		return "RandomSwapMutator";
 	}

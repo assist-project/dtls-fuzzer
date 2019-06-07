@@ -23,16 +23,18 @@ public class StateMachine {
 
 	private Alphabet<TlsInput> alphabet;
 
-	public StateMachine(MealyMachine<?, TlsInput, ?, TlsOutput> mealyMachine, Alphabet<TlsInput> alphabet) {
+	public StateMachine(MealyMachine<?, TlsInput, ?, TlsOutput> mealyMachine,
+			Alphabet<TlsInput> alphabet) {
 		this.mealyMachine = mealyMachine;
 		this.alphabet = alphabet;
 	}
 
-	public MealyMachine<?, TlsInput, ?, TlsOutput>  getMealyMachine() {
+	public MealyMachine<?, TlsInput, ?, TlsOutput> getMealyMachine() {
 		return mealyMachine;
 	}
 
-	public void setMealyMachine(MealyMachine<?, TlsInput, ?, TlsOutput>  mealyMachine) {
+	public void setMealyMachine(
+			MealyMachine<?, TlsInput, ?, TlsOutput> mealyMachine) {
 		this.mealyMachine = mealyMachine;
 	}
 
@@ -43,7 +45,7 @@ public class StateMachine {
 	public void setAlphabet(Alphabet<TlsInput> alphabet) {
 		this.alphabet = alphabet;
 	}
-	
+
 	/**
 	 * Exports the hypothesis to the supplied file and generates a corresponding
 	 * viewable .pdf model.

@@ -14,8 +14,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
 /**
- * Copied from an EQ oracle implementation in LearnLib's development branch not
- * yet merged to main.
+ * Adapted from an EQ oracle implementation in LearnLib's development branch not
+ * available in the version we use.
  * 
  * <pre>
  * See: <a href="https://github.com/mtf90/learnlib/blob/develop/eqtests/
@@ -35,6 +35,8 @@ import java.util.*;
  * length of the random word. (The expected length in effect is minimalSize +
  * rndLength.) In the unbounded case it will not terminate for a correct
  * hypothesis.
+ * 
+ * Our adaptation is randomizing access sequence generation.
  *
  * @param <A>
  *            automaton type
