@@ -116,6 +116,7 @@ public class TestParser {
 		for (String inputString : inputStrings) {
 			if (inputString.equals("reset")) {
 				tests.add(readTest(alphabet, currentTestStrings));
+				currentTestStrings.clear();
 			} else {
 				currentTestStrings.add(inputString);
 			}
