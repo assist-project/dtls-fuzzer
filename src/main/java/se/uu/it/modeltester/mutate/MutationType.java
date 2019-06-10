@@ -9,15 +9,14 @@ import se.uu.it.modeltester.execute.PackingResult;
  * Each mutation type is associated with exactly one implementing class.
  */
 public enum MutationType {
-	FRAGMENT_REORDERING(ReorderingMutation.class, FragmentationResult.class), 
-	FRAGMENT_REPLAY(FragmentReplayMutation.class, FragmentationResult.class), 
-	MESSAGE_SPLITTING(SplittingMutation.class, FragmentationResult.class), 
-	EMPTY_FRAGMENT_ADDITION(EmptyFragmentAdditionMutation.class, FragmentationResult.class), 
-	RECORD_REORDERING(RecordSwapMutation.class, PackingResult.class), 
-	RECORD_DEFERRAL(RecordDeferMutation.class, PackingResult.class), 
-	RECORD_FLUSHING(RecordFlushMutation.class, PackingResult.class), 
-	RECORD_DUPLICATE(RecordDupMutation.class, PackingResult.class), 
-	;
+	FRAGMENT_REORDERING(ReorderingMutation.class, FragmentationResult.class), FRAGMENT_REPLAY(
+			FragmentReplayMutation.class, FragmentationResult.class), MESSAGE_SPLITTING(
+			SplittingMutation.class, FragmentationResult.class), EMPTY_FRAGMENT_ADDITION(
+			EmptyFragmentAdditionMutation.class, FragmentationResult.class), RECORD_REORDERING(
+			RecordSwapMutation.class, PackingResult.class), RECORD_DEFERRAL(
+			RecordDeferMutation.class, PackingResult.class), RECORD_FLUSHING(
+			RecordFlushMutation.class, PackingResult.class), RECORD_DUPLICATE(
+			RecordDupMutation.class, PackingResult.class), ;
 
 	private Class<? extends Mutation<?>> mutationClass;
 	private Class<?> resultType;

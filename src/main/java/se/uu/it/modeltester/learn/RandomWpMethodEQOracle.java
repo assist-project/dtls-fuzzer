@@ -53,6 +53,7 @@ public class RandomWpMethodEQOracle<A extends UniversalDeterministicAutomaton<?,
 	private final int minimalSize;
 	private final int rndLength;
 	private final int bound;
+	private long seed;
 
 	/**
 	 * Constructor for an unbounded testing oracle
@@ -65,10 +66,11 @@ public class RandomWpMethodEQOracle<A extends UniversalDeterministicAutomaton<?,
 	 *            expected length (in addition to minimalSize) of random word
 	 */
 	public RandomWpMethodEQOracle(MembershipOracle<I, D> sulOracle,
-			int minimalSize, int rndLength) {
+			int minimalSize, int rndLength, long seed) {
 		this.sulOracle = sulOracle;
 		this.minimalSize = minimalSize;
 		this.rndLength = rndLength;
+		this.seed = seed;
 		this.bound = 0;
 	}
 
@@ -85,11 +87,12 @@ public class RandomWpMethodEQOracle<A extends UniversalDeterministicAutomaton<?,
 	 *            specifies the bound (set to 0 for unbounded).
 	 */
 	public RandomWpMethodEQOracle(MembershipOracle<I, D> sulOracle,
-			int minimalSize, int rndLength, int bound) {
+			int minimalSize, int rndLength, int bound, long seed) {
 		this.sulOracle = sulOracle;
 		this.minimalSize = minimalSize;
 		this.rndLength = rndLength;
 		this.bound = bound;
+		this.seed = seed;
 	}
 
 	/*
@@ -117,8 +120,8 @@ public class RandomWpMethodEQOracle<A extends UniversalDeterministicAutomaton<?,
 		// Note that we want to use ArrayLists because we want constant time
 		// random access
 		// We will sample from this for a prefix
-		ArrayList<Word<I>> stateCover = new ArrayList<>(hypothesis.size());
-		Automata.cover(hypothesis, inputs, stateCover, null);
+		// ArrayList<Word<I>> stateCover = new ArrayList<>(hypothesis.size());
+		// Automata.cover(hypothesis, inputs, stateCover, null);
 
 		// Then repeatedly from this for a random word
 		ArrayList<I> arrayAlphabet = new ArrayList<>(inputs);
@@ -137,13 +140,19 @@ public class RandomWpMethodEQOracle<A extends UniversalDeterministicAutomaton<?,
 			localSuffixSets.put(state, suffixSet);
 		}
 
-		Random rand = new Random();
+		Random rand = new Random(seed);
+		List<S> states = new ArrayList<>(hypothesis.getStates());
+
+		WpEQSequenceGenerator<I, D, S> generator = new WpEQSequenceGenerator<>(
+				hypothesis, inputs);
+
 		int currentBound = bound;
 		while (bound == 0 || currentBound-- > 0) {
 			WordBuilder<I> wb = new WordBuilder<>(minimalSize + rndLength + 1);
 
 			// pick a random state
-			wb.append(stateCover.get(rand.nextInt(stateCover.size())));
+			wb.append(generator.getRandomAccessSequence(
+					states.get(rand.nextInt(states.size())), rand));
 
 			// construct random middle part (of some expected length)
 			int size = minimalSize;

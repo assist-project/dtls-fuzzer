@@ -24,7 +24,7 @@ public class TestingInputExecutor extends AbstractInputExecutor {
 		helper = new ExecuteInputHelper();
 		sequentialSend = false;
 	}
-	
+
 	@Override
 	protected final void sendMessage(ProtocolMessage message, State state,
 			ExecutionContext context) {
@@ -44,14 +44,14 @@ public class TestingInputExecutor extends AbstractInputExecutor {
 		PackingResult result = packMessages(messagesToSend, state, context);
 		context.getStepContext().setPackingResult(result);
 		message.getHandler(state.getTlsContext())
-					.adjustTlsContextAfterSerialize(message);
-			
+				.adjustTlsContextAfterSerialize(message);
+
 		if (sequentialSend)
 			result.getRecords().forEach(
 					r -> helper.sendRecords(Arrays.asList(r), state));
-		else 
+		else
 			helper.sendRecords(result.getRecords(), state);
-			
+
 	}
 
 	protected ProtocolMessage prepareMessage(ProtocolMessage message,

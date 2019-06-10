@@ -31,6 +31,8 @@ import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
 public class LearnerFactory {
+	public static final long SEED = 123456l;
+
 	public static MealyLearner<TlsInput, TlsOutput> loadLearner(
 			LearningConfig config,
 			MealyMembershipOracle<TlsInput, TlsOutput> sulOracle,
@@ -96,7 +98,7 @@ public class LearnerFactory {
 			case RANDOM_WALK :
 				return new RandomWalkEQOracle<TlsInput, TlsOutput>(
 						config.getProbReset(), config.getNumberOfQueries(),
-						true, new Random(123456l), sul);
+						true, new Random(config.getSeed()), sul);
 				// Other methods are somewhat smarter than random testing: state
 				// coverage, trying to distinguish states, etc.
 			case W_METHOD :
@@ -108,15 +110,15 @@ public class LearnerFactory {
 			case RANDOM_WP_METHOD :
 				return new RandomWpMethodEQOracle<>(sulOracle,
 						config.getMinLength(), config.getRandLength(),
-						config.getNumberOfQueries());
+						config.getNumberOfQueries(), config.getSeed());
 			case SAMPLED_TESTS :
 				return new SampledTestsEQOracle<>(readTests(config, alphabet),
 						sulOracle);
 			case WP_SAMPLED_TESTS :
 				return new WpSampledTestsEQOracle<>(
 						readTests(config, alphabet), sulOracle,
-						config.getMinLength(), config.getRandLength(), 123456l,
-						config.getNumberOfQueries());
+						config.getMinLength(), config.getRandLength(),
+						config.getSeed(), config.getNumberOfQueries());
 			default :
 				throw new RuntimeException(
 						"Equivalence algorithm not supported");

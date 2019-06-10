@@ -118,7 +118,7 @@ public class WpEQSequenceGenerator<I, D, S> {
 			List<I> shuffledInputs = new ArrayList<>(inputs);
 			Collections.shuffle(shuffledInputs, rand);
 
-			for (I in : inputs) {
+			for (I in : shuffledInputs) {
 				S succ = automaton.getSuccessor(curr, in);
 				if (succ == null)
 					continue;

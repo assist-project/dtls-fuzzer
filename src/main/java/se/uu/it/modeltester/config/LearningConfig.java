@@ -2,6 +2,7 @@ package se.uu.it.modeltester.config;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import com.beust.jcommander.Parameter;
 
@@ -36,6 +37,9 @@ public class LearningConfig {
 
 	@Parameter(names = "-testFile", description = "A file with tests to be run.")
 	private String testFile;
+
+	@Parameter(names = "-seed", description = "Seed used for random value generation.")
+	private long seed = new Random().nextLong();
 
 	@Parameter(names = "-logQueries", description = "Log queries to an output false")
 	private boolean logQueries = false;
@@ -78,6 +82,10 @@ public class LearningConfig {
 
 	public String getTestFile() {
 		return testFile;
+	}
+
+	public long getSeed() {
+		return seed;
 	}
 
 }
