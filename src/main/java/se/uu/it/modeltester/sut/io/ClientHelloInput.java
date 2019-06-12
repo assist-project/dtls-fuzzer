@@ -29,6 +29,7 @@ public class ClientHelloInput extends NamedTlsInput {
 		state.getConfig().setDefaultServerSupportedCiphersuites(suite);
 		state.getConfig().setDefaultClientSupportedCiphersuites(
 				Arrays.asList(suite));
+		state.getTlsContext().getDigest().reset();
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 		// message.getHandler(state.getTlsContext()).prepareMessage(message);
 
