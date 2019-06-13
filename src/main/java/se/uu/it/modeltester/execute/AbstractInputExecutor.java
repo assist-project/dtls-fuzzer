@@ -46,7 +46,6 @@ public abstract class AbstractInputExecutor {
 	}
 
 	private TlsOutput extractOutput(State state, GenericReceiveAction action) {
-		ResponseFingerprint e;
 		return new TlsOutput(action.getReceivedMessages());
 	}
 }
