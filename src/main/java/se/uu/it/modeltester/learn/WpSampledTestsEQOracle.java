@@ -1,12 +1,10 @@
 package se.uu.it.modeltester.learn;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Random;
 
 import de.learnlib.api.EquivalenceOracle;
@@ -14,7 +12,6 @@ import de.learnlib.api.MembershipOracle;
 import de.learnlib.oracles.DefaultQuery;
 import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
-import net.automatalib.commons.util.mappings.MutableMapping;
 import net.automatalib.words.Word;
 
 /**
@@ -60,10 +57,10 @@ public class WpSampledTestsEQOracle<A extends UniversalDeterministicAutomaton<?,
 			Output<I, D> output, Collection<? extends I> inputs) {
 		WpEQSequenceGenerator<I, D, S> generator = new WpEQSequenceGenerator<>(
 				hypothesis, inputs);
+		List<S> states = new ArrayList<>(hypothesis.getStates());
+		
 		for (int i = 0; i < bound; i++) {
-			S randState = hypothesis.getStates().stream()
-					.skip(rand.nextInt(hypothesis.getStates().size()))
-					.findFirst().get();
+			S randState = states.get(rand.nextInt(states.size())); 
 
 			Word<I> randAccSeq = generator.getRandomAccessSequence(randState,
 					rand);
@@ -81,7 +78,7 @@ public class WpSampledTestsEQOracle<A extends UniversalDeterministicAutomaton<?,
 			}
 
 			Word<I> distSequence = generator
-					.getRandomDistinguishingSequence(rand);
+					.getRandomCharacterizingSequence(randAccSeq.concat(middlePart), rand);
 
 			Word<I> test = randAccSeq.concat(middlePart, distSequence);
 
@@ -92,37 +89,5 @@ public class WpSampledTestsEQOracle<A extends UniversalDeterministicAutomaton<?,
 				return query;
 		}
 		return null;
-	}
-
-	private <S> Word<I> randomAccessSequence(
-			UniversalDeterministicAutomaton<S, I, ?, ?, ?> automaton,
-			Collection<? extends I> inputs, S toState) {
-		Queue<S> bfsQueue = new ArrayDeque<S>();
-		MutableMapping<S, Word<I>> reach = automaton.createStaticStateMapping();
-		S init = automaton.getInitialState();
-		reach.put(init, Word.<I> epsilon());
-		bfsQueue.add(init);
-
-		S curr;
-
-		while ((curr = bfsQueue.poll()) != null && curr != toState) {
-			Word<I> as = reach.get(curr);
-			List<I> shuffledInputs = new ArrayList<>(inputs);
-			Collections.shuffle(shuffledInputs, rand);
-
-			for (I in : inputs) {
-				S succ = automaton.getSuccessor(curr, in);
-				if (succ == null)
-					continue;
-
-				if (reach.get(succ) == null) {
-					Word<I> succAs = as.append(in);
-					reach.put(succ, succAs);
-				}
-				bfsQueue.add(succ);
-			}
-		}
-
-		return reach.get(curr);
 	}
 }

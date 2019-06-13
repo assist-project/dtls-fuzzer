@@ -1,17 +1,21 @@
 package se.uu.it.modeltester.learn;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.MembershipOracle;
 import de.learnlib.oracles.DefaultQuery;
 import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
-import net.automatalib.commons.util.mappings.MutableMapping;
-import net.automatalib.util.automata.Automata;
 import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
 
 /**
  * Adapted from an EQ oracle implementation in LearnLib's development branch not
@@ -117,34 +121,12 @@ public class RandomWpMethodEQOracle<A extends UniversalDeterministicAutomaton<?,
 	private <S> DefaultQuery<I, D> doFindCounterExample(
 			UniversalDeterministicAutomaton<S, I, ?, ?, ?> hypothesis,
 			Output<I, D> output, Collection<? extends I> inputs) {
-		// Note that we want to use ArrayLists because we want constant time
-		// random access
-		// We will sample from this for a prefix
-		// ArrayList<Word<I>> stateCover = new ArrayList<>(hypothesis.size());
-		// Automata.cover(hypothesis, inputs, stateCover, null);
-
-		// Then repeatedly from this for a random word
-		ArrayList<I> arrayAlphabet = new ArrayList<>(inputs);
-
-		// Finally we test the state with a suffix, sometimes a global one,
-		// sometimes local
-		ArrayList<Word<I>> globalSuffixes = new ArrayList<>();
-		Automata.characterizingSet(hypothesis, inputs, globalSuffixes);
-
-		MutableMapping<S, ArrayList<Word<I>>> localSuffixSets = hypothesis
-				.createStaticStateMapping();
-		for (S state : hypothesis.getStates()) {
-			ArrayList<Word<I>> suffixSet = new ArrayList<>();
-			Automata.stateCharacterizingSet(hypothesis, inputs, state,
-					suffixSet);
-			localSuffixSets.put(state, suffixSet);
-		}
+		
+		WpEQSequenceGenerator<I, D, S> generator = new WpEQSequenceGenerator<>(
+				hypothesis, inputs);
 
 		Random rand = new Random(seed);
 		List<S> states = new ArrayList<>(hypothesis.getStates());
-
-		WpEQSequenceGenerator<I, D, S> generator = new WpEQSequenceGenerator<>(
-				hypothesis, inputs);
 
 		int currentBound = bound;
 		while (bound == 0 || currentBound-- > 0) {
@@ -155,30 +137,10 @@ public class RandomWpMethodEQOracle<A extends UniversalDeterministicAutomaton<?,
 					states.get(rand.nextInt(states.size())), rand));
 
 			// construct random middle part (of some expected length)
-			int size = minimalSize;
-			while ((size > 0) || (rand.nextDouble() > 1 / (rndLength + 1.0))) {
-				wb.append(arrayAlphabet.get(rand.nextInt(arrayAlphabet.size())));
-				if (size > 0)
-					size--;
-			}
-
-			// pick a random suffix for this state
-			// 50% chance for state testing, 50% chance for transition testing
-			if (rand.nextBoolean()) {
-				// global
-				if (!globalSuffixes.isEmpty()) {
-					wb.append(globalSuffixes.get(rand.nextInt(globalSuffixes
-							.size())));
-				}
-			} else {
-				// local
-				S state2 = hypothesis.getState(wb);
-				ArrayList<Word<I>> localSuffixes = localSuffixSets.get(state2);
-				if (!localSuffixes.isEmpty()) {
-					wb.append(localSuffixes.get(rand.nextInt(localSuffixes
-							.size())));
-				}
-			}
+			wb.append(generator.getRandomMiddleSequence(minimalSize, rndLength, rand));
+			
+			// construct a random characterizing/identifying sequence
+			wb.append(generator.getRandomCharacterizingSequence(wb, rand));
 
 			Word<I> queryWord = wb.toWord();
 			DefaultQuery<I, D> query = new DefaultQuery<>(queryWord);

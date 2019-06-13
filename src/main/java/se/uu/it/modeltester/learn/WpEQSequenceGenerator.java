@@ -16,6 +16,16 @@ import net.automatalib.words.WordBuilder;
 
 /**
  * Sequence generation method factored out from the RandomWpMethodEQOracle.
+ * 
+ * The implementation was mostly taken/adapted from Joshua's implementation of 
+ * the RandomWpMethod
+ * 
+* <pre>
+ * See: <a href="https://github.com/mtf90/learnlib/blob/develop/eqtests/
+ * 	basic-eqtests/src/main/java/de/learnlib/eqtests/basic/RandomWpMethodEQOracle.java">RandomWpMethodEQOracle</a>
+ * </pre>
+ * 
+ * Key difference is that we randomize access sequences.
  */
 public class WpEQSequenceGenerator<I, D, S> {
 
@@ -67,15 +77,15 @@ public class WpEQSequenceGenerator<I, D, S> {
 		return wb.toWord();
 	}
 
-	Word<I> getRandomDistinguishingSequence(Random rand) {
-		Word<I> accSeq = getRandomDistinguishingSequence(automaton, inputs,
-				rand);
+	Word<I> getRandomCharacterizingSequence(Iterable<I> fromSequence, Random rand) {
+		Word<I> accSeq = getRandomCharacterizingSequence(automaton, inputs,
+				fromSequence, rand);
 		return accSeq;
 	}
 
-	private Word<I> getRandomDistinguishingSequence(
+	private Word<I> getRandomCharacterizingSequence(
 			UniversalDeterministicAutomaton<S, I, ?, ?, ?> automaton,
-			Collection<? extends I> inputs, Random rand) {
+			Collection<? extends I> inputs, Iterable<I> fromSequence, Random rand) {
 		WordBuilder<I> wb = new WordBuilder<>();
 
 		// pick a random suffix for this state
@@ -87,7 +97,7 @@ public class WpEQSequenceGenerator<I, D, S> {
 			}
 		} else {
 			// local
-			S state2 = automaton.getState(wb);
+			S state2 = automaton.getState(fromSequence);
 			ArrayList<Word<I>> localSuffixes = localSuffixSets.get(state2);
 			if (!localSuffixes.isEmpty()) {
 				wb.append(localSuffixes.get(rand.nextInt(localSuffixes.size())));
