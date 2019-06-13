@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
+import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.modeltester.execute.AbstractInputExecutor;
@@ -43,6 +44,7 @@ public abstract class TlsInput {
 	/**
 	 * Updates the context after receiving an output.
 	 */
+	// TODO it would be better to have abstracting/concretizing mapper components.
 	public void postReceiveUpdate(TlsOutput output, State state) {
 	}
 

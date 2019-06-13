@@ -2,6 +2,7 @@ package se.uu.it.modeltester.sut.io;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
  */
 public class TlsOutput {
 	private List<String> messageStrings;
+	private List<ProtocolMessage> messages;
 	private boolean isAlive = true;
 
 	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(
@@ -28,11 +30,13 @@ public class TlsOutput {
 
 	public TlsOutput(String[] messageStrings) {
 		this.messageStrings = Arrays.asList(messageStrings);
+		this.messages = null;
 	}
 
 	public TlsOutput(List<ProtocolMessage> messages) {
 		messageStrings = messages.stream().map(m -> m.toCompactString())
 				.collect(Collectors.toList());
+		this.messages = messages;
 	}
 
 	public String toString() {
@@ -52,6 +56,17 @@ public class TlsOutput {
 
 	public boolean isAlive() {
 		return isAlive;
+	}
+	
+	public boolean isTimeout() {
+		return messageStrings.isEmpty();
+	}
+	
+	/**
+	 * Returns the protocol messages associated with the output. Returns null if this output was derived from a specification.
+	 */
+	public List<ProtocolMessage> getMessages() {
+		return messages;
 	}
 
 	public boolean equals(Object obj) {
