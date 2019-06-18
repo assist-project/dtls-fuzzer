@@ -1,0 +1,56 @@
+Testing Report
+
+SpecificationBug: {   bugId: 1
+   inputs: RSA_CLIENT_HELLO RSA_CLIENT_HELLO RSA_CLIENT_HELLO
+   expected: TIMEOUT TIMEOUT TIMEOUT
+   actual: TIMEOUT[crashed] TIMEOUT[crashed] TIMEOUT[crashed]
+   state: s1
+}
+SpecificationBug: {   bugId: 2
+   inputs: RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_HELLO RSA_CLIENT_HELLO
+   expected: TIMEOUT TIMEOUT TIMEOUT
+   actual: TIMEOUT[crashed] TIMEOUT[crashed] TIMEOUT[crashed]
+   state: s1
+}
+SpecificationBug: {   bugId: 3
+   inputs: PSK_CLIENT_HELLO RSA_CLIENT_HELLO RSA_CLIENT_HELLO
+   expected: TIMEOUT TIMEOUT TIMEOUT
+   actual: TIMEOUT[crashed] TIMEOUT[crashed] TIMEOUT[crashed]
+   state: s1
+}
+SpecificationBug: {   bugId: 4
+   inputs: PSK_CLIENT_KEY_EXCHANGE RSA_CLIENT_HELLO RSA_CLIENT_HELLO
+   expected: TIMEOUT TIMEOUT TIMEOUT
+   actual: TIMEOUT[crashed] TIMEOUT[crashed] TIMEOUT[crashed]
+   state: s1
+}
+SpecificationBug: {   bugId: 5
+   inputs: CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO RSA_CLIENT_HELLO
+   expected: TIMEOUT TIMEOUT TIMEOUT
+   actual: TIMEOUT[crashed] TIMEOUT[crashed] TIMEOUT[crashed]
+   state: s1
+}
+SpecificationBug: {   bugId: 6
+   inputs: FINISHED RSA_CLIENT_HELLO RSA_CLIENT_HELLO
+   expected: TIMEOUT TIMEOUT TIMEOUT
+   actual: TIMEOUT[crashed] TIMEOUT[crashed] TIMEOUT[crashed]
+   state: s1
+}
+SpecificationBug: {   bugId: 7
+   inputs: APPLICATION RSA_CLIENT_HELLO RSA_CLIENT_HELLO
+   expected: TIMEOUT TIMEOUT TIMEOUT
+   actual: TIMEOUT[crashed] TIMEOUT[crashed] TIMEOUT[crashed]
+   state: s1
+}
+SpecificationBug: {   bugId: 8
+   inputs: Alert(WARNING,CLOSE_NOTIFY) RSA_CLIENT_HELLO RSA_CLIENT_HELLO
+   expected: TIMEOUT TIMEOUT TIMEOUT
+   actual: TIMEOUT[crashed] TIMEOUT[crashed] TIMEOUT[crashed]
+   state: s1
+}
+SpecificationBug: {   bugId: 9
+   inputs: Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_HELLO RSA_CLIENT_HELLO
+   expected: TIMEOUT TIMEOUT TIMEOUT
+   actual: TIMEOUT[crashed] TIMEOUT[crashed] TIMEOUT[crashed]
+   state: s1
+}

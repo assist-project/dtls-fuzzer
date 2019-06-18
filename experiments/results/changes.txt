@@ -1,0 +1,12 @@
+Jun 11 19:23 ../../TLS-Attacker-Development/tls-attacker.patch
+- proper reporting of sequence numbers
+- learning experiments before this are tainted
+Jun 12 14:21:31 
+- ClientHello also resets the digest
+Jun 13 18:48:44
+- Updated mapper. Updated default cipher suites.
+    - sets selected cipher suite to NULL
+    
+Jun 13 19:35:45
+- fixed sampledtests oracle, previously it would pick global characterizing sequences for the initial state rather than for the state selected
+

@@ -1,0 +1,26 @@
+The mapper: 
+- properly sets received sequence numbers
+- resets digest on only Finished
+- uses RSA as default selected cipher suite 
+(see sul_config.xml)
+
+
+ls output:
+Jun 11 19:56 gnutls-3.6.7_psk_rsa
+Jun 12 03:57 gnutls-3.6.7_psk_rsa_cert_nreq
+Jun 12 11:47 gnutls-3.6.7_psk_rsa_cert_nreq_randwp
+Jun 12 10:15 gnutls-3.6.7_psk_rsa_cert_req
+Jun 12 03:24 gnutls-3.6.7_psk_rsa_cert_req_randwp
+Jun 11 19:46 gnutls-3.6.7_psk_rsa_randwp
+Jun 13 04:40 mbedtls_psk_rsa
+Jun 12 09:38 mbedtls_psk_rsa_cert_nreq
+Jun 12 08:12 mbedtls_psk_rsa_cert_req
+Jun 11 19:42 mbedtls_psk_rsa_nalert
+Jun 11 19:42 mbedtls_rsa_cert_nreq
+Jun 11 19:42 mbedtls_rsa_cert_nreq_nalert
+Jun 11 19:42 mbedtls_rsa_cert_req
+Jun 18 12:18 notes.txt
+Jun 12 04:57 openssl-1.1.1b_psk_rsa_cert_nreq
+Jun 12 09:12 openssl-1.1.1b_psk_rsa_cert_req
+Jun 12 09:19 tinydtls_psk
+

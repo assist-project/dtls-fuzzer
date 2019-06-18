@@ -1,0 +1,21 @@
+<Config>
+    <enforceSettings>false</enforceSettings>
+    <quickReceive>false</quickReceive>
+    <earlyStop>false</earlyStop>
+    <stopActionsAfterFatal>false</stopActionsAfterFatal>
+    <stopReceivingAfterFatal>false</stopReceivingAfterFatal>
+    <addServerNameIndicationExtension>true</addServerNameIndicationExtension>
+    <addRenegotiationInfoExtension>false</addRenegotiationInfoExtension>
+    <addSignatureAndHashAlgorithmsExtension>true</addSignatureAndHashAlgorithmsExtension>
+    <addHeartbeatExtension>true</addHeartbeatExtension>
+    <defaultSelectedCipherSuite>TLS_RSA_WITH_AES_128_CBC_SHA</defaultSelectedCipherSuite>
+    <defaultClientSupportedCiphersuites>TLS_RSA_WITH_AES_128_CBC_SHA</defaultClientSupportedCiphersuites>
+    <defaultServerSupportedCiphersuites>TLS_RSA_WITH_AES_128_CBC_SHA</defaultServerSupportedCiphersuites>
+    <addEllipticCurveExtension>false</addEllipticCurveExtension>
+    <addECPointFormatExtension>false</addECPointFormatExtension>
+    <defaultPSKIdentity>436C69656E745F6964656E74697479</defaultPSKIdentity>
+    <defaultPSKKey>1234</defaultPSKKey>
+    <dtlsExcludeOutOfOrder>false</dtlsExcludeOutOfOrder>
+    <!-- Note: this fixes any certificate input -->
+    <autoSelectCertificate>false</autoSelectCertificate>
+</Config>
