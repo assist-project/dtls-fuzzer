@@ -2,9 +2,7 @@
 using CCM_8 ciphersuites. -->
 <alphabet>
     <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_CLIENT_HELLO"/>
-    <GenericTlsInput name="PSK_CLIENT_KEY_EXCHANGE">
-        <PskClientKeyExchange/>
-    </GenericTlsInput>
+    <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED"/>
     <GenericTlsInput name="APPLICATION">

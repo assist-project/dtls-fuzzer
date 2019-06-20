@@ -2,13 +2,9 @@
 using CCM_8 ciphersuites. -->
 <alphabet>
     <ClientHelloInput suite="TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8" name="DHE_CLIENT_HELLO"/>
-    <GenericTlsInput name="DH_CLIENT_KEY_EXCHANGE">
-        <DHClientKeyExchange/>
-    </GenericTlsInput>
+    <ClientKeyExchangeInput name="DH_CLIENT_KEY_EXCHANGE" algorithm="DH"/>
     <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_CLIENT_HELLO"/>
-    <GenericTlsInput name="PSK_CLIENT_KEY_EXCHANGE">
-        <PskClientKeyExchange/>
-    </GenericTlsInput>
+    <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED"/>
     <GenericTlsInput name="APPLICATION">

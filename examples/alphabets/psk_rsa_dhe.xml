@@ -4,15 +4,9 @@ using PSK, RSA and DH key exchange mechanisms. -->
     <ClientHelloWord suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO"/>
     <ClientHelloWord suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
     <ClientHelloWord suite="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" name="DHE_CLIENT_HELLO"/>
-    <GenericMessageWord>
-        <PskClientKeyExchange/>
-    </GenericMessageWord>
-    <GenericMessageWord>
-        <DHClientKeyExchange/>
-    </GenericMessageWord>
-    <GenericMessageWord>
-        <RSAClientKeyExchange/>
-    </GenericMessageWord>
+    <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
+    <ClientKeyExchangeInput name="DH_CLIENT_KEY_EXCHANGE" algorithm="DH"/>
+    <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>
     <ChangeCipherSpecWord/>
     <FinishedWord/>
    <GenericTlsInput name="APPLICATION">
