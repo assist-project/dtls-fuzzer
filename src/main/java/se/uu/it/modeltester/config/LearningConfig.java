@@ -43,7 +43,7 @@ public class LearningConfig {
 
 	@Parameter(names = "-logQueries", description = "Log queries to an output false")
 	private boolean logQueries = false;
-
+	
 	public boolean doLogQueries() {
 		return logQueries;
 	}

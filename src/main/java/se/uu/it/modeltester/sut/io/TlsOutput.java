@@ -14,9 +14,13 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
  * messages.
  */
 public class TlsOutput {
+	// fields used in equals
 	private List<String> messageStrings;
-	private List<ProtocolMessage> messages;
 	private boolean isAlive = true;
+
+	// fields not used in equals, but used in toString representation
+	private List<ProtocolMessage> messages;
+	private String applicationOutput = null;
 
 	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(
 			new ArrayList<>());
@@ -47,7 +51,15 @@ public class TlsOutput {
 		if (!isAlive) {
 			messageString = messageString.concat("[crashed]");
 		}
+		if (applicationOutput != null) {
+			messageString = messageString.concat("{" + "appOutput="
+					+ applicationOutput + "}");
+		}
 		return messageString;
+	}
+
+	public void setApplicationOutput(String log) {
+		this.applicationOutput = log;
 	}
 
 	public void setIsAlive(boolean isAlive) {
@@ -57,13 +69,14 @@ public class TlsOutput {
 	public boolean isAlive() {
 		return isAlive;
 	}
-	
+
 	public boolean isTimeout() {
 		return messageStrings.isEmpty();
 	}
-	
+
 	/**
-	 * Returns the protocol messages associated with the output. Returns null if this output was derived from a specification.
+	 * Returns the protocol messages associated with the output. Returns null if
+	 * this output was derived from a specification.
 	 */
 	public List<ProtocolMessage> getMessages() {
 		return messages;

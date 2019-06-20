@@ -27,6 +27,9 @@ public class SulDelegate extends ClientDelegate {
 	@Parameter(names = "-sulConfig", required = false, description = "Configuration for the SUL")
 	private String sulConfig = null;
 
+	@Parameter(names = "-withApplicationOutput", required = false, description = "Includes the application output in the output generated. Only useful the command was provided")
+	private boolean withApplicationOutput = false;
+
 	public SulDelegate() {
 		super();
 	}
@@ -82,5 +85,9 @@ public class SulDelegate extends ClientDelegate {
 
 	public void setSulConfig(String sulConfig) {
 		this.sulConfig = sulConfig;
+	}
+
+	public boolean isWithApplicationOutput() {
+		return withApplicationOutput;
 	}
 }

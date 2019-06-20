@@ -22,6 +22,10 @@ public abstract class NamedTlsInput extends TlsInput {
 		return name;
 	}
 
+	protected void setName(String name) {
+		this.name = name;
+	}
+
 	public final String getName() {
 		return name;
 	}

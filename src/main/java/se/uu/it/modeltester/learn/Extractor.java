@@ -26,6 +26,7 @@ import se.uu.it.modeltester.sut.CachingSULOracle;
 import se.uu.it.modeltester.sut.NonDeterminismRetryingSUL;
 import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
+import se.uu.it.modeltester.sut.TlsProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
 import se.uu.it.modeltester.sut.io.AlphabetFactory;
 import se.uu.it.modeltester.sut.io.TlsInput;
@@ -69,9 +70,9 @@ public class Extractor {
 				finderConfig.getSulDelegate(), new BasicInputExecutor());
 
 		if (finderConfig.getSulDelegate().getCommand() != null) {
-			tlsSystemUnderTest = new SulProcessWrapper<TlsInput, TlsOutput>(
-					tlsSystemUnderTest, new ProcessHandler(
-							finderConfig.getSulDelegate()));
+			tlsSystemUnderTest = new TlsProcessWrapper(tlsSystemUnderTest,
+					new ProcessHandler(finderConfig.getSulDelegate()),
+					finderConfig.getSulDelegate().isWithApplicationOutput());
 		}
 
 		// we use a wrapper to check for non-determinism, we could use its
@@ -79,7 +80,7 @@ public class Extractor {
 		try {
 			tlsSystemUnderTest = new NonDeterminismRetryingSUL<TlsInput, TlsOutput>(
 					tlsSystemUnderTest, NON_DET_ATTEMPTS, new FileWriter(
-							new File(outputFolder, "nondet.log")));
+							new File(outputFolder, NON_DET_FILENAME)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
