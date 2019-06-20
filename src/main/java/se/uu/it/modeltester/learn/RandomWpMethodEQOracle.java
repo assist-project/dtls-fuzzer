@@ -121,7 +121,7 @@ public class RandomWpMethodEQOracle<A extends UniversalDeterministicAutomaton<?,
 	private <S> DefaultQuery<I, D> doFindCounterExample(
 			UniversalDeterministicAutomaton<S, I, ?, ?, ?> hypothesis,
 			Output<I, D> output, Collection<? extends I> inputs) {
-		
+
 		WpEQSequenceGenerator<I, D, S> generator = new WpEQSequenceGenerator<>(
 				hypothesis, inputs);
 
@@ -137,8 +137,9 @@ public class RandomWpMethodEQOracle<A extends UniversalDeterministicAutomaton<?,
 					states.get(rand.nextInt(states.size())), rand));
 
 			// construct random middle part (of some expected length)
-			wb.append(generator.getRandomMiddleSequence(minimalSize, rndLength, rand));
-			
+			wb.append(generator.getRandomMiddleSequence(minimalSize, rndLength,
+					rand));
+
 			// construct a random characterizing/identifying sequence
 			wb.append(generator.getRandomCharacterizingSequence(wb, rand));
 

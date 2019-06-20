@@ -58,9 +58,9 @@ public class WpSampledTestsEQOracle<A extends UniversalDeterministicAutomaton<?,
 		WpEQSequenceGenerator<I, D, S> generator = new WpEQSequenceGenerator<>(
 				hypothesis, inputs);
 		List<S> states = new ArrayList<>(hypothesis.getStates());
-		
+
 		for (int i = 0; i < bound; i++) {
-			S randState = states.get(rand.nextInt(states.size())); 
+			S randState = states.get(rand.nextInt(states.size()));
 
 			Word<I> randAccSeq = generator.getRandomAccessSequence(randState,
 					rand);
@@ -77,8 +77,8 @@ public class WpSampledTestsEQOracle<A extends UniversalDeterministicAutomaton<?,
 						rndLength, rand);
 			}
 
-			Word<I> distSequence = generator
-					.getRandomCharacterizingSequence(randAccSeq.concat(middlePart), rand);
+			Word<I> distSequence = generator.getRandomCharacterizingSequence(
+					randAccSeq.concat(middlePart), rand);
 
 			Word<I> test = randAccSeq.concat(middlePart, distSequence);
 

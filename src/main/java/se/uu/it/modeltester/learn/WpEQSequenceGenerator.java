@@ -17,10 +17,10 @@ import net.automatalib.words.WordBuilder;
 /**
  * Sequence generation method factored out from the RandomWpMethodEQOracle.
  * 
- * The implementation was mostly taken/adapted from Joshua's implementation of 
+ * The implementation was mostly taken/adapted from Joshua's implementation of
  * the RandomWpMethod
  * 
-* <pre>
+ * <pre>
  * See: <a href="https://github.com/mtf90/learnlib/blob/develop/eqtests/
  * 	basic-eqtests/src/main/java/de/learnlib/eqtests/basic/RandomWpMethodEQOracle.java">RandomWpMethodEQOracle</a>
  * </pre>
@@ -77,7 +77,8 @@ public class WpEQSequenceGenerator<I, D, S> {
 		return wb.toWord();
 	}
 
-	Word<I> getRandomCharacterizingSequence(Iterable<I> fromSequence, Random rand) {
+	Word<I> getRandomCharacterizingSequence(Iterable<I> fromSequence,
+			Random rand) {
 		Word<I> accSeq = getRandomCharacterizingSequence(automaton, inputs,
 				fromSequence, rand);
 		return accSeq;
@@ -85,7 +86,8 @@ public class WpEQSequenceGenerator<I, D, S> {
 
 	private Word<I> getRandomCharacterizingSequence(
 			UniversalDeterministicAutomaton<S, I, ?, ?, ?> automaton,
-			Collection<? extends I> inputs, Iterable<I> fromSequence, Random rand) {
+			Collection<? extends I> inputs, Iterable<I> fromSequence,
+			Random rand) {
 		WordBuilder<I> wb = new WordBuilder<>();
 
 		// pick a random suffix for this state
@@ -136,8 +138,8 @@ public class WpEQSequenceGenerator<I, D, S> {
 				if (reach.get(succ) == null) {
 					Word<I> succAs = as.append(in);
 					reach.put(succ, succAs);
+					bfsQueue.add(succ);
 				}
-				bfsQueue.add(succ);
 			}
 		}
 
