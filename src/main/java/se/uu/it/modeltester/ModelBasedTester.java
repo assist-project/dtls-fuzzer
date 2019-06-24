@@ -87,9 +87,8 @@ public class ModelBasedTester {
 				new TestingInputExecutor());
 		if (config.getSulDelegate().getCommand() != null) {
 
-			tlsSut = new TlsProcessWrapper(tlsSut, new ProcessHandler(config
-					.getSulDelegate().getCommand(), config.getSulDelegate()
-					.getRunWait()), config.getSulDelegate()
+			tlsSut = new TlsProcessWrapper(tlsSut, new ProcessHandler(
+					config.getSulDelegate()), config.getSulDelegate()
 					.isWithApplicationOutput());
 		}
 		SULOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(

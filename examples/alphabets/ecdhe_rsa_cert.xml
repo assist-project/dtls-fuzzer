@@ -1,11 +1,10 @@
-<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes. 
+<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes.
 client authentication.-->
 <alphabet>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
     <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>
-    <ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" name="ECDHE_CLIENT_HELLO"/>
-    <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDHE"/>
-    
+    <ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" name="ECDH_CLIENT_HELLO"/>
+    <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDH"/>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED"/>
     <GenericTlsInput name="APPLICATION">
@@ -17,6 +16,18 @@ client authentication.-->
                 </byteArrayExplicitValueModification>
             </data>
         </Application>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE">
+        <Certificate/>
+    </GenericTlsInput>
+    <GenericTlsInput name="EMPTY_CERTIFICATE">
+        <Certificate>
+            <certificatesList>
+            </certificatesList>
+        </Certificate>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE_VERIFY">
+        <CertificateVerify/>
     </GenericTlsInput>
     <!-- Alert(WARNING,CLOSE_NOTIFY) -->
     <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">

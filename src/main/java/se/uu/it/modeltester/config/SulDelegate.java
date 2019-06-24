@@ -21,6 +21,9 @@ public class SulDelegate extends ClientDelegate {
 	@Parameter(names = {"-command", "-cmd"}, required = false, description = "Command for starting the (D)TLS process")
 	private String command = null;
 
+	@Parameter(names = {"-processDir"}, required = false, description = "The directory of the (D)TLS process")
+	private String processDir = null;
+
 	@Parameter(names = "-runWait", required = false, description = "Time waited after running each TLS command")
 	private Long runWait = 0L;
 
@@ -77,6 +80,14 @@ public class SulDelegate extends ClientDelegate {
 
 	public void setRunWait(Long runWait) {
 		this.runWait = runWait;
+	}
+
+	public String getProcessDir() {
+		return processDir;
+	}
+
+	public void setProcessDir(String processDir) {
+		this.processDir = processDir;
 	}
 
 	public String getSulConfig() {

@@ -3,6 +3,7 @@ package se.uu.it.modeltester;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Security;
@@ -14,11 +15,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.alexmerz.graphviz.ParseException;
@@ -32,13 +42,29 @@ import de.learnlib.oracles.CounterOracle.MealyCounterOracle;
 import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.oracles.SimulatorOracle;
 import de.learnlib.oracles.SimulatorOracle.MealySimulatorOracle;
+import de.rub.nds.modifiablevariable.ModifiableVariable;
+import de.rub.nds.modifiablevariable.ModificationFilter;
+import de.rub.nds.modifiablevariable.VariableModification;
+import de.rub.nds.modifiablevariable.util.ArrayConverter;
+import de.rub.nds.tlsattacker.core.certificate.CertificateByteChooser;
+import de.rub.nds.tlsattacker.core.certificate.CertificateKeyPair;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
+import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+import de.rub.nds.tlsattacker.core.crypto.keys.CustomRsaPublicKey;
+import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.CertificateVerifyMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.FinishedMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.extension.ExtensionMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import de.rub.nds.tlsattacker.core.state.TlsContext;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.automata.transout.impl.FastMealyState;
@@ -66,12 +92,15 @@ import se.uu.it.modeltester.sut.TlsSUL;
 import se.uu.it.modeltester.sut.io.AlphabetSerializer;
 import se.uu.it.modeltester.sut.io.ChangeCipherSpecInput;
 import se.uu.it.modeltester.sut.io.ClientHelloInput;
+import se.uu.it.modeltester.sut.io.ClientKeyExchangeInput;
 import se.uu.it.modeltester.sut.io.FinishedInput;
 import se.uu.it.modeltester.sut.io.GenericTlsInput;
+import se.uu.it.modeltester.sut.io.KeyExchangeAlgorithm;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 import se.uu.it.modeltester.sut.io.definitions.Definitions;
 import se.uu.it.modeltester.sut.io.definitions.DefinitionsFactory;
+import se.uu.it.modeltester.sut.io.definitions.InputDefinition;
 
 // an ugly test harness.
 public class Trace {
@@ -97,9 +126,7 @@ public class Trace {
 				+ "-key /home/paul/Keys/RSA1024/server-key.pem -cert /home/paul/Keys/RSA1024/server-cert.pem "
 				+ "-accept 20000 -dtls1 -mtu 1500";
 
-		private static String opensslDtls111aRsa = "/home/paul/Modules/openssl-1.1.1a/apps/openssl s_server "
-				+ "-key /home/paul/Keys/RSA1024/server-key.pem -cert /home/paul/Keys/RSA1024/server-cert.pem "
-				+ "-accept 20000 -dtls1 -mtu 1500";
+		private static String opensslDtls111All = "/home/paul/Modules/openssl-1.1.1c/apps/openssl  s_server -state -psk 1234 -key /home/paul/Keys/RSA1024/server-key.pem -cert /home/paul/Keys/RSA1024/server-cert.pem -CAfile /home/paul/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa1024_cert.pem -Verify 1 -accept 20000 -dtls1_2 -timeout 5000 -mtu 5000";
 
 		private static String opensslTls111aRsa = "/home/paul/Modules/openssl-1.1.1a/apps/openssl s_server \"\n"
 				+ "				+ \"-key /home/paul/Keys/RSA1024/server-key.pem -cert /home/paul/Keys/RSA1024/server-cert.pem \"\n"
@@ -132,11 +159,37 @@ public class Trace {
 
 		private static String localTinyDtls = "/home/paul/Modules/tinydtls-fuzz/tests/dtls-server -p 20000";
 
-		private static String localMbedDtls = "/home/paul/Modules/mbedtls-2.14.0/programs/ssl/ssl_server2 "
-				+ "dtls=1 psk=1234 mtu=100 key_file=/home/paul/Keys/RSA2048/server-key.pem "
-				+ "crt_file=/home/paul/Keys/RSA2048/server-cert.pem server_port=20000 exchanges=100 hs_timeout=20000-120000";
+		private static String localETinyDtls = "/home/paul/GitHub/etinydtls/tests/dtls-server -p 20000";
+
+		private static String localMbedDtls = "/home/paul/Modules/mbedtls-2.16.1/programs/ssl/ssl_server2 dtls=1 psk=1234 mtu=5000 key_file=/home/paul/Keys/RSA2048/server-key.pem crt_file=/home/paul/Keys/RSA2048/server-cert.pem server_port=20000 exchanges=100 hs_timeout=20000-120000 ca_file=/home/paul/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa2048_cert.pem auth_mode=required debug_level=100";
 
 		private static String none = null;
+	}
+
+	static class Handshake {
+		public static TlsInput[] handshake(CipherSuite cs,
+				@Nullable Boolean inclCert) {
+			List<TlsInput> inputs = new ArrayList<>();
+			KeyExchangeAlgorithm alg = KeyExchangeAlgorithm
+					.getKeyExchangeAlgorithm(cs);
+			inputs.add(new ClientHelloInput(cs));
+			inputs.add(new ClientHelloInput(cs));
+			if (inclCert != null) {
+				CertificateMessage cm = new CertificateMessage();
+				if (!inclCert) {
+					cm.setCertificatesList(Collections.emptyList());
+				}
+				inputs.add(new GenericTlsInput(cm));
+			}
+			inputs.add(new ClientKeyExchangeInput(alg));
+			if (inclCert != null && inclCert) {
+				inputs.add(new GenericTlsInput(new CertificateVerifyMessage()));
+			}
+			inputs.add(new GenericTlsInput(new ChangeCipherSpecMessage()));
+			inputs.add(new FinishedInput());
+
+			return inputs.toArray(new TlsInput[inputs.size()]);
+		}
 	}
 
 	private static int NUM_FRAGS = 5;
@@ -200,6 +253,7 @@ public class Trace {
 			// openssl non-det
 			"RSA_CLIENT_HELLO RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC FINISHED CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED APPLICATION Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE Alert(WARNING,CLOSE_NOTIFY) FINISHED FINISHED RSA_CLIENT_KEY_EXCHANGE FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE APPLICATION RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) APPLICATION RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(WARNING,CLOSE_NOTIFY) RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO"};
 
+	// test exposing tinydtls bug
 	public static TlsInput[] oooCcs = new TlsInput[]{
 			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
 			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
@@ -209,22 +263,159 @@ public class Trace {
 			mutated(new ChangeCipherSpecInput(), new RecordFlushMutation(),
 					new RecordDupMutation(-2)), new FinishedInput()};
 
+	public static TlsInput[] opensslKexSwitch1 = new TlsInput[]{
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+			// new GenericTlsInput(new PskClientKeyExchangeMessage()),
+			nonmut(new GenericTlsInput(new CertificateMessage())),
+			nonmut(new ClientKeyExchangeInput(KeyExchangeAlgorithm.PSK) {
+				public ProtocolMessage generateMessage(State state) {
+					ProtocolMessage msg = super.generateMessage(state);
+					HandshakeMessage hMsg = (HandshakeMessage) msg;
+					hMsg.setIncludeInDigest(true);
+					return hMsg;
+				}
+
+			}
+
+			),
+			nonmut(new GenericTlsInput(new CertificateVerifyMessage())),
+			nonmut(new ClientKeyExchangeInput(KeyExchangeAlgorithm.RSA) {
+				public ProtocolMessage generateMessage(State state) {
+					state.getTlsContext().setDtlsNextSendSequenceNumber(
+							state.getTlsContext()
+									.getDtlsNextSendSequenceNumber() - 2);
+					return super.generateMessage(state);
+				}
+
+				public void postReceiveUpdate(TlsOutput output, State state) {
+					// state.getTlsContext().setDtlsNextSendSequenceNumber(state.getTlsContext().getDtlsNextSendSequenceNumber()+2);
+				}
+
+			}), nonmut(new GenericTlsInput(new CertificateVerifyMessage())),
+			nonmut(new GenericTlsInput(new ChangeCipherSpecMessage())),
+	// nonmut(new GenericTlsInput(new FinishedMessage()))
+	};
+
+	public static TlsInput[] opensslBadKex = new TlsInput[]{
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+			// new GenericTlsInput(new PskClientKeyExchangeMessage()),
+			nonmut(new GenericTlsInput(new CertificateMessage())),
+			nonmut(new ClientKeyExchangeInput(KeyExchangeAlgorithm.PSK)),
+			nonmut(new GenericTlsInput(new CertificateVerifyMessage())),
+			nonmut(new GenericTlsInput(new ChangeCipherSpecMessage())),
+	// nonmut(new GenericTlsInput(new FinishedMessage()))
+	};
+
+	@XmlRootElement
+	static class CertificateHolder {
+		@XmlElement(name = "certificatePair")
+		private CertificateKeyPair pair;
+
+		public CertificateHolder() {
+		}
+
+		public CertificateHolder(CertificateKeyPair pair) {
+			this.pair = pair;
+		}
+	}
+
+	public static void kexPlay() throws JAXBException {
+
+	}
+
+	public static void certPlay() throws JAXBException {
+		init();
+		Config config = Config.createConfig();
+		CertificateByteChooser chooser = CertificateByteChooser.getInstance();
+		State state = new State();
+		CertificateKeyPair cert = chooser.chooseCertificateKeyPair(state
+				.getTlsContext().getChooser());
+		TlsContext context = state.getTlsContext();
+		CustomRsaPublicKey pkey = (CustomRsaPublicKey) cert.getPublicKey();
+
+		// System.out.println(cert.toString());
+		// System.out.println("Modulus: " + pkey.getModulus());
+		// System.out.println("Modulus (1024 rshift): " +
+		// pkey.getModulus().shiftRight(1020));
+		// System.out.println(ArrayConverter.bytesToHexString(pkey.getModulus().toByteArray())
+		// );
+
+		context.setSelectedCipherSuite(CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256);
+
+		CertificateKeyPair defaultPair = config
+				.getDefaultExplicitCertificateKeyPair();
+		CustomRsaPublicKey defaultKey = (CustomRsaPublicKey) defaultPair
+				.getPublicKey();
+
+		System.out.println(defaultKey.getModulus());
+		System.out.println(ArrayConverter.bytesToHexString(defaultKey
+				.getModulus().toByteArray()));
+		CertificateMessage message = new CertificateMessage();
+		message.getHandler(state.getTlsContext()).prepareMessage(message);
+		CustomRsaPublicKey certMsgKey = (CustomRsaPublicKey) message
+				.getCertificateKeyPair().getPublicKey();
+		System.out.println(defaultKey.getModulus());
+
+		CertificateKeyPair rightPair = null;
+
+		for (CertificateKeyPair pair : chooser.getCertificateKeyPairList()) {
+			if (pair.getCertPublicKeyType() == CertificateKeyType.RSA) {
+				CustomRsaPublicKey key = (CustomRsaPublicKey) pair
+						.getPublicKey();
+				if (key.getModulus().toByteArray().length == 257) {
+					rightPair = pair;
+				}
+			}
+		}
+
+		JAXBContext jContext = JAXBContext.newInstance(CertificateHolder.class,
+				CertificateKeyPair.class);
+		Marshaller m = jContext.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		StringWriter sw = new StringWriter();
+		m.marshal(new CertificateHolder(rightPair), sw);
+		System.out.println(sw.toString());
+	}
+
 	public static void main(String[] args) throws Exception {
+		runTest2();
+	}
+
+	public static void runTest2() throws Exception {
+
+		//
+		CipherSuite rsa = CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA;
+
+		CipherSuite psk = CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA;
+
+		CipherSuite dh = CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256;
+		CipherSuite ecdh = CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256;
+
+		int iterations = 1;
+		int stepWait = 100;
+		long runWait = 100;
+
+		TlsInput[] inputs = Handshake.handshake(ecdh, true);
+
+		runTest(Command.none, inputs, iterations, stepWait, runWait);
+	}
+
+	public static void runTest() throws Exception {
 
 		//
 		CipherSuite cs =
 		// CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8;
-		CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
-		// CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
+		// CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
+		CipherSuite.TLS_PSK_WITH_AES_128_CCM_8;
 		int iterations = 1;
-		int stepWait = 150;
+		int stepWait = 50;
 		long runWait = 100;
-
-		ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage();
-		ccs.setAdjustContext(false);
-		GenericTlsInput ccsInput = new GenericTlsInput(ccs);
-
-		ccs.setAdjustContext(false);
 
 		TlsInput[] inputs = new TlsInput[]{
 				nonmut(new ClientHelloInput(cs)),
@@ -235,7 +426,7 @@ public class Trace {
 				mutated(new FinishedInput(), new RecordFlushMutation(),
 						new RecordDupMutation(-2))};
 
-		runTest(Command.localMbedDtls, inputs, iterations, stepWait, runWait);
+		runTest(Command.none, inputs, iterations, stepWait, runWait);
 	}
 
 	private static void compareStateMaps() throws Exception {
@@ -269,6 +460,42 @@ public class Trace {
 
 	private static void runTest(String command, TlsInput[] inputs,
 			int iterations, Integer stepWait, Long runWait)
+			throws InterruptedException {
+		SUL<TlsInput, TlsOutput> sut = setupSut(command, stepWait, runWait);
+
+		Map<List<TlsOutput>, Integer> allResponses = new LinkedHashMap<>();
+		for (int i = 0; i < iterations; i++) {
+			TlsOutput[] responses = new TlsOutput[inputs.length];
+			int count = 0;
+			sut.pre();
+			for (TlsInput input : inputs) {
+				responses[count++] = sut.step(input);
+			}
+			sut.post();
+			List<TlsOutput> resList = Arrays.asList(responses);
+			if (!allResponses.containsKey(resList)) {
+				allResponses.put(resList, 1);
+			} else {
+				allResponses.put(resList, allResponses.get(resList) + 1);
+			}
+		}
+
+		System.out.println("Test: " + Arrays.asList(inputs));
+		for (Entry<List<TlsOutput>, Integer> res : allResponses.entrySet()) {
+			System.out.println(res.getValue() + " times:" + res.getKey());
+		}
+
+		for (Entry<List<TlsOutput>, Integer> res : allResponses.entrySet()) {
+			System.out.println(res.getValue() + " times:"
+					+ compact(res.getKey()));
+		}
+
+		Supplier<Object> a;
+	}
+
+	private static void runTest(String command, TlsInput[] inputs,
+			int iterations, Integer stepWait, Long runWait,
+			Map<Integer, Consumer<TlsContext>> preInputUpdate)
 			throws InterruptedException {
 		SUL<TlsInput, TlsOutput> sut = setupSut(command, stepWait, runWait);
 

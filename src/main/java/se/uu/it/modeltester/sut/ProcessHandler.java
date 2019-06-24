@@ -1,5 +1,6 @@
 package se.uu.it.modeltester.sut;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,6 +39,9 @@ public class ProcessHandler {
 
 	public ProcessHandler(SulDelegate sulConfig) {
 		this(sulConfig.getCommand(), sulConfig.getRunWait());
+		if (sulConfig.getProcessDir() != null) {
+			setDirectory(new File(sulConfig.getProcessDir()));
+		}
 	}
 
 	public void redirectOutput(OutputStream toOutput) {
@@ -46,6 +50,10 @@ public class ProcessHandler {
 
 	public void redirectError(OutputStream toOutput) {
 		error = toOutput;
+	}
+
+	public void setDirectory(File procDir) {
+		pb.directory(procDir);
 	}
 
 	public long getRunWait() {

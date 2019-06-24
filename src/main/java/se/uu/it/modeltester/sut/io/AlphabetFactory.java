@@ -27,6 +27,7 @@ public class AlphabetFactory {
 				alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
 			} catch (JAXBException | IOException | XMLStreamException e) {
 				LOGGER.fatal("Failed to instantiate alphabet");
+				LOGGER.fatal(e.getMessage());
 				System.exit(0);
 			}
 		} else {
@@ -34,6 +35,7 @@ public class AlphabetFactory {
 				alphabet = AlphabetFactory.buildDefaultAlphabet();
 			} catch (JAXBException | IOException | XMLStreamException e) {
 				LOGGER.fatal("Failed to instantiate default alphabet");
+				LOGGER.fatal(e.getMessage());
 				System.exit(0);
 			}
 		}
