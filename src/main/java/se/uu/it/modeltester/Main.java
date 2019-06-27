@@ -8,10 +8,8 @@ import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.security.Security;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.beust.jcommander.JCommander;
@@ -25,8 +23,9 @@ public class Main {
 	private static final Logger LOGGER = LogManager.getLogger(Main.class
 			.getName());
 	private static String ARGS_FILE = "command.args";
+	private static String ERROR_FILE = "error.msg";
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 		UnlimitedStrengthEnabler.enable();
 		Security.addProvider(new BouncyCastleProvider());
 		ModelBasedTesterConfig config = new ModelBasedTesterConfig(
@@ -53,6 +52,15 @@ public class Main {
 				E.printStackTrace();
 				// TODO ^^ what says here :)
 				LOGGER.error(E);
+
+				// useful to log what actually went wrong
+				try (FileWriter fw = new FileWriter(new File(ERROR_FILE))) {
+					PrintWriter pw = new PrintWriter(fw);
+					pw.println(E.getMessage());
+					E.printStackTrace(pw);
+					pw.close();
+				}
+
 			}
 		} catch (ParameterException E) {
 			LOGGER.error("Could not parse provided parameters. "

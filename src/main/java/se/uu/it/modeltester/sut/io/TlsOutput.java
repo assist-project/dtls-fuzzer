@@ -2,8 +2,9 @@ package se.uu.it.modeltester.sut.io;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -16,11 +17,12 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 public class TlsOutput {
 	// fields used in equals
 	private List<String> messageStrings;
-	private boolean isAlive = true;
+	private boolean alive = true;
 
 	// fields not used in equals, but used in toString representation
 	private List<ProtocolMessage> messages;
 	private String applicationOutput = null;
+	private boolean compact = true;
 
 	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(
 			new ArrayList<>());
@@ -44,11 +46,48 @@ public class TlsOutput {
 	}
 
 	public String toString() {
+		if (compact) {
+			return toCompactString();
+		} else {
+			return toFullString();
+		}
+	}
+
+	public String toFullString() {
+		// CLIENT_HELLO,SERVER_HELLO...
+		StringBuilder builder = new StringBuilder();
+		String messageString = messageStrings.stream()
+				.reduce((s1, s2) -> s1 + "," + s2).orElse("TIMEOUT");
+		builder.append(messageString);
+		if (!alive) {
+			builder.append("[crashed]");
+		}
+		LinkedHashMap<String, String> printMap = new LinkedHashMap<>();
+		if (messages != null && !messages.isEmpty()) {
+			printMap.put("messages", messages.toString());
+		}
+		if (applicationOutput != null) {
+			printMap.put("appOutput", applicationOutput);
+		}
+
+		builder.append("{");
+		for (Map.Entry<String, String> entry : printMap.entrySet()) {
+			builder.append(entry.getKey());
+			builder.append("=");
+			builder.append(entry.getValue());
+			builder.append(";");
+		}
+
+		builder.append("}");
+		return builder.toString();
+	}
+
+	public String toCompactString() {
 		// CLIENT_HELLO,SERVER_HELLO...
 		String messageString = messageStrings.stream()
 				.reduce((s1, s2) -> s1 + "," + s2).orElse("TIMEOUT");
 
-		if (!isAlive) {
+		if (!alive) {
 			messageString = messageString.concat("[crashed]");
 		}
 		if (applicationOutput != null) {
@@ -56,22 +95,6 @@ public class TlsOutput {
 					+ applicationOutput + "}");
 		}
 		return messageString;
-	}
-
-	public void setApplicationOutput(String log) {
-		this.applicationOutput = log;
-	}
-
-	public void setIsAlive(boolean isAlive) {
-		this.isAlive = isAlive;
-	}
-
-	public boolean isAlive() {
-		return isAlive;
-	}
-
-	public boolean isTimeout() {
-		return messageStrings.isEmpty();
 	}
 
 	/**
@@ -82,18 +105,42 @@ public class TlsOutput {
 		return messages;
 	}
 
+	public void setApplicationOutput(String log) {
+		this.applicationOutput = log;
+	}
+
+	public void setAlive(boolean alive) {
+		this.alive = alive;
+	}
+
+	public boolean isAlive() {
+		return alive;
+	}
+
+	public boolean isTimeout() {
+		return messageStrings.isEmpty();
+	}
+
+	public void setCompact(boolean compact) {
+		this.compact = compact;
+	}
+
+	public boolean isCompact() {
+		return this.compact;
+	}
+
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			TlsOutput that = (TlsOutput) obj;
 			// TODO not the proper way of comparing outputs but whatever
 			return Objects.equals(this.toString(), that.toString())
-					&& Objects.equals(this.isAlive, that.isAlive);
+					&& Objects.equals(this.alive, that.alive);
 		}
 		return false;
 	}
 
 	public int hashCode() {
-		int hashCode = 2 * toString().hashCode() + (isAlive ? 1 : 0);
+		int hashCode = 2 * toString().hashCode() + (alive ? 1 : 0);
 		return hashCode;
 	}
 

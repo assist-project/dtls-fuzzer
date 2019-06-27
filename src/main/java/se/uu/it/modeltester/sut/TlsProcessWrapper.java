@@ -34,7 +34,7 @@ public class TlsProcessWrapper extends SulProcessWrapper<TlsInput, TlsOutput> {
 	@Override
 	public TlsOutput step(TlsInput in) throws SULException {
 		TlsOutput output = super.step(in);
-		output.setIsAlive(super.isAlive());
+		output.setAlive(super.isAlive());
 		if (storeApplicationOutput) {
 			String procOutput = procOut.getString();
 			output.setApplicationOutput(procOutput);

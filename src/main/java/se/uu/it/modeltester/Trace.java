@@ -54,6 +54,7 @@ import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.crypto.keys.CustomRsaPublicKey;
+import de.rub.nds.tlsattacker.core.protocol.message.ApplicationMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateVerifyMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
@@ -312,6 +313,41 @@ public class Trace {
 	// nonmut(new GenericTlsInput(new FinishedMessage()))
 	};
 
+	public static TlsInput[] tinyDtlsNextEpochBug = new TlsInput[]{
+			nonmut(new GenericTlsInput(new ChangeCipherSpecMessage())),
+			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
+			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8) {
+				public void postReceiveUpdate(TlsOutput output, State state) {
+					state.getTlsContext().setDtlsSendEpoch(0);
+				}
+			}),
+			// new GenericTlsInput(new PskClientKeyExchangeMessage()),
+			nonmut(new ClientKeyExchangeInput(KeyExchangeAlgorithm.PSK)),
+			nonmut(new GenericTlsInput(new ChangeCipherSpecMessage())),
+			nonmut(new FinishedInput()),};
+
+	public static TlsInput[] wolfsslApplication = new TlsInput[]{
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+			// new GenericTlsInput(new PskClientKeyExchangeMessage()),
+			nonmut(new GenericTlsInput(new CertificateMessage())),
+			nonmut(new ClientKeyExchangeInput(KeyExchangeAlgorithm.RSA)),
+			nonmut(new GenericTlsInput(new CertificateVerifyMessage())),
+			nonmut(new GenericTlsInput(new ChangeCipherSpecMessage())),
+			nonmut(new FinishedInput()),
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+			nonmut(new GenericTlsInput(new ChangeCipherSpecMessage())),
+			nonmut(new FinishedInput()),};
+
+	// nonmut(new ClientHelloInput(
+	// CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+	// mutated(new FinishedInput(), new RecordDeferMutation()),
+	// mutated(new GenericTlsInput(new ApplicationMessage()), new
+	// RecordFlushMutation()
+
 	@XmlRootElement
 	static class CertificateHolder {
 		@XmlElement(name = "certificatePair")
@@ -401,9 +437,9 @@ public class Trace {
 		int stepWait = 100;
 		long runWait = 100;
 
-		TlsInput[] inputs = Handshake.handshake(ecdh, true);
+		TlsInput[] inputs = Handshake.handshake(rsa, true);
 
-		runTest(Command.none, inputs, iterations, stepWait, runWait);
+		runTest(Command.none, wolfsslApplication, iterations, stepWait, runWait);
 	}
 
 	public static void runTest() throws Exception {
