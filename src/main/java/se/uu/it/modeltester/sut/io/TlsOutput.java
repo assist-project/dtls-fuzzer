@@ -11,10 +11,18 @@ import java.util.stream.Collectors;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 
 /**
- * The outputs used in learning comprise message strings obtained by compacting
- * messages.
+ * The outputs used in learning comprise messages. 
  */
 public class TlsOutput {
+	/**
+	 * This is a temporary hack, should be fixed
+	 */
+	private static boolean compact = true;
+	public static void setRepresentation(boolean compact) {
+		TlsOutput.compact = compact;
+	}
+	
+	
 	// fields used in equals
 	private List<String> messageStrings;
 	private boolean alive = true;
@@ -22,7 +30,6 @@ public class TlsOutput {
 	// fields not used in equals, but used in toString representation
 	private List<ProtocolMessage> messages;
 	private String applicationOutput = null;
-	private boolean compact = true;
 
 	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(
 			new ArrayList<>());
@@ -45,16 +52,30 @@ public class TlsOutput {
 		this.messages = messages;
 	}
 
+	/**
+	 * Only includes the output header
+	 */
 	public String toString() {
-		if (compact) {
-			return toCompactString();
-		} else {
-			return toFullString();
-		}
+		return getOutputHeader();
 	}
-
-	public String toFullString() {
+	
+	/**
+	 * Includes the output header and output details
+	 */
+	public String toDetailedString() {
 		// CLIENT_HELLO,SERVER_HELLO...
+		StringBuilder builder = new StringBuilder();
+		String header = getOutputHeader();
+		builder.append(header);
+		if (!compact) {
+			builder.append("\n");
+			String details = getOutputDetails();		
+			builder.append(details);
+		}
+		return builder.toString();
+	}
+	
+	public String getOutputHeader() {
 		StringBuilder builder = new StringBuilder();
 		String messageString = messageStrings.stream()
 				.reduce((s1, s2) -> s1 + "," + s2).orElse("TIMEOUT");
@@ -62,6 +83,12 @@ public class TlsOutput {
 		if (!alive) {
 			builder.append("[crashed]");
 		}
+		return builder.toString();
+	}
+	
+	public String getOutputDetails() {
+		StringBuilder builder = new StringBuilder();
+		
 		LinkedHashMap<String, String> printMap = new LinkedHashMap<>();
 		if (messages != null && !messages.isEmpty()) {
 			printMap.put("messages", messages.toString());
@@ -77,24 +104,8 @@ public class TlsOutput {
 			builder.append(entry.getValue());
 			builder.append(";");
 		}
-
 		builder.append("}");
 		return builder.toString();
-	}
-
-	public String toCompactString() {
-		// CLIENT_HELLO,SERVER_HELLO...
-		String messageString = messageStrings.stream()
-				.reduce((s1, s2) -> s1 + "," + s2).orElse("TIMEOUT");
-
-		if (!alive) {
-			messageString = messageString.concat("[crashed]");
-		}
-		if (applicationOutput != null) {
-			messageString = messageString.concat("{" + "appOutput="
-					+ applicationOutput + "}");
-		}
-		return messageString;
 	}
 
 	/**
@@ -121,13 +132,6 @@ public class TlsOutput {
 		return messageStrings.isEmpty();
 	}
 
-	public void setCompact(boolean compact) {
-		this.compact = compact;
-	}
-
-	public boolean isCompact() {
-		return this.compact;
-	}
 
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {

@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import net.automatalib.automata.transout.MealyMachine;
@@ -50,10 +52,10 @@ public class StateMachine {
 	 * Exports the hypothesis to the supplied file and generates a corresponding
 	 * viewable .pdf model.
 	 */
-	public void export(File graphFile, boolean generatePdf) {
+	public void export(File graphFile, boolean generatePdf, boolean fullOutput) {
 		try {
 			graphFile.createNewFile();
-			export(new FileWriter(graphFile));
+			export(new FileWriter(graphFile), fullOutput);
 			if (generatePdf) {
 				Runtime.getRuntime().exec(
 						"dot -Tpdf -O " + graphFile.getAbsolutePath());
@@ -63,9 +65,11 @@ public class StateMachine {
 		}
 	}
 
-	public void export(Writer writer) {
+	public void export(Writer writer, boolean fullOutput) {
 		try {
+			TlsOutput.setRepresentation(!fullOutput);
 			GraphDOT.write(mealyMachine, alphabet, writer);
+			TlsOutput.setRepresentation(true);
 			writer.close();
 		} catch (IOException e) {
 			LOG.info("Could not export model!");
@@ -74,11 +78,12 @@ public class StateMachine {
 
 	public String toString() {
 		StringWriter sw = new StringWriter();
-		export(sw);
+		export(sw, false);
 		return sw.toString();
 	}
 
 	public Definitions generateDefinitions() {
 		return DefinitionsFactory.generateDefinitions(alphabet);
 	}
+	
 }

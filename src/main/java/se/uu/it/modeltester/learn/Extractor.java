@@ -122,7 +122,8 @@ public class Extractor {
 			// it is useful to print intermediate hypothesis as learning is
 			// running
 			serializeHypothesis(stateMachine, outputFolder, "hyp"
-					+ (rounds + 1) + ".dot", false);
+					+ (rounds + 1) + ".dot", false, false);
+			
 
 			tracker.newHypothesis(stateMachine);
 			counterExample = equivalenceAlgorithm.findCounterExample(
@@ -149,7 +150,10 @@ public class Extractor {
 
 		// exporting to output files
 		serializeHypothesis(stateMachine, outputFolder, LEARNED_MODEL_FILENAME,
-				true);
+				true, false);
+		serializeHypothesis(stateMachine, outputFolder, LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
+				false, true);
+		
 		extractorResult.setLearnedModelFile(new File(outputFolder,
 				LEARNED_MODEL_FILENAME));
 		try {
@@ -180,9 +184,9 @@ public class Extractor {
 	}
 
 	private void serializeHypothesis(StateMachine hypothesis, File folder,
-			String name, boolean genPdf) {
+			String name, boolean genPdf, boolean fullOutput) {
 		File graphFile = new File(folder, name);
-		hypothesis.export(graphFile, genPdf);
+		hypothesis.export(graphFile, genPdf, fullOutput);
 	}
 
 	public static class ExtractorResult {
