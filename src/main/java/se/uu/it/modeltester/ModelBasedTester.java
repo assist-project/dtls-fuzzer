@@ -21,7 +21,6 @@ import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.TestingInputExecutor;
 import se.uu.it.modeltester.learn.Extractor;
 import se.uu.it.modeltester.learn.Extractor.ExtractorResult;
-import se.uu.it.modeltester.sut.ProcessHandler;
 import se.uu.it.modeltester.sut.TlsProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
 import se.uu.it.modeltester.sut.io.AlphabetFactory;
@@ -87,9 +86,7 @@ public class ModelBasedTester {
 				new TestingInputExecutor());
 		if (config.getSulDelegate().getCommand() != null) {
 
-			tlsSut = new TlsProcessWrapper(tlsSut, new ProcessHandler(
-					config.getSulDelegate()), config.getSulDelegate()
-					.isWithApplicationOutput());
+			tlsSut = new TlsProcessWrapper(tlsSut, config.getSulDelegate());
 		}
 		SULOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSut);

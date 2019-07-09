@@ -71,8 +71,7 @@ public class Extractor {
 
 		if (finderConfig.getSulDelegate().getCommand() != null) {
 			tlsSystemUnderTest = new TlsProcessWrapper(tlsSystemUnderTest,
-					new ProcessHandler(finderConfig.getSulDelegate()),
-					finderConfig.getSulDelegate().isWithApplicationOutput());
+					finderConfig.getSulDelegate());
 		}
 
 		// we use a wrapper to check for non-determinism, we could use its
@@ -123,7 +122,6 @@ public class Extractor {
 			// running
 			serializeHypothesis(stateMachine, outputFolder, "hyp"
 					+ (rounds + 1) + ".dot", false, false);
-			
 
 			tracker.newHypothesis(stateMachine);
 			counterExample = equivalenceAlgorithm.findCounterExample(
@@ -151,9 +149,10 @@ public class Extractor {
 		// exporting to output files
 		serializeHypothesis(stateMachine, outputFolder, LEARNED_MODEL_FILENAME,
 				true, false);
-		serializeHypothesis(stateMachine, outputFolder, LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
+		serializeHypothesis(stateMachine, outputFolder,
+				LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
 				false, true);
-		
+
 		extractorResult.setLearnedModelFile(new File(outputFolder,
 				LEARNED_MODEL_FILENAME));
 		try {

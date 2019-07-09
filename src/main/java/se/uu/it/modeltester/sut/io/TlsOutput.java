@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 
 /**
- * The outputs used in learning comprise messages. 
+ * The outputs used in learning comprise messages.
  */
 public class TlsOutput {
 	/**
@@ -21,8 +21,7 @@ public class TlsOutput {
 	public static void setRepresentation(boolean compact) {
 		TlsOutput.compact = compact;
 	}
-	
-	
+
 	// fields used in equals
 	private List<String> messageStrings;
 	private boolean alive = true;
@@ -58,7 +57,7 @@ public class TlsOutput {
 	public String toString() {
 		return getOutputHeader();
 	}
-	
+
 	/**
 	 * Includes the output header and output details
 	 */
@@ -69,12 +68,12 @@ public class TlsOutput {
 		builder.append(header);
 		if (!compact) {
 			builder.append("\n");
-			String details = getOutputDetails();		
+			String details = getOutputDetails();
 			builder.append(details);
 		}
 		return builder.toString();
 	}
-	
+
 	public String getOutputHeader() {
 		StringBuilder builder = new StringBuilder();
 		String messageString = messageStrings.stream()
@@ -85,10 +84,10 @@ public class TlsOutput {
 		}
 		return builder.toString();
 	}
-	
+
 	public String getOutputDetails() {
 		StringBuilder builder = new StringBuilder();
-		
+
 		LinkedHashMap<String, String> printMap = new LinkedHashMap<>();
 		if (messages != null && !messages.isEmpty()) {
 			printMap.put("messages", messages.toString());
@@ -131,7 +130,6 @@ public class TlsOutput {
 	public boolean isTimeout() {
 		return messageStrings.isEmpty();
 	}
-
 
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {

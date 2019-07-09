@@ -2,6 +2,7 @@ package se.uu.it.modeltester.sut;
 
 import de.learnlib.api.SUL;
 import de.learnlib.api.SULException;
+import se.uu.it.modeltester.config.SulDelegate;
 
 /**
  * A SUL wrapper which joins the SUL with a handler for the process that
@@ -9,24 +10,47 @@ import de.learnlib.api.SULException;
  */
 public class SulProcessWrapper<I, O> implements SUL<I, O> {
 
-	private SUL<I, O> sul;
-	private ProcessHandler handler;
+	private static boolean started = false;
+	// TODO we are limited to one process because of this.
+	protected static ProcessHandler handler = null;
 
-	public SulProcessWrapper(SUL<I, O> sul, ProcessHandler handler) {
+	private SUL<I, O> sul;
+	// TODO having the trigger here is not nice since it limits the trigger
+	// options. Ideally we would have it outside.
+	private ProcessLaunchTrigger trigger;
+
+	public SulProcessWrapper(SUL<I, O> sul, SulDelegate sulDelegate) {
 		this.sul = sul;
-		this.handler = handler;
+		if (handler == null)
+			handler = new ProcessHandler(sulDelegate);
+		this.trigger = sulDelegate.getProcessTrigger();
+		if (trigger == ProcessLaunchTrigger.START && !started) {
+			started = true;
+			handler.launchProcess();
+			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+				@Override
+				public void run() {
+					handler.terminateProcess();
+				}
+
+			}));
+		}
 	}
 
 	@Override
 	public void pre() {
-		handler.launchProcess();
+		if (trigger == ProcessLaunchTrigger.NEW_TEST) {
+			handler.launchProcess();
+		}
 		sul.pre();
 	}
 
 	@Override
 	public void post() {
 		sul.post();
-		handler.terminateProcess();
+		if (trigger == ProcessLaunchTrigger.NEW_TEST) {
+			handler.terminateProcess();
+		}
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.io.OutputStream;
 
 import de.learnlib.api.SUL;
 import de.learnlib.api.SULException;
+import se.uu.it.modeltester.config.SulDelegate;
 import se.uu.it.modeltester.sut.io.TlsInput;
 import se.uu.it.modeltester.sut.io.TlsOutput;
 
@@ -15,9 +16,9 @@ public class TlsProcessWrapper extends SulProcessWrapper<TlsInput, TlsOutput> {
 	private boolean storeApplicationOutput;
 
 	public TlsProcessWrapper(SUL<TlsInput, TlsOutput> sul,
-			ProcessHandler handler, boolean storeApplicationOutput) {
-		super(sul, handler);
-		this.storeApplicationOutput = storeApplicationOutput;
+			SulDelegate sulDelegate) {
+		super(sul, sulDelegate);
+		this.storeApplicationOutput = sulDelegate.isWithApplicationOutput();
 		if (storeApplicationOutput) {
 			procOut = new StringOutputStream();
 			handler.redirectError(procOut);

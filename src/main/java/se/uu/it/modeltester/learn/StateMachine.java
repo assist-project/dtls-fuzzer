@@ -85,5 +85,5 @@ public class StateMachine {
 	public Definitions generateDefinitions() {
 		return DefinitionsFactory.generateDefinitions(alphabet);
 	}
-	
+
 }

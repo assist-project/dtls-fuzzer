@@ -88,6 +88,7 @@ import se.uu.it.modeltester.mutate.record.RecordDeferMutation;
 import se.uu.it.modeltester.mutate.record.RecordDupMutation;
 import se.uu.it.modeltester.mutate.record.RecordFlushMutation;
 import se.uu.it.modeltester.sut.ProcessHandler;
+import se.uu.it.modeltester.sut.ProcessLaunchTrigger;
 import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
 import se.uu.it.modeltester.sut.io.AlphabetSerializer;
@@ -255,14 +256,44 @@ public class Trace {
 			"RSA_CLIENT_HELLO RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC FINISHED CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED APPLICATION Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE Alert(WARNING,CLOSE_NOTIFY) FINISHED FINISHED RSA_CLIENT_KEY_EXCHANGE FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE APPLICATION RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) RSA_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) APPLICATION RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC Alert(FATAL,UNEXPECTED_MESSAGE) FINISHED CHANGE_CIPHER_SPEC CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) FINISHED Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(WARNING,CLOSE_NOTIFY) RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_KEY_EXCHANGE RSA_CLIENT_HELLO RSA_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC RSA_CLIENT_HELLO"};
 
 	// test exposing tinydtls bug
-	public static TlsInput[] oooCcs = new TlsInput[]{
+	public static TlsInput[] tinyDtlsOooFinished = new TlsInput[]{
 			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
 			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
-			// new GenericTlsInput(new PskClientKeyExchangeMessage()),
+			mutated(new GenericTlsInput(new PskClientKeyExchangeMessage())),
+			mutated(new ChangeCipherSpecInput(), new RecordDeferMutation()),
+			mutated(new FinishedInput(), new RecordFlushMutation(),
+					new RecordDupMutation(-2))};
+
+	// test exposing tinydtls bug
+	public static TlsInput[] tinyDtlsOooFinishedBeforeKex = new TlsInput[]{
+			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
+			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
 			mutated(new GenericTlsInput(new PskClientKeyExchangeMessage()),
 					new RecordDeferMutation()),
-			mutated(new ChangeCipherSpecInput(), new RecordFlushMutation(),
-					new RecordDupMutation(-2)), new FinishedInput()};
+			mutated(new ChangeCipherSpecInput(), new RecordDeferMutation()),
+			mutated(new FinishedInput(), new RecordFlushMutation(),
+					new RecordDupMutation(-2))};
+
+	public static TlsInput[] regularDtlsOooFinished = new TlsInput[]{
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA)),
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA)),
+			mutated(new GenericTlsInput(new PskClientKeyExchangeMessage())),
+			mutated(new ChangeCipherSpecInput(), new RecordDeferMutation()),
+			mutated(new FinishedInput(), new RecordFlushMutation(),
+					new RecordDupMutation(-2))};
+
+	public static TlsInput[] regularOooFinishedBeforeKex = new TlsInput[]{
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA)),
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA)),
+			mutated(new GenericTlsInput(new PskClientKeyExchangeMessage()),
+					new RecordDeferMutation()),
+			mutated(new ChangeCipherSpecInput(), new RecordDeferMutation()),
+			mutated(new FinishedInput(), new RecordFlushMutation(),
+					new RecordDupMutation(-3))};
 
 	public static TlsInput[] opensslKexSwitch1 = new TlsInput[]{
 			nonmut(new ClientHelloInput(
@@ -314,8 +345,13 @@ public class Trace {
 	};
 
 	public static TlsInput[] tinyDtlsNextEpochBug = new TlsInput[]{
-			nonmut(new GenericTlsInput(new ChangeCipherSpecMessage())),
-			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8)),
+			// nonmut(new GenericTlsInput(new ChangeCipherSpecMessage())),
+			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8) {
+				public ProtocolMessage generateMessage(State state) {
+					state.getTlsContext().setDtlsSendEpoch(1);
+					return super.generateMessage(state);
+				}
+			}),
 			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8) {
 				public void postReceiveUpdate(TlsOutput output, State state) {
 					state.getTlsContext().setDtlsSendEpoch(0);
@@ -434,7 +470,7 @@ public class Trace {
 		CipherSuite ecdh = CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256;
 
 		int iterations = 1;
-		int stepWait = 100;
+		int stepWait = 50;
 		long runWait = 100;
 
 		TlsInput[] inputs = Handshake.handshake(rsa, true);
@@ -582,11 +618,8 @@ public class Trace {
 		SUL<TlsInput, TlsOutput> sut = new TlsSUL(
 				modelFuzzConfig.getSulDelegate(), new TestingInputExecutor());
 		if (command != Command.none) {
-			ProcessHandler phandler = new ProcessHandler(
+			sut = new SulProcessWrapper<TlsInput, TlsOutput>(sut,
 					modelFuzzConfig.getSulDelegate());
-			phandler.redirectOutput(System.err);
-			phandler.redirectError(System.err);
-			sut = new SulProcessWrapper<TlsInput, TlsOutput>(sut, phandler);
 		}
 		return sut;
 	}

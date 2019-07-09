@@ -6,6 +6,7 @@ import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.ClientDelegate;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
+import se.uu.it.modeltester.sut.ProcessLaunchTrigger;
 
 public class SulDelegate extends ClientDelegate {
 
@@ -23,6 +24,9 @@ public class SulDelegate extends ClientDelegate {
 
 	@Parameter(names = {"-processDir"}, required = false, description = "The directory of the (D)TLS process")
 	private String processDir = null;
+
+	@Parameter(names = {"-processTrigger"}, required = false, description = "When is the process launched")
+	private ProcessLaunchTrigger processTrigger = ProcessLaunchTrigger.NEW_TEST;
 
 	@Parameter(names = "-runWait", required = false, description = "Time waited after running each TLS command")
 	private Long runWait = 0L;
@@ -100,5 +104,9 @@ public class SulDelegate extends ClientDelegate {
 
 	public boolean isWithApplicationOutput() {
 		return withApplicationOutput;
+	}
+
+	public ProcessLaunchTrigger getProcessTrigger() {
+		return processTrigger;
 	}
 }

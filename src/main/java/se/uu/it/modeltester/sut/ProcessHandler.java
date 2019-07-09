@@ -28,7 +28,7 @@ public class ProcessHandler {
 	private OutputStream error;
 	private long runWait;
 
-	public ProcessHandler(String command, long runWait) {
+	private ProcessHandler(String command, long runWait) {
 		// '+' after \\s takes care of multiple consecutive spaces so that they
 		// don't result in empty arguments
 		pb = new ProcessBuilder(command.split("\\s+"));
