@@ -28,8 +28,7 @@ public class Main {
 	public static void main(String args[]) throws IOException {
 		UnlimitedStrengthEnabler.enable();
 		Security.addProvider(new BouncyCastleProvider());
-		ModelBasedTesterConfig config = new ModelBasedTesterConfig(
-				new GeneralDelegate());
+		ModelBasedTesterConfig config = new ModelBasedTesterConfig();
 		JCommander commander = new JCommander(config);
 		commander.setAllowParameterOverwriting(true);
 		try {
@@ -38,6 +37,7 @@ public class Main {
 				commander.usage();
 				return;
 			}
+			config.getGeneralDelegate().applyDelegate(null);
 
 			try {
 				ModelBasedTester tester = new ModelBasedTester(config);

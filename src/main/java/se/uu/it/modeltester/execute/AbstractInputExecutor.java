@@ -1,11 +1,14 @@
 package se.uu.it.modeltester.execute;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.GenericReceiveAction;
 import se.uu.it.modeltester.Main;
@@ -51,7 +54,19 @@ public abstract class AbstractInputExecutor {
 		}
 	}
 
+	private boolean isResponseUnknown(GenericReceiveAction action) {
+		if (action.getReceivedMessages().size() > 2) {
+			return action.getReceivedMessages().stream()
+					.allMatch(m -> m instanceof AlertMessage);
+		}
+		return false;
+	}
+
 	private TlsOutput extractOutput(State state, GenericReceiveAction action) {
-		return new TlsOutput(action.getReceivedMessages());
+		if (isResponseUnknown(action)) {
+			return new TlsOutput(Arrays.asList(new UnknownMessage()));
+		} else {
+			return new TlsOutput(action.getReceivedMessages());
+		}
 	}
 }

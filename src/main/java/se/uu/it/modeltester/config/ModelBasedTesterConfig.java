@@ -8,7 +8,7 @@ import com.beust.jcommander.ParametersDelegate;
 import de.rub.nds.tlsattacker.core.config.TLSDelegateConfig;
 import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 
-public class ModelBasedTesterConfig extends TLSDelegateConfig {
+public class ModelBasedTesterConfig {
 
 	@Parameter(names = "-specification", required = false, description = "A model of the specification. For examples, look at './models/'. "
 			+ "If no specification is given, active learning is run with the provided alphabet."
@@ -45,14 +45,22 @@ public class ModelBasedTesterConfig extends TLSDelegateConfig {
 
 	@ParametersDelegate
 	private TestRunnerConfig testRunnerConfig;
+	
+	@ParametersDelegate
+	private GeneralDelegate generalDelegate;
 
-	public ModelBasedTesterConfig(GeneralDelegate delegate) {
-		super(delegate);
+	
+
+	public ModelBasedTesterConfig() {
+		generalDelegate = new GeneralDelegate();
 		sulDelegate = new SulDelegate();
-		addDelegate(sulDelegate);
 		learningConfig = new LearningConfig();
 		testingConfig = new TestingConfig();
 		testRunnerConfig = new TestRunnerConfig();
+	}
+	
+	public GeneralDelegate getGeneralDelegate() {
+		return generalDelegate;
 	}
 
 	public SulDelegate getSulDelegate() {
