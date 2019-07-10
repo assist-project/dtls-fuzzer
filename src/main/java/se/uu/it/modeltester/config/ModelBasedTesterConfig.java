@@ -45,11 +45,9 @@ public class ModelBasedTesterConfig {
 
 	@ParametersDelegate
 	private TestRunnerConfig testRunnerConfig;
-	
+
 	@ParametersDelegate
 	private GeneralDelegate generalDelegate;
-
-	
 
 	public ModelBasedTesterConfig() {
 		generalDelegate = new GeneralDelegate();
@@ -58,7 +56,7 @@ public class ModelBasedTesterConfig {
 		testingConfig = new TestingConfig();
 		testRunnerConfig = new TestRunnerConfig();
 	}
-	
+
 	public GeneralDelegate getGeneralDelegate() {
 		return generalDelegate;
 	}
