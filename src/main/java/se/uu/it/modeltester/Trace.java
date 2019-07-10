@@ -605,8 +605,7 @@ public class Trace {
 		// "openssl s_server -nocert -psk 1234 -accept 20000 -dtls1_2 -debug";
 		// //Command.openssl101dRsa;
 
-		ModelBasedTesterConfig modelFuzzConfig = new ModelBasedTesterConfig(
-				new GeneralDelegate());
+		ModelBasedTesterConfig modelFuzzConfig = new ModelBasedTesterConfig();
 		modelFuzzConfig.getSulDelegate().setHost("localhost:20000");
 		modelFuzzConfig.getSulDelegate().setProtocolVersion(
 				ProtocolVersion.DTLS12);
