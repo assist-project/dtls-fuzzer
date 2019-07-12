@@ -24,8 +24,6 @@ import se.uu.it.modeltester.config.ModelBasedTesterConfig;
 import se.uu.it.modeltester.execute.BasicInputExecutor;
 import se.uu.it.modeltester.sut.CachingSULOracle;
 import se.uu.it.modeltester.sut.NonDeterminismRetryingSUL;
-import se.uu.it.modeltester.sut.ProcessHandler;
-import se.uu.it.modeltester.sut.SulProcessWrapper;
 import se.uu.it.modeltester.sut.TlsProcessWrapper;
 import se.uu.it.modeltester.sut.TlsSUL;
 import se.uu.it.modeltester.sut.io.AlphabetFactory;
