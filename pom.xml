@@ -82,20 +82,15 @@
 			<groupId>net.automatalib</groupId>
 			<artifactId>automata-util</artifactId>
 		</dependency>
-		<!-- A bit unfortunate we have to include these libraries this way -->
 		<dependency>
 			<groupId>com.pfg666.dotparser</groupId>
 			<artifactId>dot-parser</artifactId>
 			<version>0.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dot-parser-0.1.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.alexmerz.graphviz</groupId>
 			<artifactId>graphviz</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/com.alexmerz.graphviz.jar</systemPath>
 		</dependency>
 		<dependency>
             <groupId>com.google.code.gson</groupId>
@@ -104,7 +99,7 @@
         </dependency>
 	</dependencies>
 	<build>
-	    <finalName>TLS-ModelBasedTester</finalName>
+	    <finalName>dtls-fuzzer</finalName>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
