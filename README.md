@@ -12,16 +12,17 @@ These mutations focus primarily on fragmentation.
 A lot of the code was taken/adapted from TLS-StateVulnFinder, which was built on Joeri's StateLearner tool. These tools implement learning using TLS-Attacker. 
 
 # Installing
-Run the prepare script which will deploy the two local .jars to your local repository, then install the tool itself.
-Thus the on a POSIX system would be:
+Run the prepare script which will deploy local .jars it depends on to your local repository, then install the tool itself.
+Thus on a POSIX system would be:
 
     > bash prepare.sh
     > mvn clean install
 
 Following these steps, a target directory should have been built containing dtls-fuzzer.jar . 
 
-# Getting Help Page
+# Displaying help page
 Run:
+
     > java -jar dtls-fuzzer.jar -help
 
 # Learning DTLS implementations
