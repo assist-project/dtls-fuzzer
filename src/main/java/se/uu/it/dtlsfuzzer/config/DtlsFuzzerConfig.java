@@ -1,7 +1,5 @@
 package se.uu.it.dtlsfuzzer.config;
 
-import java.util.List;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParametersDelegate;
 
@@ -9,8 +7,8 @@ import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 
 public class DtlsFuzzerConfig {
 
-	@Parameter(names = "-specification", required = false, description = "A model of the specification. For examples, look at './models/'. "
-			+ "If no specification is given, active learning is run with the provided alphabet."
+	@Parameter(names = "-specification", required = false, description = "A model of the specification. For examples, look at './examples/specifications/'. "
+			+ "If no specification is given, active learning is run with the alphabet provided to generate it."
 			+ "Inputs in the specification are defined in the alphabet, outputs are parsed as strings. "
 			+ "Outputs are capitalized snake case of the messages involved. ")
 	private String specification = null;
@@ -18,9 +16,9 @@ public class DtlsFuzzerConfig {
 	@Parameter(names = "-onlyLearn", required = false, description = "Only generates a model of the specification. Does not do conformance testing")
 	private boolean onlyLearn = true;
 
-	@Parameter(names = "-inputs", required = false, description = "A list of comma separated input names. "
-			+ "If given, testing will be restricted to these inputs. ")
-	private List<String> inputs = null;
+//	@Parameter(names = "-inputs", required = false, description = "A list of comma separated input names. "
+//			+ "If given, testing will be restricted to these inputs. ")
+//	private List<String> inputs = null;
 
 	@Parameter(names = "-alphabet", required = false, description = "An .xml file defining the input alphabet. "
 			+ "The alphabet is used to interpret inputs from a given specification, as well as to learn. "

@@ -6,21 +6,19 @@ import argparse
 
 # simple script for launching experiments
 
-JAR_LOCATION="TLS-ModelBasedTester.jar"
+JAR_LOCATION="dtls-fuzzer.jar"
+LIB_DIR="lib"
+COMMAND_TEMPLATE="java -jar {} @{} "
 
-COMMAND_TEMPLATE="java -cp \"{}:{}/*\"  se.uu.it.modeltester.Main @{} "
+def build_command(arg_file, jar_file, other_args):
+    cmd = "java -jar " + jar_file
+    if arg_file is not None:
+        cmd+= " @" + arg_file
+    cmd += " " +" ".join(other_args)
+    return cmd
 
-# a launcher for experiments
-# takes as arguments the arguments file and optionally the jar location
-def print_usage():
-    print("Usage: python launcher.py args_file [dtls-tool.jar][args for java]")
-
- 
-
-def launch_experiment(arg_file, jar_file, lib_dir, redir, other_args = []):
-    command = COMMAND_TEMPLATE.format(jar_file, lib_dir, arg_file)
-    command += " ".join(other_args)
-    print("Launching ", command)
+def launch_experiment(arg_file, jar_file, redir, other_args = []):
+    command = build_command(arg_file, jar_file, other_args)
     if redir:
         redir_out, redir_err=sys.stdout, sys.stderr
     else:
@@ -28,22 +26,34 @@ def launch_experiment(arg_file, jar_file, lib_dir, redir, other_args = []):
     subp = subprocess.Popen(command, shell=True, 
         stdout=redir_out, 
         stderr=redir_err, 
-        close_fds=True)
-    print("Process pid: ", subp.pid)
+        close_fds=True,
+        cwd=os.getcwd())
+    print("Launched command: \"", command, "\" with process pid: ", subp.pid)
+    return (command, subp)
 
-def launch_experiments(args_dir, jar_file, redir, other_args = []):
-    lib_dir = os.path.join(os.path.dirname(jar_file), "lib")
-    for arg_file in os.listdir(args_dir):
-        if os.path.isfile:
-            launch_experiment(os.path.join(args_dir,arg_file), jar_file, lib_dir, redir, other_args=other_args)
+def launch_experiments(args_location, jar_file, redir, other_args = []):
+    if args_location is not None and os.path.isdir(args_location):
+        args_files = [os.path.join(args_location,args_file) for args_file in os.listdir(args_location)]
+    else:
+        args_files = [args_location]
+    experiments = []
+    for args_file in args_files:
+        experiments.append(launch_experiment(args_file, jar_file, redir, other_args=other_args))
+    return experiments
 
+def log_experiments(experiments, log_file):
+    with open(log_file, "w") as f:
+        for (cmd, proc) in experiments:
+            f.write("command: \"{}\"; pid: {}\n".format(cmd, proc.pid))
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Utility for launching multiple instances of DTLS learner')
-    parser.add_argument('-a', "--args", required=True, type=str, help="directory with argument files/argument file")
+    parser = argparse.ArgumentParser(description='Utility for launching multiple instances of DTLS-Fuzzer')
+    parser.add_argument('-a', "--args", required=False, type=str, help="directory with argument files or argument file")
     parser.add_argument('-r', "--redirect", action='store_true', help="redirect process output/error to stdout/stderr")
-    parser.add_argument('-j', "--jar", required=False, type=str, default=JAR_LOCATION, help="DTLS learner .jar file, note that a lib dir should be in the same directory as the .jar ")
-    parser.add_argument('-p', "--params", required=False, nargs='+', default=[], help="additional parameters to pass to the learning processes (which augment/overwrite those in the argument files)")
+    parser.add_argument('-l', "--log", required=False, type=str, default=None, help="optional log file to which command/process information is written")
+    parser.add_argument('-j', "--jar", required=False, type=str, default=JAR_LOCATION, help="DTLS-Fuzzer .jar file")
+    parser.add_argument('-p', "--params", required=False, nargs='+', default=[], help="parameters to pass to the learning processes (which augment/overwrite those in the argument files)")
     args = parser.parse_args()
-    print(args.params)
-    launch_experiments(args.args, args.jar, args.redirect, other_args=args.params)
+    experiments = launch_experiments(args.args, args.jar, args.redirect, other_args=args.params)
+    if args.log is not None:
+        log_experiments(experiments, args.log)

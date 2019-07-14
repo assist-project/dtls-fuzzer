@@ -55,7 +55,11 @@ public class TlsOutput {
 	 * Only includes the output header
 	 */
 	public String toString() {
-		return getOutputHeader();
+		if (compact) {
+			return getOutputHeader();
+		} else {
+			return toDetailedString();
+		}
 	}
 
 	/**
