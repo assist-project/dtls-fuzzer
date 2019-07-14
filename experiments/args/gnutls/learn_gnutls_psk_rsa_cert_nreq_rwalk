@@ -1,0 +1,20 @@
+-protocol 
+DTLS12 
+-connect 
+localhost:30005 
+-alphabet 
+../examples/alphabets/psk_rsa_cert.xml 
+-runWait 
+100 
+-timeout  
+200 
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms 
+RANDOM_WP_METHOD,WP_METHOD
+-output
+gnutls-3.6.7_psk_rsa_cert_nreq_rwalk
+-cmd 
+"/home/pfg666/Modules/gnutls-3.6.7/src/gnutls-serv  --udp --x509keyfile /home/pfg666/Keys/RSA2048/server-key.pem --x509certfile /home/pfg666/Keys/RSA2048/server-cert.pem --x509cafile /home/pfg666/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa1024_cert.pem --pskpasswd /home/pfg666/Keys/keys.psk --priority NORMAL:+PSK:+SRP --mtu 1500 -p 30005"
