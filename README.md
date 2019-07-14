@@ -1,4 +1,4 @@
-dtls-fuzzer is a tool which performs protocol state fuzzing of DTLS servers. To that end, it supports the following functionality:
+**dtls-fuzzer** is a tool which performs protocol state fuzzing of DTLS servers. To that end, it supports the following functionality:
 1. given an alphabet, can automatically generate a model of a local/remote DTLS server implementation.
 2. given a test (sequence of inputs) and an alphabet, can execute the test on a DTLS server implementation.
 3. run a batch learning task, involving multiple 
