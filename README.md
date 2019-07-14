@@ -50,7 +50,7 @@ Go to 'experiments/args' for examples of arguments.
 To supply an argument file to dtls-fuzzer provide it as parameter prepended by "@".
 You can also add other explicit arguments to the commands (which will overwrite those in the arguments file)
 
-    > java -jar dtls-fuzzer.jar @arg_file ...overwritting params...
+    > java -jar dtls-fuzzer.jar @arg_file ...overwriting params...
 
 ## Batch learning     
 To launch a batch of learning runs, one can use the 'launcher.py' script in 'experiments/scripts'. 
