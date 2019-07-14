@@ -142,7 +142,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>se.uu.it.modeltester.Main</mainClass>
+							<mainClass>se.uu.it.dtlsfuzzer.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
