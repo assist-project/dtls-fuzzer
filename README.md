@@ -9,10 +9,14 @@ In prototype stage are the following functionalities:
 These mutations focus primarily on fragmentation.
 
 
-A lot of the code was taken/adapted from TLS-StateVulnFinder, which was built on Joeri's StateLearner tool. These tools implement learning using TLS-Attacker. 
+A lot of the code was taken/adapted from TLS-StateVulnFinder, which was built on Joeri's StateLearner tool. 
+These tools implement learning for TLS attacks. 
+dtls-fuzzer does it for DTLS stacks though it can technically work on TLS stacks as well.
+What all these tools have in common is that they use TLS-Attacker to generate/parse valid (D)TLS messages.
+TLS-Attacker is a frameworking for testing TLS implementations which was extended with DTLS support.
 
 # Installing
-Run the prepare script which will deploy local .jars it depends on to your local repository, then install the tool itself.
+Run the prepare script which will deploy the local .jars dtls-fuzzer depends to your local maven repository, then install the tool itself.
 Thus on a POSIX system would be:
 
     > bash prepare.sh
@@ -39,8 +43,8 @@ To launch a learning run for an existing say local server implementation listeni
 There will likely be issues with this type of learning. 
 Learning requires that one is able to reset the server after each test.
 Some servers will carry some state from one test to another. 
-This may lead to non-determinism, hence it is suggested that a command is provided by which the server can be launched.
-The server will be then launched on every test, ensuring proper reset.
+This may lead to non-determinism during learning, hence it is suggested that a command is provided by which the server can be launched.
+A new server thread will be then launched on every test and killed once the test is run, ensuring proper reset.
 Example for OpenSSL:
 
     > java -jar dtls-fuzzer.jar -connect localhost:20000 -cmd "openssl s_server -accept 20000 -dtls1_2"
