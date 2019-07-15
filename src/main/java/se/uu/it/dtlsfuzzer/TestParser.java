@@ -81,12 +81,13 @@ public class TestParser {
 				String mutatedInputString = inputString.substring(1,
 						inputString.indexOf("["));
 				if (!inputs.containsKey(mutatedInputString)) {
-					if (throwOnMissing) 
+					if (throwOnMissing)
 						throw new RuntimeException(
 								"Mutated input is missing from the alphabet "
 										+ mutatedInputString);
 					else {
-						LOGGER.warn("Mutated input is missing from the alphabet " + mutatedInputString);
+						LOGGER.warn("Mutated input is missing from the alphabet "
+								+ mutatedInputString);
 						return null;
 					}
 				}
@@ -100,12 +101,13 @@ public class TestParser {
 				inputWord = inputWord.append(mutatedInput);
 			} else {
 				if (!inputs.containsKey(inputString)) {
-					if (throwOnMissing) 
+					if (throwOnMissing)
 						throw new RuntimeException(
 								"Input is missing from the alphabet "
 										+ inputString);
 					else {
-						LOGGER.warn("Input is missing from the alphabet " + inputString);
+						LOGGER.warn("Input is missing from the alphabet "
+								+ inputString);
 						return null;
 					}
 				}
@@ -126,11 +128,12 @@ public class TestParser {
 		LinkedList<String> currentTestStrings = new LinkedList<>();
 		for (String inputString : inputStrings) {
 			if (inputString.equals("reset")) {
-				Word<TlsInput> test = readTest(alphabet, currentTestStrings, false);
+				Word<TlsInput> test = readTest(alphabet, currentTestStrings,
+						false);
 				if (test != null)
 					tests.add(test);
 				else {
-					LOGGER.warn("Excluding invalid test "+ currentTestStrings);
+					LOGGER.warn("Excluding invalid test " + currentTestStrings);
 				}
 				currentTestStrings.clear();
 			} else {
@@ -142,7 +145,7 @@ public class TestParser {
 			if (test != null) {
 				tests.add(test);
 			} else {
-				LOGGER.warn("Excluding invalid test "+ currentTestStrings);
+				LOGGER.warn("Excluding invalid test " + currentTestStrings);
 			}
 		}
 		return tests;

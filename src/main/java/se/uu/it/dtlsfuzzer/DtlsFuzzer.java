@@ -32,8 +32,7 @@ import se.uu.it.dtlsfuzzer.test.ConformanceTester;
 import se.uu.it.dtlsfuzzer.test.TestReport;
 
 public class DtlsFuzzer {
-	private static final Logger LOGGER = LogManager
-			.getLogger(DtlsFuzzer.class);
+	private static final Logger LOGGER = LogManager.getLogger(DtlsFuzzer.class);
 
 	private DtlsFuzzerConfig config;
 

@@ -50,8 +50,7 @@ public class Extractor {
 	private final DtlsFuzzerConfig finderConfig;
 	private final Alphabet<TlsInput> alphabet;
 
-	public Extractor(DtlsFuzzerConfig finderConfig,
-			Alphabet<TlsInput> alphabet) {
+	public Extractor(DtlsFuzzerConfig finderConfig, Alphabet<TlsInput> alphabet) {
 		this.finderConfig = finderConfig;
 		this.alphabet = alphabet;
 	}
