@@ -32,6 +32,11 @@ public class ClientHelloInput extends NamedTlsInput {
 		resetAction.setConnectionAlias(state.getTlsContext().getConnection()
 				.getAlias());
 		resetAction.execute(state);
+		state.getTlsContext().setDtlsCookie(new byte[]{});
+		state.getTlsContext().setDtlsNextReceiveSequenceNumber(0);
+		state.getTlsContext().setDtlsNextSendSequenceNumber(0);
+		state.getTlsContext().setDtlsSendEpoch(0);
+		state.getTlsContext().setDtlsNextReceiveEpoch(0);
 	}
 
 	@Override
@@ -41,13 +46,8 @@ public class ClientHelloInput extends NamedTlsInput {
 		state.getTlsContext().getDigest().reset();
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 		if (resume && !state.getTlsContext().getSessionList().isEmpty()) {
-			// resume and reset the connection
+			// reset and resume the connection
 			resetTransportHandler(state);
-			state.getTlsContext().setDtlsCookie(new byte[]{});
-			state.getTlsContext().setDtlsNextReceiveSequenceNumber(0);
-			state.getTlsContext().setDtlsNextSendSequenceNumber(0);
-			state.getTlsContext().setDtlsSendEpoch(0);
-			state.getTlsContext().setDtlsNextReceiveEpoch(0);
 			message.setCookie(new byte[]{});
 			message.setSessionId(state.getTlsContext().getSessionList()
 					.get(state.getTlsContext().getSessionList().size() - 1)
