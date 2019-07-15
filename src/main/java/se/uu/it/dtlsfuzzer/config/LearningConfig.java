@@ -39,7 +39,7 @@ public class LearningConfig {
 	private String testFile;
 
 	@Parameter(names = "-seed", description = "Seed used for random value generation.")
-	private long seed = new Random().nextLong();
+	private long seed = 0;
 
 	@Parameter(names = "-logQueries", description = "Log queries to an output false")
 	private boolean logQueries = false;
