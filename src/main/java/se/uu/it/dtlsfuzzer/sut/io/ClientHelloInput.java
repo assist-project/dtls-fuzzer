@@ -14,6 +14,9 @@ public class ClientHelloInput extends NamedTlsInput {
 	@XmlAttribute(name = "suite", required = true)
 	private CipherSuite suite;
 
+	@XmlAttribute(name = "resume", required = false)
+	private boolean resume = false;
+
 	public ClientHelloInput() {
 		super("CLIENT_HELLO");
 	}
@@ -29,7 +32,11 @@ public class ClientHelloInput extends NamedTlsInput {
 				Arrays.asList(suite));
 		state.getTlsContext().getDigest().reset();
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
-
+		if (resume && !state.getTlsContext().getSessionList().isEmpty()) {
+			message.setSessionId(state.getTlsContext().getSessionList()
+					.get(state.getTlsContext().getSessionList().size() - 1)
+					.getSessionId());
+		}
 		return message;
 	}
 
