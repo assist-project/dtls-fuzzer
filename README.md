@@ -10,10 +10,10 @@ These mutations focus primarily on fragmentation.
 
 
 A lot of the code was taken/adapted from TLS-StateVulnFinder, which was built on Joeri's StateLearner tool. 
-These tools implement learning for TLS attacks. 
+These tools implement learning for TLS stacks. 
 dtls-fuzzer does it for DTLS stacks though it can technically work on TLS stacks as well.
 What all these tools have in common is that they use TLS-Attacker to generate/parse valid (D)TLS messages.
-TLS-Attacker is a frameworking for testing TLS implementations which was extended with DTLS support.
+TLS-Attacker is a framework for testing TLS implementations which was extended with DTLS support.
 
 # Installing
 Run the prepare script which will deploy the local .jars dtls-fuzzer depends to your local maven repository, then install the tool itself.
