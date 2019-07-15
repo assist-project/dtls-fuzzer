@@ -13,12 +13,9 @@ public class DtlsFuzzerConfig {
 			+ "Outputs are capitalized snake case of the messages involved. ")
 	private String specification = null;
 
-	@Parameter(names = "-onlyLearn", required = false, description = "Only generates a model of the specification. Does not do conformance testing")
+	// @Parameter(names = "-onlyLearn", required = false, description =
+	// "Only generates a model of the specification. Does not do conformance testing")
 	private boolean onlyLearn = true;
-
-//	@Parameter(names = "-inputs", required = false, description = "A list of comma separated input names. "
-//			+ "If given, testing will be restricted to these inputs. ")
-//	private List<String> inputs = null;
 
 	@Parameter(names = "-alphabet", required = false, description = "An .xml file defining the input alphabet. "
 			+ "The alphabet is used to interpret inputs from a given specification, as well as to learn. "
@@ -37,7 +34,7 @@ public class DtlsFuzzerConfig {
 	@ParametersDelegate
 	private LearningConfig learningConfig;
 
-	@ParametersDelegate
+	// @ParametersDelegate
 	private TestingConfig testingConfig;
 
 	@ParametersDelegate
