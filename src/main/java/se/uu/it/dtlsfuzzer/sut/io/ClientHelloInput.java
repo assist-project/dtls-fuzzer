@@ -29,10 +29,10 @@ public class ClientHelloInput extends NamedTlsInput {
 				Arrays.asList(suite));
 		if (suite.name().contains("EC")) {
 			state.getConfig().setAddECPointFormatExtension(true);
-            state.getConfig().setAddEllipticCurveExtension(true);
+			state.getConfig().setAddEllipticCurveExtension(true);
 		} else {
 			state.getConfig().setAddECPointFormatExtension(false);
-            state.getConfig().setAddEllipticCurveExtension(false);
+			state.getConfig().setAddEllipticCurveExtension(false);
 		}
 		state.getTlsContext().getDigest().reset();
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
