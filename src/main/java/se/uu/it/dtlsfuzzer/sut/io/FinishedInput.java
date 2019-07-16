@@ -13,7 +13,6 @@ public class FinishedInput extends NamedTlsInput {
 	@Override
 	public ProtocolMessage generateMessage(State state) {
 		FinishedMessage message = new FinishedMessage();
-		// message.getHandler(state.getTlsContext()).prepareMessage(message);
 		return message;
 	}
 

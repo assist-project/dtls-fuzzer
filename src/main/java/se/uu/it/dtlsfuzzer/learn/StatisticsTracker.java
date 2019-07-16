@@ -52,8 +52,7 @@ public class StatisticsTracker {
 	/**
 	 * Should be called before starting learning.
 	 */
-	public void startLearning(DtlsFuzzerConfig config,
-			Alphabet<?> alphabet) {
+	public void startLearning(DtlsFuzzerConfig config, Alphabet<?> alphabet) {
 		learnInputs = 0;
 		learnResets = 0;
 		time = System.currentTimeMillis();

@@ -66,12 +66,12 @@ public class TestParser {
 	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH)
 			throws IOException {
 		List<String> inputStrings = readTestStrings(PATH);
-		Word<TlsInput> test = readTest(alphabet, inputStrings);
+		Word<TlsInput> test = readTest(alphabet, inputStrings, true);
 		return test;
 	}
 
 	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet,
-			List<String> testInputStrings) {
+			List<String> testInputStrings, boolean throwOnMissing) {
 		Map<String, TlsInput> inputs = new LinkedHashMap<>();
 		alphabet.stream().forEach(i -> inputs.put(i.toString(), i));
 		Word<TlsInput> inputWord = Word.epsilon();
@@ -81,9 +81,15 @@ public class TestParser {
 				String mutatedInputString = inputString.substring(1,
 						inputString.indexOf("["));
 				if (!inputs.containsKey(mutatedInputString)) {
-					throw new RuntimeException(
-							"Mutated input is missing from the alphabet "
-									+ mutatedInputString);
+					if (throwOnMissing)
+						throw new RuntimeException(
+								"Mutated input is missing from the alphabet "
+										+ mutatedInputString);
+					else {
+						LOGGER.warn("Mutated input is missing from the alphabet "
+								+ mutatedInputString);
+						return null;
+					}
 				}
 				String mutationsJsonString = inputString.substring(
 						inputString.indexOf("["), inputString.length());
@@ -95,8 +101,15 @@ public class TestParser {
 				inputWord = inputWord.append(mutatedInput);
 			} else {
 				if (!inputs.containsKey(inputString)) {
-					throw new RuntimeException(
-							"Input is missing from the alphabet " + inputString);
+					if (throwOnMissing)
+						throw new RuntimeException(
+								"Input is missing from the alphabet "
+										+ inputString);
+					else {
+						LOGGER.warn("Input is missing from the alphabet "
+								+ inputString);
+						return null;
+					}
 				}
 				inputWord = inputWord.append(inputs.get(inputString));
 			}
@@ -115,14 +128,25 @@ public class TestParser {
 		LinkedList<String> currentTestStrings = new LinkedList<>();
 		for (String inputString : inputStrings) {
 			if (inputString.equals("reset")) {
-				tests.add(readTest(alphabet, currentTestStrings));
+				Word<TlsInput> test = readTest(alphabet, currentTestStrings,
+						false);
+				if (test != null)
+					tests.add(test);
+				else {
+					LOGGER.warn("Excluding invalid test " + currentTestStrings);
+				}
 				currentTestStrings.clear();
 			} else {
 				currentTestStrings.add(inputString);
 			}
 		}
 		if (!inputStrings.isEmpty()) {
-			tests.add(readTest(alphabet, currentTestStrings));
+			Word<TlsInput> test = readTest(alphabet, currentTestStrings, false);
+			if (test != null) {
+				tests.add(test);
+			} else {
+				LOGGER.warn("Excluding invalid test " + currentTestStrings);
+			}
 		}
 		return tests;
 	}

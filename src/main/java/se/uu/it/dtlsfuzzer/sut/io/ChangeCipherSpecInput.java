@@ -13,7 +13,6 @@ public class ChangeCipherSpecInput extends NamedTlsInput {
 	public ProtocolMessage generateMessage(State state) {
 		ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage(
 				state.getConfig());
-		// ccs.getHandler(state.getTlsContext()).prepareMessage(ccs);
 		return ccs;
 	}
 

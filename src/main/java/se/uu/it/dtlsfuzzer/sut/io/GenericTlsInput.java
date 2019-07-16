@@ -104,20 +104,13 @@ public class GenericTlsInput extends NamedTlsInput {
 			@XmlElement(type = HelloRetryRequestMessage.class, name = "HelloRetryRequest")})
 	private ProtocolMessage message;
 
-	private boolean prepare;
-
 	public GenericTlsInput() {
 		super(null);
 	}
 
 	public GenericTlsInput(ProtocolMessage message) {
-		this(message, true);
-	}
-
-	public GenericTlsInput(ProtocolMessage message, boolean prepare) {
 		super(message.toCompactString());
 		this.message = message;
-		this.prepare = prepare;
 	}
 
 	public ProtocolMessage generateMessage(State state) {

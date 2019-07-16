@@ -27,9 +27,15 @@ public class ClientHelloInput extends NamedTlsInput {
 	public ProtocolMessage generateMessage(State state) {
 		state.getConfig().setDefaultClientSupportedCiphersuites(
 				Arrays.asList(suite));
+		if (suite.name().contains("EC")) {
+			state.getConfig().setAddECPointFormatExtension(true);
+            state.getConfig().setAddEllipticCurveExtension(true);
+		} else {
+			state.getConfig().setAddECPointFormatExtension(false);
+            state.getConfig().setAddEllipticCurveExtension(false);
+		}
 		state.getTlsContext().getDigest().reset();
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
-
 		return message;
 	}
 
