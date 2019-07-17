@@ -46,6 +46,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 	private SulDelegate delegate;
 
 	private AbstractInputExecutor defaultExecutor;
+	private boolean isDisabled;
 
 	public TlsSUL(SulDelegate delegate, AbstractInputExecutor defaultExecutor) {
 		this.delegate = delegate;
@@ -77,6 +78,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		closed = false;
 		resetWait = delegate.getResetWait();
 		context = new ExecutionContext();
+		isDisabled = false;
 		LOG.error("Start " + count++);
 	}
 
@@ -103,6 +105,9 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		if (executor == null) {
 			executor = defaultExecutor;
 		}
+		if (isDisabled) {
+			return TlsOutput.disabled();
+		}
 
 		TlsOutput output = null;
 		try {
@@ -119,6 +124,10 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 					state.getTlsContext().getChooser().getConnectionEndType());
 			output = executor.execute(in, state, context);
 			LOG.debug("received:" + output);
+			if (output == TlsOutput.disabled()) {
+				// this should lead to a disabled sink state
+				isDisabled = true;
+			} 
 			return output;
 		} catch (IOException ex) {
 			ex.printStackTrace();

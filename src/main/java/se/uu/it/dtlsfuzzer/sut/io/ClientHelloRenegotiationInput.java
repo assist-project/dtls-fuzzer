@@ -41,7 +41,8 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 				// receive epoch is 1 or more
 				return state.getTlsContext().getDtlsNextReceiveEpoch() > 0;
 			case ONCE :
-				return context.getStepContexes().stream()
+				return context.getStepContexes().subList(0, context.getStepCount()-1)
+						.stream()
 						.noneMatch(s -> s.getInput().equals(this));
 			default :
 				return true;
@@ -65,10 +66,12 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 		}
 
 		// mbedtls will only engage in renegotiation if the cookie is empty
-		ModifiableByteArray cbyte = new ModifiableByteArray();
-		cbyte.setModification(new ByteArrayExplicitValueModification(
-				new byte[]{}));
-		message.setCookie(cbyte);
+		if (state.getTlsContext().getDtlsCookie() != null) {
+			ModifiableByteArray sbyte = new ModifiableByteArray();
+			sbyte.setModification(new ByteArrayExplicitValueModification(
+					new byte[]{}));
+			message.setCookie(sbyte);
+		}
 		return message;
 	}
 
