@@ -25,9 +25,11 @@ public abstract class AbstractInputExecutor {
 			ExecutionContext context) {
 		if (input.isEnabled(state)) {
 			ProtocolMessage message = input.generateMessage(state);
-			LOGGER.info("Sending Message " + message.toCompactString());
-			sendMessage(message, state, context);
-			input.postSendUpdate(state);
+			if (message != null) {
+				LOGGER.info("Sending Message " + message.toCompactString());
+				sendMessage(message, state, context);
+				input.postSendUpdate(state);
+			}
 			TlsOutput output = receiveOutput(state, context);
 			input.postReceiveUpdate(output, state);
 			return output;

@@ -29,15 +29,21 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 	public ProtocolMessage generateMessage(State state) {
 		state.getTlsContext().setDtlsNextSendSequenceNumber(0);
 		state.getTlsContext().getDigest().reset();
+		state.getTlsContext().setDtlsNextReceiveSequenceNumber(0);
 		if (suite != null) {
 			state.getConfig().setDefaultClientSupportedCiphersuites(suite);
 		}
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 		if (!isShort) {
-			ModifiableByteArray mbyte = new ModifiableByteArray();
-			mbyte.setModification(new ByteArrayExplicitValueModification(new byte [] {}));
-			message.setSessionId(mbyte);
+			ModifiableByteArray sbyte = new ModifiableByteArray();
+			sbyte.setModification(new ByteArrayExplicitValueModification(new byte [] {}));
+			message.setSessionId(sbyte);
 		}
+		
+		// mbedtls will only engage in renegotiation if the cookie is empty
+		ModifiableByteArray cbyte = new ModifiableByteArray();
+		cbyte.setModification(new ByteArrayExplicitValueModification(new byte [] {}));
+		message.setCookie(cbyte);
 		return message;
 	}
 

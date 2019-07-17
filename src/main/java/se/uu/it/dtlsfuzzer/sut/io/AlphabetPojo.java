@@ -21,7 +21,8 @@ public class AlphabetPojo {
 			@XmlElement(type = ClientHelloWithSessionIdInput.class, name = "ClientHelloWithSessionIdInput"),
 			@XmlElement(type = ClientHelloRenegotiationInput.class, name = "ClientHelloRenegotiation"),
 			@XmlElement(type = FinishedInput.class, name = "FinishedInput"),
-			@XmlElement(type = ClientKeyExchangeInput.class, name = "ClientKeyExchangeInput")})
+			@XmlElement(type = ClientKeyExchangeInput.class, name = "ClientKeyExchangeInput"),
+			@XmlElement(type = DebugInput.class, name = "DebugInput")})
 	private List<TlsInput> inputs;
 
 	public AlphabetPojo() {
