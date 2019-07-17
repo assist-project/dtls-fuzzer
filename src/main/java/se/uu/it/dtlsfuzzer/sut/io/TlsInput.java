@@ -29,6 +29,13 @@ public abstract class TlsInput {
 	public void setPreferredExecutor(AbstractInputExecutor preferredExecutor) {
 		this.preferredExecutor = preferredExecutor;
 	}
+	
+	/**
+	 * Enables the input for execution. 
+	 */
+	public boolean isEnabled(State state) {
+		return true;
+	}
 
 	/**
 	 * Generates a fresh prepared message and updates the context.

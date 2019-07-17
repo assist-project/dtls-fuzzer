@@ -1,12 +1,14 @@
 package se.uu.it.dtlsfuzzer.execute;
 
-import java.io.IOException;
 import java.util.Arrays;
+import java.io.IOException;
+import java.util.LinkedList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.HelloVerifyRequestMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
@@ -21,13 +23,17 @@ public abstract class AbstractInputExecutor {
 
 	public TlsOutput execute(TlsInput input, State state,
 			ExecutionContext context) {
-		ProtocolMessage message = input.generateMessage(state);
-		LOGGER.info("Sending Message " + message.toCompactString());
-		sendMessage(message, state, context);
-		input.postSendUpdate(state);
-		TlsOutput output = receiveOutput(state, context);
-		input.postReceiveUpdate(output, state);
-		return output;
+		if (input.isEnabled(state)) {
+			ProtocolMessage message = input.generateMessage(state);
+			LOGGER.info("Sending Message " + message.toCompactString());
+			sendMessage(message, state, context);
+			input.postSendUpdate(state);
+			TlsOutput output = receiveOutput(state, context);
+			input.postReceiveUpdate(output, state);
+			return output;
+		} else {
+			return TlsOutput.disabled();
+		}
 	}
 
 	protected abstract void sendMessage(ProtocolMessage message, State state,
@@ -66,7 +72,19 @@ public abstract class AbstractInputExecutor {
 		if (isResponseUnknown(action)) {
 			return new TlsOutput(Arrays.asList(new UnknownMessage()));
 		} else {
-			return new TlsOutput(action.getReceivedMessages());
+			LinkedList<ProtocolMessage> receivedMessages = new LinkedList<>();
+			int hvSeen = 0;
+			for (ProtocolMessage m : action.getReceivedMessages()) {
+				if (m.isHandshakeMessage()
+						&& m instanceof HelloVerifyRequestMessage) {
+					if (hvSeen == 2) {
+						continue;
+					}
+					hvSeen++;
+				}
+				receivedMessages.add(m);
+			}
+			return new TlsOutput(receivedMessages);
 		}
 	}
 }

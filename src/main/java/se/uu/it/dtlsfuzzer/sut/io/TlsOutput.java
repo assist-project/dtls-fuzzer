@@ -31,11 +31,21 @@ public class TlsOutput {
 	private String applicationOutput = null;
 
 	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(
-			new ArrayList<>());
-
+			new String [] {"SOCKET_CLOSED"});
+	
+	private static final TlsOutput DISABLED = new TlsOutput(
+			new String [] {"DISABLED"}
+			);
+	
 	public static TlsOutput socketClosed() {
 		return SOCKET_CLOSED;
 	}
+	
+	public static TlsOutput disabled() {
+		return DISABLED;
+	}
+	
+	
 
 	public TlsOutput() {
 	}

@@ -19,7 +19,7 @@ public class AlphabetPojo {
 			@XmlElement(type = ChangeCipherSpecInput.class, name = "ChangeCipherSpecInput"),
 			@XmlElement(type = ClientHelloInput.class, name = "ClientHelloInput"),
 			@XmlElement(type = ClientHelloWithSessionIdInput.class, name = "ClientHelloWithSessionIdInput"),
-			@XmlElement(type = ClientHelloRenegotiation.class, name = "ClientHelloRenegotiation"),
+			@XmlElement(type = ClientHelloRenegotiationInput.class, name = "ClientHelloRenegotiation"),
 			@XmlElement(type = FinishedInput.class, name = "FinishedInput"),
 			@XmlElement(type = ClientKeyExchangeInput.class, name = "ClientKeyExchangeInput")})
 	private List<TlsInput> inputs;
