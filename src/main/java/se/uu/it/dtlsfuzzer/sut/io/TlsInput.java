@@ -8,6 +8,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.execute.AbstractInputExecutor;
+import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class TlsInput {
@@ -29,11 +30,11 @@ public abstract class TlsInput {
 	public void setPreferredExecutor(AbstractInputExecutor preferredExecutor) {
 		this.preferredExecutor = preferredExecutor;
 	}
-	
+
 	/**
-	 * Enables the input for execution. 
+	 * Enables the input for execution.
 	 */
-	public boolean isEnabled(State state) {
+	public boolean isEnabled(State state, ExecutionContext context) {
 		return true;
 	}
 

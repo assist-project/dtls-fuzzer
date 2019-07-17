@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
+import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 
 public class StepContext {
 	private FragmentationResult fragmentationResult;
@@ -12,6 +13,7 @@ public class StepContext {
 	private List<ProtocolMessage> receivedOutputMessages;
 
 	private List<AbstractRecord> deferredRecords;
+	private TlsInput input;
 
 	public StepContext() {
 		deferredRecords = Collections.emptyList();
@@ -42,5 +44,14 @@ public class StepContext {
 
 	public void setDeferredRecords(List<AbstractRecord> deferredRecords) {
 		this.deferredRecords = deferredRecords;
+	}
+
+	public TlsInput getInput() {
+		return this.input;
+	}
+
+	public void setInput(TlsInput input) {
+		this.input = input;
+
 	}
 }

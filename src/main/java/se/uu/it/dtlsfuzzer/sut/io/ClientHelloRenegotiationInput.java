@@ -8,23 +8,46 @@ import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
 
 public class ClientHelloRenegotiationInput extends NamedTlsInput {
-	
+
+	static enum Enabled {
+		OWN_EPOCH_CHANGE, SERVER_EPOCH_CHANGE, ALWAYS, ONCE
+	}
+
 	/**
 	 * The name with which the input can be referred
 	 */
 	@XmlAttribute(name = "short", required = false)
-	private boolean isShort =  false;
-	
+	private boolean isShort = false;
+
 	@XmlAttribute(name = "suite", required = false)
 	private CipherSuite suite = null;
-	
+
+	@XmlAttribute(name = "enabled", required = false)
+	private Enabled enabled = Enabled.ALWAYS;
 
 	public ClientHelloRenegotiationInput() {
 		super("CLIENT_HELLO_RENEGOTIATION");
 	}
-	
+
+	public boolean isEnabled(State state, ExecutionContext context) {
+		switch (enabled) {
+			case OWN_EPOCH_CHANGE :
+				// send epoch is 1 or more
+				return state.getTlsContext().getDtlsSendEpoch() > 0;
+			case SERVER_EPOCH_CHANGE :
+				// receive epoch is 1 or more
+				return state.getTlsContext().getDtlsNextReceiveEpoch() > 0;
+			case ONCE :
+				return context.getStepContexes().stream()
+						.noneMatch(s -> s.getInput().equals(this));
+			default :
+				return true;
+		}
+	}
+
 	@Override
 	public ProtocolMessage generateMessage(State state) {
 		state.getTlsContext().setDtlsNextSendSequenceNumber(0);
@@ -36,13 +59,15 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 		if (!isShort) {
 			ModifiableByteArray sbyte = new ModifiableByteArray();
-			sbyte.setModification(new ByteArrayExplicitValueModification(new byte [] {}));
+			sbyte.setModification(new ByteArrayExplicitValueModification(
+					new byte[]{}));
 			message.setSessionId(sbyte);
 		}
-		
+
 		// mbedtls will only engage in renegotiation if the cookie is empty
 		ModifiableByteArray cbyte = new ModifiableByteArray();
-		cbyte.setModification(new ByteArrayExplicitValueModification(new byte [] {}));
+		cbyte.setModification(new ByteArrayExplicitValueModification(
+				new byte[]{}));
 		message.setCookie(cbyte);
 		return message;
 	}

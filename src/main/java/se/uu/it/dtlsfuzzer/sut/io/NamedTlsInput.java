@@ -11,11 +11,11 @@ public abstract class NamedTlsInput extends TlsInput {
 	 */
 	@XmlAttribute(name = "name", required = true)
 	private String name = null;
-	
+
 	protected NamedTlsInput() {
 		super();
 	}
-	
+
 	protected NamedTlsInput(String name) {
 		super();
 		this.name = name;
