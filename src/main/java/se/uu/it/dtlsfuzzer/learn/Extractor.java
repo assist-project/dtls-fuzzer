@@ -168,6 +168,14 @@ public class Extractor {
 				LOG.log(Level.SEVERE,
 						"Could not copy sampled tests file to output folder");
 			}
+			try {
+				Files.copy(new File(finderConfig.getSulDelegate()
+						.getSulConfig()), new File(outputFolder, finderConfig
+						.getSulDelegate().getSulConfig()));
+			} catch (IOException e) {
+				LOG.log(Level.SEVERE,
+						"Could not copy sul configuration to output folder");
+			}
 		}
 		try {
 			statistics.export(new FileWriter(new File(outputFolder,

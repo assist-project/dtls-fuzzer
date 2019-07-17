@@ -32,7 +32,6 @@ import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
 	private static final Logger LOG = LogManager.getLogger();
-	public static final String SUL_CONFIG = "/sul.config";
 	private State state = null;
 	private ExecutionContext context = null;
 
@@ -130,13 +129,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
 	private Config getSulConfig(SulDelegate delegate) {
 		if (config == null) {
-			if (delegate.getSulConfig() == null) {
-				config = Config.createConfig(SulDelegate.class
-						.getResourceAsStream(SUL_CONFIG));
-
-			} else {
-				config = Config.createConfig(new File(delegate.getSulConfig()));
-			}
+			config = Config.createConfig(new File(delegate.getSulConfig()));
 			delegate.applyDelegate(config);
 		}
 

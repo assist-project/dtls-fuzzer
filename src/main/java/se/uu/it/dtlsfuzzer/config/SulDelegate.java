@@ -1,5 +1,7 @@
 package se.uu.it.dtlsfuzzer.config;
 
+import java.io.File;
+
 import com.beust.jcommander.Parameter;
 
 import de.rub.nds.tlsattacker.core.config.Config;
@@ -9,6 +11,7 @@ import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
 import se.uu.it.dtlsfuzzer.sut.ProcessLaunchTrigger;
 
 public class SulDelegate extends ClientDelegate {
+	public static final String SUL_CONFIG = "/sul.config";
 
 	@Parameter(names = "-protocol", required = false, description = "Protocol analyzed, determines transport layer used", converter = ProtocolVersionConverter.class)
 	private ProtocolVersion protocolVersion = ProtocolVersion.DTLS12;
@@ -95,7 +98,11 @@ public class SulDelegate extends ClientDelegate {
 	}
 
 	public String getSulConfig() {
-		return sulConfig;
+		if (sulConfig == null) {
+			return SulDelegate.class.getResource(SUL_CONFIG).getFile();
+		} else {
+			return sulConfig;
+		}
 	}
 
 	public void setSulConfig(String sulConfig) {
