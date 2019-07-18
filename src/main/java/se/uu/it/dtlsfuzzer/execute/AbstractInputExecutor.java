@@ -85,15 +85,18 @@ public abstract class AbstractInputExecutor {
 			Class<? extends ProtocolMessage> lastSeen = null;
 			boolean skipStar = false;
 			for (ProtocolMessage m : action.getReceivedMessages()) {
-				if (lastSeen != null && lastSeen.equals(m.getClass())
-						&& !skipStar) {
-					builder.append("*");
-					skipStar = true;
+				if (lastSeen != null && lastSeen.equals(m.getClass())) {
+					if (!skipStar) {
+						// insert before ,
+						builder.insert(builder.length() - 1, '*');
+						skipStar = true;
+					}
+				} else {
+					lastSeen = m.getClass();
+					skipStar = false;
+					builder.append(m.toCompactString());
+					builder.append(",");
 				}
-				lastSeen = m.getClass();
-				skipStar = false;
-				builder.append(m.toCompactString());
-				builder.append(",");
 			}
 
 			String header = builder.substring(0, builder.length() - 1);

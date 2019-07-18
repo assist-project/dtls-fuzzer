@@ -65,8 +65,8 @@ public class Extractor {
 		// setting up our output directory
 		File outputFolder = new File(finderConfig.getOutput());
 		outputFolder.mkdirs();
-		
-		// for convenience, we copy all the input files/streams 
+
+		// for convenience, we copy all the input files/streams
 		// to the output folder before starting the arduous learning process
 		copyInputsToOutputFolder(outputFolder);
 
@@ -169,7 +169,7 @@ public class Extractor {
 
 		return extractorResult;
 	}
-	
+
 	private void copyInputsToOutputFolder(File outputFolder) {
 		try {
 			Files.copy(AlphabetFactory.getAlphabetFile(finderConfig), new File(
@@ -189,13 +189,12 @@ public class Extractor {
 			}
 		}
 		try {
-			dumpToFile(finderConfig.getSulDelegate()
-					.getSulConfigInputStream(), new File(outputFolder,
-					SUL_CONFIG_FILENAME));
+			dumpToFile(finderConfig.getSulDelegate().getSulConfigInputStream(),
+					new File(outputFolder, SUL_CONFIG_FILENAME));
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE,
 					"Could not copy sul configuration to output folder");
-		}		
+		}
 	}
 
 	private void dumpToFile(InputStream is, File outputFile) throws IOException {
