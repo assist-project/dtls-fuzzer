@@ -74,20 +74,32 @@ public abstract class AbstractInputExecutor {
 	private TlsOutput extractOutput(State state, GenericReceiveAction action) {
 		if (isResponseUnknown(action)) {
 			return new TlsOutput(Arrays.asList(new UnknownMessage()));
+		}
+		if (action.getReceivedMessages().isEmpty()) {
+			return TlsOutput.timeout();
 		} else {
+
+			// in case we find repeated occurrences of types of messages, we
+			// coalesce them under *
+			StringBuilder builder = new StringBuilder();
 			LinkedList<ProtocolMessage> receivedMessages = new LinkedList<>();
-			int hvSeen = 0;
+			Class<? extends ProtocolMessage> lastSeen = null;
+			boolean skipStar = false;
 			for (ProtocolMessage m : action.getReceivedMessages()) {
-				if (m.isHandshakeMessage()
-						&& m instanceof HelloVerifyRequestMessage) {
-					if (hvSeen == 2) {
-						continue;
-					}
-					hvSeen++;
+				if (lastSeen != null && lastSeen.equals(m.getClass())
+						&& !skipStar) {
+					builder.append("*");
+					skipStar = true;
 				}
-				receivedMessages.add(m);
+				lastSeen = m.getClass();
+				skipStar = false;
+				builder.append(m.toCompactString());
+				builder.append(",");
 			}
-			return new TlsOutput(receivedMessages);
+
+			String header = builder.substring(0, builder.length() - 1);
+
+			return new TlsOutput(header, receivedMessages);
 		}
 	}
 }

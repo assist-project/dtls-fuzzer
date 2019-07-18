@@ -1,12 +1,10 @@
 package se.uu.it.dtlsfuzzer.sut.io;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 
@@ -22,39 +20,45 @@ public class TlsOutput {
 		TlsOutput.compact = compact;
 	}
 
-	// fields used in equals
-	private List<String> messageStrings;
-	private boolean alive = true;
+	public static final String TIMEOUT = "TIMEOUT";
 
-	// fields not used in equals, but used in toString representation
-	private List<ProtocolMessage> messages;
-	private String applicationOutput = null;
-
-	private static final TlsOutput SOCKET_CLOSED = new TlsOutput(
-			new String[]{"SOCKET_CLOSED"});
-
-	private static final TlsOutput DISABLED = new TlsOutput(
-			new String[]{"DISABLED"});
+	public static TlsOutput timeout() {
+		return new TlsOutput(new String[]{TIMEOUT});
+	}
 
 	public static TlsOutput socketClosed() {
-		return SOCKET_CLOSED;
+		return new TlsOutput(new String[]{"SOCKET_CLOSED"});
 	}
 
 	public static TlsOutput disabled() {
-		return DISABLED;
+		return new TlsOutput(new String[]{"DISABLED"});
 	}
+
+	// fields used in equals
+	// the message header is a description of all the messages
+	private String messageHeader;
+	// alive indicates whether the process/connection is alive or was lost
+	private boolean alive = true;
+
+	// fields not used in equals, but in the extended toString representation
+	private List<ProtocolMessage> messages;
+	private String applicationOutput = null;
 
 	public TlsOutput() {
 	}
 
 	public TlsOutput(String[] messageStrings) {
-		this.messageStrings = Arrays.asList(messageStrings);
+		this.messageHeader = buildMessageHeader(messageStrings);
 		this.messages = null;
 	}
 
+	public TlsOutput(String messageHeader, List<ProtocolMessage> messages) {
+		this.messageHeader = messageHeader;
+		this.messages = messages;
+	}
+
 	public TlsOutput(List<ProtocolMessage> messages) {
-		messageStrings = messages.stream().map(m -> m.toCompactString())
-				.collect(Collectors.toList());
+		this.messageHeader = buildMessageHeader(messages);
 		this.messages = messages;
 	}
 
@@ -85,11 +89,32 @@ public class TlsOutput {
 		return builder.toString();
 	}
 
+	private String buildMessageHeader(String[] messageStrings) {
+		String messageString = Arrays.stream(messageStrings)
+				.reduce((s1, s2) -> s1 + "," + s2).orElse(TIMEOUT);
+		return messageString;
+	}
+
+	private String buildMessageHeader(List<ProtocolMessage> messageStrings) {
+		String messageString = buildMessageHeader(messages.stream()
+				.map(m -> m.toCompactString()).toArray(String[]::new));
+		return messageString;
+	}
+
+	/**
+	 * Compact representation of the messages.
+	 */
+	public String getMessageHeader() {
+		return messageHeader;
+	}
+
+	/**
+	 * Compact format of the output, includes the message header and
+	 * not-aliveness"
+	 */
 	public String getOutputHeader() {
 		StringBuilder builder = new StringBuilder();
-		String messageString = messageStrings.stream()
-				.reduce((s1, s2) -> s1 + "," + s2).orElse("TIMEOUT");
-		builder.append(messageString);
+		builder.append(messageHeader);
 		if (!alive) {
 			builder.append("[crashed]");
 		}
@@ -139,21 +164,21 @@ public class TlsOutput {
 	}
 
 	public boolean isTimeout() {
-		return messageStrings.isEmpty();
+		return TIMEOUT.equals(messageHeader);
 	}
 
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			TlsOutput that = (TlsOutput) obj;
 			// TODO not the proper way of comparing outputs but whatever
-			return Objects.equals(this.toString(), that.toString())
+			return Objects.equals(this.messageHeader, that.messageHeader)
 					&& Objects.equals(this.alive, that.alive);
 		}
 		return false;
 	}
 
 	public int hashCode() {
-		int hashCode = 2 * toString().hashCode() + (alive ? 1 : 0);
+		int hashCode = 2 * this.messageHeader.hashCode() + (alive ? 1 : 0);
 		return hashCode;
 	}
 
