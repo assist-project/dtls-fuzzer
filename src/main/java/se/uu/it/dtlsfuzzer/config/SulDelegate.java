@@ -1,6 +1,10 @@
 package se.uu.it.dtlsfuzzer.config;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import com.beust.jcommander.Parameter;
 
@@ -97,11 +101,11 @@ public class SulDelegate extends ClientDelegate {
 		this.processDir = processDir;
 	}
 
-	public String getSulConfig() {
+	public InputStream getSulConfigInputStream() throws IOException {
 		if (sulConfig == null) {
-			return SulDelegate.class.getResource(SUL_CONFIG).getFile();
+			return SulDelegate.class.getResource(SUL_CONFIG).openStream();
 		} else {
-			return sulConfig;
+			return new FileInputStream(sulConfig);
 		}
 	}
 

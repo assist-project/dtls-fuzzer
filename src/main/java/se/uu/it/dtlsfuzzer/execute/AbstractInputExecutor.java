@@ -20,7 +20,7 @@ import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 public abstract class AbstractInputExecutor {
 	private static final Logger LOGGER = LogManager.getLogger(Main.class
 			.getName());
-	
+
 	public TlsOutput execute(TlsInput input, State state,
 			ExecutionContext context) {
 		context.getStepContext().setInput(input);

@@ -1,8 +1,10 @@
 package se.uu.it.dtlsfuzzer.learn;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,7 @@ import de.learnlib.api.SUL;
 import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.oracles.ResetCounterSUL;
 import de.learnlib.oracles.SymbolCounterSUL;
+import de.rub.nds.tlsattacker.core.config.Config;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -37,6 +40,7 @@ public class Extractor {
 
 	public static final String LEARNED_MODEL_FILENAME = "learnedModel.dot";
 	public static final String STATISTICS_FILENAME = "statistics.txt";
+	public static final String SUL_CONFIG_FILENAME = "sul.config";
 	public static final String ALPHABET_FILENAME = "alphabet.xml";
 	public static final String NON_DET_FILENAME = "nondet.log";
 	/*
@@ -169,9 +173,9 @@ public class Extractor {
 						"Could not copy sampled tests file to output folder");
 			}
 			try {
-				Files.copy(new File(finderConfig.getSulDelegate()
-						.getSulConfig()), new File(outputFolder, finderConfig
-						.getSulDelegate().getSulConfig()));
+				dumpToFile(finderConfig.getSulDelegate()
+						.getSulConfigInputStream(), new File(outputFolder,
+						SUL_CONFIG_FILENAME));
 			} catch (IOException e) {
 				LOG.log(Level.SEVERE,
 						"Could not copy sul configuration to output folder");
@@ -185,6 +189,19 @@ public class Extractor {
 		}
 
 		return extractorResult;
+	}
+
+	private void dumpToFile(InputStream is, File outputFile) throws IOException {
+		InputStream inputStream = finderConfig.getSulDelegate()
+				.getSulConfigInputStream();
+		try (FileOutputStream fw = new FileOutputStream(outputFile)) {
+			byte[] bytes = new byte[1000];
+			while (inputStream.read(bytes) > 0) {
+				fw.write(bytes);
+			}
+		} finally {
+			inputStream.close();
+		}
 	}
 
 	private void serializeHypothesis(StateMachine hypothesis, File folder,

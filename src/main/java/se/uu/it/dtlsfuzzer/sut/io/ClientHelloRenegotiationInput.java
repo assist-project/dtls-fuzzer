@@ -41,8 +41,8 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 				// receive epoch is 1 or more
 				return state.getTlsContext().getDtlsNextReceiveEpoch() > 0;
 			case ONCE :
-				return context.getStepContexes().subList(0, context.getStepCount()-1)
-						.stream()
+				return context.getStepContexes()
+						.subList(0, context.getStepCount() - 1).stream()
 						.noneMatch(s -> s.getInput().equals(this));
 			default :
 				return true;

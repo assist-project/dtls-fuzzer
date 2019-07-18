@@ -127,7 +127,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 			if (output == TlsOutput.disabled()) {
 				// this should lead to a disabled sink state
 				isDisabled = true;
-			} 
+			}
 			return output;
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -138,7 +138,12 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
 	private Config getSulConfig(SulDelegate delegate) {
 		if (config == null) {
-			config = Config.createConfig(new File(delegate.getSulConfig()));
+			try {
+				config = Config
+						.createConfig(delegate.getSulConfigInputStream());
+			} catch (IOException e) {
+				throw new RuntimeException("Could not load configuration file");
+			}
 			delegate.applyDelegate(config);
 		}
 
