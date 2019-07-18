@@ -6,6 +6,9 @@ import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 
+/**
+ * Result for a single test
+ */
 public class TestRunnerResult {
 	private Word<TlsInput> inputWord;
 	private Map<Word<TlsOutput>, Integer> generatedOutputs;
@@ -23,5 +26,16 @@ public class TestRunnerResult {
 
 	public Map<Word<TlsOutput>, Integer> getGeneratedOutputs() {
 		return generatedOutputs;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Inputs: ").append(inputWord).append("\n");
+		for (Word<TlsOutput> answer : generatedOutputs.keySet()) {
+			sb.append(generatedOutputs.get(answer)).append(
+					" times outputs: " + answer.toString() + "\n");
+		}
+
+		return sb.toString();
 	}
 }

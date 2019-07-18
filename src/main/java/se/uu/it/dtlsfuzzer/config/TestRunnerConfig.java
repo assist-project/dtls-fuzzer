@@ -3,10 +3,10 @@ package se.uu.it.dtlsfuzzer.config;
 import com.beust.jcommander.Parameter;
 
 public class TestRunnerConfig {
-	@Parameter(names = "-test", required = false, description = "Debug option, runs the inputs in the given file and exits. ")
+	@Parameter(names = "-test", required = false, description = "Debug option, runs the tests in the given file and exits. ")
 	private String test = null;
 
-	@Parameter(names = "-times", required = false, description = "The number of times the inputs should be run")
+	@Parameter(names = "-times", required = false, description = "The number of times the tests should be run")
 	private Integer times = 1;
 
 	public Integer getTimes() {

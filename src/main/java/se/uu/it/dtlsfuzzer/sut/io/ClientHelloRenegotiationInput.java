@@ -28,6 +28,12 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 	@XmlAttribute(name = "enabled", required = false)
 	private Enabled enabled = Enabled.ALWAYS;
 
+	@XmlAttribute(name = "withCookie", required = false)
+	private boolean withCookie = true;
+
+	@XmlAttribute(name = "resetMSeq", required = false)
+	private boolean resetMSeq = true;
+
 	public ClientHelloRenegotiationInput() {
 		super("CLIENT_HELLO_RENEGOTIATION");
 	}
@@ -51,8 +57,9 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 
 	@Override
 	public ProtocolMessage generateMessage(State state) {
-		state.getTlsContext().setDtlsNextSendSequenceNumber(0);
 		state.getTlsContext().getDigest().reset();
+		if (resetMSeq)
+			state.getTlsContext().setDtlsNextSendSequenceNumber(0);
 		state.getTlsContext().setDtlsNextReceiveSequenceNumber(0);
 		if (suite != null) {
 			state.getConfig().setDefaultClientSupportedCiphersuites(suite);
@@ -66,12 +73,13 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 		}
 
 		// mbedtls will only engage in renegotiation if the cookie is empty
-		if (state.getTlsContext().getDtlsCookie() != null) {
+		if (!withCookie && state.getTlsContext().getDtlsCookie() != null) {
 			ModifiableByteArray sbyte = new ModifiableByteArray();
 			sbyte.setModification(new ByteArrayExplicitValueModification(
 					new byte[]{}));
 			message.setCookie(sbyte);
 		}
+
 		return message;
 	}
 

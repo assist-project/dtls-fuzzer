@@ -3,6 +3,7 @@ package se.uu.it.dtlsfuzzer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -65,17 +66,20 @@ public class DtlsFuzzer {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 		TestRunner runner = new TestRunner(config.getTestRunnerConfig(),
 				alphabet, sutOracle);
-		TestRunnerResult result = runner.runTest();
-		if (config.getSpecification() != null) {
-			Definitions definitions = DefinitionsFactory
-					.generateDefinitions(alphabet);
-			MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(
-					new TlsProcessor(definitions));
-			FastMealy<TlsInput, TlsOutput> machine = dotParser.parseAutomaton(
-					config.getSpecification()).get(0);
-			Word<TlsOutput> outputWord = machine.computeOutput(result
-					.getInputWord());
-			LOGGER.error("Expected output: " + outputWord);
+		List<TestRunnerResult> results = runner.runTests();
+		for (TestRunnerResult result : results) {
+			LOGGER.error(result.toString());
+			if (config.getSpecification() != null) {
+				Definitions definitions = DefinitionsFactory
+						.generateDefinitions(alphabet);
+				MealyDotParser<TlsInput, TlsOutput> dotParser = new MealyDotParser<>(
+						new TlsProcessor(definitions));
+				FastMealy<TlsInput, TlsOutput> machine = dotParser
+						.parseAutomaton(config.getSpecification()).get(0);
+				Word<TlsOutput> outputWord = machine.computeOutput(result
+						.getInputWord());
+				LOGGER.error("Expected output: " + outputWord);
+			}
 		}
 	}
 

@@ -2,7 +2,9 @@ package se.uu.it.dtlsfuzzer;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,10 +29,16 @@ public class TestRunner {
 		this.sulOracle = sutOracle;
 	}
 
-	public TestRunnerResult runTest() throws IOException {
+	public List<TestRunnerResult> runTests() throws IOException {
 		TestParser testParser = new TestParser();
-		Word<TlsInput> test = testParser.readTest(alphabet, config.getTest());
+		List<Word<TlsInput>> tests = testParser.readTests(alphabet,
+				config.getTest());
+		List<TestRunnerResult> results = tests.stream().map(t -> runTest(t))
+				.collect(Collectors.toList());
+		return results;
+	}
 
+	private TestRunnerResult runTest(Word<TlsInput> test) {
 		Map<Word<TlsOutput>, Integer> answerMap = new LinkedHashMap<>();
 		for (int i = 0; i < config.getTimes(); i++) {
 			Word<TlsOutput> answer = sulOracle.answerQuery(test);
@@ -40,12 +48,6 @@ public class TestRunner {
 				answerMap.put(answer, answerMap.get(answer) + 1);
 			}
 		}
-		LOGGER.error("Inputs: " + test + "\n");
-		for (Word<TlsOutput> answer : answerMap.keySet()) {
-			LOGGER.error(answerMap.get(answer) + " times outputs: "
-					+ answer.toString() + "\n");
-		}
-
 		return new TestRunnerResult(test, answerMap);
 	}
 }
