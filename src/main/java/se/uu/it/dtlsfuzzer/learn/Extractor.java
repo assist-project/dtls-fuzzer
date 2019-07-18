@@ -65,6 +65,10 @@ public class Extractor {
 		// setting up our output directory
 		File outputFolder = new File(finderConfig.getOutput());
 		outputFolder.mkdirs();
+		
+		// for convenience, we copy all the input files/streams 
+		// to the output folder before starting the arduous learning process
+		copyInputsToOutputFolder(outputFolder);
 
 		// setting up SUL/T (System Under Learning/Test)
 		SUL<TlsInput, TlsOutput> tlsSystemUnderTest = new TlsSUL(
@@ -157,6 +161,17 @@ public class Extractor {
 		extractorResult.setLearnedModelFile(new File(outputFolder,
 				LEARNED_MODEL_FILENAME));
 		try {
+			statistics.export(new FileWriter(new File(outputFolder,
+					STATISTICS_FILENAME)));
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Could not copy statistics to output folder");
+		}
+
+		return extractorResult;
+	}
+	
+	private void copyInputsToOutputFolder(File outputFolder) {
+		try {
 			Files.copy(AlphabetFactory.getAlphabetFile(finderConfig), new File(
 					outputFolder, ALPHABET_FILENAME));
 		} catch (IOException e) {
@@ -172,23 +187,15 @@ public class Extractor {
 				LOG.log(Level.SEVERE,
 						"Could not copy sampled tests file to output folder");
 			}
-			try {
-				dumpToFile(finderConfig.getSulDelegate()
-						.getSulConfigInputStream(), new File(outputFolder,
-						SUL_CONFIG_FILENAME));
-			} catch (IOException e) {
-				LOG.log(Level.SEVERE,
-						"Could not copy sul configuration to output folder");
-			}
 		}
 		try {
-			statistics.export(new FileWriter(new File(outputFolder,
-					STATISTICS_FILENAME)));
+			dumpToFile(finderConfig.getSulDelegate()
+					.getSulConfigInputStream(), new File(outputFolder,
+					SUL_CONFIG_FILENAME));
 		} catch (IOException e) {
-			LOG.log(Level.SEVERE, "Could not copy statistics to output folder");
-		}
-
-		return extractorResult;
+			LOG.log(Level.SEVERE,
+					"Could not copy sul configuration to output folder");
+		}		
 	}
 
 	private void dumpToFile(InputStream is, File outputFile) throws IOException {

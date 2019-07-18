@@ -43,6 +43,7 @@ public class AlphabetFactory {
 		return alphabet;
 	}
 
+	//TODO this probably doesn't work when executing via .jar
 	public static File getAlphabetFile(DtlsFuzzerConfig config) {
 		if (config.getAlphabet() != null) {
 			return new File(config.getAlphabet());
