@@ -16,9 +16,6 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 		OWN_EPOCH_CHANGE, SERVER_EPOCH_CHANGE, ALWAYS, ONCE
 	}
 
-	/**
-	 * The name with which the input can be referred
-	 */
 	@XmlAttribute(name = "short", required = false)
 	private boolean isShort = false;
 

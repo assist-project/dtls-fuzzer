@@ -55,7 +55,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
 	@Override
 	public void pre() {
-		Config config = getSulConfig(delegate);
+		Config config = getNewSulConfig(delegate);
 		config.setAutoSelectCertificate(false);
 		delegate.applyDelegate(config);
 		state = new State(config);
@@ -136,7 +136,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		}
 	}
 
-	private Config getSulConfig(SulDelegate delegate) {
+	private Config getNewSulConfig(SulDelegate delegate) {
 		if (config == null) {
 			try {
 				config = Config
@@ -147,7 +147,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 			delegate.applyDelegate(config);
 		}
 
-		return config;
+		return config.createCopy();
 	}
 
 	public State getState() {
