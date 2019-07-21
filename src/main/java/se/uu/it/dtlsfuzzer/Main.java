@@ -80,10 +80,15 @@ public class Main {
 			for (String arg : args) {
 				if (arg.startsWith("@")) {
 					String argsFile = arg.substring(1);
-					try (FileReader fr = new FileReader(argsFile)) {
-						char[] charBuf = new char[10000];
-						while (fr.read(charBuf) != -1) {
-							pw.write(charBuf);
+					if (!new File(argsFile).exists()) {
+						LOGGER.error("Arguments file " + argsFile
+								+ "has been moved ");
+					} else {
+						try (FileReader fr = new FileReader(argsFile)) {
+							char[] charBuf = new char[10000];
+							while (fr.read(charBuf) != -1) {
+								pw.write(charBuf);
+							}
 						}
 					}
 				} else {

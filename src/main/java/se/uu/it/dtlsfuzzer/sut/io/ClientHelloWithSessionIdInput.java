@@ -39,7 +39,7 @@ public class ClientHelloWithSessionIdInput extends NamedTlsInput {
 		resetTransportHandler(state);
 		if (suite != null) {
 			state.getConfig().setDefaultClientSupportedCiphersuites(suite);
-		}		
+		}
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 		message.setSessionId(state.getTlsContext().getChooser()
 				.getServerSessionId());

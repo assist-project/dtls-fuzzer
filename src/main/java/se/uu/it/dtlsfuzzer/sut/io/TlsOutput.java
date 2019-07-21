@@ -95,7 +95,7 @@ public class TlsOutput {
 		return messageString;
 	}
 
-	private String buildMessageHeader(List<ProtocolMessage> messageStrings) {
+	private String buildMessageHeader(List<ProtocolMessage> messages) {
 		String messageString = buildMessageHeader(messages.stream()
 				.map(m -> m.toCompactString()).toArray(String[]::new));
 		return messageString;

@@ -38,19 +38,19 @@ public class ClientKeyExchangeInput extends NamedTlsInput {
 		}
 		switch (this.algorithm) {
 			case RSA :
-				return new RSAClientKeyExchangeMessage();
+				return new RSAClientKeyExchangeMessage(state.getConfig());
 			case PSK :
-				return new PskClientKeyExchangeMessage();
+				return new PskClientKeyExchangeMessage(state.getConfig());
 			case DH :
-				return new DHClientKeyExchangeMessage();
+				return new DHClientKeyExchangeMessage(state.getConfig());
 			case ECDH :
-				return new ECDHClientKeyExchangeMessage();
+				return new ECDHClientKeyExchangeMessage(state.getConfig());
 			case PSK_RSA :
-				return new PskRsaClientKeyExchangeMessage();
+				return new PskRsaClientKeyExchangeMessage(state.getConfig());
 			case GOST :
-				return new GOSTClientKeyExchangeMessage();
+				return new GOSTClientKeyExchangeMessage(state.getConfig());
 			case SRP :
-				return new SrpClientKeyExchangeMessage();
+				return new SrpClientKeyExchangeMessage(state.getConfig());
 			default :
 				throw new RuntimeException("Algorithm " + algorithm
 						+ " not supported");
