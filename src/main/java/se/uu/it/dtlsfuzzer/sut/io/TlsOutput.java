@@ -35,8 +35,8 @@ public class TlsOutput {
 	}
 
 	// fields used in equals
-	// the message header is a description of all the messages
-	private String messageHeader;
+	// the output header is the messages/records in an output
+	private String outputHeader;
 	// alive indicates whether the process/connection is alive or was lost
 	private boolean alive = true;
 
@@ -48,17 +48,17 @@ public class TlsOutput {
 	}
 
 	public TlsOutput(String[] messageStrings) {
-		this.messageHeader = buildMessageHeader(messageStrings);
+		this.outputHeader = buildMessageHeader(messageStrings);
 		this.messages = null;
 	}
 
-	public TlsOutput(String messageHeader, List<ProtocolMessage> messages) {
-		this.messageHeader = messageHeader;
+	public TlsOutput(String outputHeader, List<ProtocolMessage> messages) {
+		this.outputHeader = outputHeader;
 		this.messages = messages;
 	}
 
 	public TlsOutput(List<ProtocolMessage> messages) {
-		this.messageHeader = buildMessageHeader(messages);
+		this.outputHeader = buildMessageHeader(messages);
 		this.messages = messages;
 	}
 
@@ -95,7 +95,7 @@ public class TlsOutput {
 		return messageString;
 	}
 
-	private String buildMessageHeader(List<ProtocolMessage> messages) {
+	public String buildMessageHeader(List<ProtocolMessage> messages) {
 		String messageString = buildMessageHeader(messages.stream()
 				.map(m -> m.toCompactString()).toArray(String[]::new));
 		return messageString;
@@ -105,7 +105,7 @@ public class TlsOutput {
 	 * Compact representation of the messages.
 	 */
 	public String getMessageHeader() {
-		return messageHeader;
+		return outputHeader;
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class TlsOutput {
 	 */
 	public String getOutputHeader() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(messageHeader);
+		builder.append(outputHeader);
 		if (!alive) {
 			builder.append("[crashed]");
 		}
@@ -164,21 +164,21 @@ public class TlsOutput {
 	}
 
 	public boolean isTimeout() {
-		return TIMEOUT.equals(messageHeader);
+		return TIMEOUT.equals(outputHeader);
 	}
 
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			TlsOutput that = (TlsOutput) obj;
 			// TODO not the proper way of comparing outputs but whatever
-			return Objects.equals(this.messageHeader, that.messageHeader)
+			return Objects.equals(this.outputHeader, that.outputHeader)
 					&& Objects.equals(this.alive, that.alive);
 		}
 		return false;
 	}
 
 	public int hashCode() {
-		int hashCode = 2 * this.messageHeader.hashCode() + (alive ? 1 : 0);
+		int hashCode = 2 * this.outputHeader.hashCode() + (alive ? 1 : 0);
 		return hashCode;
 	}
 
