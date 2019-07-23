@@ -5,7 +5,10 @@ import java.util.Arrays;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
+import de.rub.nds.tlsattacker.core.dtls.MessageFragmenter;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
+import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 
@@ -13,6 +16,15 @@ public class ClientHelloInput extends NamedTlsInput {
 
 	@XmlAttribute(name = "suite", required = true)
 	private CipherSuite suite;
+
+	/**
+	 * option needed to learn DTLS implementations which use cookie-less
+	 * handshake messages
+	 */
+	@XmlAttribute(name = "forceDigest", required = false)
+	private boolean forceDigest = false;
+
+	private ProtocolMessage message;
 
 	public ClientHelloInput() {
 		super("CLIENT_HELLO");
@@ -36,12 +48,23 @@ public class ClientHelloInput extends NamedTlsInput {
 		}
 		state.getTlsContext().getDigest().reset();
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
+		this.message = message;
 		return message;
 	}
 
 	@Override
 	public TlsInputType getInputType() {
 		return TlsInputType.HANDSHAKE;
+	}
+
+	public void postSendUpdate(State state) {
+		if (forceDigest) {
+			DtlsHandshakeMessageFragment fragment = new MessageFragmenter(state
+					.getTlsContext().getConfig()).wrapInSingleFragment(
+					(HandshakeMessage) message, state.getTlsContext());
+			state.getTlsContext().getDigest()
+					.append(fragment.getCompleteResultingMessage().getValue());
+		}
 	}
 
 }
