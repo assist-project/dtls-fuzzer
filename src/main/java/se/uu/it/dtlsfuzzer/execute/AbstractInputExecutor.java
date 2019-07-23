@@ -82,17 +82,17 @@ public abstract class AbstractInputExecutor {
 			// coalesce them under *
 			StringBuilder builder = new StringBuilder();
 			LinkedList<ProtocolMessage> receivedMessages = new LinkedList<>();
-			Class<? extends ProtocolMessage> lastSeen = null;
+			String lastSeen = null;
 			boolean skipStar = false;
 			for (ProtocolMessage m : action.getReceivedMessages()) {
-				if (lastSeen != null && lastSeen.equals(m.getClass())) {
+				if (lastSeen != null && lastSeen.equals(m.toCompactString())) {
 					if (!skipStar) {
 						// insert before ,
 						builder.insert(builder.length() - 1, '*');
 						skipStar = true;
 					}
 				} else {
-					lastSeen = m.getClass();
+					lastSeen = m.toCompactString();
 					skipStar = false;
 					builder.append(m.toCompactString());
 					builder.append(",");
