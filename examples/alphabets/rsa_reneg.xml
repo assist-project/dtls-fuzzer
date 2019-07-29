@@ -1,22 +1,13 @@
-<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes. 
+<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes
+extended with certificate inputs. Useful for learning servers performing certificate-based 
 client authentication.-->
 <alphabet>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
     <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED"/>
-    <GenericTlsInput name="CERTIFICATE">
-        <Certificate/>
-    </GenericTlsInput>
-    <GenericTlsInput name="EMPTY_CERTIFICATE">
-        <Certificate>
-            <certificatesList>
-            </certificatesList>
-        </Certificate>
-    </GenericTlsInput>
-    <GenericTlsInput name="CERTIFICATE_VERIFY">
-        <CertificateVerify/>
-    </GenericTlsInput>
+    <ClientHelloRenegotiation name="CLIENT_HELLO_SHORT_RENEG" short="true"/>
+    <ClientHelloRenegotiation name="RSA_CLIENT_HELLO_LONG_RENEG" short="false" suite="TLS_RSA_WITH_AES_128_CBC_SHA"/>
     <GenericTlsInput name="APPLICATION">
         <Application>
             <data>
@@ -26,18 +17,6 @@ client authentication.-->
                 </byteArrayExplicitValueModification>
             </data>
         </Application>
-    </GenericTlsInput>
-    <GenericTlsInput name="CERTIFICATE">
-        <Certificate/>
-    </GenericTlsInput>
-    <GenericTlsInput name="EMPTY_CERTIFICATE">
-        <Certificate>
-            <certificatesList>
-            </certificatesList>
-        </Certificate>
-    </GenericTlsInput>
-    <GenericTlsInput name="CERTIFICATE_VERIFY">
-        <CertificateVerify/>
     </GenericTlsInput>
     <!-- Alert(WARNING,CLOSE_NOTIFY) -->
     <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">

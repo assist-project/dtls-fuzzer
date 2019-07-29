@@ -1,22 +1,16 @@
-<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes. 
-client authentication.-->
+<!-- DTLS alphabet comprising the messages necessary to perform PSK handshakes and 
+RSA handshakes extended with certificate inputs. -->
 <alphabet>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
-    <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>
+    <ClientKeyExchangeInput algorithm="RSA" name="RSA_CLIENT_KEY_EXCHANGE"/>
+    <ClientHelloRenegotiation name="RSA_CLIENT_HELLO_RENEG_LONG" suite="TLS_RSA_WITH_AES_128_CBC_SHA" short="false" enabled="OWN_EPOCH_CHANGE"/>
+    <ClientHelloRenegotiation name="PSK_CLIENT_HELLO_RENEG_LONG" suite="TLS_PSK_WITH_AES_128_CBC_SHA" short="false" enabled="OWN_EPOCH_CHANGE"/> 
+    <ClientHelloRenegotiation name="CLIENT_HELLO_RENEG_SHORT" short="true" enabled="OWN_EPOCH_CHANGE"/>
+    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO"/>
+    <ClientHelloWithSessionIdInput name="CLIENT_HELLO_SR"/> 
+    <ClientKeyExchangeInput algorithm="PSK" name="PSK_CLIENT_KEY_EXCHANGE"/>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED"/>
-    <GenericTlsInput name="CERTIFICATE">
-        <Certificate/>
-    </GenericTlsInput>
-    <GenericTlsInput name="EMPTY_CERTIFICATE">
-        <Certificate>
-            <certificatesList>
-            </certificatesList>
-        </Certificate>
-    </GenericTlsInput>
-    <GenericTlsInput name="CERTIFICATE_VERIFY">
-        <CertificateVerify/>
-    </GenericTlsInput>
     <GenericTlsInput name="APPLICATION">
         <Application>
             <data>

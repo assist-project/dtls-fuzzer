@@ -3,8 +3,6 @@ RSA handshakes extended with certificate inputs. -->
 <alphabet>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
     <ClientKeyExchangeInput algorithm="RSA" name="RSA_CLIENT_KEY_EXCHANGE"/>
-    <ClientHelloRenegotiation name="RSA_CLIENT_HELLO_RENEG_LONG" short="false" suite="TLS_RSA_WITH_AES_128_CBC_SHA" enabled="OWN_EPOCH_CHANGE"/>
-    <ClientHelloRenegotiation name="RSA_CLIENT_HELLO_RENEG_SHORT" short="true" suite="TLS_RSA_WITH_AES_128_CBC_SHA" enabled="OWN_EPOCH_CHANGE"/>
     <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO"/>
     <ClientKeyExchangeInput algorithm="PSK" name="PSK_CLIENT_KEY_EXCHANGE"/>
     <ClientHelloWithSessionIdInput name="CLIENT_HELLO_SR"/>
