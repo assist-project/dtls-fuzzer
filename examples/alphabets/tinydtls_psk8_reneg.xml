@@ -1,0 +1,51 @@
+<!-- DTLS alphabet comprising the messages necessary to perform PSK handshakes 
+using CCM_8 ciphersuites. -->
+<alphabet>
+    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_CLIENT_HELLO"/>
+    <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
+    <ClientHelloRenegotiation name="PSK_CLIENT_HELLO_RENEG_LONG"  short="false" suite="TLS_PSK_WITH_AES_128_CCM_8" enabled="OWN_EPOCH_CHANGE"/>
+    <!-- <ClientHelloRenegotiation name="CLIENT_HELLO_RENEG_SHORT"  short="true" enabled="OWN_EPOCH_CHANGE" withCookie="true"/>  -->
+    <!-- <ClientHelloWithSessionIdInput name="CLIENT_HELLO_SR"/> -->
+    <ChangeCipherSpecInput/>
+    <FinishedInput name="FINISHED"/>
+    <GenericTlsInput name="APPLICATION">
+        <Application>
+            <data>
+                <byteArrayExplicitValueModification>
+                        <!--HEX(This is a hello message!)-->
+                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                </byteArrayExplicitValueModification>
+            </data>
+        </Application>
+    </GenericTlsInput>
+    <!-- Alert(WARNING,CLOSE_NOTIFY) -->
+    <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
+        <Alert>
+            <level>
+                <byteExplicitValueModification>
+                        <explicitValue>1</explicitValue>
+                </byteExplicitValueModification>
+            </level>
+            <description>
+                <byteExplicitValueModification>
+                        <explicitValue>0</explicitValue>
+                </byteExplicitValueModification>
+            </description>
+        </Alert>
+    </GenericTlsInput>
+    <!-- Alert(FATAL,UNEXPECTED_MESSAGE) -->
+    <GenericTlsInput name="Alert(FATAL,UNEXPECTED_MESSAGE)">
+        <Alert>
+            <level>
+                <byteExplicitValueModification>
+                        <explicitValue>2</explicitValue>
+                </byteExplicitValueModification>
+            </level>
+            <description>
+                <byteExplicitValueModification>
+                        <explicitValue>10</explicitValue>
+                </byteExplicitValueModification>
+            </description>
+        </Alert>
+    </GenericTlsInput>
+</alphabet>
