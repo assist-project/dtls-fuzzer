@@ -16,18 +16,6 @@ client authentication.-->
             </data>
         </Application>
     </GenericTlsInput>
-    <GenericTlsInput name="CERTIFICATE">
-        <Certificate/>
-    </GenericTlsInput>
-    <GenericTlsInput name="EMPTY_CERTIFICATE">
-        <Certificate>
-            <certificatesList>
-            </certificatesList>
-        </Certificate>
-    </GenericTlsInput>
-    <GenericTlsInput name="CERTIFICATE_VERIFY">
-        <CertificateVerify/>
-    </GenericTlsInput>
     <!-- Alert(WARNING,CLOSE_NOTIFY) -->
     <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
         <Alert>
