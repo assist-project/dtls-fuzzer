@@ -13,7 +13,7 @@ import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
 public class ClientHelloRenegotiationInput extends NamedTlsInput {
 
 	static enum Enabled {
-		OWN_EPOCH_CHANGE, SERVER_EPOCH_CHANGE, ALWAYS, ONCE
+		OWN_EPOCH_CHANGE, SERVER_EPOCH_CHANGE, ALWAYS, ONCE, ON_SERVER_HELLO
 	}
 
 	@XmlAttribute(name = "short", required = false)
@@ -79,7 +79,19 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 
 		return message;
 	}
-
+	
+	public void postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
+		switch(enabled) {
+		case ON_SERVER_HELLO:
+			if (!output.toString().contains("SERVER_HELLO")) {
+				context.getStepContext().disable();
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	
 	@Override
 	public TlsInputType getInputType() {
 		return TlsInputType.HANDSHAKE;
