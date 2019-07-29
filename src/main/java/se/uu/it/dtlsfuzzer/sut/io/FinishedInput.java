@@ -3,6 +3,7 @@ package se.uu.it.dtlsfuzzer.sut.io;
 import de.rub.nds.tlsattacker.core.protocol.message.FinishedMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
 
 public class FinishedInput extends NamedTlsInput {
 
@@ -17,7 +18,7 @@ public class FinishedInput extends NamedTlsInput {
 	}
 
 	@Override
-	public void postSendUpdate(State state) {
+	public void postSendUpdate(State state, ExecutionContext context) {
 		state.getTlsContext().getDigest().reset();
 		// we have to make this change for learning to scale
 		state.getTlsContext().setDtlsNextSendSequenceNumber(

@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.execute.AbstractInputExecutor;
@@ -46,7 +45,7 @@ public abstract class TlsInput {
 	/**
 	 * Updates the context after sending the input.
 	 */
-	public void postSendUpdate(State state) {
+	public void postSendUpdate(State state, ExecutionContext context) {
 	}
 
 	/**
@@ -54,7 +53,7 @@ public abstract class TlsInput {
 	 */
 	// TODO it would be better to have abstracting/concretizing mapper
 	// components.
-	public void postReceiveUpdate(TlsOutput output, State state) {
+	public void postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
 	}
 
 	/**

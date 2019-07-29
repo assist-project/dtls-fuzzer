@@ -28,10 +28,10 @@ public abstract class AbstractInputExecutor {
 			if (message != null) {
 				LOGGER.info("Sending Message " + message.toCompactString());
 				sendMessage(message, state, context);
-				input.postSendUpdate(state);
+				input.postSendUpdate(state, context);
 			}
 			TlsOutput output = receiveOutput(state, context);
-			input.postReceiveUpdate(output, state);
+			input.postReceiveUpdate(output, state, context);
 			return output;
 		} else {
 			return TlsOutput.disabled();

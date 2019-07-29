@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
 import se.uu.it.dtlsfuzzer.execute.MutatedInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.io.TlsInputType;
@@ -32,12 +33,12 @@ public class MutatedTlsInput extends TlsInput {
 						.getCompactMutationDescription();
 	}
 
-	public void postSendUpdate(State state) {
-		input.postSendUpdate(state);
+	public void postSendUpdate(State state, ExecutionContext context) {
+		input.postSendUpdate(state, context);
 	}
 
-	public void postReceiveUpdate(TlsOutput output, State state) {
-		input.postReceiveUpdate(output, state);
+	public void postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
+		input.postReceiveUpdate(output, state, context);
 	}
 
 	public List<Mutation<?>> getMutations() {
