@@ -67,19 +67,30 @@ public class NonDeterminismRetryingSUL<I, O> implements SUL<I, O> {
 		return result;
 	}
 
-	private O retryInputs(List<I> inputs, int numTimes) {
+	private O retryInputs(List<I> inputs, int numTimes) throws SULException {
+		// we intersperse more breaks in the execution
+		pause(1000);
 		O result = null;
 		for (int i = 0; i < numTimes; i++) {
 			List<O> outputs = new ArrayList<O>();
 			sul.post();
 			sul.pre();
+			// we intersperse more breaks in the execution
+			pause(1000);
 			for (I input : inputs) {
 				outputs.add(sul.step(input));
 			}
-			result = outputs.get(outputs.size() - 1); // lazzyyyy
+			result = outputs.get(outputs.size() - 1);
 			root.addObservation(inputs, outputs);
 		}
 		return result;
 	}
 
+	private void pause(long millis) throws SULException {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			throw new SULException(e);
+		}
+	}
 }

@@ -58,10 +58,11 @@ public class ClientHelloInput extends NamedTlsInput {
 	}
 
 	public void postSendUpdate(State state) {
-		// the second conjunction is used in case TLS-Attacker is updated 
+		// the second conjunction is used in case TLS-Attacker is updated
 		// to work also with 1-CH DTLS handshakes.
 		// (in which case, the clienthello is digested)
-		if (forceDigest && state.getTlsContext().getDigest().getRawBytes().length == 0) {
+		if (forceDigest
+				&& state.getTlsContext().getDigest().getRawBytes().length == 0) {
 			DtlsHandshakeMessageFragment fragment = new MessageFragmenter(state
 					.getTlsContext().getConfig()).wrapInSingleFragment(
 					(HandshakeMessage) message, state.getTlsContext());

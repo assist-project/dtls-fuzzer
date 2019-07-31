@@ -47,7 +47,7 @@ public class Extractor {
 	 * In case of non-determinism, the number of times the causing sequence of
 	 * inputs (to confirm/infirm non-determinism)
 	 */
-	private static final Integer NON_DET_ATTEMPTS = 5;
+	private static final Integer NON_DET_ATTEMPTS = 3;
 
 	private static final Logger LOG = Logger.getLogger(Extractor.class
 			.getName());

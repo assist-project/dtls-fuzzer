@@ -14,12 +14,11 @@ public class StepContext {
 
 	private List<AbstractRecord> deferredRecords;
 	private TlsInput input;
-	
+
 	/**
-	 * A boolean for disabling current execution. 
+	 * A boolean for disabling current execution.
 	 */
 	private boolean disabled;
-	
 
 	public StepContext() {
 		deferredRecords = Collections.emptyList();
@@ -60,11 +59,11 @@ public class StepContext {
 	public void setInput(TlsInput input) {
 		this.input = input;
 	}
-	
+
 	public boolean isDisabled() {
 		return disabled;
 	}
-	
+
 	public void disable() {
 		disabled = true;
 	}

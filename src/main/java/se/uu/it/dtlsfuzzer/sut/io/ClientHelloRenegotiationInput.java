@@ -79,19 +79,20 @@ public class ClientHelloRenegotiationInput extends NamedTlsInput {
 
 		return message;
 	}
-	
-	public void postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
-		switch(enabled) {
-		case ON_SERVER_HELLO:
-			if (!output.toString().contains("SERVER_HELLO")) {
-				context.getStepContext().disable();
-			}
-			break;
-		default:
-			break;
+
+	public void postReceiveUpdate(TlsOutput output, State state,
+			ExecutionContext context) {
+		switch (enabled) {
+			case ON_SERVER_HELLO :
+				if (!output.toString().contains("SERVER_HELLO")) {
+					context.getStepContext().disable();
+				}
+				break;
+			default :
+				break;
 		}
 	}
-	
+
 	@Override
 	public TlsInputType getInputType() {
 		return TlsInputType.HANDSHAKE;

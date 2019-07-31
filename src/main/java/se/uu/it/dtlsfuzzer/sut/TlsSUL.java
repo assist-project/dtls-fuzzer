@@ -124,8 +124,9 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 					state.getTlsContext().getChooser().getConnectionEndType());
 			output = executor.execute(in, state, context);
 			LOG.debug("received:" + output);
-			
-			if (output == TlsOutput.disabled() || context.getStepContext().isDisabled()) {
+
+			if (output == TlsOutput.disabled()
+					|| context.getStepContext().isDisabled()) {
 				// this should lead to a disabled sink state
 				isDisabled = true;
 			}

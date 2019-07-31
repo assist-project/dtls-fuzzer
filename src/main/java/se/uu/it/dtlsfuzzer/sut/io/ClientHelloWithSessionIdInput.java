@@ -20,14 +20,14 @@ public class ClientHelloWithSessionIdInput extends NamedTlsInput {
 
 	@XmlAttribute(name = "suite", required = false)
 	private CipherSuite suite;
-	
+
 	/**
-	 * Resetting the cookie may prompt a long resumption, 
-	 * which is resumption including a server HelloVerifyRequest
+	 * Resetting the cookie may prompt a long resumption, which is resumption
+	 * including a server HelloVerifyRequest
 	 */
 	@XmlAttribute(name = "resetCookie", required = false)
 	private boolean resetCookie = false;
-	
+
 	private void resetTransportHandler(State state) {
 		ResetConnectionAction resetAction = new ResetConnectionAction();
 		resetAction.setConnectionAlias(state.getTlsContext().getConnection()
@@ -39,7 +39,7 @@ public class ClientHelloWithSessionIdInput extends NamedTlsInput {
 		state.getTlsContext().setDtlsNextSendSequenceNumber(0);
 		state.getTlsContext().setDtlsSendEpoch(0);
 		state.getTlsContext().setDtlsNextReceiveEpoch(0);
-		
+
 		if (resetCookie) {
 			state.getTlsContext().setDtlsCookie(null);
 		}
