@@ -1,9 +1,13 @@
 package se.uu.it.dtlsfuzzer;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.file.Path;
+import java.security.PrivateKey;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,9 +19,14 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.XMLStreamException;
 
+import org.bouncycastle.crypto.tls.Certificate;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.alexmerz.graphviz.ParseException;
@@ -30,8 +39,15 @@ import de.learnlib.oracles.CounterOracle;
 import de.learnlib.oracles.CounterOracle.MealyCounterOracle;
 import de.learnlib.oracles.SimulatorOracle;
 import de.learnlib.oracles.SimulatorOracle.MealySimulatorOracle;
+import de.rub.nds.modifiablevariable.util.ArrayConverter;
+import de.rub.nds.tlsattacker.core.certificate.CertificateByteChooser;
+import de.rub.nds.tlsattacker.core.certificate.CertificateKeyPair;
+import de.rub.nds.tlsattacker.core.certificate.PemUtil;
+import de.rub.nds.tlsattacker.core.config.Config;
+import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+import de.rub.nds.tlsattacker.core.crypto.keys.CustomRsaPublicKey;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateVerifyMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
@@ -39,6 +55,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import de.rub.nds.tlsattacker.core.state.TlsContext;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.words.Alphabet;
@@ -315,7 +332,10 @@ public class Trace {
 			nonmut(new FinishedInput()),};
 
 	public static void main(String[] args) throws Exception {
-		runTest();
+//		runTest();
+		StringWriter sw = new StringWriter();
+		keyPairSerialize("experiments/keystore/ec_secp256r1_cert.pem", "experiments/keystore/ec_secp256r1_key.pem", sw);
+		System.out.println(sw);
 	}
 
 	public static void runTest() throws Exception {
@@ -396,6 +416,43 @@ public class Trace {
 					modelFuzzConfig.getSulDelegate());
 		}
 		return sut;
+	}
+	
+
+	@XmlRootElement
+	static class CertificateHolder {
+		@XmlElement(name = "certificatePair")
+		private CertificateKeyPair pair;
+
+		public CertificateHolder() {
+		}
+
+		public CertificateHolder(CertificateKeyPair pair) {
+			this.pair = pair;
+		}
+	}
+
+	/*
+	 * Utility function used for serializing key pairs.
+	 */
+	public static void keyPairSerialize(String certPath, String keyPath, Writer w) throws JAXBException {
+		init();
+		CertificateKeyPair keyPair = loadKeyPair(certPath, keyPath);
+		JAXBContext jContext = JAXBContext.newInstance(CertificateHolder.class,
+				CertificateKeyPair.class);
+		Marshaller m = jContext.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		m.marshal(new CertificateHolder(keyPair), w);
+	}
+	
+	private static CertificateKeyPair loadKeyPair(String certPath, String keyPath) {
+		try {
+            Certificate readCertificate = PemUtil.readCertificate(new File(certPath));
+            PrivateKey privateKey = PemUtil.readPrivateKey(new File(keyPath));
+            return new CertificateKeyPair(readCertificate, privateKey);
+        } catch (Exception E) {
+        }
+		return null;
 	}
 
 	/*
