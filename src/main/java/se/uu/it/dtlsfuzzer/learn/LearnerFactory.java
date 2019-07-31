@@ -134,7 +134,7 @@ public class LearnerFactory {
 			return tests;
 		} catch (IOException e) {
 			throw new RuntimeException("Could not read tests from file "
-					+ config.getTestFile());
+					+ config.getTestFile(), e);
 		}
 	}
 }
