@@ -1,5 +1,5 @@
 -connect 
-localhost:50000 
+localhost:50005 
 -runWait 
 100
 -alphabet
@@ -13,8 +13,12 @@ localhost:50000
 -protocol 
 DTLS12 
 -output 
-tinydtls_psk_rwalk
+rwalk_tinydtls_psk
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -cmd 
-"/home/pfg666/GitHub/tinydtls/tests/dtls-server -p 50000"
+"/home/pfg666/GitHub/tinydtls/tests/dtls-server -p 50005"
+-testFile
+../examples/tests/psk
+-depth
+1
