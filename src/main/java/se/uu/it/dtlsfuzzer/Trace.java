@@ -60,6 +60,7 @@ import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import net.automatalib.automata.transout.impl.FastMealy;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
+import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
 import se.uu.it.dtlsfuzzer.execute.TestingInputExecutor;
 import se.uu.it.dtlsfuzzer.mutate.MutatedTlsInput;
 import se.uu.it.dtlsfuzzer.mutate.MutatingTlsInput;
@@ -306,7 +307,8 @@ public class Trace {
 				}
 			}),
 			nonmut(new ClientHelloInput(CipherSuite.TLS_PSK_WITH_AES_128_CCM_8) {
-				public void postReceiveUpdate(TlsOutput output, State state) {
+				public void postReceiveUpdate(TlsOutput output, State state,
+						ExecutionContext context) {
 					state.getTlsContext().setDtlsSendEpoch(0);
 				}
 			}),
@@ -332,10 +334,11 @@ public class Trace {
 			nonmut(new FinishedInput()),};
 
 	public static void main(String[] args) throws Exception {
-//		runTest();
-		StringWriter sw = new StringWriter();
-		keyPairSerialize("experiments/keystore/ec_secp256r1_cert.pem", "experiments/keystore/ec_secp256r1_key.pem", sw);
-		System.out.println(sw);
+		runTest();
+		// StringWriter sw = new StringWriter();
+		// keyPairSerialize("experiments/keystore/ec_secp256r1_cert.pem",
+		// "experiments/keystore/ec_secp256r1_key.pem", sw);
+		// System.out.println(sw);
 	}
 
 	public static void runTest() throws Exception {
@@ -349,14 +352,7 @@ public class Trace {
 		int stepWait = 50;
 		long runWait = 100;
 
-		TlsInput[] inputs = new TlsInput[]{
-				nonmut(new ClientHelloInput(cs)),
-				nonmut(new ClientHelloInput(cs)),
-				// new GenericTlsInput(new PskClientKeyExchangeMessage()),
-				nonmut(new GenericTlsInput(new PskClientKeyExchangeMessage())),
-				mutated(new ChangeCipherSpecInput(), new RecordDeferMutation()),
-				mutated(new FinishedInput(), new RecordFlushMutation(),
-						new RecordDupMutation(-2))};
+		TlsInput[] inputs = tinyDtlsNextEpochBug;
 
 		runTest(Command.none, inputs, iterations, stepWait, runWait);
 	}
@@ -417,7 +413,6 @@ public class Trace {
 		}
 		return sut;
 	}
-	
 
 	@XmlRootElement
 	static class CertificateHolder {
@@ -435,7 +430,8 @@ public class Trace {
 	/*
 	 * Utility function used for serializing key pairs.
 	 */
-	public static void keyPairSerialize(String certPath, String keyPath, Writer w) throws JAXBException {
+	public static void keyPairSerialize(String certPath, String keyPath,
+			Writer w) throws JAXBException {
 		init();
 		CertificateKeyPair keyPair = loadKeyPair(certPath, keyPath);
 		JAXBContext jContext = JAXBContext.newInstance(CertificateHolder.class,
@@ -444,14 +440,16 @@ public class Trace {
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		m.marshal(new CertificateHolder(keyPair), w);
 	}
-	
-	private static CertificateKeyPair loadKeyPair(String certPath, String keyPath) {
+
+	private static CertificateKeyPair loadKeyPair(String certPath,
+			String keyPath) {
 		try {
-            Certificate readCertificate = PemUtil.readCertificate(new File(certPath));
-            PrivateKey privateKey = PemUtil.readPrivateKey(new File(keyPath));
-            return new CertificateKeyPair(readCertificate, privateKey);
-        } catch (Exception E) {
-        }
+			Certificate readCertificate = PemUtil.readCertificate(new File(
+					certPath));
+			PrivateKey privateKey = PemUtil.readPrivateKey(new File(keyPath));
+			return new CertificateKeyPair(readCertificate, privateKey);
+		} catch (Exception E) {
+		}
 		return null;
 	}
 

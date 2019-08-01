@@ -81,7 +81,6 @@ public abstract class AbstractInputExecutor {
 			// in case we find repeated occurrences of types of messages, we
 			// coalesce them under *
 			StringBuilder builder = new StringBuilder();
-			LinkedList<ProtocolMessage> receivedMessages = new LinkedList<>();
 			String lastSeen = null;
 			boolean skipStar = false;
 			for (ProtocolMessage m : action.getReceivedMessages()) {
@@ -101,7 +100,7 @@ public abstract class AbstractInputExecutor {
 
 			String header = builder.substring(0, builder.length() - 1);
 
-			return new TlsOutput(header, receivedMessages);
+			return new TlsOutput(header);
 		}
 	}
 }

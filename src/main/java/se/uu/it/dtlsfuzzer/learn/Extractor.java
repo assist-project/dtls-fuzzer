@@ -154,9 +154,10 @@ public class Extractor {
 		// exporting to output files
 		serializeHypothesis(stateMachine, outputFolder, LEARNED_MODEL_FILENAME,
 				true, false);
-		serializeHypothesis(stateMachine, outputFolder,
-				LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
-				false, true);
+		// we disable this feature for now, as models are too large for it
+		// serializeHypothesis(stateMachine, outputFolder,
+		// LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
+		// false, true);
 
 		extractorResult.setLearnedModelFile(new File(outputFolder,
 				LEARNED_MODEL_FILENAME));
