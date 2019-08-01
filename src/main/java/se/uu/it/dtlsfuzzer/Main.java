@@ -14,6 +14,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import com.google.common.io.Files;
 
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
@@ -75,27 +76,17 @@ public class Main {
 	private static void copyArgsToOutDir(String[] args, String outDir)
 			throws IOException {
 		File file = Paths.get(outDir, ARGS_FILE).toFile();
-		try (FileWriter fw = new FileWriter(file)) {
-			PrintWriter pw = new PrintWriter(fw);
-			for (String arg : args) {
-				if (arg.startsWith("@")) {
-					String argsFile = arg.substring(1);
-					if (!new File(argsFile).exists()) {
-						LOGGER.error("Arguments file " + argsFile
-								+ "has been moved ");
-					} else {
-						try (FileReader fr = new FileReader(argsFile)) {
-							char[] charBuf = new char[10000];
-							while (fr.read(charBuf) != -1) {
-								pw.write(charBuf);
-							}
-						}
-					}
+		for (String arg : args) {
+			if (arg.startsWith("@")) {
+				String argsFileName = arg.substring(1);
+				File argsFile = new File(argsFileName);
+				if (!argsFile.exists()) {
+					LOGGER.error("Arguments file " + argsFile
+							+ "has been moved ");
 				} else {
-					pw.println(arg);
+					Files.copy(argsFile, file);
 				}
-			}
-			pw.close();
+			} 
 		}
 	}
 }
