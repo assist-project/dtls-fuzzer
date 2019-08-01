@@ -23,15 +23,15 @@ public class TlsOutput {
 	public static final String TIMEOUT = "TIMEOUT";
 
 	public static TlsOutput timeout() {
-		return new TlsOutput(new String[]{TIMEOUT});
+		return new TlsOutput(TIMEOUT);
 	}
 
 	public static TlsOutput socketClosed() {
-		return new TlsOutput(new String[]{"SOCKET_CLOSED"});
+		return new TlsOutput("SOCKET_CLOSED");
 	}
 
 	public static TlsOutput disabled() {
-		return new TlsOutput(new String[]{"DISABLED"});
+		return new TlsOutput("DISABLED");
 	}
 
 	// fields used in equals
@@ -44,7 +44,8 @@ public class TlsOutput {
 	private List<ProtocolMessage> messages;
 	private String applicationOutput = null;
 
-	public TlsOutput() {
+	public TlsOutput(String messageHeader) {
+		this.outputHeader = messageHeader;
 	}
 
 	public TlsOutput(String[] messageStrings) {
