@@ -17,7 +17,7 @@ import de.learnlib.api.SULException;
  */
 public class NonDeterminismRetryingSUL<I, O> implements SUL<I, O> {
 	private final SUL<I, O> sul;
-	private final ObservationTree<I, O> root = new ObservationTree<I, O>();
+	private final ObservationTree<I, O> root;
 	private final List<I> inputs = new ArrayList<>();
 	private final List<O> outputs = new ArrayList<>();
 	private int retries;
@@ -26,7 +26,14 @@ public class NonDeterminismRetryingSUL<I, O> implements SUL<I, O> {
 	// the number of confirmation retries should be high
 	public NonDeterminismRetryingSUL(SUL<I, O> sul, int confirmationRetries,
 			Writer log) {
+		this(sul, new ObservationTree<I, O>(), confirmationRetries, log);
+	}
+
+	// use an existing cache
+	public NonDeterminismRetryingSUL(SUL<I, O> sul,
+			ObservationTree<I, O> cache, int confirmationRetries, Writer log) {
 		this.sul = sul;
+		this.root = cache;
 		this.retries = confirmationRetries;
 		this.log = new PrintWriter(log);
 	}

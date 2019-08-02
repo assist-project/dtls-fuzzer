@@ -26,6 +26,11 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 	private ObservationTree<I, O> root;
 	private SUL<I, O> sul;
 
+	public CachingSULOracle(SUL<I, O> sul, ObservationTree<I, O> cache) {
+		this.sul = sul;
+		this.root = cache;
+	}
+
 	public CachingSULOracle(SUL<I, O> sul) {
 		root = new ObservationTree<I, O>();
 		this.sul = sul;

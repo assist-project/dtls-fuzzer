@@ -2,7 +2,6 @@ package se.uu.it.dtlsfuzzer.config;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import com.beust.jcommander.Parameter;
 
@@ -43,6 +42,9 @@ public class LearningConfig {
 
 	@Parameter(names = "-logQueries", description = "Log queries to an output false")
 	private boolean logQueries = false;
+
+	@Parameter(names = "-dontCacheTests", description = "Do not cache tests to limit the memory footprint")
+	private boolean dontCacheTests = false;
 
 	public boolean doLogQueries() {
 		return logQueries;
@@ -88,4 +90,7 @@ public class LearningConfig {
 		return seed;
 	}
 
+	public boolean dontCacheTests() {
+		return dontCacheTests;
+	}
 }

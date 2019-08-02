@@ -15,11 +15,12 @@ import com.google.common.io.Files;
 
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
+import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.SUL;
 import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.oracles.ResetCounterSUL;
+import de.learnlib.oracles.SULOracle;
 import de.learnlib.oracles.SymbolCounterSUL;
-import de.rub.nds.tlsattacker.core.config.Config;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -27,6 +28,7 @@ import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSUL;
+import se.uu.it.dtlsfuzzer.sut.ObservationTree;
 import se.uu.it.dtlsfuzzer.sut.TlsProcessWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsSUL;
 import se.uu.it.dtlsfuzzer.sut.io.AlphabetFactory;
@@ -79,12 +81,15 @@ public class Extractor {
 					finderConfig.getSulDelegate());
 		}
 
+		// the cache is an observation tree
+		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
+
 		// we use a wrapper to check for non-determinism, we could use its
 		// observation tree as cache
 		try {
 			tlsSystemUnderTest = new NonDeterminismRetryingSUL<TlsInput, TlsOutput>(
-					tlsSystemUnderTest, NON_DET_ATTEMPTS, new FileWriter(
-							new File(outputFolder, NON_DET_FILENAME)));
+					tlsSystemUnderTest, cache, NON_DET_ATTEMPTS,
+					new FileWriter(new File(outputFolder, NON_DET_FILENAME)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -102,15 +107,23 @@ public class Extractor {
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
 		CachingSULOracle<TlsInput, TlsOutput> sulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
-				tlsSystemUnderTest);
+				tlsSystemUnderTest, cache);
 
 		// setting up membership and equivalence oracles
 		MealyLearner<TlsInput, TlsOutput> algorithm = LearnerFactory
 				.loadLearner(finderConfig.getLearningConfig(), sulOracle,
 						alphabet);
+
+		// if the user decides not to cache tests, we use a SULOracle wrapper
+		// instead of a Caching one.
+		MealyMembershipOracle<TlsInput, TlsOutput> testOracle = sulOracle;
+		if (finderConfig.getLearningConfig().dontCacheTests()) {
+			testOracle = new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest);
+		}
+
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory
 				.loadTester(finderConfig.getLearningConfig(),
-						tlsSystemUnderTest, sulOracle, alphabet);
+						tlsSystemUnderTest, testOracle, alphabet);
 
 		// running learning and collecting important statistics
 		MealyMachine<?, TlsInput, ?, TlsOutput> hypothesis = null;
@@ -154,6 +167,7 @@ public class Extractor {
 		// exporting to output files
 		serializeHypothesis(stateMachine, outputFolder, LEARNED_MODEL_FILENAME,
 				true, false);
+
 		// we disable this feature for now, as models are too large for it
 		// serializeHypothesis(stateMachine, outputFolder,
 		// LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
