@@ -1,8 +1,7 @@
 package se.uu.it.dtlsfuzzer.execute;
 
-import java.util.Arrays;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,12 +11,11 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.GenericReceiveAction;
-import se.uu.it.dtlsfuzzer.Main;
 import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 
 public abstract class AbstractInputExecutor {
-	private static final Logger LOGGER = LogManager.getLogger(Main.class
+	private static final Logger LOGGER = LogManager.getLogger(AbstractInputExecutor.class
 			.getName());
 
 	public TlsOutput execute(TlsInput input, State state,

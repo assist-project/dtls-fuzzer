@@ -22,6 +22,7 @@ import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 import se.uu.it.dtlsfuzzer.execute.TestingInputExecutor;
 import se.uu.it.dtlsfuzzer.learn.Extractor;
 import se.uu.it.dtlsfuzzer.learn.Extractor.ExtractorResult;
+import se.uu.it.dtlsfuzzer.sut.ResettingWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsProcessWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsSUL;
 import se.uu.it.dtlsfuzzer.sut.io.AlphabetFactory;
@@ -90,6 +91,8 @@ public class DtlsFuzzer {
 		if (config.getSulDelegate().getCommand() != null) {
 
 			tlsSut = new TlsProcessWrapper(tlsSut, config.getSulDelegate());
+		} else if (config.getSulDelegate().getResetPort() != null) {
+			tlsSut = new ResettingWrapper<TlsInput, TlsOutput>(tlsSut, config.getSulDelegate());
 		}
 		SULOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSut);

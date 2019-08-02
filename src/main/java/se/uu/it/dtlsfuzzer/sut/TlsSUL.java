@@ -5,7 +5,6 @@
  */
 package se.uu.it.dtlsfuzzer.sut;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
@@ -126,7 +125,8 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 			LOG.debug("received:" + output);
 
 			if (output == TlsOutput.disabled()
-					|| context.getStepContext().isDisabled()) {
+					|| context.getStepContext().isDisabled()
+					|| !output.isAlive()) {
 				// this should lead to a disabled sink state
 				isDisabled = true;
 			}
@@ -134,6 +134,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			closed = true;
+			isDisabled = true;
 			return TlsOutput.socketClosed();
 		}
 	}

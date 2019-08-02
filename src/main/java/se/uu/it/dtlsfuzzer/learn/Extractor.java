@@ -29,6 +29,7 @@ import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSUL;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
+import se.uu.it.dtlsfuzzer.sut.ResettingWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsProcessWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsSUL;
 import se.uu.it.dtlsfuzzer.sut.io.AlphabetFactory;
@@ -79,6 +80,8 @@ public class Extractor {
 		if (finderConfig.getSulDelegate().getCommand() != null) {
 			tlsSystemUnderTest = new TlsProcessWrapper(tlsSystemUnderTest,
 					finderConfig.getSulDelegate());
+		} else if (finderConfig.getSulDelegate().getResetPort() != null) {
+			tlsSystemUnderTest = new ResettingWrapper<TlsInput, TlsOutput>(tlsSystemUnderTest, finderConfig.getSulDelegate());
 		}
 
 		// the cache is an observation tree
