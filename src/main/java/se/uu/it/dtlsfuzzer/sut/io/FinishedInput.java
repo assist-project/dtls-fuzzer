@@ -1,11 +1,16 @@
 package se.uu.it.dtlsfuzzer.sut.io;
 
+import javax.xml.bind.annotation.XmlAttribute;
+
 import de.rub.nds.tlsattacker.core.protocol.message.FinishedMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
 
 public class FinishedInput extends NamedTlsInput {
+	
+	@XmlAttribute(name = "resetMSeq", required = true)
+	private boolean resetMSeq = false;
 
 	public FinishedInput() {
 		super("FINISHED");
@@ -24,7 +29,16 @@ public class FinishedInput extends NamedTlsInput {
 		state.getTlsContext().setDtlsNextSendSequenceNumber(
 				state.getTlsContext().getDtlsCurrentSendSequenceNumber() + 1);
 	}
-
+	
+	public void postReceiveUpdate(TlsOutput output, State state,
+			ExecutionContext context) {
+		if (resetMSeq) {
+			if (output.getMessageHeader().contains("CHANGE_CIPHER_SPEC")) {
+				state.getTlsContext().setDtlsNextSendSequenceNumber(0);
+			} 
+		}
+	}
+	
 	@Override
 	public TlsInputType getInputType() {
 		return TlsInputType.HANDSHAKE;
