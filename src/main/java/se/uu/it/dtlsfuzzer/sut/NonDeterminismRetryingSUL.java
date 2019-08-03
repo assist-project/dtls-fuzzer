@@ -69,6 +69,7 @@ public class NonDeterminismRetryingSUL<I, O> implements SUL<I, O> {
 			// if we rerun the sequence $retries times?
 			result = retryInputs(inputs, retries);
 			log.println("Non-determinism could not be confirmed. Learning can continue");
+			log.flush();
 		}
 		this.outputs.add(result);
 		return result;
