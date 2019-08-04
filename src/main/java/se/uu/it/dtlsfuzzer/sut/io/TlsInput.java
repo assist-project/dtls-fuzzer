@@ -2,6 +2,7 @@ package se.uu.it.dtlsfuzzer.sut.io;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
@@ -14,7 +15,10 @@ public abstract class TlsInput {
 
 	@XmlTransient
 	private AbstractInputExecutor preferredExecutor = null;
-
+	
+	@XmlAttribute(name = "extendedWait", required = false)
+	private Integer extendedWait;
+	
 	protected TlsInput() {
 	}
 
@@ -46,6 +50,10 @@ public abstract class TlsInput {
 	 * Updates the context after sending the input.
 	 */
 	public void postSendUpdate(State state, ExecutionContext context) {
+	}
+	
+	public Integer getExtendedWait() {
+		return extendedWait;
 	}
 
 	/**

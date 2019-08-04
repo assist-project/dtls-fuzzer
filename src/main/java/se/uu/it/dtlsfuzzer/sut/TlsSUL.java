@@ -43,7 +43,6 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 	private int count = 0;
 
 	private SulDelegate delegate;
-
 	private AbstractInputExecutor defaultExecutor;
 	private boolean isDisabled;
 
@@ -118,11 +117,8 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 				closed = true;
 				return TlsOutput.socketClosed();
 			}
-			LOG.debug("sent:" + in.toString());
-			state.getTlsContext().setTalkingConnectionEndType(
-					state.getTlsContext().getChooser().getConnectionEndType());
-			output = executor.execute(in, state, context);
-			LOG.debug("received:" + output);
+			
+			output = executeInput(in, executor);
 
 			if (output == TlsOutput.disabled()
 					|| context.getStepContext().isDisabled()
@@ -137,6 +133,19 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 			isDisabled = true;
 			return TlsOutput.socketClosed();
 		}
+	}
+	
+	private TlsOutput executeInput(TlsInput in, AbstractInputExecutor executor) {
+		LOG.debug("sent:" + in.toString());
+		state.getTlsContext().setTalkingConnectionEndType(
+				state.getTlsContext().getChooser().getConnectionEndType());
+		long originalTimeout = state.getTlsContext().getTransportHandler().getTimeout();
+		if (in.getExtendedWait() != null)
+			state.getTlsContext().getTransportHandler().setTimeout(originalTimeout + in.getExtendedWait());
+		TlsOutput output = executor.execute(in, state, context);
+		LOG.debug("received:" + output);
+		state.getTlsContext().getTransportHandler().setTimeout(originalTimeout);
+		return output;
 	}
 
 	private Config getNewSulConfig(SulDelegate delegate) {
