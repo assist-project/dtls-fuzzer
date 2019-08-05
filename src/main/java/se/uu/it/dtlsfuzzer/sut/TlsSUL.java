@@ -26,7 +26,7 @@ import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 /**
  * Note: SUT = System Under Test SUL = System Under Learning
  *
- * @author robert
+ * @author robert, paul
  */
 public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
@@ -36,7 +36,17 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
 	private Config config;
 
+	/**
+	 * the sut is closed if the it crashed resulting in IMCP packets, or it
+	 * simply terminated the connection
+	 */
 	private boolean closed = false;
+
+	/**
+	 * the sut is disabled if an input has disabled it as a result of a learning
+	 * purpose
+	 */
+	private boolean disabled = false;
 
 	private long resetWait = 0;
 
@@ -44,7 +54,6 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
 	private SulDelegate delegate;
 	private AbstractInputExecutor defaultExecutor;
-	private boolean isDisabled;
 
 	public TlsSUL(SulDelegate delegate, AbstractInputExecutor defaultExecutor) {
 		this.delegate = delegate;
@@ -76,7 +85,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		closed = false;
 		resetWait = delegate.getResetWait();
 		context = new ExecutionContext();
-		isDisabled = false;
+		disabled = false;
 		LOG.error("Start " + count++);
 	}
 
@@ -103,7 +112,8 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		if (executor == null) {
 			executor = defaultExecutor;
 		}
-		if (isDisabled) {
+
+		if (disabled) {
 			return TlsOutput.disabled();
 		}
 
@@ -121,16 +131,18 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 			output = executeInput(in, executor);
 
 			if (output == TlsOutput.disabled()
-					|| context.getStepContext().isDisabled()
-					|| !output.isAlive()) {
+					|| context.getStepContext().isDisabled()) {
 				// this should lead to a disabled sink state
-				isDisabled = true;
+				disabled = true;
+			}
+
+			if (state.getTlsContext().isReceivedTransportHandlerException()) {
+				closed = true;
 			}
 			return output;
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			closed = true;
-			isDisabled = true;
 			return TlsOutput.socketClosed();
 		}
 	}

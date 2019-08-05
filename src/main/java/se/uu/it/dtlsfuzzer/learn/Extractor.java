@@ -27,6 +27,7 @@ import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
+import se.uu.it.dtlsfuzzer.sut.IsAliveWrapper;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSUL;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
 import se.uu.it.dtlsfuzzer.sut.ResettingWrapper;
@@ -80,10 +81,12 @@ public class Extractor {
 		if (finderConfig.getSulDelegate().getCommand() != null) {
 			tlsSystemUnderTest = new TlsProcessWrapper(tlsSystemUnderTest,
 					finderConfig.getSulDelegate());
-		} else if (finderConfig.getSulDelegate().getResetPort() != null) {
+		}
+		if (finderConfig.getSulDelegate().getResetPort() != null) {
 			tlsSystemUnderTest = new ResettingWrapper<TlsInput, TlsOutput>(
 					tlsSystemUnderTest, finderConfig.getSulDelegate());
 		}
+		tlsSystemUnderTest = new IsAliveWrapper(tlsSystemUnderTest);
 
 		// the cache is an observation tree
 		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();

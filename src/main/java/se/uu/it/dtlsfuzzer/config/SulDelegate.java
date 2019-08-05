@@ -42,6 +42,9 @@ public class SulDelegate extends ClientDelegate {
 	@Parameter(names = "-resetAddress", required = false, description = "Address to which to send a reset command")
 	private String resetAddress = "localhost";
 
+	@Parameter(names = "-resetCommandWait", required = false, description = "Time waited after sending a reset command")
+	private Long resetCommandWait = 0L;
+
 	@Parameter(names = "-sulConfig", required = false, description = "Configuration for the SUL")
 	private String sulConfig = null;
 
@@ -91,6 +94,10 @@ public class SulDelegate extends ClientDelegate {
 
 	public Long getRunWait() {
 		return runWait;
+	}
+
+	public Long getResetCommandWait() {
+		return resetCommandWait;
 	}
 
 	public void setRunWait(Long runWait) {

@@ -116,9 +116,6 @@ public class TlsOutput {
 	public String getOutputHeader() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(outputHeader);
-		if (!alive) {
-			builder.append("[crashed]");
-		}
 		return builder.toString();
 	}
 
@@ -126,6 +123,7 @@ public class TlsOutput {
 		StringBuilder builder = new StringBuilder();
 
 		LinkedHashMap<String, String> printMap = new LinkedHashMap<>();
+		printMap.put("isAlive", Boolean.toString(isAlive()));
 		if (messages != null && !messages.isEmpty()) {
 			printMap.put("messages", messages.toString());
 		}

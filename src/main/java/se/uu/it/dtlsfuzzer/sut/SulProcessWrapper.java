@@ -39,10 +39,10 @@ public class SulProcessWrapper<I, O> implements SUL<I, O> {
 
 	@Override
 	public void pre() {
+		sul.pre();
 		if (trigger == ProcessLaunchTrigger.NEW_TEST) {
 			handler.launchProcess();
 		}
-		sul.pre();
 	}
 
 	@Override

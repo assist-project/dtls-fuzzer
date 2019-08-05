@@ -16,11 +16,13 @@ public class ResettingWrapper<I, O> implements SUL<I, O> {
 
 	private DatagramSocket resetSocket;
 	private InetSocketAddress resetAddress;
+	private long resetCommandWait;
 
 	public ResettingWrapper(SUL<I, O> sul, SulDelegate sulDelegate) {
 		this.sul = sul;
 		resetAddress = new InetSocketAddress(sulDelegate.getResetAddress(),
 				sulDelegate.getResetPort());
+		resetCommandWait = sulDelegate.getResetCommandWait();
 		try {
 			resetSocket = new DatagramSocket();
 		} catch (SocketException e) {
@@ -30,16 +32,20 @@ public class ResettingWrapper<I, O> implements SUL<I, O> {
 
 	@Override
 	public void pre() {
+		sul.pre();
 		byte[] buf = "reset".getBytes();
 		DatagramPacket packet = new DatagramPacket(buf, buf.length,
 				resetAddress);
 		try {
 			resetSocket.send(packet);
+			if (resetCommandWait > 0)
+				Thread.sleep(resetCommandWait);
 		} catch (IOException e) {
 			Runtime.getRuntime().runFinalization();
 			System.exit(0);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-		sul.pre();
 	}
 
 	@Override
