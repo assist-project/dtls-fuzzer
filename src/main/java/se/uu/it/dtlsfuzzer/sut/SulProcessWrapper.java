@@ -5,14 +5,15 @@ import de.learnlib.api.SULException;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
 
 /**
- * A SUL wrapper which joins the SUL with a handler for the process that
- * launches/terminates it.
+ * A SUL wrapper responsible for launching/terminating the process starting up
+ * the SUL. Launches can be made at two distinct trigger points: (1) once at the
+ * start, with termination taking place at the end of learning/testing; (2)
+ * before executing each test, with termination done after the test has been
+ * executed.
  */
 public class SulProcessWrapper<I, O> implements SUL<I, O> {
 
-	private static boolean started = false;
-	// TODO we are limited to one process because of this.
-	protected static ProcessHandler handler = null;
+	protected ProcessHandler handler = null;
 
 	private SUL<I, O> sul;
 	// TODO having the trigger here is not nice since it limits the trigger
@@ -24,8 +25,7 @@ public class SulProcessWrapper<I, O> implements SUL<I, O> {
 		if (handler == null)
 			handler = new ProcessHandler(sulDelegate);
 		this.trigger = sulDelegate.getProcessTrigger();
-		if (trigger == ProcessLaunchTrigger.START && !started) {
-			started = true;
+		if (trigger == ProcessLaunchTrigger.START && !handler.hasLaunched()) {
 			handler.launchProcess();
 			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 				@Override

@@ -35,9 +35,12 @@ public class SulDelegate extends ClientDelegate {
 
 	@Parameter(names = "-runWait", required = false, description = "Time waited after running each TLS command")
 	private Long runWait = 0L;
-	
+
 	@Parameter(names = "-resetPort", required = false, description = "Port to which to send a reset command")
 	private Integer resetPort = null;
+
+	@Parameter(names = "-resetAddress", required = false, description = "Address to which to send a reset command")
+	private String resetAddress = "localhost";
 
 	@Parameter(names = "-sulConfig", required = false, description = "Configuration for the SUL")
 	private String sulConfig = null;
@@ -121,8 +124,12 @@ public class SulDelegate extends ClientDelegate {
 	public ProcessLaunchTrigger getProcessTrigger() {
 		return processTrigger;
 	}
-	
+
 	public Integer getResetPort() {
 		return resetPort;
+	}
+
+	public String getResetAddress() {
+		return resetAddress;
 	}
 }

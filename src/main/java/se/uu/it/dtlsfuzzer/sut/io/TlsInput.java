@@ -15,10 +15,10 @@ public abstract class TlsInput {
 
 	@XmlTransient
 	private AbstractInputExecutor preferredExecutor = null;
-	
+
 	@XmlAttribute(name = "extendedWait", required = false)
 	private Integer extendedWait;
-	
+
 	protected TlsInput() {
 	}
 
@@ -51,7 +51,7 @@ public abstract class TlsInput {
 	 */
 	public void postSendUpdate(State state, ExecutionContext context) {
 	}
-	
+
 	public Integer getExtendedWait() {
 		return extendedWait;
 	}

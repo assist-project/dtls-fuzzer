@@ -81,7 +81,8 @@ public class Extractor {
 			tlsSystemUnderTest = new TlsProcessWrapper(tlsSystemUnderTest,
 					finderConfig.getSulDelegate());
 		} else if (finderConfig.getSulDelegate().getResetPort() != null) {
-			tlsSystemUnderTest = new ResettingWrapper<TlsInput, TlsOutput>(tlsSystemUnderTest, finderConfig.getSulDelegate());
+			tlsSystemUnderTest = new ResettingWrapper<TlsInput, TlsOutput>(
+					tlsSystemUnderTest, finderConfig.getSulDelegate());
 		}
 
 		// the cache is an observation tree

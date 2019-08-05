@@ -27,6 +27,7 @@ public class ProcessHandler {
 	private OutputStream output;
 	private OutputStream error;
 	private long runWait;
+	private boolean hasLaunched;
 
 	private ProcessHandler(String command, long runWait) {
 		// '+' after \\s takes care of multiple consecutive spaces so that they
@@ -56,21 +57,21 @@ public class ProcessHandler {
 		pb.directory(procDir);
 	}
 
-	public long getRunWait() {
-		return runWait;
-	}
-
-	public void setRunWait(long runWait) {
-		this.runWait = runWait;
-	}
-
 	/**
 	 * Launches a process which executes the handler's command. Does nothing if
 	 * the process has been launched already.
+	 * 
+	 * Sets {@link ProcessHandler#hasLaunched} to true on successful launch of
+	 * the process, making {@link ProcessHandler#hasLaunched()} return true
+	 * thereafter.
+	 * 
+	 * After launching, it sleeps for {@link ProcessHandler#runWait}
+	 * milliseconds.
 	 */
 	public void launchProcess() {
 		try {
 			if (currentProcess == null) {
+				hasLaunched = true;
 				currentProcess = pb.start();
 				if (output != null)
 					inheritIO(currentProcess.getInputStream(), new PrintStream(
@@ -104,6 +105,14 @@ public class ProcessHandler {
 
 	public boolean isAlive() {
 		return currentProcess != null && currentProcess.isAlive();
+	}
+
+	/**
+	 * Returns true if the process has been launched successfully at least once,
+	 * irrespective of whether it has terminated since first execution.
+	 */
+	public boolean hasLaunched() {
+		return hasLaunched;
 	}
 
 	private void inheritIO(final InputStream src, final PrintStream dest) {

@@ -15,8 +15,8 @@ import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 
 public abstract class AbstractInputExecutor {
-	private static final Logger LOGGER = LogManager.getLogger(AbstractInputExecutor.class
-			.getName());
+	private static final Logger LOGGER = LogManager
+			.getLogger(AbstractInputExecutor.class.getName());
 
 	public TlsOutput execute(TlsInput input, State state,
 			ExecutionContext context) {

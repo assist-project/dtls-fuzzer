@@ -92,7 +92,8 @@ public class DtlsFuzzer {
 
 			tlsSut = new TlsProcessWrapper(tlsSut, config.getSulDelegate());
 		} else if (config.getSulDelegate().getResetPort() != null) {
-			tlsSut = new ResettingWrapper<TlsInput, TlsOutput>(tlsSut, config.getSulDelegate());
+			tlsSut = new ResettingWrapper<TlsInput, TlsOutput>(tlsSut,
+					config.getSulDelegate());
 		}
 		SULOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSut);
