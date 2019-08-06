@@ -11,6 +11,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
 
 public class ClientHelloInput extends NamedTlsInput {
 
@@ -57,7 +58,7 @@ public class ClientHelloInput extends NamedTlsInput {
 		return TlsInputType.HANDSHAKE;
 	}
 
-	public void postSendUpdate(State state) {
+	public void postSendUpdate(State state, ExecutionContext context) {
 		// the second conjunction is used in case TLS-Attacker is updated
 		// to work also with 1-CH DTLS handshakes.
 		// (in which case, the clienthello is digested)

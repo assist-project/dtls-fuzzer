@@ -12,8 +12,6 @@ import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismException;
-import se.uu.it.dtlsfuzzer.sut.ObservationTree;
-import se.uu.it.dtlsfuzzer.sut.RemovalException;
 
 /**
  * Adding CE checking at the SULOracle level allows us to avoid having to
