@@ -2,18 +2,17 @@ package se.uu.it.dtlsfuzzer.sut;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.learnlib.api.MembershipOracle;
 import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.Query;
-import de.learnlib.api.SUL;
+import de.learnlib.cache.sul.SULCache;
 import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Word;
-import net.automatalib.words.WordBuilder;
 
 /**
  * This class is adapted from {@link SULOracle}. Unfortunately, the
@@ -21,41 +20,34 @@ import net.automatalib.words.WordBuilder;
  */
 public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
-	private static final Logger LOG = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager
+			.getLogger(CachingSULOracle.class);
 
 	private ObservationTree<I, O> root;
-	private SUL<I, O> sul;
 
-	public CachingSULOracle(SUL<I, O> sul, ObservationTree<I, O> cache) {
-		this.sul = sul;
+	private MembershipOracle<I, Word<O>> sulOracle;
+
+	public CachingSULOracle(MembershipOracle<I, Word<O>> sulOracle,
+			ObservationTree<I, O> cache) {
 		this.root = cache;
-	}
-
-	public CachingSULOracle(SUL<I, O> sul) {
-		root = new ObservationTree<I, O>();
-		this.sul = sul;
+		this.sulOracle = sulOracle;
 	}
 
 	@Override
 	public void processQueries(Collection<? extends Query<I, Word<O>>> queries) {
-		processQueries(sul, queries);
-	}
-
-	private void processQueries(SUL<I, O> sul,
-			Collection<? extends Query<I, Word<O>>> queries) {
 		for (Query<I, Word<O>> q : queries) {
 			Word<I> fullInput = q.getPrefix().concat(q.getSuffix());
 			Word<O> fullOutput = answerFromCache(fullInput);
 			if (fullOutput == null) {
-				fullOutput = answer(fullInput);
+				fullOutput = sulOracle.answerQuery(fullInput);
 				storeToCache(fullInput, fullOutput);
 			} else {
-				LOG.info("CACHE HIT!");
+				LOGGER.info("CACHE HIT!");
 			}
 
 			Word<O> output = fullOutput.suffix(q.getSuffix().size());
 			q.answer(output);
-			LOG.info(q.toString());
+			LOGGER.info(q.toString());
 		}
 	}
 
@@ -66,21 +58,5 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 	@Nullable
 	private Word<O> answerFromCache(Word<I> input) {
 		return root.answerQuery(input);
-	}
-
-	@Nonnull
-	private Word<O> answer(Word<I> input) {
-		sul.pre();
-		try {
-
-			WordBuilder<O> wb = new WordBuilder<>(input.length());
-			for (I sym : input) {
-				wb.add(sul.step(sym));
-			}
-
-			return wb.toWord();
-		} finally {
-			sul.post();
-		}
 	}
 }

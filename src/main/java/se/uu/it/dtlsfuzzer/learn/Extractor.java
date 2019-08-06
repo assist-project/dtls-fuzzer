@@ -114,18 +114,28 @@ public class Extractor {
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
 		CachingSULOracle<TlsInput, TlsOutput> sulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
-				tlsSystemUnderTest, cache);
+				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache);
 
 		// setting up membership and equivalence oracles
 		MealyLearner<TlsInput, TlsOutput> algorithm = LearnerFactory
 				.loadLearner(finderConfig.getLearningConfig(), sulOracle,
 						alphabet);
 
-		// if the user decides not to cache tests, we use a SULOracle wrapper
-		// instead of a Caching one.
-		MealyMembershipOracle<TlsInput, TlsOutput> testOracle = sulOracle;
-		if (finderConfig.getLearningConfig().dontCacheTests()) {
-			testOracle = new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest);
+		// we apply a CE verification wrapper to check counterexamples before
+		// they are returned to the EQ oracle
+		int ceReruns = finderConfig.getLearningConfig().getCeReruns();
+		MealyMembershipOracle<TlsInput, TlsOutput> testOracle = new SULOracle<TlsInput, TlsOutput>(
+				tlsSystemUnderTest);
+		if (ceReruns > 0) {
+			testOracle = new CECheckingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
+					ceReruns, testOracle, () -> algorithm.getHypothesisModel());
+		}
+
+		// if caching is enabled during testing, we apply a caching wrapper
+		if (!finderConfig.getLearningConfig().dontCacheTests()) {
+			testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
+					cache);
+
 		}
 
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory

@@ -135,6 +135,45 @@ public class ObservationTree<I, O> {
 		}
 	}
 
+	public void remove() {
+		if (this.parent == null) {
+			throw new RuntimeException("Cannot remove root node");
+		}
+		for (I symbol : this.parent.children.keySet()) {
+			if (this == this.parent.children.get(symbol)) {
+				this.parent.children.remove(symbol);
+				this.parent.outputs.remove(symbol);
+				break;
+			}
+		}
+	}
+
+	public void remove(Word<I> accesSequence) {
+		remove(accesSequence.asList());
+	}
+
+	public void remove(List<I> accessSequence) throws RemovalException {
+
+		if (accessSequence.isEmpty()) {
+			this.remove();
+		} else {
+			ObservationTree<I, O> child = this.children.get(accessSequence
+					.get(0));
+			if (child == null) {
+				throw new RemovalException(
+						"Cannot remove branch which is not present for input\n"
+								+ accessSequence);
+			}
+			try {
+				child.remove(accessSequence.subList(1, accessSequence.size()));
+			} catch (RemovalException e) {
+				throw new RemovalException(
+						"Cannot remove branch which is not present for input\n"
+								+ accessSequence);
+			}
+		}
+	}
+
 	@Nullable
 	public Word<O> answerQuery(Word<I> word) {
 		List<I> inputChain = word.asList();

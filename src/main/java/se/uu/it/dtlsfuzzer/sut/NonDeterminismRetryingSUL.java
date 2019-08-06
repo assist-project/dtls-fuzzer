@@ -21,6 +21,7 @@ public class NonDeterminismRetryingSUL<I, O> implements SUL<I, O> {
 	private final List<I> inputs = new ArrayList<>();
 	private final List<O> outputs = new ArrayList<>();
 	private int retries;
+	// TODO we should be using the log4j framework for logging purposes
 	private PrintWriter log;
 
 	// the number of confirmation retries should be high

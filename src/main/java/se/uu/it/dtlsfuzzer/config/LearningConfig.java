@@ -46,6 +46,9 @@ public class LearningConfig {
 	@Parameter(names = "-dontCacheTests", description = "Do not cache tests to limit the memory footprint")
 	private boolean dontCacheTests = false;
 
+	@Parameter(names = "-ceReruns", description = "The number of times a CE is re-run in order for it to be confirmed")
+	private int ceReruns = 0;
+
 	public boolean doLogQueries() {
 		return logQueries;
 	}
@@ -92,5 +95,9 @@ public class LearningConfig {
 
 	public boolean dontCacheTests() {
 		return dontCacheTests;
+	}
+
+	public int getCeReruns() {
+		return ceReruns;
 	}
 }
