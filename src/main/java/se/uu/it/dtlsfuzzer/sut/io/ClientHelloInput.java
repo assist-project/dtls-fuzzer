@@ -26,7 +26,7 @@ public class ClientHelloInput extends NamedTlsInput {
 	 */
 	@XmlAttribute(name = "forceDigest", required = false)
 	private boolean forceDigest = false;
-	
+
 	/**
 	 * Include the latest session id in the client hello
 	 */
@@ -56,9 +56,9 @@ public class ClientHelloInput extends NamedTlsInput {
 			state.getConfig().setAddEllipticCurveExtension(false);
 		}
 		state.getTlsContext().getDigest().reset();
-		
+
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
-		
+
 		// we exclude the sessionId
 		if (!withSessionId) {
 			ModifiableByteArray sbyte = new ModifiableByteArray();
@@ -66,7 +66,7 @@ public class ClientHelloInput extends NamedTlsInput {
 					new byte[]{}));
 			message.setSessionId(sbyte);
 		}
-		
+
 		this.message = message;
 		return message;
 	}

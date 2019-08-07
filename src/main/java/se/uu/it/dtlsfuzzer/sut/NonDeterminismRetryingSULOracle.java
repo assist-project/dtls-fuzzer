@@ -46,7 +46,7 @@ public class NonDeterminismRetryingSULOracle<I, O>
 				log.println("Non-determinism could not be confirmed. Learning can continue");
 				log.flush();
 			}
-			query.answer(output);
+			query.answer(output.suffix(query.getSuffix().length()));
 		}
 	}
 

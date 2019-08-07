@@ -83,7 +83,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 			returnedOutput = originalOutput;
 		}
 
-		q.answer(returnedOutput);
+		q.answer(returnedOutput.suffix(q.getSuffix().length()));
 	}
 
 	private Word<O> getCheckedOutput(Word<I> input, Word<O> originalOutput,
