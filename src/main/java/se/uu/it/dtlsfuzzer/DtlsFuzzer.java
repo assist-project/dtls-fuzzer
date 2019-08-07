@@ -68,8 +68,8 @@ public class DtlsFuzzer {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 		TestRunner runner = new TestRunner(config.getTestRunnerConfig(),
 				alphabet, sutOracle);
-		List<TestRunnerResult> results = runner.runTests();
-		for (TestRunnerResult result : results) {
+		List<TestRunnerResult<TlsInput, TlsOutput>> results = runner.runTests();
+		for (TestRunnerResult<TlsInput, TlsOutput> result : results) {
 			LOGGER.error(result.toString());
 			if (config.getSpecification() != null) {
 				Definitions definitions = DefinitionsFactory

@@ -28,7 +28,7 @@ import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.IsAliveWrapper;
-import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSUL;
+import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
 import se.uu.it.dtlsfuzzer.sut.ResettingWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsProcessWrapper;
@@ -88,19 +88,6 @@ public class Extractor {
 		}
 		tlsSystemUnderTest = new IsAliveWrapper(tlsSystemUnderTest);
 
-		// the cache is an observation tree
-		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
-
-		// we use a wrapper to check for non-determinism, we could use its
-		// observation tree as cache
-		try {
-			tlsSystemUnderTest = new NonDeterminismRetryingSUL<TlsInput, TlsOutput>(
-					tlsSystemUnderTest, cache, NON_DET_ATTEMPTS,
-					new FileWriter(new File(outputFolder, NON_DET_FILENAME)));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		SymbolCounterSUL<TlsInput, TlsOutput> symbolCounterSul = new SymbolCounterSUL<>(
 				"symbol counter", tlsSystemUnderTest);
 		ResetCounterSUL<TlsInput, TlsOutput> resetCounterSul = new ResetCounterSUL<>(
@@ -111,31 +98,53 @@ public class Extractor {
 				resetCounterSul.getStatisticalData());
 		tlsSystemUnderTest = resetCounterSul;
 
+		// the cache is an observation tree
+		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
+
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
-		CachingSULOracle<TlsInput, TlsOutput> sulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
+		CachingSULOracle<TlsInput, TlsOutput> cachedSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
 				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache);
+
+		// TODO the LOGGER instances should handle this, instead of us passing
+		// non det writers as arguments.
+		FileWriter nonDetWriter = null;
+		try {
+			nonDetWriter = new FileWriter(new File(outputFolder,
+					NON_DET_FILENAME));
+		} catch (IOException e1) {
+			throw new RuntimeException(
+					"Could not create non-determinism file writer");
+		}
+
+		// a SUL oracle which uses the cached oracle and attempts to re-run
+		// queries in case non-determinism is detected
+		NonDeterminismRetryingSULOracle<TlsInput, TlsOutput> nonDetSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(
+				cachedSulOracle, NON_DET_ATTEMPTS, nonDetWriter);
 
 		// setting up membership and equivalence oracles
 		MealyLearner<TlsInput, TlsOutput> algorithm = LearnerFactory
-				.loadLearner(finderConfig.getLearningConfig(), sulOracle,
+				.loadLearner(finderConfig.getLearningConfig(), nonDetSulOracle,
 						alphabet);
 
-		// we apply a CE verification wrapper to check counterexamples before
-		// they are returned to the EQ oracle
-		int ceReruns = finderConfig.getLearningConfig().getCeReruns();
 		MealyMembershipOracle<TlsInput, TlsOutput> testOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSystemUnderTest);
-		if (ceReruns > 0) {
-			testOracle = new CECheckingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
-					ceReruns, testOracle, () -> algorithm.getHypothesisModel());
+
+		// in case sanitization is enabled, we apply a CE verification wrapper
+		// to
+		// check counterexamples before they are returned to the EQ oracle
+		if (finderConfig.getLearningConfig().isCeSanitization()) {
+			testOracle = new CESanitizingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
+					finderConfig.getLearningConfig().getCeReruns(), testOracle,
+					() -> algorithm.getHypothesisModel(), finderConfig
+							.getLearningConfig().isProbabilisticSanitization(),
+					nonDetWriter);
 		}
 
 		// if caching is enabled during testing, we apply a caching wrapper
 		if (!finderConfig.getLearningConfig().dontCacheTests()) {
 			testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
 					cache);
-
 		}
 
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory
