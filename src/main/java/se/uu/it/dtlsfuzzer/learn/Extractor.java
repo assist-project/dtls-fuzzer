@@ -27,10 +27,12 @@ import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
+import se.uu.it.dtlsfuzzer.sut.ExperimentTimeoutException;
 import se.uu.it.dtlsfuzzer.sut.IsAliveWrapper;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
 import se.uu.it.dtlsfuzzer.sut.ResettingWrapper;
+import se.uu.it.dtlsfuzzer.sut.TimeoutWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsProcessWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsSUL;
 import se.uu.it.dtlsfuzzer.sut.io.AlphabetFactory;
@@ -85,6 +87,11 @@ public class Extractor {
 		if (finderConfig.getSulDelegate().getResetPort() != null) {
 			tlsSystemUnderTest = new ResettingWrapper<TlsInput, TlsOutput>(
 					tlsSystemUnderTest, finderConfig.getSulDelegate());
+		}
+		if (finderConfig.getLearningConfig().getTimeLimit() != null) {
+			tlsSystemUnderTest = new TimeoutWrapper<TlsInput, TlsOutput>(
+					tlsSystemUnderTest, finderConfig.getLearningConfig()
+							.getTimeLimit());
 		}
 		tlsSystemUnderTest = new IsAliveWrapper(tlsSystemUnderTest);
 
@@ -154,33 +161,43 @@ public class Extractor {
 		// running learning and collecting important statistics
 		MealyMachine<?, TlsInput, ?, TlsOutput> hypothesis = null;
 		DefaultQuery<TlsInput, Word<TlsOutput>> counterExample = null;
+		boolean success = false;
 		int rounds = 0;
 
 		algorithm.startLearning();
 		tracker.startLearning(finderConfig, alphabet);
-		do {
-			hypothesis = algorithm.getHypothesisModel();
-			StateMachine stateMachine = new StateMachine(hypothesis, alphabet);
-			extractorResult.addHypothesis(stateMachine);
-			// it is useful to print intermediate hypothesis as learning is
-			// running
-			serializeHypothesis(stateMachine, outputFolder, "hyp"
-					+ (rounds + 1) + ".dot", false, false);
+		try {
+			do {
+				hypothesis = algorithm.getHypothesisModel();
+				StateMachine stateMachine = new StateMachine(hypothesis,
+						alphabet);
+				extractorResult.addHypothesis(stateMachine);
+				// it is useful to print intermediate hypothesis as learning is
+				// running
+				serializeHypothesis(stateMachine, outputFolder, "hyp"
+						+ (rounds + 1) + ".dot", false, false);
 
-			tracker.newHypothesis(stateMachine);
-			counterExample = equivalenceAlgorithm.findCounterExample(
-					hypothesis, alphabet);
-			if (counterExample != null) {
-				LOG.warning("Counterexample: " + counterExample.toString());
-				tracker.newCounterExample(counterExample);
-				algorithm.refineHypothesis(counterExample);
-			}
-			rounds++;
-		} while (counterExample != null);
+				tracker.newHypothesis(stateMachine);
+				counterExample = equivalenceAlgorithm.findCounterExample(
+						hypothesis, alphabet);
+				if (counterExample != null) {
+					LOG.warning("Counterexample: " + counterExample.toString());
+					tracker.newCounterExample(counterExample);
+					algorithm.refineHypothesis(counterExample);
+				}
+				rounds++;
+			} while (counterExample != null);
+			success = true;
+		} catch (ExperimentTimeoutException exc) {
+			LOG.severe("Learning timed out after a duration of "
+					+ exc.getDuration() + " (i.e. "
+					+ exc.getDuration().toHours() + " hours )");
+			LOG.severe("Logging last hypothesis");
+		}
 
 		// building results:
 		StateMachine stateMachine = new StateMachine(hypothesis, alphabet);
-		tracker.finishedLearning(stateMachine);
+		tracker.finishedLearning(stateMachine, success);
 		Statistics statistics = tracker.generateStatistics();
 
 		LOG.log(Level.INFO, "Finished Learning");
@@ -190,17 +207,19 @@ public class Extractor {
 		extractorResult.setLearnedModel(stateMachine);
 		extractorResult.setStatistics(statistics);
 
-		// exporting to output files
-		serializeHypothesis(stateMachine, outputFolder, LEARNED_MODEL_FILENAME,
-				true, false);
+		if (success) {
+			// exporting to output files
+			serializeHypothesis(stateMachine, outputFolder,
+					LEARNED_MODEL_FILENAME, true, false);
 
-		// we disable this feature for now, as models are too large for it
-		// serializeHypothesis(stateMachine, outputFolder,
-		// LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
-		// false, true);
+			// we disable this feature for now, as models are too large for it
+			// serializeHypothesis(stateMachine, outputFolder,
+			// LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
+			// false, true);
 
-		extractorResult.setLearnedModelFile(new File(outputFolder,
-				LEARNED_MODEL_FILENAME));
+			extractorResult.setLearnedModelFile(new File(outputFolder,
+					LEARNED_MODEL_FILENAME));
+		}
 		try {
 			statistics.export(new FileWriter(new File(outputFolder,
 					STATISTICS_FILENAME)));

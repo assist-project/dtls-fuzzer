@@ -25,6 +25,7 @@ public class Statistics {
 	private long duration;
 	private long lastHypResets;
 	private long lastHypInputs;
+	private boolean successful;
 
 	protected Statistics() {
 		runDescription = "";
@@ -42,6 +43,7 @@ public class Statistics {
 		PrintWriter out = new PrintWriter(writer);
 		out.println(runDescription);
 		out.println("=== STATISTICS ===");
+		out.println("Learning successful: " + successful);
 		out.println("Number of states: " + states);
 		out.println("Number of hypotheses: " + (counterexamples.size() - 1));
 		out.println("Number of inputs: " + allInputs);
@@ -160,5 +162,9 @@ public class Statistics {
 
 	protected void setCounterexamples(List<DefaultQuery<?, ?>> counterexamples) {
 		this.counterexamples = counterexamples;
+	}
+
+	protected void setSuccessful(boolean successful) {
+		this.successful = successful;
 	}
 }

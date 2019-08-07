@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.config;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,6 +55,10 @@ public class LearningConfig {
 
 	@Parameter(names = "-probabilisticSanitization", description = "Enables probabilistic sanitization of the CEs resulting in non determinism")
 	private boolean probabilisticSanitization = true;
+
+	@Parameter(names = "-timeLimit", description = "If set, imposes a time limit on the learning experiment. Once this time ellapses, "
+			+ "learning is stopped and statistics for the incomplete learning run are published", converter = DurationConverter.class)
+	private Duration timeLimit = null;
 
 	public boolean doLogQueries() {
 		return logQueries;
@@ -113,5 +118,9 @@ public class LearningConfig {
 
 	public boolean isProbabilisticSanitization() {
 		return probabilisticSanitization;
+	}
+
+	public Duration getTimeLimit() {
+		return timeLimit;
 	}
 }
