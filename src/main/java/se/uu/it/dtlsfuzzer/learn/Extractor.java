@@ -27,10 +27,12 @@ import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
+import se.uu.it.dtlsfuzzer.sut.ExperimentTimeoutException;
 import se.uu.it.dtlsfuzzer.sut.IsAliveWrapper;
-import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSUL;
+import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
 import se.uu.it.dtlsfuzzer.sut.ResettingWrapper;
+import se.uu.it.dtlsfuzzer.sut.TimeoutWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsProcessWrapper;
 import se.uu.it.dtlsfuzzer.sut.TlsSUL;
 import se.uu.it.dtlsfuzzer.sut.io.AlphabetFactory;
@@ -86,20 +88,12 @@ public class Extractor {
 			tlsSystemUnderTest = new ResettingWrapper<TlsInput, TlsOutput>(
 					tlsSystemUnderTest, finderConfig.getSulDelegate());
 		}
-		tlsSystemUnderTest = new IsAliveWrapper(tlsSystemUnderTest);
-
-		// the cache is an observation tree
-		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
-
-		// we use a wrapper to check for non-determinism, we could use its
-		// observation tree as cache
-		try {
-			tlsSystemUnderTest = new NonDeterminismRetryingSUL<TlsInput, TlsOutput>(
-					tlsSystemUnderTest, cache, NON_DET_ATTEMPTS,
-					new FileWriter(new File(outputFolder, NON_DET_FILENAME)));
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (finderConfig.getLearningConfig().getTimeLimit() != null) {
+			tlsSystemUnderTest = new TimeoutWrapper<TlsInput, TlsOutput>(
+					tlsSystemUnderTest, finderConfig.getLearningConfig()
+							.getTimeLimit());
 		}
+		tlsSystemUnderTest = new IsAliveWrapper(tlsSystemUnderTest);
 
 		SymbolCounterSUL<TlsInput, TlsOutput> symbolCounterSul = new SymbolCounterSUL<>(
 				"symbol counter", tlsSystemUnderTest);
@@ -111,31 +105,53 @@ public class Extractor {
 				resetCounterSul.getStatisticalData());
 		tlsSystemUnderTest = resetCounterSul;
 
+		// the cache is an observation tree
+		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
+
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
-		CachingSULOracle<TlsInput, TlsOutput> sulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
+		CachingSULOracle<TlsInput, TlsOutput> cachedSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
 				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache);
+
+		// TODO the LOGGER instances should handle this, instead of us passing
+		// non det writers as arguments.
+		FileWriter nonDetWriter = null;
+		try {
+			nonDetWriter = new FileWriter(new File(outputFolder,
+					NON_DET_FILENAME));
+		} catch (IOException e1) {
+			throw new RuntimeException(
+					"Could not create non-determinism file writer");
+		}
+
+		// a SUL oracle which uses the cached oracle and attempts to re-run
+		// queries in case non-determinism is detected
+		NonDeterminismRetryingSULOracle<TlsInput, TlsOutput> nonDetSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(
+				cachedSulOracle, NON_DET_ATTEMPTS, nonDetWriter);
 
 		// setting up membership and equivalence oracles
 		MealyLearner<TlsInput, TlsOutput> algorithm = LearnerFactory
-				.loadLearner(finderConfig.getLearningConfig(), sulOracle,
+				.loadLearner(finderConfig.getLearningConfig(), nonDetSulOracle,
 						alphabet);
 
-		// we apply a CE verification wrapper to check counterexamples before
-		// they are returned to the EQ oracle
-		int ceReruns = finderConfig.getLearningConfig().getCeReruns();
 		MealyMembershipOracle<TlsInput, TlsOutput> testOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSystemUnderTest);
-		if (ceReruns > 0) {
-			testOracle = new CECheckingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
-					ceReruns, testOracle, () -> algorithm.getHypothesisModel());
+
+		// in case sanitization is enabled, we apply a CE verification wrapper
+		// to
+		// check counterexamples before they are returned to the EQ oracle
+		if (finderConfig.getLearningConfig().isCeSanitization()) {
+			testOracle = new CESanitizingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
+					finderConfig.getLearningConfig().getCeReruns(), testOracle,
+					() -> algorithm.getHypothesisModel(), finderConfig
+							.getLearningConfig().isProbabilisticSanitization(),
+					nonDetWriter);
 		}
 
 		// if caching is enabled during testing, we apply a caching wrapper
 		if (!finderConfig.getLearningConfig().dontCacheTests()) {
 			testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
 					cache);
-
 		}
 
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory
@@ -145,33 +161,43 @@ public class Extractor {
 		// running learning and collecting important statistics
 		MealyMachine<?, TlsInput, ?, TlsOutput> hypothesis = null;
 		DefaultQuery<TlsInput, Word<TlsOutput>> counterExample = null;
+		boolean success = false;
 		int rounds = 0;
 
 		algorithm.startLearning();
 		tracker.startLearning(finderConfig, alphabet);
-		do {
-			hypothesis = algorithm.getHypothesisModel();
-			StateMachine stateMachine = new StateMachine(hypothesis, alphabet);
-			extractorResult.addHypothesis(stateMachine);
-			// it is useful to print intermediate hypothesis as learning is
-			// running
-			serializeHypothesis(stateMachine, outputFolder, "hyp"
-					+ (rounds + 1) + ".dot", false, false);
+		try {
+			do {
+				hypothesis = algorithm.getHypothesisModel();
+				StateMachine stateMachine = new StateMachine(hypothesis,
+						alphabet);
+				extractorResult.addHypothesis(stateMachine);
+				// it is useful to print intermediate hypothesis as learning is
+				// running
+				serializeHypothesis(stateMachine, outputFolder, "hyp"
+						+ (rounds + 1) + ".dot", false, false);
 
-			tracker.newHypothesis(stateMachine);
-			counterExample = equivalenceAlgorithm.findCounterExample(
-					hypothesis, alphabet);
-			if (counterExample != null) {
-				LOG.warning("Counterexample: " + counterExample.toString());
-				tracker.newCounterExample(counterExample);
-				algorithm.refineHypothesis(counterExample);
-			}
-			rounds++;
-		} while (counterExample != null);
+				tracker.newHypothesis(stateMachine);
+				counterExample = equivalenceAlgorithm.findCounterExample(
+						hypothesis, alphabet);
+				if (counterExample != null) {
+					LOG.warning("Counterexample: " + counterExample.toString());
+					tracker.newCounterExample(counterExample);
+					algorithm.refineHypothesis(counterExample);
+				}
+				rounds++;
+			} while (counterExample != null);
+			success = true;
+		} catch (ExperimentTimeoutException exc) {
+			LOG.severe("Learning timed out after a duration of "
+					+ exc.getDuration() + " (i.e. "
+					+ exc.getDuration().toHours() + " hours )");
+			LOG.severe("Logging last hypothesis");
+		}
 
 		// building results:
 		StateMachine stateMachine = new StateMachine(hypothesis, alphabet);
-		tracker.finishedLearning(stateMachine);
+		tracker.finishedLearning(stateMachine, success);
 		Statistics statistics = tracker.generateStatistics();
 
 		LOG.log(Level.INFO, "Finished Learning");
@@ -181,17 +207,19 @@ public class Extractor {
 		extractorResult.setLearnedModel(stateMachine);
 		extractorResult.setStatistics(statistics);
 
-		// exporting to output files
-		serializeHypothesis(stateMachine, outputFolder, LEARNED_MODEL_FILENAME,
-				true, false);
+		if (success) {
+			// exporting to output files
+			serializeHypothesis(stateMachine, outputFolder,
+					LEARNED_MODEL_FILENAME, true, false);
 
-		// we disable this feature for now, as models are too large for it
-		// serializeHypothesis(stateMachine, outputFolder,
-		// LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
-		// false, true);
+			// we disable this feature for now, as models are too large for it
+			// serializeHypothesis(stateMachine, outputFolder,
+			// LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
+			// false, true);
 
-		extractorResult.setLearnedModelFile(new File(outputFolder,
-				LEARNED_MODEL_FILENAME));
+			extractorResult.setLearnedModelFile(new File(outputFolder,
+					LEARNED_MODEL_FILENAME));
+		}
 		try {
 			statistics.export(new FileWriter(new File(outputFolder,
 					STATISTICS_FILENAME)));

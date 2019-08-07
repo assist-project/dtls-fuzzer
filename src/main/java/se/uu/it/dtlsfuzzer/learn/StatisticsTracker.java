@@ -21,6 +21,7 @@ public class StatisticsTracker {
 	long allResets;
 	long lastHypInputs;
 	long lastHypResets;
+	boolean successful;
 
 	// some helper variables
 	long lastInputs;
@@ -63,6 +64,7 @@ public class StatisticsTracker {
 		this.config = config;
 		this.alphabet = alphabet;
 		counterexamples = new ArrayList<>();
+		successful = false;
 	}
 
 	/**
@@ -86,13 +88,16 @@ public class StatisticsTracker {
 	}
 
 	/**
-	 * Should be called once learning finishes with a learned model.
+	 * Should be called once learning finishes with a learned model or when it
+	 * is abruptly terminated yet statistics are still desired. In the latter
+	 * case the last hypothesis should be provided.
 	 */
-	public void finishedLearning(StateMachine learnedModel) {
+	public void finishedLearning(StateMachine learnedModel, boolean success) {
 		this.learnedModel = learnedModel;
 		allInputs = inputCounter.getCount();
 		allResets = resetCounter.getCount();
 		time = System.currentTimeMillis() - time;
+		successful = success;
 	}
 
 	/**

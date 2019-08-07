@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.config;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,8 +47,18 @@ public class LearningConfig {
 	@Parameter(names = "-dontCacheTests", description = "Do not cache tests to limit the memory footprint")
 	private boolean dontCacheTests = false;
 
-	@Parameter(names = "-ceReruns", description = "The number of times a CE is re-run in order for it to be confirmed")
-	private int ceReruns = 0;
+	@Parameter(names = "-ceSanitization", description = "Activates CE sanitization, which involves re-running potential CE's ensuring they are not spurious")
+	private boolean ceSanitization = true;
+
+	@Parameter(names = "-ceReruns", description = "Represents the number of times a CE is re-run in order for it to be confirmed")
+	private int ceReruns = 3;
+
+	@Parameter(names = "-probabilisticSanitization", description = "Enables probabilistic sanitization of the CEs resulting in non determinism")
+	private boolean probabilisticSanitization = true;
+
+	@Parameter(names = "-timeLimit", description = "If set, imposes a time limit on the learning experiment. Once this time ellapses, "
+			+ "learning is stopped and statistics for the incomplete learning run are published", converter = DurationConverter.class)
+	private Duration timeLimit = null;
 
 	public boolean doLogQueries() {
 		return logQueries;
@@ -99,5 +110,17 @@ public class LearningConfig {
 
 	public int getCeReruns() {
 		return ceReruns;
+	}
+
+	public boolean isCeSanitization() {
+		return ceSanitization;
+	}
+
+	public boolean isProbabilisticSanitization() {
+		return probabilisticSanitization;
+	}
+
+	public Duration getTimeLimit() {
+		return timeLimit;
 	}
 }

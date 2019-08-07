@@ -3,35 +3,33 @@ package se.uu.it.dtlsfuzzer;
 import java.util.Map;
 
 import net.automatalib.words.Word;
-import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
-import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 
 /**
  * Result for a single test
  */
-public class TestRunnerResult {
-	private Word<TlsInput> inputWord;
-	private Map<Word<TlsOutput>, Integer> generatedOutputs;
+public class TestRunnerResult<I, O> {
+	private Word<I> inputWord;
+	private Map<Word<O>, Integer> generatedOutputs;
 
-	public TestRunnerResult(Word<TlsInput> inputWord,
-			Map<Word<TlsOutput>, Integer> generatedOutputs) {
+	public TestRunnerResult(Word<I> inputWord,
+			Map<Word<O>, Integer> generatedOutputs) {
 		super();
 		this.inputWord = inputWord;
 		this.generatedOutputs = generatedOutputs;
 	}
 
-	public Word<TlsInput> getInputWord() {
+	public Word<I> getInputWord() {
 		return inputWord;
 	}
 
-	public Map<Word<TlsOutput>, Integer> getGeneratedOutputs() {
+	public Map<Word<O>, Integer> getGeneratedOutputs() {
 		return generatedOutputs;
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Inputs: ").append(inputWord).append("\n");
-		for (Word<TlsOutput> answer : generatedOutputs.keySet()) {
+		sb.append("Test: ").append(inputWord).append("\n");
+		for (Word<O> answer : generatedOutputs.keySet()) {
 			sb.append(generatedOutputs.get(answer)).append(
 					" times outputs: " + answer.toString() + "\n");
 		}
