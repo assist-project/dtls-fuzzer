@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
+import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModification;
+import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.dtls.MessageFragmenter;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
@@ -24,6 +26,12 @@ public class ClientHelloInput extends NamedTlsInput {
 	 */
 	@XmlAttribute(name = "forceDigest", required = false)
 	private boolean forceDigest = false;
+	
+	/**
+	 * Include the latest session id in the client hello
+	 */
+	@XmlAttribute(name = "withSessionId", required = false)
+	private boolean withSessionId = true;
 
 	private ProtocolMessage message;
 
@@ -48,7 +56,17 @@ public class ClientHelloInput extends NamedTlsInput {
 			state.getConfig().setAddEllipticCurveExtension(false);
 		}
 		state.getTlsContext().getDigest().reset();
+		
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
+		
+		// we exclude the sessionId
+		if (!withSessionId) {
+			ModifiableByteArray sbyte = new ModifiableByteArray();
+			sbyte.setModification(new ByteArrayExplicitValueModification(
+					new byte[]{}));
+			message.setSessionId(sbyte);
+		}
+		
 		this.message = message;
 		return message;
 	}
