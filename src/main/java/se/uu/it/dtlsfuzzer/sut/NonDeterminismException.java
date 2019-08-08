@@ -10,7 +10,7 @@ public class NonDeterminismException extends RuntimeException {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final Word<?> oldOutput, newOutput, input;
+	private Word<?> oldOutput, newOutput, input;
 
 	public NonDeterminismException(Word<?> input, Word<?> oldOutput,
 			Word<?> newOutput) {
@@ -58,6 +58,14 @@ public class NonDeterminismException extends RuntimeException {
 			indexOfInconsistency++;
 		}
 		return this.input.subWord(0, indexOfInconsistency);
+	}
+	
+	// TODO this is a lazy implementation.
+	public NonDeterminismException makeCompact() {
+		this.input = getShortestInconsistentInput();
+		this.oldOutput = this.oldOutput.prefix(input.length());
+		this.newOutput = this.newOutput.prefix(input.length());
+		return this;
 	}
 
 	@Override

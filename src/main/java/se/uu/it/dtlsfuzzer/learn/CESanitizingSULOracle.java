@@ -42,7 +42,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 	private MealyMembershipOracle<I, O> sulOracle;
 	private Supplier<A> automatonProvider;
-	private boolean failFast;
+	private boolean probabilisticSanitization;
 
 	private PrintWriter log;
 
@@ -53,7 +53,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 		this.sulOracle = sulOracle;
 		this.automatonProvider = automatonProvider;
 		this.ceReruns = ceReruns;
-		this.failFast = probabilisticSanitization;
+		this.probabilisticSanitization = probabilisticSanitization;
 		this.log = new PrintWriter(log);
 	}
 
@@ -97,9 +97,9 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 			log.println("Non determinism in CE sanitization");
 			log.write(result.toString());
 			log.flush();
-			if (failFast) {
+			if (!probabilisticSanitization) {
 				throw new NonDeterminismException(input, outputIter.next(),
-						outputIter.next());
+						outputIter.next()).makeCompact();
 			} else {
 				checkedOutput = getProbabilisticOutput(input);
 			}

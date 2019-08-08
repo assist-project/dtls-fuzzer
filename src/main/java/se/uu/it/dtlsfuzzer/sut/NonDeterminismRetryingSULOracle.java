@@ -61,7 +61,7 @@ public class NonDeterminismRetryingSULOracle<I, O>
 		for (int i = 0; i < numTimes-1; i++) {
 			output = sulOracle.answerQueryWithoutCache(inputs);
 			if (!expectedOutput.equals(output)) {
-				throw new NonDeterminismException(inputs, expectedOutput, output);
+				throw new NonDeterminismException(inputs, expectedOutput, output).makeCompact();
 			}
 			pause(1000);
 		}
