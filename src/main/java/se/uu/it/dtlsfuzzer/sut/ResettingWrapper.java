@@ -42,7 +42,7 @@ public class ResettingWrapper<I, O> implements SUL<I, O> {
 				Thread.sleep(resetCommandWait);
 		} catch (IOException e) {
 			Runtime.getRuntime().runFinalization();
-			System.exit(0);
+			throw new RuntimeException(e);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

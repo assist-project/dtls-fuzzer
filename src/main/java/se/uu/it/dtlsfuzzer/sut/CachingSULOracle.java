@@ -59,4 +59,8 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 	private Word<O> answerFromCache(Word<I> input) {
 		return root.answerQuery(input);
 	}
+	
+	public Word<O> answerQueryWithoutCache(Word<I> input) {
+		return sulOracle.answerQuery(input);
+	}
 }
