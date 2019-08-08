@@ -42,7 +42,7 @@ public class NonDeterminismRetryingSULOracle<I, O>
 				// occur
 				// at least once
 				// if we rerun the sequence $retries times?
-				output = retryAnswerQuery(query.getInput(), retries, exc.getOldOutput());
+				output = retryAnswerQuery(query.getInput(), retries);
 				log.println("Non-determinism could not be confirmed. Learning can continue");
 				log.flush();
 			}
@@ -50,19 +50,22 @@ public class NonDeterminismRetryingSULOracle<I, O>
 		}
 	}
 
-	private Word<O> retryAnswerQuery(Word<I> inputs, int numTimes, Word<?> oldOutput)
+	private Word<O> retryAnswerQuery(Word<I> inputs, int numTimes)
 			throws SULException {
-		Word<O> output = null;
+		Word<O> output, expectedOutput;
 		// we intersperse more breaks in the execution
 		pause(1000);
-		for (int i = 0; i < numTimes; i++) {
+		// try to re-run once to get the expected output
+		expectedOutput = sulOracle.answerQuery(inputs);
+		pause(1000);
+		for (int i = 0; i < numTimes-1; i++) {
 			output = sulOracle.answerQueryWithoutCache(inputs);
-			if (!oldOutput.equals(output)) {
-				throw new NonDeterminismException(inputs, oldOutput, output);
+			if (!expectedOutput.equals(output)) {
+				throw new NonDeterminismException(inputs, expectedOutput, output);
 			}
 			pause(1000);
 		}
-		return output;
+		return expectedOutput;
 	}
 
 	private void pause(long millis) throws SULException {
