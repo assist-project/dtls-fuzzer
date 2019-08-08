@@ -1,0 +1,24 @@
+-connect
+localhost:40000
+-runWait
+100
+-alphabet
+../examples/alphabets/wolfssl_dhe_ecdhe_rsa_cert.xml
+-timeout
+50
+-randLength
+10
+-queries
+20000
+-protocol
+DTLS12
+-output
+wolfssl-4.0.0_dhe_ecdhe_rsa_cert_rwalk
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-cmd
+"/home/pfg666/Modules/wolfssl-4.0.0/examples/server/server -i -x -p 40000 -u -k /home/pfg666/Keys/RSA2048/server-key.pem -c /home/pfg666/Keys/RSA2048/server-cert.pem -A /home/pfg666/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa2048_cert.pem -l AES128-SHA:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-SHA"
+-processDir
+"/home/pfg666/Modules/wolfssl-4.0.0/"
+-depth
+1
