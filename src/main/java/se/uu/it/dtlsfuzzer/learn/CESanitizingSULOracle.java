@@ -78,7 +78,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 			returnedOutput = getCheckedOutput(q.getInput(), originalOutput,
 					autOutput);
 		}
-		// no counterexample, making it safe to return the original output
+		// no counterexample, meaning it is safe to return the original output
 		else {
 			returnedOutput = originalOutput;
 		}
@@ -139,7 +139,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 					.keySet().iterator();
 			// TODO NonDeterminismException should carry multiple outputs
 			throw new NonDeterminismException(input, outputIter.next(),
-					outputIter.next());
+					outputIter.next()).makeCompact();
 		}
 	}
 

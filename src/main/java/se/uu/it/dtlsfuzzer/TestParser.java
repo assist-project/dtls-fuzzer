@@ -137,7 +137,8 @@ public class TestParser {
 				}
 				currentTestStrings.clear();
 			} else {
-				currentTestStrings.add(inputString);
+				String[] spSepInputs = inputString.split("\\s");
+				currentTestStrings.addAll(Arrays.asList(spSepInputs));
 			}
 		}
 		if (!inputStrings.isEmpty()) {

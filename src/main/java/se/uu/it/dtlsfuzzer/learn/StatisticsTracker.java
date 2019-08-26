@@ -101,11 +101,12 @@ public class StatisticsTracker {
 	}
 
 	/**
-	 * Should be called after learning finishes and {@link finishedLearning} is
-	 * called.
+	 * Should be called after learning finishes and {@link finishedLearning} has been
+	 * called. 
 	 */
 	public Statistics generateStatistics() {
 		Statistics statistics = new Statistics();
+		statistics.setSuccessful(successful);
 		statistics.generateRunDescription(config, alphabet);
 		statistics.setAllInputs(allInputs);
 		statistics.setAllResets(allResets);

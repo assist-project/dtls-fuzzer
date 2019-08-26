@@ -44,21 +44,22 @@ public class DtlsFuzzer {
 	}
 
 	public TestReport startTesting() throws ParseException, IOException {
-		// setting up our output directory
-		File folder = new File(config.getOutput());
-		folder.mkdirs();
 		SULOracle<TlsInput, TlsOutput> sutOracle = createTestOracle(config);
 		if (config.getTestRunnerConfig().getTest() != null) {
 			runTest(config, sutOracle);
-			System.exit(0);
-		}
-		if (config.isOnlyLearn()) {
-			extractModel(config);
 			return null;
 		} else {
-			ConformanceTestingTask task = generateModelBasedTestingTask(config);
-			TestReport report = testModel(config, sutOracle, task);
-			return report;
+			// setting up our output directory
+			File folder = new File(config.getOutput());
+			folder.mkdirs();
+			if (config.isOnlyLearn()) {
+				extractModel(config);
+				return null;
+			} else {
+				ConformanceTestingTask task = generateModelBasedTestingTask(config);
+				TestReport report = testModel(config, sutOracle, task);
+				return report;
+			}
 		}
 	}
 

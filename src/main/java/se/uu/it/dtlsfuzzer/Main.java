@@ -37,23 +37,20 @@ public class Main {
 				return;
 			}
 			config.getGeneralDelegate().applyDelegate(null);
+			File outputFolder = new File(config.getOutput());
+			outputFolder.mkdirs();
 
 			try {
+				// this is an extra step done to store the running arguments
+				copyArgsToOutDir(args, config.getOutput());
 				DtlsFuzzer tester = new DtlsFuzzer(config);
 				tester.startTesting();
-				// this is an extra step done to store the running arguments
-				if (config.getOutput() != null
-						&& new File(config.getOutput()).exists()) {
-					copyArgsToOutDir(args, config.getOutput());
-				}
 			} catch (Exception E) {
 				LOGGER.error("Encountered an exception. See debug for more info.");
 				E.printStackTrace();
 				// TODO ^^ what says here :)
 				LOGGER.error(E);
 
-				File outputFolder = new File(config.getOutput());
-				if (outputFolder.exists()) {
 					// useful to log what actually went wrong
 					try (FileWriter fw = new FileWriter(new File(outputFolder,
 							ERROR_FILE))) {
@@ -62,7 +59,6 @@ public class Main {
 						E.printStackTrace(pw);
 						pw.close();
 					}
-				}
 			}
 		} catch (ParameterException E) {
 			LOGGER.error("Could not parse provided parameters. "
