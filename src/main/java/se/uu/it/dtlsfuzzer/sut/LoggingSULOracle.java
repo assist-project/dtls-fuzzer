@@ -21,5 +21,6 @@ public class LoggingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 	public void processQueries(Collection<? extends Query<I, Word<O>>> queries) {
 		oracle.processQueries(queries);
 		queries.forEach(q -> writer.println(q.toString()));
+		writer.flush();
 	}
 }

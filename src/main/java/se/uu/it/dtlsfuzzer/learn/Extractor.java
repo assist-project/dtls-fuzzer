@@ -30,6 +30,7 @@ import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ExperimentTimeoutException;
 import se.uu.it.dtlsfuzzer.sut.IsAliveWrapper;
+import se.uu.it.dtlsfuzzer.sut.LoggingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
 import se.uu.it.dtlsfuzzer.sut.ResettingWrapper;
@@ -129,12 +130,25 @@ public class Extractor {
 
 		// a SUL oracle which uses the cached oracle and attempts to re-run
 		// queries in case non-determinism is detected
-		NonDeterminismRetryingSULOracle<TlsInput, TlsOutput> nonDetSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(
+		MealyMembershipOracle<TlsInput, TlsOutput> learningSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(
 				cachedSulOracle, NON_DET_ATTEMPTS, nonDetWriter);
+		
+		if (finderConfig.getLearningConfig().getQueryFile() != null) {
+			FileWriter queryWriter = null;
+			try {
+				queryWriter = new FileWriter(new File(outputFolder,
+						finderConfig.getLearningConfig().getQueryFile()));
+			} catch (IOException e1) {
+				throw new RuntimeException(
+						"Could not create queryfile writer");
+			}
+			learningSulOracle = new LoggingSULOracle<TlsInput, TlsOutput>(learningSulOracle, queryWriter);
+		}
+		
 
 		// setting up membership and equivalence oracles
 		MealyLearner<TlsInput, TlsOutput> algorithm = LearnerFactory
-				.loadLearner(finderConfig.getLearningConfig(), nonDetSulOracle,
+				.loadLearner(finderConfig.getLearningConfig(), learningSulOracle,
 						alphabet);
 
 		MealyMembershipOracle<TlsInput, TlsOutput> testOracle = new SULOracle<TlsInput, TlsOutput>(

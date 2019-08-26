@@ -31,6 +31,9 @@ public class LearningConfig {
 
 	@Parameter(names = "-queries", description = "Number of queries (all)")
 	private int numberOfQueries = 1000;
+	
+	@Parameter(names = "-queryFile", description = "If set, logs all membership queries to this file.")
+	private String queryFile;
 
 	@Parameter(names = "-probReset", description = "Probability of stopping execution of a test after each input")
 	private int probReset = 0;
@@ -40,9 +43,6 @@ public class LearningConfig {
 
 	@Parameter(names = "-seed", description = "Seed used for random value generation.")
 	private long seed = 0;
-
-	@Parameter(names = "-logQueries", description = "Log queries to an output false")
-	private boolean logQueries = false;
 
 	@Parameter(names = "-dontCacheTests", description = "Do not cache tests to limit the memory footprint")
 	private boolean dontCacheTests = false;
@@ -60,9 +60,6 @@ public class LearningConfig {
 			+ "learning is stopped and statistics for the incomplete learning run are published", converter = DurationConverter.class)
 	private Duration timeLimit = null;
 
-	public boolean doLogQueries() {
-		return logQueries;
-	}
 
 	public LearningAlgorithmName getLearningAlgorithm() {
 		return learningAlgorithm;
@@ -110,6 +107,10 @@ public class LearningConfig {
 
 	public int getCeReruns() {
 		return ceReruns;
+	}
+	
+	public String getQueryFile() {
+		return queryFile;
 	}
 
 	public boolean isCeSanitization() {
