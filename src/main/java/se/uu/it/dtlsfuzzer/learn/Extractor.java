@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +50,8 @@ public class Extractor {
 	public static final String SUL_CONFIG_FILENAME = "sul.config";
 	public static final String ALPHABET_FILENAME = "alphabet.xml";
 	public static final String NON_DET_FILENAME = "nondet.log";
+	private static final String ERROR_FILENAME = "error.msg";
+	
 	/*
 	 * In case of non-determinism, the number of times the causing sequence of
 	 * inputs (to confirm/infirm non-determinism)
@@ -193,6 +196,18 @@ public class Extractor {
 					+ exc.getDuration() + " (i.e. "
 					+ exc.getDuration().toHours() + " hours )");
 			LOG.severe("Logging last hypothesis");
+		} catch (Exception exc) {
+			LOG.severe("Exception generated during learning");
+			// useful to log what actually went wrong
+			try (FileWriter fw = new FileWriter(new File(outputFolder,
+					ERROR_FILENAME))) {
+				PrintWriter pw = new PrintWriter(fw);
+				pw.println(exc.getMessage());
+				exc.printStackTrace(pw);
+				pw.close();
+			} catch (IOException e) {
+				LOG.severe("Could not create error file writer");
+			}
 		}
 
 		// building results:

@@ -50,15 +50,6 @@ public class Main {
 				E.printStackTrace();
 				// TODO ^^ what says here :)
 				LOGGER.error(E);
-
-					// useful to log what actually went wrong
-					try (FileWriter fw = new FileWriter(new File(outputFolder,
-							ERROR_FILE))) {
-						PrintWriter pw = new PrintWriter(fw);
-						pw.println(E.getMessage());
-						E.printStackTrace(pw);
-						pw.close();
-					}
 			}
 		} catch (ParameterException E) {
 			LOGGER.error("Could not parse provided parameters. "
