@@ -37,7 +37,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 	private Config config;
 
 	/**
-	 * the sut is closed if the it crashed resulting in IMCP packets, or it
+	 * the sut is closed if it has crashed resulting in IMCP packets, or it
 	 * simply terminated the connection
 	 */
 	private boolean closed = false;
