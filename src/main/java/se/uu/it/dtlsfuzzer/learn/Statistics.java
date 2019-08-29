@@ -5,7 +5,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
-import de.learnlib.oracles.DefaultQuery;
+import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.config.LearningConfig;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;

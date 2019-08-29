@@ -22,7 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<learnlib.version>0.12.0</learnlib.version>
+		<learnlib.version>0.14.0</learnlib.version>
 	</properties>
 
 	<dependencies>
@@ -39,54 +39,21 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>de.learnlib</groupId>
-			<artifactId>learnlib-core</artifactId>
-		</dependency>
-		<dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-counterexamples</artifactId>
+            <groupId>de.learnlib.distribution</groupId>
+            <artifactId>learnlib-distribution</artifactId>
+            <type>pom</type>
         </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-basic-eqtests</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-simulator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-lstar-generic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-dhc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-ttt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-kearns-vazirani</artifactId>
-        </dependency>
-		<dependency>
-			<groupId>net.automatalib</groupId>
-			<artifactId>automata-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.automatalib</groupId>
-			<artifactId>automata-util</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>com.pfg666.dotparser</groupId>
 			<artifactId>dot-parser</artifactId>
-			<version>0.1</version>
+			<version>0.2</version>
 		</dependency>
+		<!-- provide an SLF4J implementation -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 		<dependency>
 			<groupId>com.alexmerz.graphviz</groupId>
 			<artifactId>graphviz</artifactId>

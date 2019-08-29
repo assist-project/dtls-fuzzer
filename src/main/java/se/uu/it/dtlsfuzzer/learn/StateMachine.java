@@ -7,8 +7,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.logging.Logger;
 
-import net.automatalib.automata.transout.MealyMachine;
-import net.automatalib.util.graphs.dot.GraphDOT;
+import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.serialization.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;

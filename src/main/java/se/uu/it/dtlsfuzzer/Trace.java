@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.security.PrivateKey;
@@ -33,21 +32,16 @@ import com.alexmerz.graphviz.ParseException;
 import com.pfg666.dotparser.fsm.mealy.MealyDotParser;
 
 import de.learnlib.api.SUL;
-import de.learnlib.eqtests.basic.WpMethodEQOracle;
-import de.learnlib.eqtests.basic.WpMethodEQOracle.MealyWpMethodEQOracle;
-import de.learnlib.oracles.CounterOracle;
-import de.learnlib.oracles.CounterOracle.MealyCounterOracle;
-import de.learnlib.oracles.SimulatorOracle;
-import de.learnlib.oracles.SimulatorOracle.MealySimulatorOracle;
-import de.rub.nds.modifiablevariable.util.ArrayConverter;
-import de.rub.nds.tlsattacker.core.certificate.CertificateByteChooser;
+import de.learnlib.filter.statistic.oracle.CounterOracle;
+import de.learnlib.filter.statistic.oracle.CounterOracle.MealyCounterOracle;
+import de.learnlib.oracle.equivalence.WpMethodEQOracle;
+import de.learnlib.oracle.equivalence.WpMethodEQOracle.MealyWpMethodEQOracle;
+import de.learnlib.oracle.membership.SimulatorOracle;
+import de.learnlib.oracle.membership.SimulatorOracle.MealySimulatorOracle;
 import de.rub.nds.tlsattacker.core.certificate.CertificateKeyPair;
 import de.rub.nds.tlsattacker.core.certificate.PemUtil;
-import de.rub.nds.tlsattacker.core.config.Config;
-import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
-import de.rub.nds.tlsattacker.core.crypto.keys.CustomRsaPublicKey;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateVerifyMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
@@ -55,9 +49,8 @@ import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import de.rub.nds.tlsattacker.core.state.TlsContext;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
-import net.automatalib.automata.transout.impl.FastMealy;
+import net.automatalib.automata.transducers.impl.FastMealy;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
@@ -465,7 +458,7 @@ public class Trace {
 		MealyCounterOracle<TlsInput, TlsOutput> counterOracle = new CounterOracle.MealyCounterOracle<>(
 				sim, "counter");
 		MealyWpMethodEQOracle<TlsInput, TlsOutput> oracle = new WpMethodEQOracle.MealyWpMethodEQOracle<>(
-				depth, counterOracle);
+				counterOracle, depth);
 		oracle.findCounterExample(fastMealy, fastMealy.getInputAlphabet());
 		return counterOracle.getStatisticalData().getCount();
 	}

@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.config.TestRunnerConfig;

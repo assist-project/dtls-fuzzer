@@ -4,9 +4,9 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Collection;
 
-import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.api.Query;
-import de.learnlib.api.SULException;
+import de.learnlib.api.exception.SULException;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.query.Query;
 import net.automatalib.words.Word;
 
 public class NonDeterminismRetryingSULOracle<I, O>
@@ -17,8 +17,9 @@ public class NonDeterminismRetryingSULOracle<I, O>
 	private PrintWriter log;
 	private int retries;
 
-	public NonDeterminismRetryingSULOracle(CachingSULOracle<I, O> cachingSulOracle,
-			int retries, Writer nonDetWriter) {
+	public NonDeterminismRetryingSULOracle(
+			CachingSULOracle<I, O> cachingSulOracle, int retries,
+			Writer nonDetWriter) {
 		this.sulOracle = cachingSulOracle;
 		this.log = new PrintWriter(nonDetWriter);
 		if (retries <= 0) {
@@ -60,11 +61,12 @@ public class NonDeterminismRetryingSULOracle<I, O>
 		expectedOutput = sulOracle.answerQuery(inputs);
 		log.println("expected output: " + expectedOutput);
 		pause(1000);
-		for (int i = 0; i < numTimes-1; i++) {
+		for (int i = 0; i < numTimes - 1; i++) {
 			output = sulOracle.answerQueryWithoutCache(inputs);
 			 log.println("received output: " + output);
 			if (!expectedOutput.equals(output)) {
-				throw new NonDeterminismException(inputs, expectedOutput, output).makeCompact();
+				throw new NonDeterminismException(inputs, expectedOutput,
+						output).makeCompact();
 			}
 			pause(1000);
 		}

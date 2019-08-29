@@ -1,9 +1,7 @@
 package se.uu.it.dtlsfuzzer;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.security.Security;
 
@@ -22,7 +20,6 @@ public class Main {
 	private static final Logger LOGGER = LogManager.getLogger(Main.class
 			.getName());
 	private static String ARGS_FILE = "command.args";
-	private static String ERROR_FILE = "error.msg";
 
 	public static void main(String args[]) throws IOException {
 		UnlimitedStrengthEnabler.enable();

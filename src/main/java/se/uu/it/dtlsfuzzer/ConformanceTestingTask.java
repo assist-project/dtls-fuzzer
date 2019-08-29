@@ -1,6 +1,6 @@
 package se.uu.it.dtlsfuzzer;
 
-import net.automatalib.automata.transout.impl.FastMealy;
+import net.automatalib.automata.transducers.impl.FastMealy;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;

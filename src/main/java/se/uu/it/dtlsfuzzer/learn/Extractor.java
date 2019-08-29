@@ -14,15 +14,15 @@ import java.util.logging.Logger;
 
 import com.google.common.io.Files;
 
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.LearningAlgorithm.MealyLearner;
-import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.SUL;
-import de.learnlib.oracles.DefaultQuery;
-import de.learnlib.oracles.ResetCounterSUL;
-import de.learnlib.oracles.SULOracle;
-import de.learnlib.oracles.SymbolCounterSUL;
-import net.automatalib.automata.transout.MealyMachine;
+import de.learnlib.api.algorithm.LearningAlgorithm.MealyLearner;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.query.DefaultQuery;
+import de.learnlib.filter.statistic.sul.ResetCounterSUL;
+import de.learnlib.filter.statistic.sul.SymbolCounterSUL;
+import de.learnlib.oracle.membership.SULOracle;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
@@ -52,7 +52,7 @@ public class Extractor {
 	public static final String ALPHABET_FILENAME = "alphabet.xml";
 	public static final String NON_DET_FILENAME = "nondet.log";
 	private static final String ERROR_FILENAME = "error.msg";
-	
+
 	/*
 	 * In case of non-determinism, the number of times the causing sequence of
 	 * inputs (to confirm/infirm non-determinism)
@@ -115,7 +115,8 @@ public class Extractor {
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
 		CachingSULOracle<TlsInput, TlsOutput> cachedSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
-				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache);
+				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache,
+				false, TlsOutput.socketClosed());
 
 		// TODO the LOGGER instances should handle this, instead of us passing
 		// non det writers as arguments.
@@ -132,24 +133,23 @@ public class Extractor {
 		// queries in case non-determinism is detected
 		MealyMembershipOracle<TlsInput, TlsOutput> learningSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(
 				cachedSulOracle, NON_DET_ATTEMPTS, nonDetWriter);
-		
+
 		if (finderConfig.getLearningConfig().getQueryFile() != null) {
 			FileWriter queryWriter = null;
 			try {
 				queryWriter = new FileWriter(new File(outputFolder,
 						finderConfig.getLearningConfig().getQueryFile()));
 			} catch (IOException e1) {
-				throw new RuntimeException(
-						"Could not create queryfile writer");
+				throw new RuntimeException("Could not create queryfile writer");
 			}
-			learningSulOracle = new LoggingSULOracle<TlsInput, TlsOutput>(learningSulOracle, queryWriter);
+			learningSulOracle = new LoggingSULOracle<TlsInput, TlsOutput>(
+					learningSulOracle, queryWriter);
 		}
-		
 
 		// setting up membership and equivalence oracles
 		MealyLearner<TlsInput, TlsOutput> algorithm = LearnerFactory
-				.loadLearner(finderConfig.getLearningConfig(), learningSulOracle,
-						alphabet);
+				.loadLearner(finderConfig.getLearningConfig(),
+						learningSulOracle, alphabet);
 
 		MealyMembershipOracle<TlsInput, TlsOutput> testOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSystemUnderTest);
@@ -165,11 +165,9 @@ public class Extractor {
 					nonDetWriter);
 		}
 
-		// if caching is enabled during testing, we apply a caching wrapper
-		if (!finderConfig.getLearningConfig().dontCacheTests()) {
-			testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
-					cache);
-		}
+		testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
+				cache, finderConfig.getLearningConfig().dontCacheTests(),
+				TlsOutput.socketClosed());
 
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory
 				.loadTester(finderConfig.getLearningConfig(),

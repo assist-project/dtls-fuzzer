@@ -3,7 +3,7 @@ package se.uu.it.dtlsfuzzer.sut;
 import java.time.Duration;
 
 import de.learnlib.api.SUL;
-import de.learnlib.api.SULException;
+import de.learnlib.api.exception.SULException;
 
 public class TimeoutWrapper<I, O> implements SUL<I, O> {
 	private SUL<I, O> sul;

@@ -3,8 +3,8 @@ package se.uu.it.dtlsfuzzer.learn;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.learnlib.oracles.DefaultQuery;
-import de.learnlib.statistics.Counter;
+import de.learnlib.api.query.DefaultQuery;
+import de.learnlib.filter.statistic.Counter;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 
@@ -101,8 +101,8 @@ public class StatisticsTracker {
 	}
 
 	/**
-	 * Should be called after learning finishes and {@link finishedLearning} has been
-	 * called. 
+	 * Should be called after learning finishes and {@link finishedLearning} has
+	 * been called.
 	 */
 	public Statistics generateStatistics() {
 		Statistics statistics = new Statistics();

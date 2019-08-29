@@ -31,7 +31,7 @@ public class LearningConfig {
 
 	@Parameter(names = "-queries", description = "Number of queries (all)")
 	private int numberOfQueries = 1000;
-	
+
 	@Parameter(names = "-queryFile", description = "If set, logs all membership queries to this file.")
 	private String queryFile;
 
@@ -59,7 +59,6 @@ public class LearningConfig {
 	@Parameter(names = "-timeLimit", description = "If set, imposes a time limit on the learning experiment. Once this time ellapses, "
 			+ "learning is stopped and statistics for the incomplete learning run are published", converter = DurationConverter.class)
 	private Duration timeLimit = null;
-
 
 	public LearningAlgorithmName getLearningAlgorithm() {
 		return learningAlgorithm;
@@ -108,7 +107,7 @@ public class LearningConfig {
 	public int getCeReruns() {
 		return ceReruns;
 	}
-	
+
 	public String getQueryFile() {
 		return queryFile;
 	}

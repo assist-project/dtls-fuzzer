@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 import de.learnlib.api.SUL;
-import de.learnlib.api.SULException;
+import de.learnlib.api.exception.SULException;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
 
 public class ResettingWrapper<I, O> implements SUL<I, O> {

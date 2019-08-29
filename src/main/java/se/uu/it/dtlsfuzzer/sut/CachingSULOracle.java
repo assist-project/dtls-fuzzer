@@ -1,22 +1,26 @@
 package se.uu.it.dtlsfuzzer.sut;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.learnlib.api.MembershipOracle;
-import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.api.Query;
-import de.learnlib.cache.sul.SULCache;
-import de.learnlib.oracles.SULOracle;
+import com.google.common.collect.Sets;
+
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.query.Query;
 import net.automatalib.words.Word;
 
 /**
  * This class is adapted from {@link SULOracle}. Unfortunately, the
- * implementation of LearnLib's cache oracle {@link SULCache} is unstable.
+ * implementation of LearnLib's cache oracle {@link SULCache} is unstable (the
+ * version 0.12.0 at least).
+ * 
+ * The implementation adds lookahead functionality.
  */
 public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
@@ -27,10 +31,18 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
 	private MembershipOracle<I, Word<O>> sulOracle;
 
+	private boolean onlyLookup;
+
+	private HashSet<O> lookaheadOutputs;
+
+	@SafeVarargs
 	public CachingSULOracle(MembershipOracle<I, Word<O>> sulOracle,
-			ObservationTree<I, O> cache) {
+			ObservationTree<I, O> cache, boolean onlyLookup,
+			O... lookaheadOutputs) {
 		this.root = cache;
 		this.sulOracle = sulOracle;
+		this.onlyLookup = onlyLookup;
+		this.lookaheadOutputs = Sets.newHashSet(lookaheadOutputs);
 	}
 
 	@Override
@@ -40,7 +52,8 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 			Word<O> fullOutput = answerFromCache(fullInput);
 			if (fullOutput == null) {
 				fullOutput = sulOracle.answerQuery(fullInput);
-				storeToCache(fullInput, fullOutput);
+				if (!onlyLookup)
+					storeToCache(fullInput, fullOutput);
 			} else {
 				LOGGER.info("CACHE HIT!");
 			}
@@ -57,9 +70,32 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
 	@Nullable
 	private Word<O> answerFromCache(Word<I> input) {
-		return root.answerQuery(input);
+		if (lookaheadOutputs.isEmpty())
+			return root.answerQuery(input);
+		else {
+			Word<O> output = root.answerQuery(input, true);
+			if (output.length() < input.length()) {
+				if (output.isEmpty())
+					return null;
+				else {
+					if (lookaheadOutputs.contains(output.lastSymbol())) {
+						Word<O> extendedOutput = output;
+						while (extendedOutput.length() < input.length()) {
+							extendedOutput = extendedOutput.append(output
+									.lastSymbol());
+						}
+						return extendedOutput;
+					} else {
+						return null;
+					}
+				}
+			} else {
+				return output;
+			}
+		}
+
 	}
-	
+
 	public Word<O> answerQueryWithoutCache(Word<I> input) {
 		return sulOracle.answerQuery(input);
 	}
