@@ -36,8 +36,9 @@ public class NonDeterminismRetryingSULOracle<I, O>
 				output = sulOracle.answerQuery(query.getInput());
 			} catch (CacheInconsistencyException exc) {
 				log.println(exc.toString());
-				log.println("Retrying inputs " + retries
+				log.println("Retrying input: " + query.getInput() + "\n" + retries
 						+ " times to confirm non-determinism");
+                                log.flush();
 				// ok, non determinism detected, could it be a blip? Does it
 				// occur
 				// at least once
@@ -57,9 +58,11 @@ public class NonDeterminismRetryingSULOracle<I, O>
 		pause(1000);
 		// try to re-run once to get the expected output
 		expectedOutput = sulOracle.answerQuery(inputs);
+		log.println("expected output: " + expectedOutput);
 		pause(1000);
 		for (int i = 0; i < numTimes-1; i++) {
 			output = sulOracle.answerQueryWithoutCache(inputs);
+			 log.println("received output: " + output);
 			if (!expectedOutput.equals(output)) {
 				throw new NonDeterminismException(inputs, expectedOutput, output).makeCompact();
 			}
