@@ -115,7 +115,8 @@ public class Extractor {
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
 		CachingSULOracle<TlsInput, TlsOutput> cachedSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
-				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache);
+				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache,
+				false, TlsOutput.socketClosed());
 
 		// TODO the LOGGER instances should handle this, instead of us passing
 		// non det writers as arguments.
@@ -164,11 +165,9 @@ public class Extractor {
 					nonDetWriter);
 		}
 
-		// if caching is enabled during testing, we apply a caching wrapper
-		if (!finderConfig.getLearningConfig().dontCacheTests()) {
-			testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
-					cache);
-		}
+		testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
+				cache, finderConfig.getLearningConfig().dontCacheTests(),
+				TlsOutput.socketClosed());
 
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory
 				.loadTester(finderConfig.getLearningConfig(),

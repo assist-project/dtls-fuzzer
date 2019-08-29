@@ -174,10 +174,32 @@ public class ObservationTree<I, O> {
 		}
 	}
 
+	/**
+	 * Returns an answer only if the whole input word is stored in the tree,
+	 * otherwise returns null.
+	 */
 	@Nullable
 	public Word<O> answerQuery(Word<I> word) {
 		List<I> inputChain = word.asList();
-		List<O> outputChain = answerInputChain(inputChain);
+		List<O> outputChain = answerInputChain(inputChain, false);
+		if (outputChain != null) {
+			return toWord(outputChain);
+		}
+		return null;
+	}
+
+	/**
+	 * Depending on allowIncompleteAnswer, incomplete resolution of a query is
+	 * dealt with differently. Incomplete resolution captures the case when the
+	 * input word is not completely stored in the tree. In this case the method
+	 * either returns null (if incomplete answer not allowed), or an answer for
+	 * the longest prefix stored in the cache.
+	 */
+	@Nullable
+	public Word<O> answerQuery(Word<I> word, boolean allowIncompleteAnswer) {
+		List<I> inputChain = word.asList();
+		List<O> outputChain = answerInputChain(inputChain,
+				allowIncompleteAnswer);
 		if (outputChain != null) {
 			return toWord(outputChain);
 		}
@@ -185,7 +207,8 @@ public class ObservationTree<I, O> {
 	}
 
 	@Nullable
-	public List<O> answerInputChain(List<I> inputs) {
+	public List<O> answerInputChain(List<I> inputs,
+			boolean allowIncompleteAnswer) {
 		if (inputs.isEmpty())
 			return Collections.emptyList();
 		else {
@@ -194,11 +217,11 @@ public class ObservationTree<I, O> {
 			ObservationTree<I, O> nextObservationTree = this.children
 					.get(input);
 			if (output == null || nextObservationTree == null) {
-				return null;
+				return allowIncompleteAnswer ? Collections.emptyList() : null;
 			} else {
 				List<I> nextInputs = inputs.subList(1, inputs.size());
-				List<O> nextOutputs = nextObservationTree
-						.answerInputChain(nextInputs);
+				List<O> nextOutputs = nextObservationTree.answerInputChain(
+						nextInputs, allowIncompleteAnswer);
 				if (nextOutputs == null) {
 					return null;
 				} else {
