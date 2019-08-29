@@ -2,7 +2,7 @@ package se.uu.it.dtlsfuzzer.test;
 
 import java.util.List;
 
-import net.automatalib.automata.transout.impl.FastMealyState;
+import net.automatalib.automata.transducers.impl.FastMealyState;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.mutate.FragmentingTlsInput;
 import se.uu.it.dtlsfuzzer.mutate.MutatedTlsInput;

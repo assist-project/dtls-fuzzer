@@ -13,8 +13,8 @@ import com.alexmerz.graphviz.ParseException;
 import com.pfg666.dotparser.fsm.mealy.MealyDotParser;
 
 import de.learnlib.api.SUL;
-import de.learnlib.oracles.SULOracle;
-import net.automatalib.automata.transout.impl.FastMealy;
+import de.learnlib.oracle.membership.SULOracle;
+import net.automatalib.automata.transducers.impl.FastMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import net.automatalib.words.impl.ListAlphabet;

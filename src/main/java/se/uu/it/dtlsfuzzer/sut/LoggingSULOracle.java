@@ -4,8 +4,8 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Collection;
 
-import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.api.Query;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.query.Query;
 import net.automatalib.words.Word;
 
 public class LoggingSULOracle<I, O> implements MealyMembershipOracle<I, O> {

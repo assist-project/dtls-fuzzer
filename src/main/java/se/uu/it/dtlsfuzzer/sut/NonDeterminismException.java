@@ -59,7 +59,7 @@ public class NonDeterminismException extends RuntimeException {
 		}
 		return this.input.subWord(0, indexOfInconsistency);
 	}
-	
+
 	// TODO this is a lazy implementation.
 	public NonDeterminismException makeCompact() {
 		this.input = getShortestInconsistentInput();

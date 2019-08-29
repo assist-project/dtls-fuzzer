@@ -1,17 +1,14 @@
 package se.uu.it.dtlsfuzzer.sut;
 
 import java.util.Collection;
-
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.learnlib.api.MembershipOracle;
-import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.api.Query;
-import de.learnlib.cache.sul.SULCache;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.query.Query;
 import net.automatalib.words.Word;
 
 /**
@@ -59,7 +56,7 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 	private Word<O> answerFromCache(Word<I> input) {
 		return root.answerQuery(input);
 	}
-	
+
 	public Word<O> answerQueryWithoutCache(Word<I> input) {
 		return sulOracle.answerQuery(input);
 	}

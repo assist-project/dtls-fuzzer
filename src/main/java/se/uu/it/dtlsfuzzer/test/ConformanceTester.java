@@ -15,11 +15,11 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.learnlib.oracles.CounterOracle;
-import de.learnlib.oracles.CounterOracle.MealyCounterOracle;
-import de.learnlib.oracles.SULOracle;
-import net.automatalib.automata.transout.impl.FastMealy;
-import net.automatalib.automata.transout.impl.FastMealyState;
+import de.learnlib.filter.statistic.oracle.CounterOracle;
+import de.learnlib.filter.statistic.oracle.CounterOracle.MealyCounterOracle;
+import de.learnlib.oracle.membership.SULOracle;
+import net.automatalib.automata.transducers.impl.FastMealy;
+import net.automatalib.automata.transducers.impl.FastMealyState;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;

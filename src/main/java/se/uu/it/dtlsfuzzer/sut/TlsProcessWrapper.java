@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import de.learnlib.api.SUL;
-import de.learnlib.api.SULException;
+import de.learnlib.api.exception.SULException;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
 import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;

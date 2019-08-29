@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.automatalib.automata.transout.impl.FastMealyState;
+import net.automatalib.automata.transducers.impl.FastMealyState;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.DiagnosisTask;
 import se.uu.it.dtlsfuzzer.config.DiagnosisConfig;

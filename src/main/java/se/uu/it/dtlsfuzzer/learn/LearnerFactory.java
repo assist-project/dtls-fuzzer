@@ -9,20 +9,19 @@ import com.google.common.collect.Lists;
 
 import de.learnlib.acex.analyzers.AcexAnalyzers;
 import de.learnlib.algorithms.kv.mealy.KearnsVaziraniMealy;
-import de.learnlib.algorithms.lstargeneric.ce.ObservationTableCEXHandlers;
-import de.learnlib.algorithms.lstargeneric.closing.ClosingStrategies;
-import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
-import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.LearningAlgorithm.MealyLearner;
-import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.algorithms.lstar.ce.ObservationTableCEXHandlers;
+import de.learnlib.algorithms.lstar.closing.ClosingStrategies;
+import de.learnlib.algorithms.lstar.mealy.ExtensibleLStarMealy;
+import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.SUL;
-import de.learnlib.counterexamples.AcexLocalSuffixFinder;
-import de.learnlib.eqtests.basic.EQOracleChain.MealyEQOracleChain;
-import de.learnlib.eqtests.basic.WMethodEQOracle;
-import de.learnlib.eqtests.basic.WpMethodEQOracle;
-import de.learnlib.eqtests.basic.mealy.RandomWalkEQOracle;
-import net.automatalib.automata.transout.MealyMachine;
+import de.learnlib.api.algorithm.LearningAlgorithm.MealyLearner;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.oracle.equivalence.EQOracleChain.MealyEQOracleChain;
+import de.learnlib.oracle.equivalence.WMethodEQOracle;
+import de.learnlib.oracle.equivalence.WpMethodEQOracle;
+import de.learnlib.oracle.equivalence.mealy.RandomWalkEQOracle;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.TestParser;
@@ -49,10 +48,9 @@ public class LearnerFactory {
 						ObservationTableCEXHandlers.RIVEST_SCHAPIRE,
 						ClosingStrategies.CLOSE_SHORTEST);
 			case TTT :
-				AcexLocalSuffixFinder suffixFinder = new AcexLocalSuffixFinder(
-						AcexAnalyzers.BINARY_SEARCH, false, "Analyzer");
-				return new TTTLearnerMealy<TlsInput, TlsOutput>(alphabet,
-						sulOracle, suffixFinder);
+				return new TTTLearnerMealyBuilder<TlsInput, TlsOutput>()
+						.withAlphabet(alphabet).withOracle(sulOracle)
+						.withAnalyzer(AcexAnalyzers.BINARY_SEARCH_FWD).create();
 			case KV :
 				return new KearnsVaziraniMealy<TlsInput, TlsOutput>(alphabet,
 						sulOracle, false, AcexAnalyzers.LINEAR_FWD);
@@ -96,17 +94,17 @@ public class LearnerFactory {
 		// large models
 		switch (algorithm) {
 			case RANDOM_WALK :
-				return new RandomWalkEQOracle<TlsInput, TlsOutput>(
+				return new RandomWalkEQOracle<TlsInput, TlsOutput>(sul,
 						config.getProbReset(), config.getNumberOfQueries(),
-						true, new Random(config.getSeed()), sul);
+						true, new Random(config.getSeed()));
 				// Other methods are somewhat smarter than random testing: state
 				// coverage, trying to distinguish states, etc.
 			case W_METHOD :
-				return new WMethodEQOracle.MealyWMethodEQOracle<>(
-						config.getMaxDepth(), sulOracle);
+				return new WMethodEQOracle.MealyWMethodEQOracle<>(sulOracle,
+						config.getMaxDepth());
 			case WP_METHOD :
-				return new WpMethodEQOracle.MealyWpMethodEQOracle<>(
-						config.getMaxDepth(), sulOracle);
+				return new WpMethodEQOracle.MealyWpMethodEQOracle<>(sulOracle,
+						config.getMaxDepth());
 			case RANDOM_WP_METHOD :
 				return new RandomWpMethodEQOracle<>(sulOracle,
 						config.getMinLength(), config.getRandLength(),

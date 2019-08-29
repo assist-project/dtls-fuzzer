@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.MembershipOracle;
-import de.learnlib.oracles.DefaultQuery;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
 import net.automatalib.words.Word;
