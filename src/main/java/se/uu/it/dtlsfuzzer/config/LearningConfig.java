@@ -32,6 +32,9 @@ public class LearningConfig {
 	@Parameter(names = "-queries", description = "Number of queries (all)")
 	private int numberOfQueries = 1000;
 
+	@Parameter(names = "-memQueryRuns", description = "The number of times each membership query is executed before an answer is returned. Setting it to more than 1 enables an multiple-run oracle which may prevent non-determinism.")
+	private int runsPerMembershipQuery = 1;
+
 	@Parameter(names = "-queryFile", description = "If set, logs all membership queries to this file.")
 	private String queryFile;
 
@@ -122,5 +125,9 @@ public class LearningConfig {
 
 	public Duration getTimeLimit() {
 		return timeLimit;
+	}
+
+	public int getRunsPerMembershipQuery() {
+		return runsPerMembershipQuery;
 	}
 }

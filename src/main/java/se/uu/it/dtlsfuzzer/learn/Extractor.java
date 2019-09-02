@@ -109,14 +109,8 @@ public class Extractor {
 				resetCounterSul.getStatisticalData());
 		tlsSystemUnderTest = resetCounterSul;
 
-		// the cache is an observation tree
-		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
-
-		// we are adding a cache so that executions of same inputs aren't
-		// repeated
-		CachingSULOracle<TlsInput, TlsOutput> cachedSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
-				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache,
-				false, TlsOutput.socketClosed());
+		MealyMembershipOracle<TlsInput, TlsOutput> sulOracle = new SULOracle<TlsInput, TlsOutput>(
+				tlsSystemUnderTest);
 
 		// TODO the LOGGER instances should handle this, instead of us passing
 		// non det writers as arguments.
@@ -128,6 +122,22 @@ public class Extractor {
 			throw new RuntimeException(
 					"Could not create non-determinism file writer");
 		}
+
+		if (finderConfig.getLearningConfig().getRunsPerMembershipQuery() > 1) {
+			sulOracle = new MultipleRunsSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
+					finderConfig.getLearningConfig()
+							.getRunsPerMembershipQuery(), sulOracle, true,
+					nonDetWriter);
+		}
+
+		// the cache is an observation tree
+		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
+
+		// we are adding a cache so that executions of same inputs aren't
+		// repeated
+		CachingSULOracle<TlsInput, TlsOutput> cachedSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
+				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache,
+				false, TlsOutput.socketClosed());
 
 		// a SUL oracle which uses the cached oracle and attempts to re-run
 		// queries in case non-determinism is detected
