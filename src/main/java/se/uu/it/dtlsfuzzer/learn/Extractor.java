@@ -136,7 +136,7 @@ public class Extractor {
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
 		CachingSULOracle<TlsInput, TlsOutput> cachedSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
-				new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest), cache,
+				sulOracle, cache,
 				false, TlsOutput.socketClosed());
 
 		// a SUL oracle which uses the cached oracle and attempts to re-run
