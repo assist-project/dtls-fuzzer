@@ -118,7 +118,7 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 								return arg0.getValue().compareTo(arg1.getValue());
 							}
 						}).get();
-				double likelyhood = (double) (mostCommonEntry.getValue() / (i+1));
+				double likelyhood = (double) mostCommonEntry.getValue() / (i+1);
 
 				log.println("Most likely answer has likelyhood "+ likelyhood + " after " + (i+1) + " runs");
 				if (likelyhood >= ACCEPTABLE_PROBABILISTIC_THRESHOLD) {
@@ -144,5 +144,5 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 		throw new NonDeterminismException(input, outputIter.next(),
 				outputIter.next()).makeCompact();
 	}
-
+	
 }
