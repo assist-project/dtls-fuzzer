@@ -1,0 +1,27 @@
+-connect
+localhost:50008
+-runWait
+1000
+-alphabet
+../examples/alphabets/scandium_ecdhe_cert.xml
+-timeout
+100
+-randLength
+10
+-queries
+20000
+-protocol
+DTLS12
+-output
+scandium-2.0.0_ecdhe_cert_req_stests
+-equivalenceAlgorithms
+WP_SAMPLED_TESTS,WP_METHOD
+-cmd
+"java -jar scandium-2.0.0-dtls-server.jar -port 50008 -timeout 20000000 -reqCert"
+-testFile
+../examples/tests/ecdhe_cert
+-depth
+1
+-sulConfig
+scandium.config
+-dontCacheTests
