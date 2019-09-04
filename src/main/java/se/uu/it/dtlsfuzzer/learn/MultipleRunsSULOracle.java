@@ -96,6 +96,7 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 	
 	private Word<O> getProbabilisticOutput(Word<I> input) {
 		log.println("Performing probabilistic sanitization");
+		log.flush();
 		
 		LinkedHashMap<Word<O>, Integer> frequencyMap = new LinkedHashMap<>();
 		for (int i = 0; i < runs * PROBABILISTIC_MAX_MULTIPLIER; i++) {
@@ -118,15 +119,17 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 							}
 						}).get();
 				double likelyhood = (double) (mostCommonEntry.getValue() / (i+1));
-				
+
 				log.println("Most likely answer has likelyhood "+ likelyhood + " after " + (i+1) + " runs");
 				if (likelyhood >= ACCEPTABLE_PROBABILISTIC_THRESHOLD) {
 					log.println("Answer deemed to be in acceptable range, returning answer");
+					log.flush();
 					return mostCommonEntry.getKey();
 				} else {
 					if (likelyhood >= PASSABLE_PROBABILISTIC_THRESHOLD ) {
 						log.println("Answer deemed to be in passable range, continuing execution");
 					} else {
+						log.flush();
 						Iterator<Word<O>> outputIter = frequencyMap.keySet().iterator();
 						// TODO NonDeterminismException should carry multiple outputs
 						throw new NonDeterminismException(input, outputIter.next(),
