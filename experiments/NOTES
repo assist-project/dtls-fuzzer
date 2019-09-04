@@ -22,3 +22,11 @@ required editing 'src/gnutls_int.h'.
 OpenSSL was adjusted so as to increase the DTLS timeout from 1 second to 10.
 This removed non-determinism which occurred in longer traces, or when using client-side certificates.
 The change was made by adjusting 'timeout_duration_us' in 'ssl/d1_lib.c' to 10000000. 
+
+2019-09-03
+Some timing values for Scandium in ms. Notice how initializing is a lot more expensive time-wise than starting/stopping the connector.
+Init Start: 1567597117358
+Init Done: 1567597117839
+Connector Start: 1567597117839
+Connector Stop: 1567597117847
+Connector Start: 1567597117852

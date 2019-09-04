@@ -44,9 +44,8 @@ public class DtlsFuzzer {
 	}
 
 	public TestReport startTesting() throws ParseException, IOException {
-		SULOracle<TlsInput, TlsOutput> sutOracle = createTestOracle(config);
 		if (config.getTestRunnerConfig().getTest() != null) {
-			runTest(config, sutOracle);
+			runTest(config);
 			return null;
 		} else {
 			// setting up our output directory
@@ -57,15 +56,15 @@ public class DtlsFuzzer {
 				return null;
 			} else {
 				ConformanceTestingTask task = generateModelBasedTestingTask(config);
-				TestReport report = testModel(config, sutOracle, task);
+				TestReport report = testModel(config, task);
 				return report;
 			}
 		}
 	}
 
-	private void runTest(DtlsFuzzerConfig config,
-			SULOracle<TlsInput, TlsOutput> sutOracle) throws IOException,
+	private void runTest(DtlsFuzzerConfig config) throws IOException,
 			ParseException {
+		SULOracle<TlsInput, TlsOutput> sutOracle = createTestOracle(config);
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 		TestRunner runner = new TestRunner(config.getTestRunnerConfig(),
 				alphabet, sutOracle);
@@ -153,8 +152,8 @@ public class DtlsFuzzer {
 	}
 
 	private TestReport testModel(DtlsFuzzerConfig config,
-			SULOracle<TlsInput, TlsOutput> sutOracle,
 			ConformanceTestingTask task) throws IOException {
+		SULOracle<TlsInput, TlsOutput> sutOracle = createTestOracle(config);
 		ConformanceTester tester = new ConformanceTester(config);
 		return tester.testModel(sutOracle, task);
 	}
