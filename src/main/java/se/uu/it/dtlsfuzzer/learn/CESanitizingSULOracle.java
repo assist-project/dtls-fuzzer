@@ -74,8 +74,14 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 		if (!checkedOutput.equals(originalOutput)) {
 			log.println("Output changed following CE verification");
+			log.println("Input: " + input);
 			log.println("Original output: " + originalOutput);
-			log.println("New CE status: " + autOutput.equals(checkedOutput));
+			log.println("New output: " + checkedOutput);
+			if (checkedOutput.equals(autOutput)) {
+				log.println("New CE status: not a CE");
+			} else {
+				log.println("New CE status: is a CE");
+			}
 			log.flush();
 		}
 		return checkedOutput;
