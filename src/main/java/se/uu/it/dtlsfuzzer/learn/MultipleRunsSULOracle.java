@@ -39,7 +39,7 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 	// x times cereruns
 	private static final int PROBABILISTIC_MIN_MULTIPLIER = 2;
-	private static final int PROBABILISTIC_MAX_MULTIPLIER = 6;
+	private static final int PROBABILISTIC_MAX_MULTIPLIER = 7;
 	private static final double ACCEPTABLE_PROBABILISTIC_THRESHOLD = 0.8;
 	private static final double PASSABLE_PROBABILISTIC_THRESHOLD = 0.4;
 
@@ -138,6 +138,8 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 				}
 			}
 		}
+		
+		log.flush();
 		
 		// we get here after exhausting the number of tests, without having found an answer that is acceptable 
 		Iterator<Word<O>> outputIter = frequencyMap.keySet().iterator();

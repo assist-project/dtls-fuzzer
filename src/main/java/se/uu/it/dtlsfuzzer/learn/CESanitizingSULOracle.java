@@ -12,6 +12,7 @@ import de.learnlib.api.query.Query;
 import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
 import net.automatalib.words.Word;
+import se.uu.it.dtlsfuzzer.sut.NonDeterminismException;
 
 /**
  * Adding CE sanitizing at the SULOracle level allows us to avoid having to
@@ -31,12 +32,17 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 	// x times cereruns
 	private Supplier<A> automatonProvider;
 
+	private boolean skipNonDetTests;
+
 	public CESanitizingSULOracle(int ceReruns,
 			MealyMembershipOracle<I, O> sulOracle,
-			Supplier<A> automatonProvider, boolean probabilisticSanitization,
+			Supplier<A> automatonProvider, 
+			boolean probabilisticSanitization,
+			boolean skipNonDetTests,
 			Writer log) {
 		super(ceReruns, sulOracle, probabilisticSanitization, log);
 		this.automatonProvider = automatonProvider;
+		this.skipNonDetTests = skipNonDetTests;
 	}
 
 	@Override
@@ -70,20 +76,32 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 	private Word<O> getCheckedOutput(Word<I> input, Word<O> originalOutput,
 			Word<O> autOutput) {
-		Word<O> checkedOutput = super.getMultipleRunOutput(input);
-
-		if (!checkedOutput.equals(originalOutput)) {
-			log.println("Output changed following CE verification");
-			log.println("Input: " + input);
-			log.println("Original output: " + originalOutput);
-			log.println("New output: " + checkedOutput);
-			if (checkedOutput.equals(autOutput)) {
-				log.println("New CE status: not a CE");
-			} else {
-				log.println("New CE status: is a CE");
+		try {
+			Word<O> checkedOutput = super.getMultipleRunOutput(input);
+	
+			if (!checkedOutput.equals(originalOutput)) {
+				log.println("Output changed following CE verification");
+				log.println("Input: " + input);
+				log.println("Original output: " + originalOutput);
+				log.println("New output: " + checkedOutput);
+				if (checkedOutput.equals(autOutput)) {
+					log.println("New CE status: not a CE");
+				} else {
+					log.println("New CE status: is a CE");
+				}
+				log.flush();
 			}
-			log.flush();
+			return checkedOutput;
+		} catch(NonDeterminismException exc) {
+			if (skipNonDetTests) {
+				log.println("NonDetermism in running input");
+				log.println(exc);
+				log.println("Skipping: " + input);
+				log.flush();
+				return autOutput;
+			} else {
+				throw exc;
+			}
 		}
-		return checkedOutput;
 	}
 }

@@ -26,6 +26,7 @@ import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
+import se.uu.it.dtlsfuzzer.config.LearningConfig;
 import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ExperimentTimeoutException;
@@ -61,11 +62,11 @@ public class Extractor {
 
 	private static final Logger LOG = Logger.getLogger(Extractor.class
 			.getName());
-	private final DtlsFuzzerConfig finderConfig;
+	private final DtlsFuzzerConfig fuzzerConfig;
 	private final Alphabet<TlsInput> alphabet;
 
 	public Extractor(DtlsFuzzerConfig finderConfig, Alphabet<TlsInput> alphabet) {
-		this.finderConfig = finderConfig;
+		this.fuzzerConfig = finderConfig;
 		this.alphabet = alphabet;
 	}
 
@@ -73,7 +74,7 @@ public class Extractor {
 		ExtractorResult extractorResult = new ExtractorResult();
 
 		// setting up our output directory
-		File outputFolder = new File(finderConfig.getOutput());
+		File outputFolder = new File(fuzzerConfig.getOutput());
 		outputFolder.mkdirs();
 
 		// for convenience, we copy all the input files/streams
@@ -82,19 +83,19 @@ public class Extractor {
 
 		// setting up SUL/T (System Under Learning/Test)
 		SUL<TlsInput, TlsOutput> tlsSystemUnderTest = new TlsSUL(
-				finderConfig.getSulDelegate(), new BasicInputExecutor());
+				fuzzerConfig.getSulDelegate(), new BasicInputExecutor());
 
-		if (finderConfig.getSulDelegate().getCommand() != null) {
+		if (fuzzerConfig.getSulDelegate().getCommand() != null) {
 			tlsSystemUnderTest = new TlsProcessWrapper(tlsSystemUnderTest,
-					finderConfig.getSulDelegate());
+					fuzzerConfig.getSulDelegate());
 		}
-		if (finderConfig.getSulDelegate().getResetPort() != null) {
+		if (fuzzerConfig.getSulDelegate().getResetPort() != null) {
 			tlsSystemUnderTest = new ResettingWrapper<TlsInput, TlsOutput>(
-					tlsSystemUnderTest, finderConfig.getSulDelegate());
+					tlsSystemUnderTest, fuzzerConfig.getSulDelegate());
 		}
-		if (finderConfig.getLearningConfig().getTimeLimit() != null) {
+		if (fuzzerConfig.getLearningConfig().getTimeLimit() != null) {
 			tlsSystemUnderTest = new TimeoutWrapper<TlsInput, TlsOutput>(
-					tlsSystemUnderTest, finderConfig.getLearningConfig()
+					tlsSystemUnderTest, fuzzerConfig.getLearningConfig()
 							.getTimeLimit());
 		}
 		tlsSystemUnderTest = new IsAliveWrapper(tlsSystemUnderTest);
@@ -123,9 +124,9 @@ public class Extractor {
 					"Could not create non-determinism file writer");
 		}
 
-		if (finderConfig.getLearningConfig().getRunsPerMembershipQuery() > 1) {
+		if (fuzzerConfig.getLearningConfig().getRunsPerMembershipQuery() > 1) {
 			sulOracle = new MultipleRunsSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
-					finderConfig.getLearningConfig()
+					fuzzerConfig.getLearningConfig()
 							.getRunsPerMembershipQuery(), sulOracle, true,
 					nonDetWriter);
 		}
@@ -144,11 +145,11 @@ public class Extractor {
 		MealyMembershipOracle<TlsInput, TlsOutput> learningSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(
 				cachedSulOracle, NON_DET_ATTEMPTS, nonDetWriter);
 
-		if (finderConfig.getLearningConfig().getQueryFile() != null) {
+		if (fuzzerConfig.getLearningConfig().getQueryFile() != null) {
 			FileWriter queryWriter = null;
 			try {
 				queryWriter = new FileWriter(new File(outputFolder,
-						finderConfig.getLearningConfig().getQueryFile()));
+						fuzzerConfig.getLearningConfig().getQueryFile()));
 			} catch (IOException e1) {
 				throw new RuntimeException("Could not create queryfile writer");
 			}
@@ -158,7 +159,7 @@ public class Extractor {
 
 		// setting up membership and equivalence oracles
 		MealyLearner<TlsInput, TlsOutput> algorithm = LearnerFactory
-				.loadLearner(finderConfig.getLearningConfig(),
+				.loadLearner(fuzzerConfig.getLearningConfig(),
 						learningSulOracle, alphabet);
 
 		MealyMembershipOracle<TlsInput, TlsOutput> testOracle = new SULOracle<TlsInput, TlsOutput>(
@@ -167,20 +168,21 @@ public class Extractor {
 		// in case sanitization is enabled, we apply a CE verification wrapper
 		// to
 		// check counterexamples before they are returned to the EQ oracle
-		if (finderConfig.getLearningConfig().isCeSanitization()) {
+		if (fuzzerConfig.getLearningConfig().isCeSanitization()) {
 			testOracle = new CESanitizingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
-					finderConfig.getLearningConfig().getCeReruns(), testOracle,
-					() -> algorithm.getHypothesisModel(), finderConfig
-							.getLearningConfig().isProbabilisticSanitization(),
+					fuzzerConfig.getLearningConfig().getCeReruns(), testOracle,
+					() -> algorithm.getHypothesisModel(), 
+					fuzzerConfig.getLearningConfig().isProbabilisticSanitization(),
+					fuzzerConfig.getLearningConfig().isSkipNonDetTests(),
 					nonDetWriter);
 		}
 
 		testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
-				cache, finderConfig.getLearningConfig().dontCacheTests(),
+				cache, fuzzerConfig.getLearningConfig().dontCacheTests(),
 				TlsOutput.socketClosed());
 
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory
-				.loadTester(finderConfig.getLearningConfig(),
+				.loadTester(fuzzerConfig.getLearningConfig(),
 						tlsSystemUnderTest, testOracle, alphabet);
 
 		// running learning and collecting important statistics
@@ -190,7 +192,7 @@ public class Extractor {
 		int rounds = 0;
 
 		algorithm.startLearning();
-		tracker.startLearning(finderConfig, alphabet);
+		tracker.startLearning(fuzzerConfig, alphabet);
 		try {
 			do {
 				hypothesis = algorithm.getHypothesisModel();
@@ -269,16 +271,16 @@ public class Extractor {
 
 	private void copyInputsToOutputFolder(File outputFolder) {
 		try {
-			Files.copy(AlphabetFactory.getAlphabetFile(finderConfig), new File(
+			Files.copy(AlphabetFactory.getAlphabetFile(fuzzerConfig), new File(
 					outputFolder, ALPHABET_FILENAME));
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Could not copy alphabet to output folder");
 		}
-		if (finderConfig.getLearningConfig().getEquivalenceAlgorithms()
+		if (fuzzerConfig.getLearningConfig().getEquivalenceAlgorithms()
 				.contains(EquivalenceAlgorithmName.SAMPLED_TESTS)) {
 			try {
-				Files.copy(new File(finderConfig.getLearningConfig()
-						.getTestFile()), new File(outputFolder, finderConfig
+				Files.copy(new File(fuzzerConfig.getLearningConfig()
+						.getTestFile()), new File(outputFolder, fuzzerConfig
 						.getLearningConfig().getTestFile()));
 			} catch (IOException e) {
 				LOG.log(Level.SEVERE,
@@ -286,7 +288,7 @@ public class Extractor {
 			}
 		}
 		try {
-			dumpToFile(finderConfig.getSulDelegate().getSulConfigInputStream(),
+			dumpToFile(fuzzerConfig.getSulDelegate().getSulConfigInputStream(),
 					new File(outputFolder, SUL_CONFIG_FILENAME));
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE,
@@ -295,7 +297,7 @@ public class Extractor {
 	}
 
 	private void dumpToFile(InputStream is, File outputFile) throws IOException {
-		InputStream inputStream = finderConfig.getSulDelegate()
+		InputStream inputStream = fuzzerConfig.getSulDelegate()
 				.getSulConfigInputStream();
 		try (FileOutputStream fw = new FileOutputStream(outputFile)) {
 			byte[] bytes = new byte[1000];

@@ -47,11 +47,14 @@ public class LearningConfig {
 	@Parameter(names = "-seed", description = "Seed used for random value generation.")
 	private long seed = 0;
 
-	@Parameter(names = "-dontCacheTests", description = "Do not cache tests to limit the memory footprint")
+	@Parameter(names = "-dontCacheTests", description = "Do not cache tests to limit the memory footprint. It also enables most forms of non-determinism sanitization")
 	private boolean dontCacheTests = false;
 
 	@Parameter(names = "-ceSanitization", description = "Activates CE sanitization, which involves re-running potential CE's ensuring they are not spurious")
 	private boolean ceSanitization = true;
+	
+	@Parameter(names = "-skipNonDetTests", description = "Rather than throw an exception, logs and skips tests whose execution turned out non-deterministic")
+	private boolean skipNonDetTests = false;
 
 	@Parameter(names = "-ceReruns", description = "Represents the number of times a CE is re-run in order for it to be confirmed")
 	private int ceReruns = 3;
@@ -117,6 +120,10 @@ public class LearningConfig {
 
 	public boolean isCeSanitization() {
 		return ceSanitization;
+	}
+	
+	public boolean isSkipNonDetTests() {
+		return skipNonDetTests;
 	}
 
 	public boolean isProbabilisticSanitization() {

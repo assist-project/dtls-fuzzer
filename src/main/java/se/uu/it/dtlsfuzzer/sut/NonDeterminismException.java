@@ -57,7 +57,7 @@ public class NonDeterminismException extends RuntimeException {
 				newOutput.getSymbol(indexOfInconsistency))) {
 			indexOfInconsistency++;
 		}
-		return this.input.subWord(0, indexOfInconsistency);
+		return this.input.subWord(0, indexOfInconsistency+1);
 	}
 
 	// TODO this is a lazy implementation.
