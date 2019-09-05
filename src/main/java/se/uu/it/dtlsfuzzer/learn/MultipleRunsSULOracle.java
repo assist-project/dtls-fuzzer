@@ -39,9 +39,9 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 	// x times cereruns
 	private static final int PROBABILISTIC_MIN_MULTIPLIER = 2;
-	private static final int PROBABILISTIC_MAX_MULTIPLIER = 5;
+	private static final int PROBABILISTIC_MAX_MULTIPLIER = 6;
 	private static final double ACCEPTABLE_PROBABILISTIC_THRESHOLD = 0.8;
-	private static final double PASSABLE_PROBABILISTIC_THRESHOLD = 0.6;
+	private static final double PASSABLE_PROBABILISTIC_THRESHOLD = 0.4;
 
 	private int runs;
 
