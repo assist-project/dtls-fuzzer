@@ -172,6 +172,7 @@ public class Extractor {
 			testOracle = new CESanitizingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
 					fuzzerConfig.getLearningConfig().getCeReruns(), testOracle,
 					() -> algorithm.getHypothesisModel(), 
+					cache,
 					fuzzerConfig.getLearningConfig().isProbabilisticSanitization(),
 					fuzzerConfig.getLearningConfig().isSkipNonDetTests(),
 					nonDetWriter);
