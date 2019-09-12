@@ -22,3 +22,4 @@ gnutls-3.6.7_all_cert_nreq_stests_incl
 "/home/pfg666/Modules/gnutls-3.6.7/src/gnutls-serv  --udp --x509keyfile /home/pfg666/Keys/RSA2048/server-key.pem --x509certfile /home/pfg666/Keys/RSA2048/server-cert.pem --x509cafile /home/pfg666/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa2048_cert.pem --pskpasswd /home/pfg666/Keys/keys.psk --priority NORMAL:+PSK:+SRP --mtu 1500 -p 30001"
 -sulConfig
 include_oo.config
+-dontCacheTests
