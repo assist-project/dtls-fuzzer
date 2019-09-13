@@ -1,0 +1,54 @@
+digraph g {
+__start0 [label="" shape="none"];
+
+	s0 [shape="circle" label="s0"];
+	s1 [shape="circle" label="s1"];
+	s2 [shape="circle" label="s2"];
+	s3 [shape="circle" label="s3"];
+	s0 -> s2 [label="ECDH_CLIENT_HELLO / SERVER_HELLO,CERTIFICATE,ECDHE_SERVER_KEY_EXCHANGE,SERVER_HELLO_DONE"];
+	s0 -> s1 [label="ECDH_CLIENT_KEY_EXCHANGE / Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s0 -> s2 [label="DH_CLIENT_HELLO / SERVER_HELLO,CERTIFICATE,DHE_SERVER_KEY_EXCHANGE,SERVER_HELLO_DONE"];
+	s0 -> s1 [label="DH_CLIENT_KEY_EXCHANGE / Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s0 -> s2 [label="RSA_CLIENT_HELLO / SERVER_HELLO,CERTIFICATE,SERVER_HELLO_DONE"];
+	s0 -> s1 [label="RSA_CLIENT_KEY_EXCHANGE / Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s0 -> s3 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s0 -> s1 [label="FINISHED / Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s0 -> s0 [label="APPLICATION / TIMEOUT"];
+	s0 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
+	s0 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
+	s1 -> s1 [label="ECDH_CLIENT_HELLO / SOCKET_CLOSED"];
+	s1 -> s1 [label="ECDH_CLIENT_KEY_EXCHANGE / SOCKET_CLOSED"];
+	s1 -> s1 [label="DH_CLIENT_HELLO / SOCKET_CLOSED"];
+	s1 -> s1 [label="DH_CLIENT_KEY_EXCHANGE / SOCKET_CLOSED"];
+	s1 -> s1 [label="RSA_CLIENT_HELLO / SOCKET_CLOSED"];
+	s1 -> s1 [label="RSA_CLIENT_KEY_EXCHANGE / SOCKET_CLOSED"];
+	s1 -> s1 [label="CHANGE_CIPHER_SPEC / SOCKET_CLOSED"];
+	s1 -> s1 [label="FINISHED / SOCKET_CLOSED"];
+	s1 -> s1 [label="APPLICATION / SOCKET_CLOSED"];
+	s1 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / SOCKET_CLOSED"];
+	s1 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / SOCKET_CLOSED"];
+	s2 -> s1 [label="ECDH_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s2 -> s2 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s2 -> s1 [label="DH_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s2 -> s1 [label="DH_CLIENT_KEY_EXCHANGE / Alert(FATAL,HANDSHAKE_FAILURE)"];
+	s2 -> s1 [label="RSA_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s2 -> s1 [label="RSA_CLIENT_KEY_EXCHANGE / Alert(FATAL,HANDSHAKE_FAILURE)"];
+	s2 -> s3 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s2 -> s1 [label="FINISHED / Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s2 -> s2 [label="APPLICATION / TIMEOUT"];
+	s2 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
+	s2 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
+	s3 -> s3 [label="ECDH_CLIENT_HELLO / TIMEOUT"];
+	s3 -> s3 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s3 -> s3 [label="DH_CLIENT_HELLO / TIMEOUT"];
+	s3 -> s3 [label="DH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s3 -> s3 [label="RSA_CLIENT_HELLO / TIMEOUT"];
+	s3 -> s3 [label="RSA_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s3 -> s3 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s3 -> s3 [label="FINISHED / TIMEOUT"];
+	s3 -> s3 [label="APPLICATION / TIMEOUT"];
+	s3 -> s3 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
+	s3 -> s3 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
+
+__start0 -> s0;
+}
