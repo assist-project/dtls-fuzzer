@@ -13,6 +13,7 @@ import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismException;
+import se.uu.it.dtlsfuzzer.sut.ObservationTree;
 
 /**
  * Adding CE sanitizing at the SULOracle level allows us to avoid having to
@@ -34,13 +35,19 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 	private boolean skipNonDetTests;
 
+	private ObservationTree<I, O> cache;
+
 	public CESanitizingSULOracle(int ceReruns,
 			MealyMembershipOracle<I, O> sulOracle,
-			Supplier<A> automatonProvider, boolean probabilisticSanitization,
-			boolean skipNonDetTests, Writer log) {
+			Supplier<A> automatonProvider, 
+			ObservationTree<I, O> cache,
+			boolean probabilisticSanitization,
+			boolean skipNonDetTests,
+			Writer log) {
 		super(ceReruns, sulOracle, probabilisticSanitization, log);
 		this.automatonProvider = automatonProvider;
 		this.skipNonDetTests = skipNonDetTests;
+		this.cache = cache;
 	}
 
 	@Override
@@ -67,6 +74,19 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 		// no counterexample, meaning it is safe to return the original output
 		else {
 			returnedOutput = originalOutput;
+		}
+		
+		// ok, we have what appears to be a counterexample, still we check it against the cache
+		if (!returnedOutput.equals(autOutput)) {
+			Word<O> outputFromCache = cache.answerQuery(q.getInput(), true);
+			if ( !outputFromCache.equals(returnedOutput.prefix(outputFromCache.length())) ) {
+				log.println("Output inconsistent with cache, discarding it and returning automaton output");
+				log.println("Input: " + q.getInput().prefix(outputFromCache.length()));
+				log.println("Spurious output: " + returnedOutput);
+				log.println("Cached output: " + outputFromCache);
+				log.flush();
+				returnedOutput = autOutput;
+			}
 		}
 
 		q.answer(returnedOutput.suffix(q.getSuffix().length()));

@@ -26,7 +26,6 @@ import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
-import se.uu.it.dtlsfuzzer.config.LearningConfig;
 import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ExperimentTimeoutException;
@@ -170,8 +169,9 @@ public class Extractor {
 		if (fuzzerConfig.getLearningConfig().isCeSanitization()) {
 			testOracle = new CESanitizingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
 					fuzzerConfig.getLearningConfig().getCeReruns(), testOracle,
-					() -> algorithm.getHypothesisModel(), fuzzerConfig
-							.getLearningConfig().isProbabilisticSanitization(),
+					() -> algorithm.getHypothesisModel(), 
+					cache,
+					fuzzerConfig.getLearningConfig().isProbabilisticSanitization(),
 					fuzzerConfig.getLearningConfig().isSkipNonDetTests(),
 					nonDetWriter);
 		}
