@@ -40,15 +40,22 @@ import de.learnlib.oracle.membership.SimulatorOracle;
 import de.learnlib.oracle.membership.SimulatorOracle.MealySimulatorOracle;
 import de.rub.nds.tlsattacker.core.certificate.CertificateKeyPair;
 import de.rub.nds.tlsattacker.core.certificate.PemUtil;
+import de.rub.nds.tlsattacker.core.constants.AlertDescription;
+import de.rub.nds.tlsattacker.core.constants.AlertLevel;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateVerifyMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
+import de.rub.nds.tlsattacker.core.workflow.WorkflowTraceSerializer;
+import de.rub.nds.tlsattacker.core.workflow.action.SendAction;
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import net.automatalib.automata.transducers.impl.FastMealy;
 import net.automatalib.words.Alphabet;
@@ -194,6 +201,15 @@ public class Trace {
 		return inputs;
 	}
 
+	public static void testSerialize() throws FileNotFoundException,
+			JAXBException, IOException {
+		ClientHelloMessage cm = new ClientHelloMessage();
+		cm.setCipherSuites(CipherSuite.TLS_AES_128_CCM_8_SHA256.getByteValue());
+		WorkflowTrace wt = new WorkflowTrace();
+		wt.addTlsAction(new SendAction(cm));
+		WorkflowTraceSerializer.write(new File("example"), wt);
+	}
+
 	public static String[] tests = {
 			// generates malloc failure on openssl
 			"CLIENT_HELLO_RSA CLIENT_HELLO_RSA FINISHED APPLICATION",
@@ -278,6 +294,33 @@ public class Trace {
 			}), nonmut(new GenericTlsInput(new CertificateVerifyMessage())),
 			nonmut(new GenericTlsInput(new ChangeCipherSpecMessage())),};
 
+	private static AlertMessage getAlert() {
+		AlertMessage message = new AlertMessage();
+		message.setLevel(AlertLevel.WARNING.getValue());
+		message.setDescription(AlertDescription.CLOSE_NOTIFY.getValue());
+		return message;
+	}
+
+	public static TlsInput[] opensslCookie = new TlsInput[]{
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+			// new GenericTlsInput(new PskClientKeyExchangeMessage()),
+			nonmut(new GenericTlsInput(getAlert()) {
+				public void postReceiveUpdate(TlsOutput output, State state) {
+					System.out.println(state.getTlsContext().getConnection()
+							.getPort());
+					state.getTlsContext().setDtlsNextSendSequenceNumber(0);
+					state.getTlsContext().setDtlsCookie(null);
+				}
+
+			}),
+			nonmut(new ClientHelloInput(
+					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
+
+	};
+
 	public static TlsInput[] opensslBadKex = new TlsInput[]{
 			nonmut(new ClientHelloInput(
 					CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA)),
@@ -327,11 +370,6 @@ public class Trace {
 			nonmut(new FinishedInput()),};
 
 	public static void main(String[] args) throws Exception {
-		runTest();
-		// StringWriter sw = new StringWriter();
-		// keyPairSerialize("experiments/keystore/ec_secp256r1_cert.pem",
-		// "experiments/keystore/ec_secp256r1_key.pem", sw);
-		// System.out.println(sw);
 	}
 
 	public static void runTest() throws Exception {

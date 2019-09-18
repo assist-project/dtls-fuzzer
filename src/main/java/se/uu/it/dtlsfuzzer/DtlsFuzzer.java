@@ -3,6 +3,7 @@ package se.uu.it.dtlsfuzzer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,9 @@ import com.alexmerz.graphviz.ParseException;
 import com.pfg666.dotparser.fsm.mealy.MealyDotParser;
 
 import de.learnlib.api.SUL;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.oracle.membership.SULOracle;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.automata.transducers.impl.FastMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -21,6 +24,7 @@ import net.automatalib.words.impl.ListAlphabet;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 import se.uu.it.dtlsfuzzer.execute.TestingInputExecutor;
 import se.uu.it.dtlsfuzzer.learn.Extractor;
+import se.uu.it.dtlsfuzzer.learn.MultipleRunsSULOracle;
 import se.uu.it.dtlsfuzzer.learn.Extractor.ExtractorResult;
 import se.uu.it.dtlsfuzzer.sut.IsAliveWrapper;
 import se.uu.it.dtlsfuzzer.sut.ResettingWrapper;
@@ -64,7 +68,7 @@ public class DtlsFuzzer {
 
 	private void runTest(DtlsFuzzerConfig config) throws IOException,
 			ParseException {
-		SULOracle<TlsInput, TlsOutput> sutOracle = createTestOracle(config);
+		MealyMembershipOracle<TlsInput, TlsOutput> sutOracle = createTestOracle(config);
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 		TestRunner runner = new TestRunner(config.getTestRunnerConfig(),
 				alphabet, sutOracle);
@@ -85,7 +89,7 @@ public class DtlsFuzzer {
 		}
 	}
 
-	public SULOracle<TlsInput, TlsOutput> createTestOracle(
+	public MealyMembershipOracle<TlsInput, TlsOutput> createTestOracle(
 			DtlsFuzzerConfig config) {
 		SUL<TlsInput, TlsOutput> tlsSut = new TlsSUL(config.getSulDelegate(),
 				new TestingInputExecutor());
@@ -99,8 +103,9 @@ public class DtlsFuzzer {
 		}
 		tlsSut = new IsAliveWrapper(tlsSut);
 
-		SULOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(
+		MealyMembershipOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSut);
+
 		return tlsOracle;
 	}
 
@@ -153,7 +158,7 @@ public class DtlsFuzzer {
 
 	private TestReport testModel(DtlsFuzzerConfig config,
 			ConformanceTestingTask task) throws IOException {
-		SULOracle<TlsInput, TlsOutput> sutOracle = createTestOracle(config);
+		MealyMembershipOracle<TlsInput, TlsOutput> sutOracle = createTestOracle(config);
 		ConformanceTester tester = new ConformanceTester(config);
 		return tester.testModel(sutOracle, task);
 	}

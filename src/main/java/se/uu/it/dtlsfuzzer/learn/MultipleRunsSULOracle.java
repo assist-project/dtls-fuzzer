@@ -72,7 +72,7 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 	}
 
 	protected Word<O> getMultipleRunOutput(Word<I> input) {
-		
+
 		TestRunnerResult<I, O> result = TestRunner.runTest(input, runs,
 				sulOracle);
 		Iterator<Word<O>> outputIter = result.getGeneratedOutputs().keySet()
@@ -93,14 +93,14 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 		}
 		return checkedOutput;
 	}
-	
+
 	private Word<O> getProbabilisticOutput(Word<I> input) {
 		log.println("Performing probabilistic sanitization");
 		log.flush();
-		
+
 		LinkedHashMap<Word<O>, Integer> frequencyMap = new LinkedHashMap<>();
 		for (int i = 0; i < runs * PROBABILISTIC_MAX_MULTIPLIER; i++) {
-			
+
 			// update frequency map
 			Word<O> answer = sulOracle.answerQuery(input);
 			if (!frequencyMap.containsKey(answer)) {
@@ -108,43 +108,52 @@ public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, 
 			} else {
 				frequencyMap.put(answer, frequencyMap.get(answer) + 1);
 			}
-			
-			// after running enough tests, we can check whether we can return an acceptable answer 
+
+			// after running enough tests, we can check whether we can return an
+			// acceptable answer
 			if (i >= runs * PROBABILISTIC_MIN_MULTIPLIER) {
-				Entry<Word<O>, Integer> mostCommonEntry = frequencyMap.entrySet().stream()
+				Entry<Word<O>, Integer> mostCommonEntry = frequencyMap
+						.entrySet().stream()
 						.max(new Comparator<Map.Entry<Word<O>, Integer>>() {
 							public int compare(Entry<Word<O>, Integer> arg0,
 									Entry<Word<O>, Integer> arg1) {
-								return arg0.getValue().compareTo(arg1.getValue());
+								return arg0.getValue().compareTo(
+										arg1.getValue());
 							}
 						}).get();
-				double likelyhood = (double) mostCommonEntry.getValue() / (i+1);
+				double likelyhood = (double) mostCommonEntry.getValue()
+						/ (i + 1);
 
-				log.println("Most likely answer has likelyhood "+ likelyhood + " after " + (i+1) + " runs");
+				log.println("Most likely answer has likelyhood " + likelyhood
+						+ " after " + (i + 1) + " runs");
 				if (likelyhood >= ACCEPTABLE_PROBABILISTIC_THRESHOLD) {
 					log.println("Answer deemed to be in acceptable range, returning answer");
 					log.flush();
 					return mostCommonEntry.getKey();
 				} else {
-					if (likelyhood >= PASSABLE_PROBABILISTIC_THRESHOLD ) {
+					if (likelyhood >= PASSABLE_PROBABILISTIC_THRESHOLD) {
 						log.println("Answer deemed to be in passable range, continuing execution");
 					} else {
 						log.flush();
-						Iterator<Word<O>> outputIter = frequencyMap.keySet().iterator();
-						// TODO NonDeterminismException should carry multiple outputs
-						throw new NonDeterminismException(input, outputIter.next(),
-								outputIter.next()).makeCompact();
+						Iterator<Word<O>> outputIter = frequencyMap.keySet()
+								.iterator();
+						// TODO NonDeterminismException should carry multiple
+						// outputs
+						throw new NonDeterminismException(input,
+								outputIter.next(), outputIter.next())
+								.makeCompact();
 					}
 				}
 			}
 		}
-		
+
 		log.flush();
-		
-		// we get here after exhausting the number of tests, without having found an answer that is acceptable 
+
+		// we get here after exhausting the number of tests, without having
+		// found an answer that is acceptable
 		Iterator<Word<O>> outputIter = frequencyMap.keySet().iterator();
 		throw new NonDeterminismException(input, outputIter.next(),
 				outputIter.next()).makeCompact();
 	}
-	
+
 }

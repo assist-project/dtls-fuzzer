@@ -28,7 +28,13 @@ public class ClientHelloInput extends NamedTlsInput {
 	private boolean forceDigest = false;
 
 	/**
-	 * Include the latest session id in the client hello
+	 * option for resetting the digests
+	 */
+	@XmlAttribute(name = "resetDigest", required = false)
+	private boolean resetDigest = true;
+
+	/**
+	 * option for including the latest session id in the client hello
 	 */
 	@XmlAttribute(name = "withSessionId", required = false)
 	private boolean withSessionId = true;
@@ -55,7 +61,10 @@ public class ClientHelloInput extends NamedTlsInput {
 			state.getConfig().setAddECPointFormatExtension(false);
 			state.getConfig().setAddEllipticCurveExtension(false);
 		}
-		state.getTlsContext().getDigest().reset();
+
+		if (resetDigest) {
+			state.getTlsContext().getDigest().reset();
+		}
 
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 

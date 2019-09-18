@@ -60,7 +60,6 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		this.delegate = delegate;
 		this.defaultExecutor = defaultExecutor;
 	}
-	
 
 	@Override
 	public void pre() {

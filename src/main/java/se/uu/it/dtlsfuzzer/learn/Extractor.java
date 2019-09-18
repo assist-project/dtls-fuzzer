@@ -137,8 +137,7 @@ public class Extractor {
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
 		CachingSULOracle<TlsInput, TlsOutput> cachedSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
-				sulOracle, cache,
-				false, TlsOutput.socketClosed());
+				sulOracle, cache, false, TlsOutput.socketClosed());
 
 		// a SUL oracle which uses the cached oracle and attempts to re-run
 		// queries in case non-determinism is detected
@@ -171,8 +170,8 @@ public class Extractor {
 		if (fuzzerConfig.getLearningConfig().isCeSanitization()) {
 			testOracle = new CESanitizingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
 					fuzzerConfig.getLearningConfig().getCeReruns(), testOracle,
-					() -> algorithm.getHypothesisModel(), 
-					fuzzerConfig.getLearningConfig().isProbabilisticSanitization(),
+					() -> algorithm.getHypothesisModel(), fuzzerConfig
+							.getLearningConfig().isProbabilisticSanitization(),
 					fuzzerConfig.getLearningConfig().isSkipNonDetTests(),
 					nonDetWriter);
 		}

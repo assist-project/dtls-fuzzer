@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.filter.statistic.oracle.CounterOracle;
 import de.learnlib.filter.statistic.oracle.CounterOracle.MealyCounterOracle;
 import de.learnlib.oracle.membership.SULOracle;
@@ -59,7 +60,8 @@ public class ConformanceTester {
 	 * 
 	 * @throws IOException
 	 */
-	public TestReport testModel(SULOracle<TlsInput, TlsOutput> tlsOracle,
+	public TestReport testModel(
+			MealyMembershipOracle<TlsInput, TlsOutput> tlsOracle,
 			ConformanceTestingTask task) throws IOException {
 		LOGGER.info("Starting conformance testing");
 		TestReport report = doModelBasedTesting(tlsOracle, task);
@@ -68,7 +70,7 @@ public class ConformanceTester {
 	}
 
 	private TestReport doModelBasedTesting(
-			SULOracle<TlsInput, TlsOutput> tlsOracle,
+			MealyMembershipOracle<TlsInput, TlsOutput> tlsOracle,
 			final ConformanceTestingTask task) {
 		TestReport report = new TestReport();
 		final MealyCounterOracle<TlsInput, TlsOutput> testOracle = new CounterOracle.MealyCounterOracle<>(

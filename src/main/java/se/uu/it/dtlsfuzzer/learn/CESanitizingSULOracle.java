@@ -36,10 +36,8 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 	public CESanitizingSULOracle(int ceReruns,
 			MealyMembershipOracle<I, O> sulOracle,
-			Supplier<A> automatonProvider, 
-			boolean probabilisticSanitization,
-			boolean skipNonDetTests,
-			Writer log) {
+			Supplier<A> automatonProvider, boolean probabilisticSanitization,
+			boolean skipNonDetTests, Writer log) {
 		super(ceReruns, sulOracle, probabilisticSanitization, log);
 		this.automatonProvider = automatonProvider;
 		this.skipNonDetTests = skipNonDetTests;
@@ -78,7 +76,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 			Word<O> autOutput) {
 		try {
 			Word<O> checkedOutput = super.getMultipleRunOutput(input);
-	
+
 			if (!checkedOutput.equals(originalOutput)) {
 				log.println("Output changed following CE verification");
 				log.println("Input: " + input);
@@ -92,7 +90,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 				log.flush();
 			}
 			return checkedOutput;
-		} catch(NonDeterminismException exc) {
+		} catch (NonDeterminismException exc) {
 			if (skipNonDetTests) {
 				log.println("NonDetermism in running input");
 				log.println(exc);

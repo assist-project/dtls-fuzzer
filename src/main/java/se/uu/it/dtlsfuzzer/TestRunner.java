@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.config.TestRunnerConfig;
@@ -18,12 +17,12 @@ import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 
 public class TestRunner {
 	private static final Logger LOGGER = LogManager.getLogger(TestRunner.class);
-	private SULOracle<TlsInput, TlsOutput> sulOracle;
+	private MealyMembershipOracle<TlsInput, TlsOutput> sulOracle;
 	private TestRunnerConfig config;
 	private Alphabet<TlsInput> alphabet;
 
 	public TestRunner(TestRunnerConfig config, Alphabet<TlsInput> alphabet,
-			SULOracle<TlsInput, TlsOutput> sutOracle) {
+			MealyMembershipOracle<TlsInput, TlsOutput> sutOracle) {
 		this.alphabet = alphabet;
 		this.config = config;
 		this.sulOracle = sutOracle;

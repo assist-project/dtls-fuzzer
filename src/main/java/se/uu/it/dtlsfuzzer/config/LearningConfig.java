@@ -52,7 +52,7 @@ public class LearningConfig {
 
 	@Parameter(names = "-ceSanitization", description = "Activates CE sanitization, which involves re-running potential CE's ensuring they are not spurious")
 	private boolean ceSanitization = true;
-	
+
 	@Parameter(names = "-skipNonDetTests", description = "Rather than throw an exception, logs and skips tests whose execution turned out non-deterministic")
 	private boolean skipNonDetTests = false;
 
@@ -121,7 +121,7 @@ public class LearningConfig {
 	public boolean isCeSanitization() {
 		return ceSanitization;
 	}
-	
+
 	public boolean isSkipNonDetTests() {
 		return skipNonDetTests;
 	}
