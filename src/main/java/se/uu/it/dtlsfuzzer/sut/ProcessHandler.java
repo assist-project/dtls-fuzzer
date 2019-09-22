@@ -24,6 +24,7 @@ public class ProcessHandler {
 
 	private final ProcessBuilder pb;
 	private Process currentProcess;
+	private String terminateCommand;
 	private OutputStream output;
 	private OutputStream error;
 	private long runWait;
@@ -43,6 +44,7 @@ public class ProcessHandler {
 		if (sulConfig.getProcessDir() != null) {
 			setDirectory(new File(sulConfig.getProcessDir()));
 		}
+		terminateCommand = sulConfig.getTerminateCommand();
 	}
 
 	public void redirectOutput(OutputStream toOutput) {
@@ -96,7 +98,15 @@ public class ProcessHandler {
 	 */
 	public void terminateProcess() {
 		if (currentProcess != null) {
-			currentProcess.destroyForcibly();
+			if (terminateCommand != null) {
+				try {
+					Runtime.getRuntime().exec(terminateCommand);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				currentProcess.destroyForcibly();
+			}
 			currentProcess = null;
 		} else {
 			LOGGER.warn("Process has already been ended");

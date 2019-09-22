@@ -26,6 +26,9 @@ public class SulDelegate extends ClientDelegate {
 
 	@Parameter(names = {"-command", "-cmd"}, required = false, description = "Command for starting the (D)TLS process")
 	private String command = null;
+	
+	@Parameter(names = {"-terminateCommand", "-termCmd"}, required = false, description = "Command for terminating the (D)TLS process. If specified, it is used instead of java.lang.Process#destroy()")
+	private String terminateCommand = null;
 
 	@Parameter(names = {"-processDir"}, required = false, description = "The directory of the (D)TLS process")
 	private String processDir = null;
@@ -83,6 +86,15 @@ public class SulDelegate extends ClientDelegate {
 	public void setCommand(String command) {
 		this.command = command;
 	}
+	
+	public String getTerminateCommand() {
+		return terminateCommand;
+	}
+
+	public void setTerminateCommand(String terminateCommand) {
+		this.terminateCommand = terminateCommand;
+	}
+
 
 	public Long getResetWait() {
 		return resetWait;
