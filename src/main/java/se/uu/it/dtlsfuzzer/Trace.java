@@ -370,6 +370,7 @@ public class Trace {
 			nonmut(new FinishedInput()),};
 
 	public static void main(String[] args) throws Exception {
+		runTest();
 	}
 
 	public static void runTest() throws Exception {
@@ -383,7 +384,7 @@ public class Trace {
 		int stepWait = 50;
 		long runWait = 100;
 
-		TlsInput[] inputs = tinyDtlsNextEpochBug;
+		TlsInput[] inputs = Handshake.handshake(cs, false);
 
 		runTest(Command.none, inputs, iterations, stepWait, runWait);
 	}

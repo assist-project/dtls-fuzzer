@@ -3,6 +3,7 @@ package se.uu.it.dtlsfuzzer.config;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import com.beust.jcommander.Parameter;
 
@@ -26,7 +27,7 @@ public class SulDelegate extends ClientDelegate {
 
 	@Parameter(names = {"-command", "-cmd"}, required = false, description = "Command for starting the (D)TLS process")
 	private String command = null;
-	
+
 	@Parameter(names = {"-terminateCommand", "-termCmd"}, required = false, description = "Command for terminating the (D)TLS process. If specified, it is used instead of java.lang.Process#destroy()")
 	private String terminateCommand = null;
 
@@ -53,6 +54,9 @@ public class SulDelegate extends ClientDelegate {
 
 	@Parameter(names = "-withApplicationOutput", required = false, description = "Includes the application output in the output generated. Only useful the command was provided")
 	private boolean withApplicationOutput = false;
+
+	@Parameter(names = "-repeatingOutputs", required = false, description = "Specifies the outputs that the SUL is expected to repeat an arbitrary number of times, in response to an input. ")
+	private List<String> repeatingOutputs = null;
 
 	public SulDelegate() {
 		super();
@@ -86,7 +90,7 @@ public class SulDelegate extends ClientDelegate {
 	public void setCommand(String command) {
 		this.command = command;
 	}
-	
+
 	public String getTerminateCommand() {
 		return terminateCommand;
 	}
@@ -94,7 +98,6 @@ public class SulDelegate extends ClientDelegate {
 	public void setTerminateCommand(String terminateCommand) {
 		this.terminateCommand = terminateCommand;
 	}
-
 
 	public Long getResetWait() {
 		return resetWait;
@@ -150,5 +153,9 @@ public class SulDelegate extends ClientDelegate {
 
 	public String getResetAddress() {
 		return resetAddress;
+	}
+
+	public List<String> getRepeatingOutputs() {
+		return repeatingOutputs;
 	}
 }

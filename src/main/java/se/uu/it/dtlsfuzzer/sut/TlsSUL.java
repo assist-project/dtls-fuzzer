@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 
 import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
@@ -158,6 +157,18 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 			state.getTlsContext().getTransportHandler()
 					.setTimeout(originalTimeout + in.getExtendedWait());
 		TlsOutput output = executor.execute(in, state, context);
+
+		// TODO this is a hack to get learning Pion to work even when
+		// retransmissions are allowed
+		if (delegate.getRepeatingOutputs() != null) {
+			String header = output.getMessageHeader();
+			for (String outputString : delegate.getRepeatingOutputs()) {
+				header = output.getMessageHeader().replaceAll(
+						outputString + "\\+?", outputString + "\\+");
+			}
+			output = new TlsOutput(header);
+		}
+
 		LOG.debug("received:" + output);
 		state.getTlsContext().getTransportHandler().setTimeout(originalTimeout);
 		return output;

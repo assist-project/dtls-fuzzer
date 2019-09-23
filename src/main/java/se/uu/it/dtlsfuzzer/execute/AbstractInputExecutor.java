@@ -77,7 +77,7 @@ public abstract class AbstractInputExecutor {
 		} else {
 
 			// in case we find repeated occurrences of types of messages, we
-			// coalesce them under *
+			// coalesce them under +
 			StringBuilder builder = new StringBuilder();
 			String lastSeen = null;
 			boolean skipStar = false;
@@ -85,7 +85,7 @@ public abstract class AbstractInputExecutor {
 				if (lastSeen != null && lastSeen.equals(m.toCompactString())) {
 					if (!skipStar) {
 						// insert before ,
-						builder.insert(builder.length() - 1, '*');
+						builder.insert(builder.length() - 1, '+');
 						skipStar = true;
 					}
 				} else {

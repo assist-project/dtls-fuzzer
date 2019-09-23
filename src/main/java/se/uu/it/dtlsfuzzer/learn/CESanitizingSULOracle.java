@@ -39,10 +39,8 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 	public CESanitizingSULOracle(int ceReruns,
 			MealyMembershipOracle<I, O> sulOracle,
-			Supplier<A> automatonProvider, 
-			ObservationTree<I, O> cache,
-			boolean probabilisticSanitization,
-			boolean skipNonDetTests,
+			Supplier<A> automatonProvider, ObservationTree<I, O> cache,
+			boolean probabilisticSanitization, boolean skipNonDetTests,
 			Writer log) {
 		super(ceReruns, sulOracle, probabilisticSanitization, log);
 		this.automatonProvider = automatonProvider;
@@ -75,13 +73,16 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 		else {
 			returnedOutput = originalOutput;
 		}
-		
-		// ok, we have what appears to be a counterexample, still we check it against the cache
+
+		// ok, we have what appears to be a counterexample, still we check it
+		// against the cache
 		if (!returnedOutput.equals(autOutput)) {
 			Word<O> outputFromCache = cache.answerQuery(q.getInput(), true);
-			if ( !outputFromCache.equals(returnedOutput.prefix(outputFromCache.length())) ) {
+			if (!outputFromCache.equals(returnedOutput.prefix(outputFromCache
+					.length()))) {
 				log.println("Output inconsistent with cache, discarding it and returning automaton output");
-				log.println("Input: " + q.getInput().prefix(outputFromCache.length()));
+				log.println("Input: "
+						+ q.getInput().prefix(outputFromCache.length()));
 				log.println("Spurious output: " + returnedOutput);
 				log.println("Cached output: " + outputFromCache);
 				log.flush();
