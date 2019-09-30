@@ -17,7 +17,7 @@ scandium-2.0.0_ecdhe_cert_req_stests
 -equivalenceAlgorithms
 WP_SAMPLED_TESTS,WP_METHOD
 -cmd
-"java -jar scandium-2.0.0-dtls-server.jar -port 50008 -timeout 20000000 -reqCert"
+"java -jar scandium-2.0.0-dtls-server.jar -port 50008 -timeout 20000000 -clientAuth NEEDED"
 -testFile
 ../examples/tests/ecdhe_cert
 -depth
