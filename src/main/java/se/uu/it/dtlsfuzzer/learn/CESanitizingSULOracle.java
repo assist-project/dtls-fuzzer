@@ -12,6 +12,7 @@ import de.learnlib.api.query.Query;
 import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
 import net.automatalib.words.Word;
+import se.uu.it.dtlsfuzzer.sut.MultipleRunsSULOracle;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismException;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
 
@@ -23,7 +24,7 @@ import se.uu.it.dtlsfuzzer.sut.ObservationTree;
  */
 public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, I, ?, ?, ?> & Output<I, Word<O>>, I, O>
 		extends
-			MultipleRunsSULOracle<A, I, O>
+			MultipleRunsSULOracle<I, O>
 		implements
 			MealyMembershipOracle<I, O> {
 

@@ -1,84 +1,55 @@
 package se.uu.it.dtlsfuzzer.sut;
 
-import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Collection;
 
-import de.learnlib.api.exception.SULException;
 import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.query.Query;
 import net.automatalib.words.Word;
 
 public class NonDeterminismRetryingSULOracle<I, O>
-		implements
-			MealyMembershipOracle<I, O> {
+extends MultipleRunsSULOracle< I, O>
+implements
+MealyMembershipOracle<I, O> {
 
-	private CachingSULOracle<I, O> sulOracle;
-	private PrintWriter log;
-	private int retries;
+	private ObservationTree<I, O> cache;
 
-	public NonDeterminismRetryingSULOracle(
-			CachingSULOracle<I, O> cachingSulOracle, int retries,
-			Writer nonDetWriter) {
-		this.sulOracle = cachingSulOracle;
-		this.log = new PrintWriter(nonDetWriter);
-		if (retries <= 0) {
-			throw new RuntimeException(
-					"There is no point in this oracle if the number of retries is not > 0");
-		}
-		this.retries = retries;
+	public NonDeterminismRetryingSULOracle(MealyMembershipOracle<I, O> sulOracle,
+			ObservationTree<I, O> cache,
+			int retries, 
+			boolean probabilisticSanitization, Writer log) {
+		super(retries, sulOracle, probabilisticSanitization, log);
+		this.cache = cache;
 	}
-
-	@Override
-	public void processQueries(Collection<? extends Query<I, Word<O>>> queries) {
-		for (Query<I, Word<O>> query : queries) {
-			Word<O> output = null;
-			try {
-				output = sulOracle.answerQuery(query.getInput());
-			} catch (CacheInconsistencyException exc) {
-				log.println(exc.toString());
-				log.println("Retrying input: " + query.getInput() + "\n"
-						+ retries + " times to confirm non-determinism");
-				log.flush();
-				// ok, non determinism detected, could it be a blip? Does it
-				// occur
-				// at least once
-				// if we rerun the sequence $retries times?
-				output = retryAnswerQuery(query.getInput(), retries);
-				log.println("Non-determinism could not be confirmed. Learning can continue");
-				log.flush();
-			}
-			query.answer(output.suffix(query.getSuffix().length()));
+	
+	public void processQuery(Query<I, Word<O>> q) {
+		Word<O> originalOutput = sulOracle.answerQuery(q.getInput());
+		Word<O> outputFromCache = cache.answerQuery(q.getInput(), true);
+		Word<O> returnedOutput = originalOutput;
+		if (!outputFromCache.equals(originalOutput.prefix(outputFromCache
+				.length()))) {
+			log.println("Output inconsistent with cache, rerunning membership query");
+			log.println("Input: "
+					+ q.getInput().prefix(outputFromCache.length()));
+			log.println("Unexpected output: " + returnedOutput);
+			log.println("Cached output: " + outputFromCache);
+			log.flush();
+			returnedOutput = getCheckedOutput(q.getInput(), originalOutput);
 		}
+		
+		q.answer(returnedOutput.suffix(q.getSuffix().length()));
 	}
-
-	private Word<O> retryAnswerQuery(Word<I> inputs, int numTimes)
-			throws SULException {
-		Word<O> output, expectedOutput;
-		// we intersperse more breaks in the execution
-		pause(1000);
-		// try to re-run once to get the expected output
-		expectedOutput = sulOracle.answerQuery(inputs);
-		log.println("expected output: " + expectedOutput);
-		pause(1000);
-		for (int i = 0; i < numTimes - 1; i++) {
-			output = sulOracle.answerQueryWithoutCache(inputs);
-			log.println("received output: " + output);
-			if (!expectedOutput.equals(output)) {
-				throw new NonDeterminismException(inputs, expectedOutput,
-						output).makeCompact();
-			}
-			pause(1000);
+	
+	private Word<O> getCheckedOutput(Word<I> input, Word<O> originalOutput) {
+		Word<O> checkedOutput = super.getMultipleRunOutput(input);
+	
+		if (!checkedOutput.equals(originalOutput)) {
+			log.println("Output changed following rerun");
+			log.println("Input: " + input);
+			log.println("Original output: " + originalOutput);
+			log.println("New output: " + checkedOutput);
+			log.flush();
 		}
-		return expectedOutput;
+		return checkedOutput;
 	}
-
-	private void pause(long millis) throws SULException {
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			throw new SULException(e);
-		}
-	}
-
+	
 }

@@ -35,6 +35,9 @@ public class LearningConfig {
 	@Parameter(names = "-memQueryRuns", description = "The number of times each membership query is executed before an answer is returned. Setting it to more than 1 enables an multiple-run oracle which may prevent non-determinism.")
 	private int runsPerMembershipQuery = 1;
 
+	@Parameter(names = "-memQueryRetries", description = "The number of times a membership query is executed in case cache inconsistency is detected.")
+	private int membershipQueryRetries = 3;
+	
 	@Parameter(names = "-queryFile", description = "If set, logs all membership queries to this file.")
 	private String queryFile;
 
@@ -136,5 +139,9 @@ public class LearningConfig {
 
 	public int getRunsPerMembershipQuery() {
 		return runsPerMembershipQuery;
+	}
+	
+	public int getMembershipQueryRetries() {
+		return membershipQueryRetries;
 	}
 }

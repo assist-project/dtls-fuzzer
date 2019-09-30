@@ -1,4 +1,4 @@
-package se.uu.it.dtlsfuzzer.learn;
+package se.uu.it.dtlsfuzzer.sut;
 
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -14,12 +14,9 @@ import org.apache.logging.log4j.Logger;
 
 import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.query.Query;
-import net.automatalib.automata.UniversalDeterministicAutomaton;
-import net.automatalib.automata.concepts.Output;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.TestRunner;
 import se.uu.it.dtlsfuzzer.TestRunnerResult;
-import se.uu.it.dtlsfuzzer.sut.NonDeterminismException;
 
 /**
  * A membership oracle which executes each query multiple times in order to
@@ -29,8 +26,10 @@ import se.uu.it.dtlsfuzzer.sut.NonDeterminismException;
  * 
  * If the likelihood is greater than a threshold the answer is returned,
  * otherwise an exception is thrown.
+ * 
+ * This oracle provides a foundation for other oracles which may want to re-run queries.
  */
-public class MultipleRunsSULOracle<A extends UniversalDeterministicAutomaton<?, I, ?, ?, ?> & Output<I, Word<O>>, I, O>
+public class MultipleRunsSULOracle<I, O>
 		implements
 			MealyMembershipOracle<I, O> {
 

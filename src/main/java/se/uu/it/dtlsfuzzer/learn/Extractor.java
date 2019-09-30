@@ -31,6 +31,7 @@ import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ExperimentTimeoutException;
 import se.uu.it.dtlsfuzzer.sut.IsAliveWrapper;
 import se.uu.it.dtlsfuzzer.sut.LoggingSULOracle;
+import se.uu.it.dtlsfuzzer.sut.MultipleRunsSULOracle;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
 import se.uu.it.dtlsfuzzer.sut.ResettingWrapper;
@@ -52,12 +53,6 @@ public class Extractor {
 	public static final String ALPHABET_FILENAME = "alphabet.xml";
 	public static final String NON_DET_FILENAME = "nondet.log";
 	private static final String ERROR_FILENAME = "error.msg";
-
-	/*
-	 * In case of non-determinism, the number of times the causing sequence of
-	 * inputs (to confirm/infirm non-determinism)
-	 */
-	private static final Integer NON_DET_ATTEMPTS = 3;
 
 	private static final Logger LOG = Logger.getLogger(Extractor.class
 			.getName());
@@ -109,7 +104,7 @@ public class Extractor {
 				resetCounterSul.getStatisticalData());
 		tlsSystemUnderTest = resetCounterSul;
 
-		MealyMembershipOracle<TlsInput, TlsOutput> sulOracle = new SULOracle<TlsInput, TlsOutput>(
+		MealyMembershipOracle<TlsInput, TlsOutput> learningSulOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSystemUnderTest);
 
 		// TODO the LOGGER instances should handle this, instead of us passing
@@ -124,24 +119,27 @@ public class Extractor {
 		}
 
 		if (fuzzerConfig.getLearningConfig().getRunsPerMembershipQuery() > 1) {
-			sulOracle = new MultipleRunsSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
+			learningSulOracle = new MultipleRunsSULOracle<TlsInput, TlsOutput>(
 					fuzzerConfig.getLearningConfig()
-							.getRunsPerMembershipQuery(), sulOracle, true,
+							.getRunsPerMembershipQuery(), learningSulOracle, true,
 					nonDetWriter);
 		}
 
 		// the cache is an observation tree
 		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
+		
+		// a SUL oracle which uses the cache to check for non-determinism 
+		// and re-runs queries if non-det is detected
+		learningSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput> (
+						learningSulOracle, cache, 
+						fuzzerConfig.getLearningConfig().getMembershipQueryRetries(), 
+						true,  
+						nonDetWriter);
 
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
-		CachingSULOracle<TlsInput, TlsOutput> cachedSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
-				sulOracle, cache, false, TlsOutput.socketClosed());
-
-		// a SUL oracle which uses the cached oracle and attempts to re-run
-		// queries in case non-determinism is detected
-		MealyMembershipOracle<TlsInput, TlsOutput> learningSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(
-				cachedSulOracle, NON_DET_ATTEMPTS, nonDetWriter);
+		learningSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
+				learningSulOracle, cache, false, TlsOutput.socketClosed());
 
 		if (fuzzerConfig.getLearningConfig().getQueryFile() != null) {
 			FileWriter queryWriter = null;
