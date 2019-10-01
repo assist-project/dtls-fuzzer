@@ -49,6 +49,9 @@ public class SulDelegate extends ClientDelegate {
 	@Parameter(names = "-resetCommandWait", required = false, description = "Time waited after sending a reset command")
 	private Long resetCommandWait = 0L;
 
+	@Parameter(names = "-resetAck", required = false, description = "Wait from acknowledgement from the other side")
+	private boolean resetAck = false;
+
 	@Parameter(names = "-sulConfig", required = false, description = "Configuration for the SUL")
 	private String sulConfig = null;
 
@@ -153,6 +156,10 @@ public class SulDelegate extends ClientDelegate {
 
 	public String getResetAddress() {
 		return resetAddress;
+	}
+
+	public boolean getResetAck() {
+		return resetAck;
 	}
 
 	public List<String> getRepeatingOutputs() {

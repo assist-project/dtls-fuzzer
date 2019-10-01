@@ -37,7 +37,7 @@ public class LearningConfig {
 
 	@Parameter(names = "-memQueryRetries", description = "The number of times a membership query is executed in case cache inconsistency is detected.")
 	private int membershipQueryRetries = 3;
-	
+
 	@Parameter(names = "-queryFile", description = "If set, logs all membership queries to this file.")
 	private String queryFile;
 
@@ -140,7 +140,7 @@ public class LearningConfig {
 	public int getRunsPerMembershipQuery() {
 		return runsPerMembershipQuery;
 	}
-	
+
 	public int getMembershipQueryRetries() {
 		return membershipQueryRetries;
 	}

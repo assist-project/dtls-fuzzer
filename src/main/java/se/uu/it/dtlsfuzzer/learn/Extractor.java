@@ -25,6 +25,7 @@ import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
+import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 import se.uu.it.dtlsfuzzer.execute.BasicInputExecutor;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
@@ -58,10 +59,13 @@ public class Extractor {
 			.getName());
 	private final DtlsFuzzerConfig fuzzerConfig;
 	private final Alphabet<TlsInput> alphabet;
+	private final CleanupTasks cleanupTasks;
 
-	public Extractor(DtlsFuzzerConfig finderConfig, Alphabet<TlsInput> alphabet) {
+	public Extractor(DtlsFuzzerConfig finderConfig,
+			Alphabet<TlsInput> alphabet, CleanupTasks tasks) {
 		this.fuzzerConfig = finderConfig;
 		this.alphabet = alphabet;
+		this.cleanupTasks = tasks;
 	}
 
 	public ExtractorResult extractStateMachine() {
@@ -85,7 +89,8 @@ public class Extractor {
 		}
 		if (fuzzerConfig.getSulDelegate().getResetPort() != null) {
 			tlsSystemUnderTest = new ResettingWrapper<TlsInput, TlsOutput>(
-					tlsSystemUnderTest, fuzzerConfig.getSulDelegate());
+					tlsSystemUnderTest, fuzzerConfig.getSulDelegate(),
+					cleanupTasks);
 		}
 		if (fuzzerConfig.getLearningConfig().getTimeLimit() != null) {
 			tlsSystemUnderTest = new TimeoutWrapper<TlsInput, TlsOutput>(
@@ -121,20 +126,18 @@ public class Extractor {
 		if (fuzzerConfig.getLearningConfig().getRunsPerMembershipQuery() > 1) {
 			learningSulOracle = new MultipleRunsSULOracle<TlsInput, TlsOutput>(
 					fuzzerConfig.getLearningConfig()
-							.getRunsPerMembershipQuery(), learningSulOracle, true,
-					nonDetWriter);
+							.getRunsPerMembershipQuery(), learningSulOracle,
+					true, nonDetWriter);
 		}
 
 		// the cache is an observation tree
 		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
-		
-		// a SUL oracle which uses the cache to check for non-determinism 
+
+		// a SUL oracle which uses the cache to check for non-determinism
 		// and re-runs queries if non-det is detected
-		learningSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput> (
-						learningSulOracle, cache, 
-						fuzzerConfig.getLearningConfig().getMembershipQueryRetries(), 
-						true,  
-						nonDetWriter);
+		learningSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(
+				learningSulOracle, cache, fuzzerConfig.getLearningConfig()
+						.getMembershipQueryRetries(), true, nonDetWriter);
 
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated

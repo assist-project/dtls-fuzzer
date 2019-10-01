@@ -24,9 +24,7 @@ import se.uu.it.dtlsfuzzer.sut.ObservationTree;
  */
 public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, I, ?, ?, ?> & Output<I, Word<O>>, I, O>
 		extends
-			MultipleRunsSULOracle<I, O>
-		implements
-			MealyMembershipOracle<I, O> {
+			MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
 	private static final Logger LOGGER = LogManager
 			.getLogger(CESanitizingSULOracle.class);

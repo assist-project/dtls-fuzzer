@@ -27,11 +27,10 @@ import se.uu.it.dtlsfuzzer.TestRunnerResult;
  * If the likelihood is greater than a threshold the answer is returned,
  * otherwise an exception is thrown.
  * 
- * This oracle provides a foundation for other oracles which may want to re-run queries.
+ * This oracle provides a foundation for other oracles which may want to re-run
+ * queries.
  */
-public class MultipleRunsSULOracle<I, O>
-		implements
-			MealyMembershipOracle<I, O> {
+public class MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
 	private static final Logger LOGGER = LogManager
 			.getLogger(MultipleRunsSULOracle.class);

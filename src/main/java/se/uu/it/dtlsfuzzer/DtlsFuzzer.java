@@ -39,28 +39,36 @@ public class DtlsFuzzer {
 	private static final Logger LOGGER = LogManager.getLogger(DtlsFuzzer.class);
 
 	private DtlsFuzzerConfig config;
+	private CleanupTasks cleanupTasks;
 
 	public DtlsFuzzer(DtlsFuzzerConfig config) {
 		this.config = config;
+		this.cleanupTasks = new CleanupTasks();
 	}
 
 	public TestReport startTesting() throws ParseException, IOException {
-		if (config.getTestRunnerConfig().getTest() != null) {
-			runTest(config);
-			return null;
-		} else {
-			// setting up our output directory
-			File folder = new File(config.getOutput());
-			folder.mkdirs();
-			if (config.isOnlyLearn()) {
-				extractModel(config);
-				return null;
+		TestReport report = null;
+		try {
+			if (config.getTestRunnerConfig().getTest() != null) {
+				runTest(config);
 			} else {
-				ConformanceTestingTask task = generateModelBasedTestingTask(config);
-				TestReport report = testModel(config, task);
-				return report;
+				// setting up our output directory
+				File folder = new File(config.getOutput());
+				folder.mkdirs();
+				if (config.isOnlyLearn()) {
+					extractModel(config);
+				} else {
+					ConformanceTestingTask task = generateModelBasedTestingTask(config);
+					report = testModel(config, task);
+				}
 			}
+		} catch (Exception e) {
+			cleanupTasks.execute();
+			throw e;
 		}
+		cleanupTasks.execute();
+
+		return report;
 	}
 
 	private void runTest(DtlsFuzzerConfig config) throws IOException,
@@ -96,7 +104,7 @@ public class DtlsFuzzer {
 		}
 		if (config.getSulDelegate().getResetPort() != null) {
 			tlsSut = new ResettingWrapper<TlsInput, TlsOutput>(tlsSut,
-					config.getSulDelegate());
+					config.getSulDelegate(), cleanupTasks);
 		}
 		tlsSut = new IsAliveWrapper(tlsSut);
 
@@ -111,7 +119,7 @@ public class DtlsFuzzer {
 	 * alphabet to focus model based testing on. If a specification is not
 	 * provided, it is created using active learning.
 	 */
-	public ConformanceTestingTask generateModelBasedTestingTask(
+	private ConformanceTestingTask generateModelBasedTestingTask(
 			DtlsFuzzerConfig config) throws FileNotFoundException,
 			ParseException {
 
@@ -148,7 +156,7 @@ public class DtlsFuzzer {
 
 	private ExtractorResult extractModel(DtlsFuzzerConfig config) {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
-		Extractor extractor = new Extractor(config, alphabet);
+		Extractor extractor = new Extractor(config, alphabet, cleanupTasks);
 		ExtractorResult result = extractor.extractStateMachine();
 		return result;
 	}
