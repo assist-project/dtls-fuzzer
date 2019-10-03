@@ -1,7 +1,13 @@
 package se.uu.it.dtlsfuzzer;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.FileSystem;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Security;
 
@@ -19,6 +25,7 @@ import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 public class Main {
 	private static final Logger LOGGER = LogManager.getLogger(Main.class
 			.getName());
+	
 	private static String ARGS_FILE = "command.args";
 
 	public static void main(String args[]) throws IOException {
@@ -56,9 +63,13 @@ public class Main {
 		}
 	}
 
+	/*
+	 * Generates a file comprising the entire command given to to fuzzer.
+	 */
 	private static void copyArgsToOutDir(String[] args, String outDir)
 			throws IOException {
-		File file = Paths.get(outDir, ARGS_FILE).toFile();
+		FileOutputStream fw = new FileOutputStream(new File(outDir, ARGS_FILE));
+		PrintStream ps = new PrintStream(fw);
 		for (String arg : args) {
 			if (arg.startsWith("@")) {
 				String argsFileName = arg.substring(1);
@@ -67,9 +78,13 @@ public class Main {
 					LOGGER.error("Arguments file " + argsFile
 							+ "has been moved ");
 				} else {
-					Files.copy(argsFile, file);
+					Files.copy(argsFile, fw);
 				}
+			} else {
+				ps.println(arg);
 			}
 		}
+		ps.close();
+		fw.close();
 	}
 }
