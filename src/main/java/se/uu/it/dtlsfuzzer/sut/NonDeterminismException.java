@@ -10,7 +10,7 @@ public class NonDeterminismException extends RuntimeException {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Word<?> oldOutput, newOutput, input;
+	private Word<?> oldOutput, newOutput, input, precedingInput;
 
 	public NonDeterminismException(Word<?> input, Word<?> oldOutput,
 			Word<?> newOutput) {
@@ -45,6 +45,13 @@ public class NonDeterminismException extends RuntimeException {
 	public Word<?> getNewOutput() {
 		return this.newOutput;
 	}
+	
+	/**
+	 * Sets the preceding
+	 */
+	public void setPrecedingInput(Word<?> precedingInput) {
+		this.precedingInput = precedingInput;
+	}
 
 	/**
 	 * The shortest sublist of the input word which still shows non-determinism
@@ -70,8 +77,17 @@ public class NonDeterminismException extends RuntimeException {
 
 	@Override
 	public String toString() {
-		return "Non-determinism detected\nfull input:\n" + this.input
-				+ "\nfull new output:\n" + this.newOutput + "\nold output:\n"
-				+ this.oldOutput;
+		StringBuilder sb = new StringBuilder();
+		sb.append("Non-determinism detected\n");
+		sb.append("full input:\n"); 
+		sb.append(input);
+		sb.append("\nfull new output:\n"); 
+		sb.append(newOutput); 
+		sb.append("\nold output:\n"); 
+		sb.append(oldOutput);
+		if (precedingInput != null)
+			sb.append("\npreceding input:\n");
+			sb.append(precedingInput);
+		return sb.toString();
 	}
 }

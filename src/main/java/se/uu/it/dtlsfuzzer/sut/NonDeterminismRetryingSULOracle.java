@@ -11,6 +11,7 @@ public class NonDeterminismRetryingSULOracle<I, O>
 			MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
 	private ObservationTree<I, O> cache;
+	private Word<I> precedingInput;
 
 	public NonDeterminismRetryingSULOracle(
 			MealyMembershipOracle<I, O> sulOracle, ObservationTree<I, O> cache,
@@ -31,10 +32,16 @@ public class NonDeterminismRetryingSULOracle<I, O>
 			log.println("Unexpected output: " + returnedOutput);
 			log.println("Cached output: " + outputFromCache);
 			log.flush();
-			returnedOutput = getCheckedOutput(q.getInput(), originalOutput);
+			try {
+				returnedOutput = getCheckedOutput(q.getInput(), originalOutput);
+			} catch(NonDeterminismException e) {
+				e.setPrecedingInput(precedingInput);
+				throw e;
+			}
 		}
 
 		q.answer(returnedOutput.suffix(q.getSuffix().length()));
+		precedingInput = q.getInput();
 	}
 
 	private Word<O> getCheckedOutput(Word<I> input, Word<O> originalOutput) {
