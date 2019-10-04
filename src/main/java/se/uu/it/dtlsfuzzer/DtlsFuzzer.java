@@ -96,15 +96,17 @@ public class DtlsFuzzer {
 
 	public MealyMembershipOracle<TlsInput, TlsOutput> createTestOracle(
 			DtlsFuzzerConfig config) {
-		SUL<TlsInput, TlsOutput> tlsSut = new TlsSUL(config.getSulDelegate(),
+		TlsSUL actualSut = new TlsSUL(config.getSulDelegate(),
 				new TestingInputExecutor());
+		SUL<TlsInput, TlsOutput> tlsSut = actualSut;
 		if (config.getSulDelegate().getCommand() != null) {
-
 			tlsSut = new TlsProcessWrapper(tlsSut, config.getSulDelegate());
 		}
 		if (config.getSulDelegate().getResetPort() != null) {
-			tlsSut = new ResettingWrapper<TlsInput, TlsOutput>(tlsSut,
-					config.getSulDelegate(), cleanupTasks);
+			ResettingWrapper<TlsInput, TlsOutput> wrapper = new ResettingWrapper<>(
+					tlsSut, config.getSulDelegate(), cleanupTasks);
+			actualSut.setDynamicPortProvider(wrapper);
+			tlsSut = wrapper;
 		}
 		tlsSut = new IsAliveWrapper(tlsSut);
 

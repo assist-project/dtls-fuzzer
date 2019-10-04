@@ -45,7 +45,7 @@ public class NonDeterminismException extends RuntimeException {
 	public Word<?> getNewOutput() {
 		return this.newOutput;
 	}
-	
+
 	/**
 	 * Sets the preceding
 	 */
@@ -79,15 +79,15 @@ public class NonDeterminismException extends RuntimeException {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Non-determinism detected\n");
-		sb.append("full input:\n"); 
+		sb.append("full input:\n");
 		sb.append(input);
-		sb.append("\nfull new output:\n"); 
-		sb.append(newOutput); 
-		sb.append("\nold output:\n"); 
+		sb.append("\nfull new output:\n");
+		sb.append(newOutput);
+		sb.append("\nold output:\n");
 		sb.append(oldOutput);
 		if (precedingInput != null)
 			sb.append("\npreceding input:\n");
-			sb.append(precedingInput);
+		sb.append(precedingInput);
 		return sb.toString();
 	}
 }

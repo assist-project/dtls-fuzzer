@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
 import de.rub.nds.tlsattacker.core.config.Config;
+import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
 import de.rub.nds.tlsattacker.core.record.layer.TlsRecordLayer;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.transport.tcp.ClientTcpTransportHandler;
@@ -55,9 +56,15 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 	private SulDelegate delegate;
 	private AbstractInputExecutor defaultExecutor;
 
+	private DynamicPortProvider portProvider;
+
 	public TlsSUL(SulDelegate delegate, AbstractInputExecutor defaultExecutor) {
 		this.delegate = delegate;
 		this.defaultExecutor = defaultExecutor;
+	}
+
+	public void setDynamicPortProvider(DynamicPortProvider portProvider) {
+		this.portProvider = portProvider;
 	}
 
 	@Override
@@ -71,6 +78,12 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		state.getTlsContext().setTransportHandler(null);
 		config.setHighestProtocolVersion(delegate.getProtocolVersion());
 		config.setDefaultSelectedProtocolVersion(delegate.getProtocolVersion());
+		OutboundConnection connection = state.getConfig()
+				.getDefaultClientConnection();
+		if (portProvider != null) {
+			connection.setPort(portProvider.getSulPort());
+		}
+
 		if (delegate.getProtocolVersion().isDTLS()) {
 			state.getTlsContext().setTransportHandler(
 					new ClientUdpTransportHandler(state.getConfig()

@@ -34,7 +34,7 @@ public class NonDeterminismRetryingSULOracle<I, O>
 			log.flush();
 			try {
 				returnedOutput = getCheckedOutput(q.getInput(), originalOutput);
-			} catch(NonDeterminismException e) {
+			} catch (NonDeterminismException e) {
 				e.setPrecedingInput(precedingInput);
 				throw e;
 			}

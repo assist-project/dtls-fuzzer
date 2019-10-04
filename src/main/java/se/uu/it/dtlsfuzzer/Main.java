@@ -25,7 +25,7 @@ import se.uu.it.dtlsfuzzer.config.DtlsFuzzerConfig;
 public class Main {
 	private static final Logger LOGGER = LogManager.getLogger(Main.class
 			.getName());
-	
+
 	private static String ARGS_FILE = "command.args";
 
 	public static void main(String args[]) throws IOException {

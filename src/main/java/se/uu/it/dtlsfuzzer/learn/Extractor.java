@@ -80,17 +80,20 @@ public class Extractor {
 		copyInputsToOutputFolder(outputFolder);
 
 		// setting up SUL/T (System Under Learning/Test)
-		SUL<TlsInput, TlsOutput> tlsSystemUnderTest = new TlsSUL(
-				fuzzerConfig.getSulDelegate(), new BasicInputExecutor());
+		TlsSUL actualTlsSul = new TlsSUL(fuzzerConfig.getSulDelegate(),
+				new BasicInputExecutor());
+		SUL<TlsInput, TlsOutput> tlsSystemUnderTest = actualTlsSul;
 
 		if (fuzzerConfig.getSulDelegate().getCommand() != null) {
 			tlsSystemUnderTest = new TlsProcessWrapper(tlsSystemUnderTest,
 					fuzzerConfig.getSulDelegate());
 		}
 		if (fuzzerConfig.getSulDelegate().getResetPort() != null) {
-			tlsSystemUnderTest = new ResettingWrapper<TlsInput, TlsOutput>(
+			ResettingWrapper<TlsInput, TlsOutput> resetWrapper = new ResettingWrapper<TlsInput, TlsOutput>(
 					tlsSystemUnderTest, fuzzerConfig.getSulDelegate(),
 					cleanupTasks);
+			actualTlsSul.setDynamicPortProvider(resetWrapper);
+			tlsSystemUnderTest = resetWrapper;
 		}
 		if (fuzzerConfig.getLearningConfig().getTimeLimit() != null) {
 			tlsSystemUnderTest = new TimeoutWrapper<TlsInput, TlsOutput>(

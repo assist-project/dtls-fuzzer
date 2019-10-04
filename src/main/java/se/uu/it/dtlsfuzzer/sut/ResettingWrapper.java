@@ -1,6 +1,8 @@
 package se.uu.it.dtlsfuzzer.sut;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -10,14 +12,26 @@ import de.learnlib.api.exception.SULException;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
 
-public class ResettingWrapper<I, O> implements SUL<I, O> {
+/**
+ * The role of the resetting wrapper is to communicate with a SUL wrapper over a
+ * TCP connection. The resetting wrapper sends "reset" commands to the SUL
+ * wrapper. The SUL wrapper reacts by terminating the current SUL instance,
+ * starting a new one and responding with the fresh port number the instance
+ * listens to. This response is also used as a form of acknowledgement, telling
+ * the learning setup that the new instance is ready to receive messages.
+ * 
+ * Setting the port dynamically (rather than binding it statically) proved
+ * necessary in order to avoid port collisions.
+ */
+public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 
 	private SUL<I, O> sul;
 
 	private Socket resetSocket;
 	private InetSocketAddress resetAddress;
 	private long resetCommandWait;
-	private boolean resetAck;
+	private Integer dynamicPort;
+	private BufferedReader reader;
 
 	public ResettingWrapper(SUL<I, O> sul, SulDelegate sulDelegate,
 			CleanupTasks tasks) {
@@ -25,7 +39,6 @@ public class ResettingWrapper<I, O> implements SUL<I, O> {
 		resetAddress = new InetSocketAddress(sulDelegate.getResetAddress(),
 				sulDelegate.getResetPort());
 		resetCommandWait = sulDelegate.getResetCommandWait();
-		resetAck = sulDelegate.getResetAck();
 		try {
 			resetSocket = new Socket();
 			resetSocket.setReuseAddress(true);
@@ -48,26 +61,36 @@ public class ResettingWrapper<I, O> implements SUL<I, O> {
 		}
 	}
 
+	public Integer getSulPort() {
+		return dynamicPort;
+	}
+
 	@Override
 	public void pre() {
 		try {
 			if (!resetSocket.isConnected()) {
 				resetSocket.connect(resetAddress);
+				reader = new BufferedReader(new InputStreamReader(
+						resetSocket.getInputStream()));
 			}
-			sul.pre();
 			byte[] resetCmd = "reset\n".getBytes();
-			byte[] ackBuf = new byte[1000];
 
 			resetSocket.getOutputStream().write(resetCmd);
 			resetSocket.getOutputStream().flush();
-			if (resetAck) {
-				int bytes = resetSocket.getInputStream().read(ackBuf);
-				if (bytes < 0) {
-					throw new RuntimeException("Server has closed the socket");
-				}
+			String portString = reader.readLine();
+			if (portString == null) {
+				throw new RuntimeException("Server has closed the socket");
 			}
+			dynamicPort = Integer.valueOf(portString);
 			if (resetCommandWait > 0)
 				Thread.sleep(resetCommandWait);
+
+			/*
+			 * We have to pre before the SUT does, so we have a port available
+			 * for it.
+			 */
+
+			sul.pre();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (InterruptedException e) {
