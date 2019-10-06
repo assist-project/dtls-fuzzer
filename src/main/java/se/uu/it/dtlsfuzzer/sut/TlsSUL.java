@@ -70,7 +70,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 	@Override
 	public void pre() {
 		Config config = getNewSulConfig(delegate);
-		config.setAutoSelectCertificate(false);
+		// config.setAutoSelectCertificate(false);
 		delegate.applyDelegate(config);
 		state = new State(config);
 		state.getTlsContext().setRecordLayer(

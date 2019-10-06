@@ -37,6 +37,10 @@ public class TlsOutput {
 		return getSpecialOutput(TIMEOUT);
 	}
 
+	public static TlsOutput unknown() {
+		return getSpecialOutput("UNKNOWN_MESSAGE");
+	}
+
 	public static TlsOutput socketClosed() {
 		return getSpecialOutput("SOCKET_CLOSED");
 	}
