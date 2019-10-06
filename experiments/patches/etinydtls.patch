@@ -1,5 +1,94 @@
+diff --git a/dtls.c b/dtls.c
+index dd760ff..dd5eb2c 100644
+--- a/dtls.c
++++ b/dtls.c
+@@ -362,43 +362,48 @@ dtls_create_cookie(dtls_context_t *ctx,
+    * the buffer size must fit with the default hash algorithm (see
+    * implementation of dtls_hmac_context_new()). */
+ 
+-  dtls_hmac_context_t hmac_context;
+-  dtls_hmac_init(&hmac_context, ctx->cookie_secret, DTLS_COOKIE_SECRET_LENGTH);
++    for (int i=0; i<*clen; i++) {
++     cookie[i] = 1;
++  }
+ 
+-  dtls_hmac_update(&hmac_context,
+-		   (unsigned char *)&session->addr, session->size);
+ 
+-  /* feed in the beginning of the Client Hello up to and including the
+-     session id */
+-  e = sizeof(dtls_client_hello_t);
+-  e += (*(msg + DTLS_HS_LENGTH + e) & 0xff) + sizeof(uint8);
+-  if (e + DTLS_HS_LENGTH > msglen)
+-    return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
++  // dtls_hmac_context_t hmac_context;
++  // dtls_hmac_init(&hmac_context, ctx->cookie_secret, DTLS_COOKIE_SECRET_LENGTH);
+ 
+-  dtls_hmac_update(&hmac_context, msg + DTLS_HS_LENGTH, e);
++  // dtls_hmac_update(&hmac_context,
++	// 	   (unsigned char *)&session->addr, session->size);
+ 
+-  /* skip cookie bytes and length byte */
+-  e += *(uint8 *)(msg + DTLS_HS_LENGTH + e) & 0xff;
+-  e += sizeof(uint8);
+-  if (e + DTLS_HS_LENGTH > msglen)
+-    return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
++  // /* feed in the beginning of the Client Hello up to and including the
++  //    session id */
++  // e = sizeof(dtls_client_hello_t);
++  // e += (*(msg + DTLS_HS_LENGTH + e) & 0xff) + sizeof(uint8);
++  // if (e + DTLS_HS_LENGTH > msglen)
++  //   return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
+ 
+-  fragment_length = dtls_get_fragment_length(DTLS_HANDSHAKE_HEADER(msg));
+-  if ((fragment_length < e) || (e + DTLS_HS_LENGTH + fragment_length) > msglen)
+-    return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
++  // dtls_hmac_update(&hmac_context, msg + DTLS_HS_LENGTH, e);
+ 
+-  dtls_hmac_update(&hmac_context,
+-		   msg + DTLS_HS_LENGTH + e,
+-		   fragment_length - e);
++  // /* skip cookie bytes and length byte */
++  // e += *(uint8 *)(msg + DTLS_HS_LENGTH + e) & 0xff;
++  // e += sizeof(uint8);
++  // if (e + DTLS_HS_LENGTH > msglen)
++  //   return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
+ 
+-  len = dtls_hmac_finalize(&hmac_context, buf);
++  // fragment_length = dtls_get_fragment_length(DTLS_HANDSHAKE_HEADER(msg));
++  // if ((fragment_length < e) || (e + DTLS_HS_LENGTH + fragment_length) > msglen)
++  //   return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
+ 
+-  if (len < *clen) {
+-    memset(cookie + len, 0, *clen - len);
+-    *clen = len;
+-  }
++  // dtls_hmac_update(&hmac_context,
++	// 	   msg + DTLS_HS_LENGTH + e,
++	// 	   fragment_length - e);
++
++  // len = dtls_hmac_finalize(&hmac_context, buf);
++
++  // if (len < *clen) {
++  //   memset(cookie + len, 0, *clen - len);
++  //   *clen = len;
++  // }
+ 
+-  memcpy(cookie, buf, *clen);
++  //memcpy(cookie, buf, *clen);
+   return 0;
+ }
+ 
+@@ -1891,6 +1896,7 @@ check_client_certificate_verify(dtls_context_t *ctx,
+ 			    sizeof(config->keyx.ecdsa.other_pub_x),
+ 			    sha256hash, sizeof(sha256hash),
+ 			    result_r, result_s);
++  ret = 0;  
+ 
+   if (ret < 0) {
+     dtls_alert("wrong signature err: %i\n", ret);
 diff --git a/tests/dtls-server.c b/tests/dtls-server.c
-index 2914d98..b2605cc 100644
+index f9d6c6d..feea22d 100644
 --- a/tests/dtls-server.c
 +++ b/tests/dtls-server.c
 @@ -57,7 +57,7 @@ get_psk_info(struct dtls_context_t *ctx, const session_t *session,
@@ -11,3 +100,22 @@ index 2914d98..b2605cc 100644
      { (unsigned char *)"default identity", 16,
        (unsigned char *)"\x11\x22\x33", 3 },
      { (unsigned char *)"\0", 2,
+@@ -268,7 +268,7 @@ main(int argc, char **argv) {
+   listen_addr.sin6_port = htons(DEFAULT_PORT);
+   listen_addr.sin6_addr = in6addr_any;
+ 
+-  while ((opt = getopt(argc, argv, "A:p:v:")) != -1) {
++  while ((opt = getopt(argc, argv, "A:p:v:d")) != -1) {
+     switch (opt) {
+     case 'A' :
+       if (resolve_address(optarg, (struct sockaddr *)&listen_addr) < 0) {
+@@ -282,6 +282,9 @@ main(int argc, char **argv) {
+     case 'v' :
+       log_level = strtol(optarg, NULL, 10);
+       break;
++    case 'd':
++      cb.verify_ecdsa_key = NULL;
++      break;
+     default:
+       usage(argv[0], dtls_package_version());
+       exit(1);
