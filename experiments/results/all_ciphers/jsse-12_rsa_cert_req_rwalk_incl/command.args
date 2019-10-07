@@ -17,11 +17,20 @@ jsse-12_rsa_cert_req_rwalk_incl
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -cmd 
-"/home/pfg666/Modules/jdk-12.0.2/bin/java -jar jsse-dtls-testserver.jar 60007 NEEDED BASIC true"
+"/home/pfg666/Modules/jdk-12.0.2/bin/java -jar jsse-12.0.2-dtls-testserver.jar localhost:60007 NEEDED ONE_ECHO true false localhost:60017 true"
 -sulConfig
 include_oo.config
 -dontCacheTests
--memQueryRuns
-3
 -ceReruns
 3
+-resetPort
+60017
+-resetAck
+-processTrigger
+START
+-resetCommandWait
+100
+-skipNonDetTests
+-timeLimit
+"P2D"
+

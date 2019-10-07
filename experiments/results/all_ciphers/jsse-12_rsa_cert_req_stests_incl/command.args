@@ -19,11 +19,21 @@ WP_SAMPLED_TESTS,WP_METHOD
 -testFile
 ../examples/tests/rsa_cert
 -cmd 
-"/home/pfg666/Modules/jdk-12.0.2/bin/java -jar jsse-dtls-testserver.jar 60008 NEEDED BASIC true"
+"/home/pfg666/Modules/jdk-12.0.2/bin/java -jar jsse-12.0.2-dtls-testserver.jar localhost:60008 NEEDED ONE_ECHO true false localhost:60018 true"
 -sulConfig
 include_oo.config
 -dontCacheTests
--memQueryRuns
-3
+#-memQueryRuns
+#3
 -ceReruns
 3
+-resetPort
+60018
+-resetAck
+-processTrigger
+START
+-resetCommandWait
+100
+-skipNonDetTests
+-timeLimit
+"P2D"
