@@ -1,14 +1,13 @@
 package se.uu.it.dtlsfuzzer.execute;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.GenericReceiveAction;
 import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
@@ -17,6 +16,11 @@ import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 public abstract class AbstractInputExecutor {
 	private static final Logger LOGGER = LogManager
 			.getLogger(AbstractInputExecutor.class.getName());
+
+	/*
+	 * Failure to decrypt shows up as a longer sequence of alert messages.
+	 */
+	private static final int MIN_ALERTS_IN_DECRYPTION_FAILURE = 3;
 
 	public TlsOutput execute(TlsInput input, State state,
 			ExecutionContext context) {
@@ -61,27 +65,59 @@ public abstract class AbstractInputExecutor {
 	}
 
 	private boolean isResponseUnknown(GenericReceiveAction action) {
-		if (action.getReceivedMessages().size() > 2) {
+		if (action.getReceivedMessages().size() > MIN_ALERTS_IN_DECRYPTION_FAILURE) {
 			return action.getReceivedMessages().stream()
 					.allMatch(m -> m instanceof AlertMessage);
 		}
 		return false;
 	}
 
+	/*
+	 * Failure to decrypt shows up as a longer sequence of alarm messages.
+	 */
+	private int unknownResponseLookahed(int currentIndex,
+			List<ProtocolMessage> messages) {
+		int nextIndex = currentIndex;
+		if (messages.size() - currentIndex > MIN_ALERTS_IN_DECRYPTION_FAILURE) {
+			ProtocolMessage message = messages.get(nextIndex);
+			while (message instanceof AlertMessage) {
+				nextIndex++;
+				message = messages.get(nextIndex);
+			}
+			if (nextIndex - currentIndex > MIN_ALERTS_IN_DECRYPTION_FAILURE)
+				return nextIndex;
+		}
+		return -1;
+	}
+
 	private TlsOutput extractOutput(State state, GenericReceiveAction action) {
 		if (isResponseUnknown(action)) {
-			return new TlsOutput(Arrays.asList(new UnknownMessage()));
+			return TlsOutput.unknown();
 		}
 		if (action.getReceivedMessages().isEmpty()) {
 			return TlsOutput.timeout();
 		} else {
-
 			// in case we find repeated occurrences of types of messages, we
 			// coalesce them under +
 			StringBuilder builder = new StringBuilder();
 			String lastSeen = null;
 			boolean skipStar = false;
-			for (ProtocolMessage m : action.getReceivedMessages()) {
+			int i = 0;
+
+			for (i = 0; i < action.getReceivedMessages().size(); i++) {
+				// checking for cases of decryption failures, which which case
+				// we add an unknown message
+				int nextIndex = unknownResponseLookahed(i,
+						action.getReceivedMessages());
+				if (nextIndex > 0) {
+					builder.append(TlsOutput.unknown().getMessageHeader());
+					builder.append(",");
+					i = nextIndex;
+				}
+
+				// Then we check for repeating outputs (some implementations can
+				// generate a non-deterministic number of messages)"
+				ProtocolMessage m = action.getReceivedMessages().get(i);
 				if (lastSeen != null && lastSeen.equals(m.toCompactString())) {
 					if (!skipStar) {
 						// insert before ,
