@@ -19,7 +19,7 @@ WP_SAMPLED_TESTS,WP_METHOD
 -testFile
 ../examples/tests/rsa_cert
 -cmd 
-"/home/pfg666/Modules/jdk-12.0.2/bin/java -jar jsse-12.0.2-dtls-testserver.jar localhost:60008 NEEDED ONE_ECHO true false localhost:60018"
+"/home/pfg666/Modules/jdk-9.0.4/bin/java -jar jsse-9.0.4-dtls-testserver.jar localhost:60008 NEEDED ONE_ECHO true false localhost:60018 true"
 -sulConfig
 include_oo.config
 -dontCacheTests
