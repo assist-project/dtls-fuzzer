@@ -13,20 +13,20 @@ TLS SUL Parameters
 Protocol: DTLS12
 ResetWait: 0
 Timeout: 100
-RunWait: 1000
-Command: java -jar scandium-2.0.0-dtls-server.jar -port 50005 -timeout 20000000 -reqCert
+RunWait: 2000
+Command: java -jar scandium-2.0.0-dtls-server.jar -port 50005 -timeout 20000000 -clientAuth NEEDED -starterAddress localhost:50015 -starterAck
 
 === STATISTICS ===
 Learning successful: true
 Number of states: 41
 Number of hypotheses: 23
-Number of inputs: 1904971
-Number of resets: 105224
+Number of inputs: 1903891
+Number of resets: 105137
 Number of learning inputs: 44376
 Number of learning resets: 5403
-Number of inputs up to last hypothesis: 1305254
-Number of resets up to last hypothesis: 70643
-Time it took to learn model: 532106712
+Number of inputs up to last hypothesis: 1304309
+Number of resets up to last hypothesis: 70562
+Time it took to learn model: 443127734
 Counterexamples:
 CE 1:Query[?|CERTIFICATE_VERIFY CHANGE_CIPHER_SPEC CERTIFICATE ECDH_CLIENT_HELLO CERTIFICATE_VERIFY Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) ECDH_CLIENT_KEY_EXCHANGE Alert(WARNING,CLOSE_NOTIFY) FINISHED CERTIFICATE CERTIFICATE CERTIFICATE_VERIFY CERTIFICATE_VERIFY ECDH_CLIENT_HELLO / TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT]
 CE 2:Query[?|ECDH_CLIENT_HELLO CERTIFICATE CERTIFICATE ECDH_CLIENT_HELLO Alert(WARNING,CLOSE_NOTIFY) ECDH_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC ECDH_CLIENT_HELLO / HELLO_VERIFY_REQUEST TIMEOUT TIMEOUT SERVER_HELLO,CERTIFICATE,ECDHE_SERVER_KEY_EXCHANGE,CERTIFICATE_REQUEST,SERVER_HELLO_DONE Alert(WARNING,CLOSE_NOTIFY) TIMEOUT TIMEOUT TIMEOUT]
