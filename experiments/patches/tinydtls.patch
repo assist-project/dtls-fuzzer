@@ -1,29 +1,3 @@
-diff --git a/dtls.c b/dtls.c
-index 99e0b62..c37367f 100644
---- a/dtls.c
-+++ b/dtls.c
-@@ -1787,12 +1787,15 @@ check_client_certificate_verify(dtls_context_t *ctx,
- 			    sizeof(config->keyx.ecdsa.other_pub_x),
- 			    sha256hash, sizeof(sha256hash),
- 			    result_r, result_s);
--
--  if (ret < 0) {
--    dtls_alert("wrong signature err: %i\n", ret);
--    return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
--  }
--  return 0;
-+  ret = 0;
-+  
-+  // currently the check fails for reasons we have yet to figure out.
-+  // Since the specifics of the check are not interesting, we disable it.
-+ if (ret < 0) {
-+   dtls_alert("wrong signature err: %i\n", ret);
-+   return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
-+ }
-+ return 0;
- }
- #endif /* DTLS_ECC */
- 
 diff --git a/tests/dtls-client.c b/tests/dtls-client.c
 index bbb5510..7e1ad2f 100644
 --- a/tests/dtls-client.c
