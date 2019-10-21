@@ -34,7 +34,7 @@ digraph g {
 	s2 -> s3 [label="FINISHED / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s2 -> s2 [label="APPLICATION / TIMEOUT"];
 	s2 -> s2 [label="CERTIFICATE / TIMEOUT"];
-	s2 -> s3 [label="EMPTY_CERTIFICATE / Alert(FATAL,DECODE_ERROR)"];
+	s2 -> s2 [label="EMPTY_CERTIFICATE / TIMEOUT"];
 	s2 -> s3 [label="CERTIFICATE_VERIFY / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s2 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(FATAL,CLOSE_NOTIFY)"];
 	s2 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
