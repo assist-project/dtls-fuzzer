@@ -1,7 +1,7 @@
 -connect
 localhost:50008
 -runWait
-1000
+4000
 -alphabet
 ../examples/alphabets/scandium_ecdhe_cert.xml
 -timeout
@@ -17,7 +17,7 @@ scandium-2.0.0_ecdhe_cert_req_stests
 -equivalenceAlgorithms
 WP_SAMPLED_TESTS,WP_METHOD
 -cmd
-"java -jar scandium-2.0.0-dtls-server.jar -port 50008 -timeout 20000000 -clientAuth NEEDED"
+"java -jar scandium-2.0.0-dtls-server.jar -port 50008 -timeout 20000000 -clientAuth NEEDED -starterAddress localhost:50018 -starterAck"
 -testFile
 ../examples/tests/ecdhe_cert
 -depth
@@ -25,3 +25,12 @@ WP_SAMPLED_TESTS,WP_METHOD
 -sulConfig
 scandium.config
 -dontCacheTests
+-resetPort
+50018
+-processTrigger
+START
+-resetCommandWait
+50
+
+-memQueryRuns
+3

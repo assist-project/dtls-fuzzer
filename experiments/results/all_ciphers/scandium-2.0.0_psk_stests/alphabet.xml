@@ -1,10 +1,10 @@
-<!-- DTLS alphabet comprising the messages necessary to perform PSK handshakes 
+<!-- DTLS alphabet comprising the messages necessary to perform PSK and ECDHE handshakes 
 using CCM_8 ciphersuites. -->
 <alphabet>
-    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_CLIENT_HELLO"/>
+    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_CLIENT_HELLO" extendedWait="300"/>
     <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
     <ChangeCipherSpecInput/>
-    <FinishedInput name="FINISHED"/>
+    <FinishedInput name="FINISHED" extendedWait="300"/>
     <GenericTlsInput name="APPLICATION">
         <Application>
             <data>
