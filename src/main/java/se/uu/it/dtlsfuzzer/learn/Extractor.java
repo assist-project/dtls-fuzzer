@@ -180,7 +180,7 @@ public class Extractor {
 		}
 
 		testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
-				cache, fuzzerConfig.getLearningConfig().dontCacheTests(),
+				cache, !fuzzerConfig.getLearningConfig().isCacheTests(),
 				TlsOutput.socketClosed());
 
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory
