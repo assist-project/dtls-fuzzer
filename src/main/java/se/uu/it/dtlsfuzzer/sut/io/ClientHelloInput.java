@@ -37,7 +37,7 @@ public class ClientHelloInput extends NamedTlsInput {
 	 * option for including the latest session id in the client hello
 	 */
 	@XmlAttribute(name = "withSessionId", required = false)
-	private boolean withSessionId = true;
+	private boolean withSessionId = false;
 
 	private ProtocolMessage message;
 
