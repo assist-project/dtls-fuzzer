@@ -50,7 +50,10 @@ public class LearningConfig {
 	@Parameter(names = "-seed", description = "Seed used for random value generation.")
 	private long seed = 0;
 
-	@Parameter(names = "-dontCacheTests", description = "Do not cache tests to limit the memory footprint. It also enables most forms of non-determinism sanitization")
+	@Parameter(names = "-cacheTests", description = "Cache tests, which increases the memory footprint but improves performance. It also renders useless most forms of non-determinism sanitization")
+	private boolean cacheTests = false;
+	
+	@Parameter(names = "-dontCacheTests", description = "Deprecated parameter with no effect, kept for backwards compatibility. Use -cacheTests.")
 	private boolean dontCacheTests = false;
 
 	@Parameter(names = "-ceSanitization", description = "Activates CE sanitization, which involves re-running potential CE's ensuring they are not spurious")
@@ -109,8 +112,8 @@ public class LearningConfig {
 		return seed;
 	}
 
-	public boolean dontCacheTests() {
-		return dontCacheTests;
+	public boolean isCacheTests() {
+		return cacheTests;
 	}
 
 	public int getCeReruns() {
