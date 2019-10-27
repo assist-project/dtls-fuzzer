@@ -28,8 +28,8 @@ scandium.config
 -resetAck
 -processTrigger
 START
--resetCommandWait          
-50
+#-resetCommandWait          
+#50
 -skipNonDetTests
--memQueryRuns
-3
+#-memQueryRuns
+#3

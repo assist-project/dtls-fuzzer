@@ -1,5 +1,5 @@
 diff --git a/dtls.c b/dtls.c
-index fc7016a..30a4319 100644
+index fc7016a..d6afca1 100644
 --- a/dtls.c
 +++ b/dtls.c
 @@ -332,39 +332,44 @@ dtls_create_cookie(dtls_context_t *ctx,
@@ -8,12 +8,12 @@ index fc7016a..30a4319 100644
  
 -  dtls_hmac_context_t hmac_context;
 -  dtls_hmac_init(&hmac_context, ctx->cookie_secret, DTLS_COOKIE_SECRET_LENGTH);
--
--  dtls_hmac_update(&hmac_context, 
--		   (unsigned char *)&session->addr, session->size);
 +  for (int i=0; i<*clen; i++) {
 +     cookie[i] = 1;
 +  }
+ 
+-  dtls_hmac_update(&hmac_context, 
+-		   (unsigned char *)&session->addr, session->size);
  
 -  /* feed in the beginning of the Client Hello up to and including the
 -     session id */
@@ -21,6 +21,8 @@ index fc7016a..30a4319 100644
 -  e += (*(msg + DTLS_HS_LENGTH + e) & 0xff) + sizeof(uint8);
 -  if (e + DTLS_HS_LENGTH > msglen)
 -    return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
++  // dtls_hmac_context_t hmac_context;
++  // dtls_hmac_init(&hmac_context, ctx->cookie_secret, DTLS_COOKIE_SECRET_LENGTH);
  
 -  dtls_hmac_update(&hmac_context, msg + DTLS_HS_LENGTH, e);
 -  
@@ -29,16 +31,12 @@ index fc7016a..30a4319 100644
 -  e += sizeof(uint8);
 -  if (e + DTLS_HS_LENGTH > msglen)
 -    return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
-+  // dtls_hmac_context_t hmac_context;
-+  // dtls_hmac_init(&hmac_context, ctx->cookie_secret, DTLS_COOKIE_SECRET_LENGTH);
++  // dtls_hmac_update(&hmac_context, 
++	// 	   (unsigned char *)&session->addr, session->size);
  
 -  dtls_hmac_update(&hmac_context, 
 -		   msg + DTLS_HS_LENGTH + e,
 -		   dtls_get_fragment_length(DTLS_HANDSHAKE_HEADER(msg)) - e);
-+  // dtls_hmac_update(&hmac_context, 
-+	// 	   (unsigned char *)&session->addr, session->size);
- 
--  len = dtls_hmac_finalize(&hmac_context, buf);
 +  // /* feed in the beginning of the Client Hello up to and including the
 +  //    session id */
 +  // e = sizeof(dtls_client_hello_t);
@@ -46,13 +44,14 @@ index fc7016a..30a4319 100644
 +  // if (e + DTLS_HS_LENGTH > msglen)
 +  //   return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
  
+-  len = dtls_hmac_finalize(&hmac_context, buf);
+-
 -  if (len < *clen) {
 -    memset(cookie + len, 0, *clen - len);
 -    *clen = len;
 -  }
 +  // dtls_hmac_update(&hmac_context, msg + DTLS_HS_LENGTH, e);
-   
--  memcpy(cookie, buf, *clen);
++  
 +  // /* skip cookie bytes and length byte */
 +  // e += *(uint8 *)(msg + DTLS_HS_LENGTH + e) & 0xff;
 +  // e += sizeof(uint8);
@@ -69,20 +68,12 @@ index fc7016a..30a4319 100644
 +  //   memset(cookie + len, 0, *clen - len);
 +  //   *clen = len;
 +  // }
-+  
+   
+-  memcpy(cookie, buf, *clen);
 +  // memcpy(cookie, buf, *clen);
    return 0;
  }
  
-@@ -1805,6 +1810,8 @@ check_client_certificate_verify(dtls_context_t *ctx,
- 			    sha256hash, sizeof(sha256hash),
- 			    result_r, result_s);
- 
-+  ret = 0;
-+
-   if (ret < 0) {
-     dtls_alert("wrong signature err: %i\n", ret);
-     return dtls_alert_fatal_create(DTLS_ALERT_HANDSHAKE_FAILURE);
 diff --git a/tests/dtls-server.c b/tests/dtls-server.c
 index 2914d98..1ebc076 100644
 --- a/tests/dtls-server.c

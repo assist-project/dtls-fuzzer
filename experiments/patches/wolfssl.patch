@@ -1,0 +1,24 @@
+diff wolfssl-4.0.0/wolfssl/internal.h wolfssl-4.0.0_used/wolfssl/internal.h
+1373,1374c1373,1374
+<     DTLS_TIMEOUT_INIT       =  1, /* default timeout init for DTLS receive  */
+<     DTLS_TIMEOUT_MAX        = 64, /* default max timeout for DTLS receive */
+---
+>     DTLS_TIMEOUT_INIT       =  320, /* default timeout init for DTLS receive  */
+>     DTLS_TIMEOUT_MAX        = 640, /* default max timeout for DTLS receive */
+Common subdirectories: wolfssl-4.0.0/wolfssl/openssl and wolfssl-4.0.0_used/wolfssl/openssl
+diff wolfssl-4.0.0/wolfssl/test.h wolfssl-4.0.0_used/wolfssl/test.h
+1308,1311c1308,1311
+<         key[0] = 0x1a;
+<         key[1] = 0x2b;
+<         key[2] = 0x3c;
+<         key[3] = 0x4d;
+---
+>         key[0] = 0x12;
+>         key[1] = 0x34;
+>         //key[2] = 0x3c;
+>         //key[3] = 0x4d;
+1313c1313
+<         return 4;   /* length of key in octets or 0 for error */
+---
+>         return 2;   /* length of key in octets or 0 for error */
+Common subdirectories: wolfssl-4.0.0/wolfssl/wolfcrypt and wolfssl-4.0.0_used/wolfssl/wolfcrypt
