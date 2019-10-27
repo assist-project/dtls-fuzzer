@@ -14,6 +14,7 @@ digraph g {
 	s11 [shape="circle" label="s11"];
 	s12 [shape="circle" label="s12"];
 	s13 [shape="circle" label="s13"];
+	s14 [shape="circle" label="s14"];
 	s0 -> s2 [label="ECDH_CLIENT_HELLO / HELLO_VERIFY_REQUEST"];
 	s0 -> s0 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s0 -> s1 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
@@ -96,7 +97,7 @@ digraph g {
 	s7 -> s0 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
 	s8 -> s8 [label="ECDH_CLIENT_HELLO / Alert(WARNING,NO_RENEGOTIATION)"];
 	s8 -> s8 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
-	s8 -> s1 [label="CHANGE_CIPHER_SPEC / CHANGE_CIPHER_SPEC,FINISHED"];
+	s8 -> s1 [label="CHANGE_CIPHER_SPEC / CHANGE_CIPHER_SPEC,UNKNOWN_MESSAGE"];
 	s8 -> s8 [label="FINISHED / TIMEOUT"];
 	s8 -> s8 [label="APPLICATION / APPLICATION"];
 	s8 -> s8 [label="CERTIFICATE / TIMEOUT"];
@@ -128,11 +129,11 @@ digraph g {
 	s11 -> s11 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s11 -> s1 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
 	s11 -> s11 [label="FINISHED / TIMEOUT"];
-	s11 -> s11 [label="APPLICATION / APPLICATION"];
+	s11 -> s11 [label="APPLICATION / UNKNOWN_MESSAGE"];
 	s11 -> s11 [label="CERTIFICATE / TIMEOUT"];
 	s11 -> s11 [label="EMPTY_CERTIFICATE / TIMEOUT"];
 	s11 -> s11 [label="CERTIFICATE_VERIFY / TIMEOUT"];
-	s11 -> s2 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(WARNING,CLOSE_NOTIFY)"];
+	s11 -> s2 [label="Alert(WARNING,CLOSE_NOTIFY) / UNKNOWN_MESSAGE"];
 	s11 -> s2 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
 	s12 -> s1 [label="ECDH_CLIENT_HELLO / Alert(FATAL,INTERNAL_ERROR)"];
 	s12 -> s12 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
@@ -144,9 +145,9 @@ digraph g {
 	s12 -> s12 [label="CERTIFICATE_VERIFY / TIMEOUT"];
 	s12 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(WARNING,CLOSE_NOTIFY)"];
 	s12 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
-	s13 -> s9 [label="ECDH_CLIENT_HELLO / HELLO_VERIFY_REQUEST"];
+	s13 -> s14 [label="ECDH_CLIENT_HELLO / HELLO_VERIFY_REQUEST"];
 	s13 -> s13 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
-	s13 -> s1 [label="CHANGE_CIPHER_SPEC / CHANGE_CIPHER_SPEC,FINISHED"];
+	s13 -> s1 [label="CHANGE_CIPHER_SPEC / CHANGE_CIPHER_SPEC,UNKNOWN_MESSAGE"];
 	s13 -> s13 [label="FINISHED / TIMEOUT"];
 	s13 -> s10 [label="APPLICATION / APPLICATION"];
 	s13 -> s13 [label="CERTIFICATE / TIMEOUT"];
@@ -154,6 +155,16 @@ digraph g {
 	s13 -> s13 [label="CERTIFICATE_VERIFY / TIMEOUT"];
 	s13 -> s0 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(WARNING,CLOSE_NOTIFY)"];
 	s13 -> s0 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
+	s14 -> s14 [label="ECDH_CLIENT_HELLO / TIMEOUT"];
+	s14 -> s14 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s14 -> s1 [label="CHANGE_CIPHER_SPEC / CHANGE_CIPHER_SPEC,UNKNOWN_MESSAGE"];
+	s14 -> s14 [label="FINISHED / TIMEOUT"];
+	s14 -> s11 [label="APPLICATION / UNKNOWN_MESSAGE"];
+	s14 -> s14 [label="CERTIFICATE / TIMEOUT"];
+	s14 -> s14 [label="EMPTY_CERTIFICATE / TIMEOUT"];
+	s14 -> s14 [label="CERTIFICATE_VERIFY / TIMEOUT"];
+	s14 -> s2 [label="Alert(WARNING,CLOSE_NOTIFY) / UNKNOWN_MESSAGE"];
+	s14 -> s2 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
 
 __start0 [label="" shape="none" width="0" height="0"];
 __start0 -> s0;
