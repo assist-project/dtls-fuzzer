@@ -1,5 +1,5 @@
 -connect
-localhost:40001
+localhost:60006
 -runWait
 100
 -alphabet
@@ -17,7 +17,7 @@ wolfssl-4.0.0_psk_stests
 -equivalenceAlgorithms
 WP_SAMPLED_TESTS,WP_METHOD
 -cmd
-"/home/pfg666/Modules/wolfssl-4.0.0_psk/examples/server/server  -i -x -p 40001 -s -u -l PSK-AES128-CBC-SHA256"
+"/home/pfg666/Modules/wolfssl-4.0.0_psk/examples/server/server  -i -x -p 60006 -s -u -l PSK-AES128-CBC-SHA256"
 -processDir
 /home/pfg666/Modules/wolfssl-4.0.0_psk/
 -testFile
@@ -26,4 +26,3 @@ WP_SAMPLED_TESTS,WP_METHOD
 1
 -ceReruns
 3
--dontCacheTests

@@ -1,5 +1,5 @@
 -connect 
-localhost:20003
+localhost:50002
 -runWait 
 100
 -alphabet
@@ -21,4 +21,4 @@ etinydtls_ecdhe_cert_none_stests
 -testFile
 ../examples/tests/ecdhe
 -cmd 
-"/home/pfg666/GitHub/etinydtls/tests/dtls-server -p 20003 -d"
+"/home/pfg666/GitHub/etinydtls/tests/dtls-server -p 50002 -d"

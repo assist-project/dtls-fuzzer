@@ -14,19 +14,19 @@ Protocol: DTLS12
 ResetWait: 0
 Timeout: 100
 RunWait: 100
-Command: /home/pfg666/GitHub/etinydtls/tests/dtls-server -p 20001
+Command: /home/pfg666/GitHub/etinydtls/tests/dtls-server -p 50004
 
 === STATISTICS ===
 Learning successful: true
 Number of states: 27
 Number of hypotheses: 14
-Number of inputs: 323862
-Number of resets: 20467
-Number of learning inputs: 8339
-Number of learning resets: 1048
-Number of inputs up to last hypothesis: 47622
-Number of resets up to last hypothesis: 3316
-Time it took to learn model: 39754584
+Number of inputs: 418706
+Number of resets: 31098
+Number of learning inputs: 8450
+Number of learning resets: 1062
+Number of inputs up to last hypothesis: 51865
+Number of resets up to last hypothesis: 3802
+Time it took to learn model: 54678971
 Counterexamples:
 CE 1:Query[?|CERTIFICATE_VERIFY CHANGE_CIPHER_SPEC FINISHED APPLICATION / TIMEOUT TIMEOUT SOCKET_CLOSED SOCKET_CLOSED]
 CE 2:Query[?|ECDH_CLIENT_HELLO ECDH_CLIENT_HELLO EMPTY_CERTIFICATE ECDH_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC FINISHED APPLICATION ECDH_CLIENT_HELLO / HELLO_VERIFY_REQUEST SERVER_HELLO,CERTIFICATE,ECDHE_SERVER_KEY_EXCHANGE,CERTIFICATE_REQUEST,SERVER_HELLO_DONE TIMEOUT TIMEOUT TIMEOUT Alert(FATAL,DECRYPT_ERROR) TIMEOUT TIMEOUT]

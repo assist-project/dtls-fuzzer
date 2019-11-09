@@ -1,5 +1,5 @@
 -connect
-localhost:40000
+localhost:60005
 -runWait
 100
 -alphabet
@@ -17,11 +17,10 @@ wolfssl-4.0.0_psk_rwalk
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -cmd
-"/home/pfg666/Modules/wolfssl-4.0.0_psk/examples/server/server  -i -x -p 40000 -s -u -l PSK-AES128-CBC-SHA256"
+"/home/pfg666/Modules/wolfssl-4.0.0_psk/examples/server/server  -i -x -p 60005 -s -u -l PSK-AES128-CBC-SHA256"
 -processDir
 "/home/pfg666/Modules/wolfssl-4.0.0_psk/"
 -depth
 1
 -ceReruns
 3
--dontCacheTests
