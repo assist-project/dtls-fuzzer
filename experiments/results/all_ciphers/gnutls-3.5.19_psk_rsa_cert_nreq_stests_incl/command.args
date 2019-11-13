@@ -1,0 +1,24 @@
+-protocol 
+DTLS12 
+-connect 
+localhost:20006 
+-alphabet 
+../examples/alphabets/psk_rsa_cert.xml 
+-runWait 
+100 
+-timeout  
+200 
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms 
+WP_SAMPLED_TESTS,WP_METHOD
+-testFile
+../examples/tests/psk_rsa_cert
+-output
+gnutls-3.5.19_psk_rsa_cert_nreq_stests_incl
+-cmd 
+"/home/pfg666/Modules/gnutls-3.5.19/src/gnutls-serv  --udp --x509keyfile /home/pfg666/Keys/RSA2048/server-key.pem --x509certfile /home/pfg666/Keys/RSA2048/server-cert.pem --x509cafile /home/pfg666/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa2048_cert.pem --pskpasswd /home/pfg666/Keys/keys.psk  --priority NORMAL:+PSK:+SRP --mtu 1500 -p 20006"
+-sulConfig
+include_oo.config
