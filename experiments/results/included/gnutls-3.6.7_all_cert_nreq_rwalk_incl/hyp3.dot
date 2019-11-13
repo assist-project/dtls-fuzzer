@@ -53,13 +53,13 @@ digraph g {
 	s2 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
 	s2 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
 	s3 -> s2 [label="ECDH_CLIENT_HELLO / TIMEOUT"];
-	s3 -> s2 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s3 -> s1 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s3 -> s2 [label="DH_CLIENT_HELLO / TIMEOUT"];
-	s3 -> s1 [label="DH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s3 -> s2 [label="DH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s3 -> s2 [label="PSK_CLIENT_HELLO / TIMEOUT"];
-	s3 -> s1 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s3 -> s2 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s3 -> s2 [label="RSA_CLIENT_HELLO / TIMEOUT"];
-	s3 -> s1 [label="RSA_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s3 -> s2 [label="RSA_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s3 -> s1 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
 	s3 -> s2 [label="FINISHED / TIMEOUT"];
 	s3 -> s3 [label="APPLICATION / TIMEOUT"];

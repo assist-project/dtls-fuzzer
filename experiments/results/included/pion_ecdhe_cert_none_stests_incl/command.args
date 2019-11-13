@@ -1,0 +1,31 @@
+-connect 
+localhost:10003 
+-runWait 
+100
+-rstWait
+100
+-alphabet
+../examples/alphabets/pion_ecdhe_cert.xml
+-timeout  
+100  
+-randLength
+10
+-queries
+20000
+-protocol 
+DTLS12 
+-testFile
+../examples/tests/ecdhe_cert
+-equivalenceAlgorithms
+WP_SAMPLED_TESTS,WP_METHOD
+-output 
+pion_ecdhe_cert_none_stests_incl
+-cmd 
+"/home/pfg666/GitHub/pion-dtls-server/main/main 10003 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 DISABLED /home/pfg666/GitHub/dtls-fuzzer/experiments/keystore/rsa2048_cert.pem"
+-termCmd
+"/bin/bash  /home/pfg666/GitHub/dtls-fuzzer/experiments/scripts/stop_proc_at_port.sh 10003 server"
+-depth
+1
+-repeatingOutputs
+HELLO_VERIFY_REQUEST
+

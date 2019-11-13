@@ -1,7 +1,7 @@
 -protocol 
 DTLS12 
 -connect 
-localhost:60007 
+localhost:10007 
 -alphabet 
 ../examples/alphabets/dhe_ecdhe_psk_rsa_cert.xml 
 -runWait 
@@ -17,6 +17,6 @@ RANDOM_WP_METHOD,WP_METHOD
 -output
 mbedtls_all_cert_req_rwalk_incl
 -cmd 
-"/home/pfg666/Modules/mbedtls-2.16.1/programs/ssl/ssl_server2 dtls=1 psk=1234 mtu=5000 key_file=/home/pfg666/Keys/RSA2048/server-key.pem crt_file=/home/pfg666/Keys/RSA2048/server-cert.pem server_port=60007 exchanges=100 hs_timeout=20000-120000 ca_file=/home/pfg666/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa2048_cert.pem auth_mode=required renegotiation=1"
+"/home/pfg666/Modules/mbedtls-2.16.1/programs/ssl/ssl_server2 dtls=1 psk=1234 mtu=5000 key_file=/home/pfg666/Keys/RSA2048/server-key.pem crt_file=/home/pfg666/Keys/RSA2048/server-cert.pem server_port=10007 exchanges=100 hs_timeout=20000-120000 ca_file=/home/pfg666/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa2048_cert.pem auth_mode=required renegotiation=1"
 -sulConfig
 include_oo.config
