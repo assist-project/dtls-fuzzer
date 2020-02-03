@@ -1,14 +1,9 @@
 package se.uu.it.dtlsfuzzer;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Security;
 
 import org.apache.logging.log4j.LogManager;

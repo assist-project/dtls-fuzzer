@@ -8,14 +8,9 @@ import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 public class DtlsFuzzerConfig {
 
 	@Parameter(names = "-specification", required = false, description = "A model of the specification. For examples, look at './examples/specifications/'. "
-			+ "If no specification is given, active learning is run with the alphabet provided to generate it."
-			+ "Inputs in the specification are defined in the alphabet, outputs are parsed as strings. "
-			+ "Outputs are capitalized snake case of the messages involved. ")
+			+ "If a debug test is executed (via -test), the test will be run both on the system and on the model.")
 	private String specification = null;
 
-	// @Parameter(names = "-onlyLearn", required = false, description =
-	// "Only generates a model of the specification. Does not do conformance testing")
-	private boolean onlyLearn = true;
 
 	@Parameter(names = "-alphabet", required = false, description = "An .xml file defining the input alphabet. "
 			+ "The alphabet is used to interpret inputs from a given specification, as well as to learn. "
@@ -34,9 +29,6 @@ public class DtlsFuzzerConfig {
 	@ParametersDelegate
 	private LearningConfig learningConfig;
 
-	// @ParametersDelegate
-	private TestingConfig testingConfig;
-
 	@ParametersDelegate
 	private TestRunnerConfig testRunnerConfig;
 
@@ -47,7 +39,6 @@ public class DtlsFuzzerConfig {
 		generalDelegate = new GeneralDelegate();
 		sulDelegate = new SulDelegate();
 		learningConfig = new LearningConfig();
-		testingConfig = new TestingConfig();
 		testRunnerConfig = new TestRunnerConfig();
 	}
 
@@ -63,9 +54,6 @@ public class DtlsFuzzerConfig {
 		return learningConfig;
 	}
 
-	public TestingConfig getTestingConfig() {
-		return testingConfig;
-	}
 
 	public TestRunnerConfig getTestRunnerConfig() {
 		return testRunnerConfig;
@@ -83,7 +71,4 @@ public class DtlsFuzzerConfig {
 		return alphabet;
 	}
 
-	public boolean isOnlyLearn() {
-		return onlyLearn;
-	}
 }
