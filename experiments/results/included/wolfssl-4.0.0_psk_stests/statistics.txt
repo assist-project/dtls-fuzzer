@@ -1,0 +1,32 @@
+=== RUN DESCRIPTION ===
+Learning Parameters
+Alphabet: [PSK_CLIENT_HELLO, PSK_CLIENT_KEY_EXCHANGE, CHANGE_CIPHER_SPEC, FINISHED, APPLICATION, Alert(WARNING,CLOSE_NOTIFY), Alert(FATAL,UNEXPECTED_MESSAGE)]
+Learning Algorithm: TTT
+Equivalence Algorithms: [WP_SAMPLED_TESTS, WP_METHOD]
+Min Length: 5
+Max Length: 15
+Random Length: 10
+Max Depth: 1
+Prob Reset: 0
+Max Queries: 20000
+TLS SUL Parameters
+Protocol: DTLS12
+ResetWait: 0
+Timeout: 80
+RunWait: 100
+Command: /home/pfg666/Modules/wolfssl-4.0.0_psk/examples/server/server  -i -x -p 60006 -s -u -l PSK-AES128-CBC-SHA256
+
+=== STATISTICS ===
+Learning successful: true
+Number of states: 5
+Number of hypotheses: 1
+Number of inputs: 218941
+Number of resets: 18199
+Number of learning inputs: 306
+Number of learning resets: 87
+Number of inputs up to last hypothesis: 983
+Number of resets up to last hypothesis: 148
+Time it took to learn model: 23260766
+Counterexamples:
+CE 1:Query[?|PSK_CLIENT_HELLO PSK_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC FINISHED APPLICATION / HELLO_VERIFY_REQUEST TIMEOUT TIMEOUT TIMEOUT TIMEOUT]
+CE 2:Query[?|PSK_CLIENT_HELLO PSK_CLIENT_HELLO PSK_CLIENT_HELLO PSK_CLIENT_KEY_EXCHANGE PSK_CLIENT_HELLO FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) PSK_CLIENT_HELLO CHANGE_CIPHER_SPEC FINISHED CHANGE_CIPHER_SPEC PSK_CLIENT_KEY_EXCHANGE FINISHED PSK_CLIENT_HELLO / HELLO_VERIFY_REQUEST SERVER_HELLO HELLO_VERIFY_REQUEST TIMEOUT HELLO_VERIFY_REQUEST TIMEOUT TIMEOUT HELLO_VERIFY_REQUEST TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT]

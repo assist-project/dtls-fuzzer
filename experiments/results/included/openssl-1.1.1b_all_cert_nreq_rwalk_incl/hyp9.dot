@@ -1,5 +1,4 @@
 digraph g {
-__start0 [label="" shape="none"];
 
 	s0 [shape="circle" label="s0"];
 	s1 [shape="circle" label="s1"];
@@ -76,7 +75,7 @@ __start0 [label="" shape="none"];
 	s3 -> s1 [label="FINISHED / Alert(FATAL,INTERNAL_ERROR)"];
 	s3 -> s1 [label="APPLICATION / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s3 -> s6 [label="CERTIFICATE / TIMEOUT"];
-	s3 -> s14 [label="EMPTY_CERTIFICATE / TIMEOUT"];
+	s3 -> s6 [label="EMPTY_CERTIFICATE / TIMEOUT"];
 	s3 -> s1 [label="CERTIFICATE_VERIFY / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s3 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
 	s3 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
@@ -113,7 +112,7 @@ __start0 [label="" shape="none"];
 	s5 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
 	s5 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
 	s6 -> s1 [label="ECDH_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s6 -> s13 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s6 -> s7 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s6 -> s1 [label="DH_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s6 -> s1 [label="DH_CLIENT_KEY_EXCHANGE / Alert(FATAL,DECODE_ERROR)"];
 	s6 -> s1 [label="PSK_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
@@ -172,7 +171,7 @@ __start0 [label="" shape="none"];
 	s9 -> s1 [label="FINISHED / Alert(FATAL,INTERNAL_ERROR)"];
 	s9 -> s1 [label="APPLICATION / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s9 -> s10 [label="CERTIFICATE / TIMEOUT"];
-	s9 -> s10 [label="EMPTY_CERTIFICATE / TIMEOUT"];
+	s9 -> s14 [label="EMPTY_CERTIFICATE / TIMEOUT"];
 	s9 -> s1 [label="CERTIFICATE_VERIFY / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s9 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
 	s9 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
@@ -241,13 +240,13 @@ __start0 [label="" shape="none"];
 	s13 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
 	s13 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
 	s14 -> s1 [label="ECDH_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s14 -> s7 [label="ECDH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s14 -> s1 [label="ECDH_CLIENT_KEY_EXCHANGE / Alert(FATAL,DECODE_ERROR)"];
 	s14 -> s1 [label="DH_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s14 -> s1 [label="DH_CLIENT_KEY_EXCHANGE / Alert(FATAL,DECODE_ERROR)"];
+	s14 -> s7 [label="DH_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s14 -> s1 [label="PSK_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s14 -> s1 [label="PSK_CLIENT_KEY_EXCHANGE / Alert(FATAL,DECODE_ERROR)"];
+	s14 -> s7 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s14 -> s1 [label="RSA_CLIENT_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s14 -> s1 [label="RSA_CLIENT_KEY_EXCHANGE / Alert(FATAL,DECODE_ERROR)"];
+	s14 -> s7 [label="RSA_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s14 -> s4 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
 	s14 -> s1 [label="FINISHED / Alert(FATAL,INTERNAL_ERROR)"];
 	s14 -> s1 [label="APPLICATION / Alert(FATAL,UNEXPECTED_MESSAGE)"];
@@ -257,5 +256,7 @@ __start0 [label="" shape="none"];
 	s14 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
 	s14 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
 
+__start0 [label="" shape="none" width="0" height="0"];
 __start0 -> s0;
+
 }
