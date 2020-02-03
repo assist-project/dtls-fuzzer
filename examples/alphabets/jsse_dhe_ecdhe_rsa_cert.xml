@@ -1,13 +1,13 @@
 <!-- DTLS alphabet comprising the messages necessary to perform RSA, DH and ECDH handshakes-->
 <alphabet>
-	<ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA" name="ECDH_CLIENT_HELLO" extendedWait="300"/>
+	<ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA" name="ECDH_CLIENT_HELLO" extendedWait="200"/>
     <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDH"/>
-    <ClientHelloInput suite="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" name="DH_CLIENT_HELLO" extendedWait="300"/>
+    <ClientHelloInput suite="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" name="DH_CLIENT_HELLO" extendedWait="200"/>
     <ClientKeyExchangeInput name="DH_CLIENT_KEY_EXCHANGE" algorithm="DH"/>
-    <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO" extendedWait="300"/>
+    <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO" extendedWait="200"/>
     <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>  
     <ChangeCipherSpecInput/>
-    <FinishedInput name="FINISHED" extendedWait="400"/>
+    <FinishedInput name="FINISHED" extendedWait="100"/>
     <GenericTlsInput name="APPLICATION">
         <Application>
             <data>

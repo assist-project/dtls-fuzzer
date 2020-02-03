@@ -1,9 +1,9 @@
-<!-- DTLS alphabet comprising the messages necessary to perform PSK handshakes. -->
+<!-- DTLS alphabet comprising the messages necessary to perform RSA, DH and ECDH handshakes-->
 <alphabet>
-    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA256" name="PSK_CLIENT_HELLO"/>
-    <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
+	<ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA" name="ECDH_CLIENT_HELLO" extendedWait="200"/>
+    <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDH"/>
     <ChangeCipherSpecInput/>
-    <FinishedInput name="FINISHED"/>
+    <FinishedInput name="FINISHED" extendedWait="100"/>
     <GenericTlsInput name="APPLICATION">
         <Application>
             <data>
@@ -13,6 +13,18 @@
                 </byteArrayExplicitValueModification>
             </data>
         </Application>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE">
+        <Certificate/>
+    </GenericTlsInput>
+    <GenericTlsInput name="EMPTY_CERTIFICATE">
+        <Certificate>
+            <certificatesList>
+            </certificatesList>
+        </Certificate>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE_VERIFY">
+        <CertificateVerify/>
     </GenericTlsInput>
     <!-- Alert(WARNING,CLOSE_NOTIFY) -->
     <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
