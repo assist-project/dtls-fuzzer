@@ -1,19 +1,65 @@
-**dtls-fuzzer** is a tool which performs protocol state fuzzing of DTLS servers. To that end, it supports the following functionality:
+**dtls-fuzzer** is a Java tool which performs protocol state fuzzing of DTLS servers. To that end, it supports the following functionality:
 1. given an alphabet, can automatically generate a model of a local/remote DTLS server implementation.
 2. given a test (sequence of inputs) and an alphabet, can execute the test on a DTLS server implementation.
 3. run a batch learning task, involving multiple 
 
-In prototype stage are the following functionalities:
-1. given a model and an alphabet, performing conformance testing of a DTLS server.
-2. W-method guided conformance testing on the model, which checks that the system performs the same way when "behavior-preserving" mutations are applied.
-These mutations focus primarily on fragmentation.
+**dtls-fuzzer** uses **TLS-Attacker** to generate/parse DTLS messages as well as to maintain state. 
+To that end, as part of the work, **TLS-Attacker** has been extended with support for DTLS.
+The extension is available in the version 3.0 of **TLS-Attacker**.
 
+# Artifact contents
+The artifact contains:
+1. a description of the file structure of **dtls-fuzzer**, including source code and experimental data consistent with that displayed in the paper.
+2. a **dtls-fuzzer** walkthrough, consisting of a step-by-step guideto generating a model for a given SUT (System Under Test)/ DTLS server implementation. 
 
-A lot of the code was taken/adapted from TLS-StateVulnFinder, which was built on Joeri's StateLearner tool. 
-These tools implement learning for TLS stacks. 
-dtls-fuzzer does it for DTLS stacks though it can technically work on TLS stacks as well.
-What all these tools have in common is that they use TLS-Attacker to generate/parse valid (D)TLS messages.
-TLS-Attacker is a framework for testing TLS implementations which was extended with DTLS support.
+# dtls-fuzzer file structure
+There are many files/folders, the most relevant are:
+1. 'src', directory containing the Java source code of **dtls-fuzzer**. 
+2. 'examples', directory containing examples of alphabets, tests, specifications (i.e. models) and example of arguments that can be supplied to **dtls-fuzzer**, to launch learning experiments. Files here are used as inputs for learning experiments.
+3. 'experiments', directory containing data pertaining to experiments. Some of this data also serves as input during learning experiments. The most notable folders are:
+    1. 'suts', with binaries for Java SUTs. These SUTs are custom-made DTLS server programs whose source code is publically available. 
+    2. 'patches', patches that were applied to some SUTs (particularly to utilities) before the source code was compiled. The primary purpose of these patches was to prevent timing induced-behavior during learning. They also unlocked functionality in the SUT.
+    3. 'results', the experimental results
+    4. 'keystore', key material (e.g. public-private key pairs, Java keystores) used during learning
+    5. 'results', experimental results following the learning
+
+## Experimental results
+'experiments/results' contains experimental results, which are the main output of the work. In particular
+- 'all_ciphers' contains output folders for all the experiments run
+- 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). Note that not all experiments in 'all_ciphers' converged
+- 'archive' contains previous experiments not considered in the work
+
+Output folders are named based on the experiment configuration, that is: 
+- the SUT/implementation tested, 
+- the alphabet used, 
+- where applicable whether client certification was required (req), optional (nreq) or disabled (none), 
+- the testing algorithm: random walk (rwalk) or and adaptation of it (stests). Experiments using the adaptation have not been considered in the paper.
+- optionally, whether retransmissions were included (incl or excl). Retransmissions were included by default.
+
+An output folder contains of:
+- 'alphabet.xml', the alphabet 
+- 'command.args', the arguments used
+- 'sul.config', SUT-dependant configuration for **TLS-Attacker**,  the same configuration could be used to execute workflow traces on the SUT using **TLS-Attacker** alone
+- 'hyp[0-9]*.dot', intermediate hypotheses 
+- 'statistics.txt', experiment statistics such as the total number of tests, learning time. Table 4 displays this data
+- 'nondet.log', logs of encountered non-deterministic behavior
+- 'learnedModel.dot', in case learning converged, the learned model (or final hypothesis)
+- 'error.msg', an error message in case learning did not converge, either because it was stopped or because an exception happened. 
+
+The evaluator can check (for example) that experimental results in 'included' correspond to those displayed in Table 4, or that configurations tested in Table 2 also appear in 'all_ciphers'.
+Note that models have been pruned significantly. 
+For checking correspondance with a model displayed in the paper see **TODO**. 
+
+# dtls-fuzzer evaluation steps
+For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the following steps:
+1. Ensure pre-requisites are met
+2. Install dtls-fuzzer
+3. Setup SUT 
+4. Use dtls-fuzzer to generate models for the SUT
+5. Analyze results
+
+## Ensuring pre-requisites
+**dtls-fuzzer** has been tested on a Ubuntu 18.04 distribution. It should work on any recent Linux distribution. Support for other platforms has not been tested.
 
 # Installing
 Run the prepare script which will deploy the local .jars dtls-fuzzer depends to your local maven repository, then install the tool itself.
