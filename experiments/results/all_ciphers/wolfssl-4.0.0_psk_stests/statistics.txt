@@ -14,19 +14,19 @@ Protocol: DTLS12
 ResetWait: 0
 Timeout: 80
 RunWait: 100
-Command: /home/pfg666/Modules/wolfssl-4.0.0_psk/examples/server/server  -i -x -p 40001 -s -u -l PSK-AES128-CBC-SHA256
+Command: /home/pfg666/Modules/wolfssl-4.0.0_psk/examples/server/server  -i -x -p 60006 -s -u -l PSK-AES128-CBC-SHA256
 
 === STATISTICS ===
 Learning successful: true
 Number of states: 10
 Number of hypotheses: 3
-Number of inputs: 238560
-Number of resets: 18393
+Number of inputs: 237840
+Number of resets: 18353
 Number of learning inputs: 943
 Number of learning resets: 215
 Number of inputs up to last hypothesis: 1601
 Number of resets up to last hypothesis: 277
-Time it took to learn model: 25979588
+Time it took to learn model: 25935953
 Counterexamples:
 CE 1:Query[?|PSK_CLIENT_HELLO PSK_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC FINISHED APPLICATION / HELLO_VERIFY_REQUEST TIMEOUT TIMEOUT TIMEOUT TIMEOUT]
 CE 2:Query[?|PSK_CLIENT_HELLO PSK_CLIENT_HELLO PSK_CLIENT_KEY_EXCHANGE CHANGE_CIPHER_SPEC FINISHED APPLICATION PSK_CLIENT_HELLO / HELLO_VERIFY_REQUEST SERVER_HELLO,PSK_SERVER_KEY_EXCHANGE,SERVER_HELLO_DONE TIMEOUT TIMEOUT CHANGE_CIPHER_SPEC,FINISHED APPLICATION TIMEOUT]

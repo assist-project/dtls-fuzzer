@@ -1,7 +1,7 @@
 -connect
-localhost:50003
+localhost:50008
 -runWait
-1000
+2000
 -alphabet
 ../examples/alphabets/scandium_psk.xml
 -timeout
@@ -17,7 +17,7 @@ scandium-2.0.0_psk_stests
 -equivalenceAlgorithms
 WP_SAMPLED_TESTS,WP_METHOD
 -cmd
-"java -jar scandium-2.0.0-dtls-server.jar -port 50003 -timeout 20000000 -cipherSuites TLS_PSK_WITH_AES_128_CCM_8,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
+"java -jar scandium-2.0.0-dtls-server.jar -port 50008 -timeout 20000000 -cipherSuites TLS_PSK_WITH_AES_128_CCM_8,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 -starterAddress localhost:50014"
 -testFile
 ../examples/tests/psk
 -depth
@@ -26,4 +26,10 @@ WP_SAMPLED_TESTS,WP_METHOD
 scandium.config
 -ceReruns
 3
--dontCacheTests
+-resetPort                                                                                                                                                                  
+50014                                                                                                                                            
+-processTrigger                                                                                                                                                      
+START                                                                                                                                                    
+-resetCommandWait                                                                                                                
+50    
+-skipNonDetTests

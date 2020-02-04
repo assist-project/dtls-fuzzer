@@ -14,19 +14,19 @@ Protocol: DTLS12
 ResetWait: 0
 Timeout: 80
 RunWait: 100
-Command: /home/pfg666/Modules/wolfssl-4.0.0_psk/examples/server/server  -i -x -p 40000 -s -u -l PSK-AES128-CBC-SHA256
+Command: /home/pfg666/Modules/wolfssl-4.0.0_psk/examples/server/server  -i -x -p 60005 -s -u -l PSK-AES128-CBC-SHA256
 
 === STATISTICS ===
 Learning successful: true
 Number of states: 10
 Number of hypotheses: 5
-Number of inputs: 383391
+Number of inputs: 383511
 Number of resets: 21611
 Number of learning inputs: 1007
 Number of learning resets: 225
 Number of inputs up to last hypothesis: 7145
 Number of resets up to last hypothesis: 584
-Time it took to learn model: 39397771
+Time it took to learn model: 39394459
 Counterexamples:
 CE 1:Query[?|CHANGE_CIPHER_SPEC APPLICATION CHANGE_CIPHER_SPEC APPLICATION PSK_CLIENT_HELLO Alert(FATAL,UNEXPECTED_MESSAGE) CHANGE_CIPHER_SPEC APPLICATION PSK_CLIENT_HELLO PSK_CLIENT_KEY_EXCHANGE APPLICATION Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT]
 CE 2:Query[?|PSK_CLIENT_HELLO FINISHED PSK_CLIENT_KEY_EXCHANGE PSK_CLIENT_HELLO Alert(WARNING,CLOSE_NOTIFY) FINISHED PSK_CLIENT_KEY_EXCHANGE Alert(FATAL,UNEXPECTED_MESSAGE) PSK_CLIENT_HELLO / HELLO_VERIFY_REQUEST TIMEOUT TIMEOUT SERVER_HELLO,PSK_SERVER_KEY_EXCHANGE,SERVER_HELLO_DONE TIMEOUT TIMEOUT TIMEOUT TIMEOUT HELLO_VERIFY_REQUEST]
