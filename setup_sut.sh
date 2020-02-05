@@ -34,7 +34,7 @@ readonly SCANDIUM_OLD_JAR_PATH="$SUT_JAR_DIR/scandium-2.0.0-dtls-server.jar"
 #readonly SCANDIUM_OLD_JVM="jdk-12.0.2"
 readonly SCANDIUM_NEW='scandium-2.0.0_latest'
 readonly SCANDIUM_NEW_JAR_PATH="$SUT_JAR_DIR/scandium-2.0.0-dtls-server_latest.jar"
-readonly JSSE_12="jsse-12"
+readonly JSSE_12="jsse-12.0.2"
 readonly JSSE_12_JVM_URL="https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz"
 
 sutvarnames=("OPENSSL" "MBEDTLS" "ETINYDTLS" "CTINYDTLS" "GNUTLS_OLD" "GNUTLS_NEW" "SCANDIUM_OLD" "SCANDIUM_NEW" "JSSE-12")
@@ -74,18 +74,18 @@ function get_rep_url() {
 }
 
 function solve_arch() {
-    sut_dir=$1
+    target_dir=$1
     arch_url=$2
     temp_dir=/tmp/`(basename $arch_url)`
     echo $temp_dir
-    echo "Fetching/unpacking from $arch_url into $sut_dir"
+    echo "Fetching/unpacking from $arch_url into $target_dir"
     if [[ ! -f "$temp_dir" ]]
     then
         echo "Downloading archive from url to $temp_dir"
         wget -nc --no-check-certificate $arch_url -O $temp_dir
     fi
     
-    mkdir $sut_dir
+    mkdir $target_dir
     # ${temp_dir##*.} retrieves the substring between the last index of . and the end of $temp_dir
     arch=`echo "${temp_dir##*.}"`
     if [[ $arch == "xz" ]]
@@ -95,7 +95,7 @@ function solve_arch() {
         tar_param="zxvf"
     fi
     echo $tar_param
-    tar $tar_param $temp_dir -C $sut_dir --strip-components=1
+    tar $tar_param $temp_dir -C $target_dir --strip-components=1
 }
 
 function clone_rep() {
@@ -169,14 +169,23 @@ function make_sut() {
     sut=$1
     sut_dir=$2
 
-    if [[ -d MODULES_DIR ]]; then
+    if [[ ! -d MODULES_DIR ]]; then
         mkdir $MODULES_DIR
     fi
 
     # Java SUT, meaning all we need to ensure is that the right vm is installed
     jar_path=`get_jar_path $sut`
-    if [[ -n "$jar_path"]]; then
-        echo "Deploying JVM"
+    if [[ -n "$jar_path" ]]; then
+        echo "Downloading/deploying JVM"
+        jvm_dir=$MODULES_DIR/$JSSE_12
+        solve_arch $jvm_dir $JSSE_12_JVM_URL
+        return 1
+    fi
+
+    make_path="$sut_dir/Makefile"
+    if [[ -f "$make_path" ]]; then
+        echo "Running make inside $sut_dir"
+        ( cd $sut_dir; make )
     fi
 }
 
@@ -196,6 +205,7 @@ function setup_sut() {
     fi
     download_sut $1 $sut_dir 
     apply_patch $1 $sut_dir
+    make_sut $1 $sut_dir
 }
 
 if [ $# = 0 ]; then
