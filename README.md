@@ -26,6 +26,7 @@ There are many files/folders, the most relevant are:
 ## Experimental results
 'experiments/results' contains experimental results, which are the main output of the work. In particular
 - 'all_ciphers' contains output folders for all the experiments run
+    - 'mapper' contains
 - 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). Note that not all experiments in 'all_ciphers' converged
 - 'archive' contains previous experiments not considered in the work
 
@@ -34,7 +35,7 @@ Output folders are named based on the experiment configuration, that is:
 - the alphabet used, 
 - where applicable whether client certification was required (req), optional (nreq) or disabled (none), 
 - the testing algorithm: random walk (rwalk) or and adaptation of it (stests). Experiments using the adaptation have not been considered in the paper.
-- optionally, whether retransmissions were included (incl or excl). Retransmissions were included by default.
+- optionally, whether retransmissions were included (incl or excl). Retransmissions were included by default. 
 
 An output folder contains of:
 - 'alphabet.xml', the alphabet 
@@ -47,8 +48,8 @@ An output folder contains of:
 - 'error.msg', an error message in case learning did not converge, either because it was stopped or because an exception happened. 
 
 The evaluator can check (for example) that experimental results in 'included' correspond to those displayed in Table 4, or that configurations tested in Table 2 also appear in 'all_ciphers'.
-Note that models have been pruned significantly. 
-For checking correspondance with a model displayed in the paper see **TODO**. 
+Note that models appearing in the paper were the result of significant pruning. 
+See more here **TODO**. 
 
 # dtls-fuzzer evaluation steps
 For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the following steps:
