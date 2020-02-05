@@ -7,7 +7,7 @@
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SUTS_DIR="$SCRIPT_DIR/suts"
 
-# variable naming allows us to determine via dynamic variable resolution whether, for exempla, an SUT is fetched from a repository or from some archive
+# variable naming allows us to determine via dynamic variable resolution whether, for exemple, an SUT is fetched from a repository or from some archive
 readonly MBEDTLS="mbedtls"
 readonly MBEDTLS_ARCH_URL='https://tls.mbed.org/download/mbedtls-2.16.1-gpl.tgz'
 readonly GNUTLS_NEW='gnutls-3.6.7'
@@ -22,6 +22,7 @@ readonly ETINYDTLS_COMMIT='8414f8a'
 readonly CTINYDTLS='ctinydtls'
 readonly CTINYDTLS_REP_URL='https://github.com/contiki-ng/tinydtls.git'
 readonly CTINYDTLS_COMMIT='53a0d97'
+
 
 
 sutvarnames=("OPENSSL" "MBEDTLS" "ETINYDTLS" "CTINYDTLS" "GNUTLS_OLD" "GNUTLS_NEW")
@@ -53,11 +54,20 @@ function solve_arch() {
     if [[ ! -f "$temp_dir" ]]
     then
         echo "Downloading archive from url to $temp_dir"
-        wget -nc --no-check-certificate $arch_url $temp_dir
+        wget -nc --no-check-certificate $arch_url -O $temp_dir
     fi
     
-    # strip components so that we $sut_dir contains the children of the archived root dir
-    tar zxvf $temp_dir -C $sut_dir --strip-components=1
+    mkdir $sut_dir
+    # ${temp_dir##*.} retrieves the substring between the last index of . and the end of $temp_dir
+    arch=`echo "${temp_dir##*.}"`
+    if [[ $arch == "xz" ]]
+    then
+        tar_param="-xJf"
+    else 
+        tar_param="zxvf"
+    fi
+    echo $tar_param
+    tar $tar_param $temp_dir -C $sut_dir --strip-components=1
 }
 
 function clone_rep() {
