@@ -1,1 +1,0 @@
-Analyzing the output logs, it appears that the SULCache implementation provided by LearnLib is broken. It's best to implement own SUL Cache.

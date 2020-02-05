@@ -1,8 +1,0 @@
-=== STATISTICS ===
-Number of states: 5
-Number of counterexamples/hypotheses: 2
-Number of inputs: 302
-Number of resets: 77
-Number of learning inputs: 202
-Number of learning resets: 72
-Time it took to learn model: 44321
