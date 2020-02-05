@@ -15,6 +15,7 @@ import se.uu.it.dtlsfuzzer.sut.ProcessLaunchTrigger;
 
 public class SulDelegate extends ClientDelegate {
 	public static final String SUL_CONFIG = "/sul.config";
+	public static final String FUZZER_DIR = "fuzzer.dir";
 
 	@Parameter(names = "-protocol", required = false, description = "Protocol analyzed, determines transport layer used", converter = ProtocolVersionConverter.class)
 	private ProtocolVersion protocolVersion = ProtocolVersion.DTLS12;
@@ -64,6 +65,20 @@ public class SulDelegate extends ClientDelegate {
 	public SulDelegate() {
 		super();
 	}
+	
+	/*
+	 * Replaces instances of ${FUZZER_HOME} in strings 
+	 */
+	private String resolveHomeTemplate(String str) {
+		if (str == null || !str.contains(FUZZER_DIR)) 
+			return str;
+		
+		String homeVal = System.getProperty(FUZZER_DIR);
+		if (homeVal == null)
+			homeVal = System.getProperty("user.dir");
+		
+		return str.replaceAll("\\$\\{"+FUZZER_DIR+"\\}", homeVal);
+	}
 
 	public void applyDelegate(Config config) throws ConfigurationException {
 		super.applyDelegate(config);
@@ -87,7 +102,7 @@ public class SulDelegate extends ClientDelegate {
 	}
 
 	public String getCommand() {
-		return command;
+		return resolveHomeTemplate(command);
 	}
 
 	public void setCommand(String command) {
@@ -95,7 +110,7 @@ public class SulDelegate extends ClientDelegate {
 	}
 
 	public String getTerminateCommand() {
-		return terminateCommand;
+		return resolveHomeTemplate(terminateCommand);
 	}
 
 	public void setTerminateCommand(String terminateCommand) {
@@ -123,7 +138,7 @@ public class SulDelegate extends ClientDelegate {
 	}
 
 	public String getProcessDir() {
-		return processDir;
+		return resolveHomeTemplate(processDir);
 	}
 
 	public void setProcessDir(String processDir) {
