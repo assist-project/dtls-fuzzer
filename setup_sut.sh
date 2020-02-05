@@ -15,7 +15,7 @@ readonly MODULES_DIR="$SCRIPT_DIR/modules"
 
 # the names of the suts for which directories are created should be consistent with the names appearing in argument files
 # variable naming allows us to determine via dynamic variable resolution whether, for exemple, an SUT is fetched from a repository or from some archive
-readonly MBEDTLS="mbedtls"
+readonly MBEDTLS="mbedtls-2.16.1"
 readonly MBEDTLS_ARCH_URL='https://tls.mbed.org/download/mbedtls-2.16.1-gpl.tgz'
 readonly GNUTLS_NEW='gnutls-3.6.7'
 readonly GNUTLS_NEW_ARCH_URL='ftp://ftp.gnutls.org/gcrypt/gnutls/v3.6/gnutls-3.6.7.tar.xz'
@@ -169,7 +169,7 @@ function make_sut() {
     sut=$1
     sut_dir=$2
 
-    if [[ ! -d MODULES_DIR ]]; then
+    if [[ ! -d $MODULES_DIR ]]; then
         mkdir $MODULES_DIR
     fi
 
@@ -182,10 +182,28 @@ function make_sut() {
         return 1
     fi
 
+    if [[ $sut == $ETINYDTLS ]]; then 
+        ( cd $sut_dir ; autoconf ; autoheader ; )
+    fi
+
+    config_path="$sut_dir/configure"
+    if [[ -f "$config_path" ]]; then
+        ( cd $sut_dir ; ./configure )
+    fi
+
+    if [[ $sut == $OPENSSL ]]; then
+        ( cd $sut_dir ; ./config )
+    fi  
+
     make_path="$sut_dir/Makefile"
     if [[ -f "$make_path" ]]; then
         echo "Running make inside $sut_dir"
         ( cd $sut_dir; make )
+        # tinydtls exceptions
+        if [[ $sut == $CTINYDTLS || $sut == $ETINYDTLS ]]; then
+            test_dir="$sut_dir/tests"
+            ( cd $test_dir; make)
+        fi
     fi
 }
 

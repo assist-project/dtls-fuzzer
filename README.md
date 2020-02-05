@@ -62,8 +62,8 @@ For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the fol
 ## Ensuring pre-requisites
 **dtls-fuzzer** has been tested on a Ubuntu 18.04 distribution. It should work on any recent Linux distribution. Support for other platforms has not been tested.
 It is assumed that a recent (>=8) JDK distribution of Java VM is installed, plus associated utilities (maven).
-We recommend using sufficiently strong hardware, otherwise timing parameters might become an issue.
-The original experiments were run on a many-core server, however, we expect (though haven't tested) that learning should be possible also on a dual-core or quad-core (virtual-)machine with 4 GB of memory or more.
+We recommend using sufficiently strong hardware, otherwise sensitive timing parameters such as response waiting time might become too low, causing learning to fail.
+The original experiments were run on a many-core server, however, we expect (though haven't tested thoroughly) that learning should be possible also on a dual-core or quad-core (virtual-)machine with 4 GB of memory or more.
 
 ## Installing dtls-fuzzer
 Run the prepare script which will deploy the local .jars dtls-fuzzer depends to your local maven repository, then install the tool itself.
@@ -75,7 +75,8 @@ Thus on a POSIX system would be:
 Following these steps, a 'target' directory should have been built containing dtls-fuzzer.jar . 
 
 ## Setting up the SUT
-We provide a script for setting up the SUT, which encompasses downloading the source files, installing any dependencies and building the SUT.
+We provide a script for setting up the SUT.
+This script downloads the source files, installs some dependencies (jvm) and builds the SUT.
 To view SUTs for which automatic setup is provided run:
 
     > bash setup_sut.sh
@@ -90,7 +91,7 @@ The script will generate two folders in **dtls-fuzzer** root directory.
 - 'modules', where any dependencies are deployed
 
 Unfortunately, automating SUT setup can be a complicated process, hence we take the following shortcuts. 
-For the Java libraries we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
+For Java libraries we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Right now we don't automatically install dependencies.
 Unmet dependencies will cause building to fail.
 GnuTLS in particular relies on several libraries which will have to be installed manually.
@@ -98,10 +99,10 @@ Finally, we do not provide automatic setup for NSS and PionDTLS due to how compl
 If things stop working, deleting the 'suts' folder (or the 'suts/SUT_SPEC' folder) might so
 
 ## Learning a SUT configuration
-We are now ready to learn a SUT configuration.
-Configuration files are provided in the 'args' directory located in **dtls-fuzzer**'s home directory.
-Each configuration filename describes the experiment setup (SUT, alphabet, authentication) in the same way it is described in the experimental results output folder name.
-To start learning for a SUT using a configuration file, run:
+We are now ready to learn an SUT configuration.
+Argument files for various SUT configurations are provided in the 'args' directory located in **dtls-fuzzer**'s home directory.
+Each argument filename describes the experiment setup (SUT, alphabet, authentication) as described by the output folder names in 'experiments/results/'.
+To start learning for an SUT using a argument file, run:
 
     > java -jar target/dtls-fuzzer.jar @config_file
 
@@ -109,9 +110,7 @@ It is possible to learn multiple SUTs at a time assuming that different server l
 However, running more than a few (>3) instances may lead to learning failure due to port collision.
 
 ## Suggested configurations
-With learning taking more than a day and with SUT-setup challenges, we suggest the running following configurations. 
-
-
+We suggest configurations for which automatic building is reliable, learning is faster or interesting bugs have been found.
 
 
 # Displaying help page
