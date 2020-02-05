@@ -26,7 +26,7 @@ There are many files/folders, the most relevant are:
 ## Experimental results
 'experiments/results' contains experimental results, which are the main output of the work. In particular
 - 'all_ciphers' contains output folders for all the experiments run
-    - 'mapper' contains
+    - 'mapper' contains output folders for experiments which help justify some of the mapper decisions made ()
 - 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). Note that not all experiments in 'all_ciphers' converged
 - 'archive' contains previous experiments not considered in the work
 
@@ -61,15 +61,58 @@ For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the fol
 
 ## Ensuring pre-requisites
 **dtls-fuzzer** has been tested on a Ubuntu 18.04 distribution. It should work on any recent Linux distribution. Support for other platforms has not been tested.
+It is assumed that a recent (>=8) JDK distribution of Java VM is installed, plus associated utilities (maven).
+We recommend using sufficiently strong hardware, otherwise timing parameters might become an issue.
+The original experiments were run on a many-core server, however, we expect (though haven't tested) that learning should be possible also on a dual-core or quad-core (virtual-)machine with 4 GB of memory or more.
 
-# Installing
+## Installing dtls-fuzzer
 Run the prepare script which will deploy the local .jars dtls-fuzzer depends to your local maven repository, then install the tool itself.
 Thus on a POSIX system would be:
 
     > bash prepare.sh
     > mvn clean install
 
-Following these steps, a target directory should have been built containing dtls-fuzzer.jar . 
+Following these steps, a 'target' directory should have been built containing dtls-fuzzer.jar . 
+
+## Setting up the SUT
+We provide a script for setting up the SUT, which encompasses downloading the source files, installing any dependencies and building the SUT.
+To view SUTs for which automatic setup is provided run:
+
+    > bash setup_sut.sh
+
+To setup, for example, contiki-ng's tinydtls implementation run:
+
+    > bash setup_sut.sh ctinydtls
+
+The script will generate two folders in **dtls-fuzzer** root directory.
+
+- 'suts', where the SUT binaries are deployed
+- 'modules', where any dependencies are deployed
+
+Unfortunately, automating SUT setup can be a complicated process, hence we take the following shortcuts. 
+For the Java libraries we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
+Right now we don't automatically install dependencies.
+Unmet dependencies will cause building to fail.
+GnuTLS in particular relies on several libraries which will have to be installed manually.
+Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
+If things stop working, deleting the 'suts' folder (or the 'suts/SUT_SPEC' folder) might so
+
+## Learning a SUT configuration
+We are now ready to learn a SUT configuration.
+Configuration files are provided in the 'args' directory located in **dtls-fuzzer**'s home directory.
+Each configuration filename describes the experiment setup (SUT, alphabet, authentication) in the same way it is described in the experimental results output folder name.
+To start learning for a SUT using a configuration file, run:
+
+    > java -jar target/dtls-fuzzer.jar @config_file
+
+It is possible to learn multiple SUTs at a time assuming that different server listening ports are used. 
+However, running more than a few (>3) instances may lead to learning failure due to port collision.
+
+## Suggested configurations
+With learning taking more than a day and with SUT-setup challenges, we suggest the running following configurations. 
+
+
+
 
 # Displaying help page
 Run:
