@@ -72,6 +72,7 @@ This evaluation section is followed by a guide on using **dtls-fuzzer** which in
 It is assumed that a recent (>=8) JDK distribution of Java VM is installed, plus associated utilities (maven).
 We recommend using sufficiently strong hardware, otherwise sensitive timing parameters such as response waiting time might become too low, causing learning to fail.
 The original experiments were run on a many-core server, however, we expect (though haven't tested thoroughly) that learning should be possible on a desktop with an i7 processor.
+Learning is also possible on weaker systems if timing parameters are tweaked accordingly.
 Finally, visualizing models or even exporting them to .pdf requires installing the [graphviz library][graphviz].
 It is assumed that the 'dot' utility is located in the system PATH.
 
@@ -166,6 +167,9 @@ To avoid this form of collision, we advise running Scandium and JSSE experiments
 ## Suggested configurations
 We suggest the following configurations for which automatic building is reliable, learning is faster or interesting bugs have been found.
 Make sure you set up the SUT before running the command provided.
+You will note we focus on PSK configurations where possible.
+That is because PSK with small passwords requires significantly less processing time than any other encryption mechanism.
+
 
 ### OpenSSL 1.1.1b
 Any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl') can be tried out.
@@ -173,7 +177,9 @@ The SUT exhibits stable timing making non-determinism unlikely,
 Experiments terminate quickly (~half a day),  exercising all key exchange algorithms. 
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
 
-    > java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl 
+    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl 
+
+Note, when learning OpenSSL it is necessary to point the LD_LIBRARY_PATH variable to the installation directory.
 
 ### MbedTLS 2.16.1
 Any mbedtls-2.16.1 configuration can be used for the same reasons as OpenSSL. 
@@ -181,6 +187,12 @@ Experiments take more time to complete since the SUT is slower.
 Command for client certificate authentication disabled configuration using all key exchange algorithms:
 
     > java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_all_cert_none_rwalk_incl
+
+
+### Contiki-NG TinyDTLS using PSK
+A redacted version of the model obtained for this configuration appears in the appendix.
+
+    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk
 
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
