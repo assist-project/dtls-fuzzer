@@ -1,7 +1,7 @@
 **dtls-fuzzer** is a Java tool which performs protocol state fuzzing of DTLS servers. More concretely, it supports the following functionality:
-1. given an alphabet, can automatically generate a model of a local/remote DTLS server implementation;
-2. given a test (sequence of inputs) and an alphabet, can execute the test on a DTLS server implementation;
-3. run a batch learning task, involving multiple learning runs.
+1. given an alphabet, it can automatically generate a model of a local/remote DTLS server implementation;
+2. given a test (sequence of inputs) and an alphabet, it can execute the test on a DTLS server implementation;
+3. it can run a batch learning task, involving multiple learning runs.
 
 **dtls-fuzzer** uses [TLS-Attacker][tlsattacker] to generate/parse DTLS messages as well as to maintain state. 
 To that end, **TLS-Attacker** has been extended with support for DTLS.
@@ -129,13 +129,17 @@ To start learning for an SUT using a argument file, run:
 The output folder will be stored in a generated 'output' directory.
 
 ### Concurrent experiments and port collisions
-It is possible to learn multiple SUTs at a time assuming that different server listening ports are used. 
+It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
+A simple way is via the 'disown' utility, for example:
+
+    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk > /dev/null 2>&1 & disown
+
 However, running more than a few (>2) instances increases the chance of learning failure due to accidental port collision.
 In most configurations, servers are configured to listen to some hard-coded port over localhost, the configurations provided use distinct hard-coded ports. 
 For JSSE and Scandium configurations, where custom server programs were provided, on every test, servers dynamically select the listening port and communicate it over TCP sockets to **dtls-fuzzer**.
 This has the advantage of letting **dtls-fuzzer** know for sure when the server is ready to receive packets (rather than having to blindly wait an arbitrary amount of time for the server to start).
 The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein server thread has recently been stopped and no new thread has been started yet (mearning the hard-coded port could be used in dynamic allocation).
-To avoid this form of collision, we suggest running Scandium and JSSE experiments seperately from all others.
+To avoid this form of collision, we advise running Scandium and JSSE experiments seperately from all others.
 
 
 ## Suggested configurations
@@ -228,7 +232,7 @@ You can also add other explicit arguments to commands (which will overwrite thos
 To launch a batch of learning runs, one can use the 'launcher.py' script in 'experiments/scripts'. 
 Provided a directory with argument files, the tool will launch a learning process for each argument file.
 
-    > python3 launcher.py -a args_dir
+    > python3 experiments/scripts/launcher.py --jar target/dtls-fuzzer.jar --args args_folder
     
 ## Running a single test
 To run a single test on a server using a default alphabet/one provided, you can run:
