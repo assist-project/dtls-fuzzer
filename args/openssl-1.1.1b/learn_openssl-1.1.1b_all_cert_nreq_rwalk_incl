@@ -5,7 +5,7 @@ localhost:30003
 -runWait 
 200
 -timeout
-40
+20
 -randLength
 10
 -queries
