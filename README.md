@@ -107,13 +107,26 @@ Argument files for various SUT configurations are provided in the 'args' directo
 Each argument filename describes the experiment setup (SUT, alphabet, authentication) as described by the output folder names in 'experiments/results/'.
 To start learning for an SUT using a argument file, run:
 
-    > java -jar target/dtls-fuzzer.jar @config_file
+    > java -jar target/dtls-fuzzer.jar @arg_file
 
 It is possible to learn multiple SUTs at a time assuming that different server listening ports are used. 
-However, running more than a few (>3) instances may lead to learning failure due to port collision.
+However, running more than a few (>2) instances increase the chance of learning failure due to accidental port collision.
+
+In most configurations, servers are configured to listen to some hard-coded port over localhost. 
+For JSSE and Scandium configurations, where custom server programs were provided, servers dynamically select the listening port and communicate it over TCP sockets to **dtls-fuzzer**.
+This has the advantage of letting **dtls-fuzzer** know for sure when the server is ready to receive packets (rather than having to blindly wait an arbitrary amount of time for the server to start).
+The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein server thread has recently been stopped and no new thread has been started yet (hence the listening port is free to be allocated).
+To avoid this form of collision, we suggest running Scandium and JSSE experiments seperately from all others.
+
 
 ## Suggested configurations
-We suggest configurations for which automatic building is reliable, learning is faster or interesting bugs have been found.
+We suggest the following configurations for which automatic building is reliable, learning is faster or interesting bugs have been found:
+
+- any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl')
+    - terminates quickly, reliable timing making non-determinism unlikely, exercises all key exchange algorithms
+- any mbedtls-2.16.1 configuration (same reasons, though it takes more time to complete because SUT is slower)
+- scandium psk configuration 'args/scandium-2.0.0/learn_scandium-2.0.0_psk_rwalk'
+    - redacted version of the model in paper, exposes bugs, should not be run alongside non-Scandium or non-JSSE experiments
 
 # General dtls-fuzzer walkthrough
 
