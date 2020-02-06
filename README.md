@@ -71,14 +71,14 @@ This evaluation section is followed by a guide on using **dtls-fuzzer** which in
 **dtls-fuzzer** has been tested on a Ubuntu 18.04 distribution. It should work on any recent Linux distribution. Support for other platforms has not been tested.
 It is assumed that a recent (>=8) JDK distribution of Java VM is installed, plus associated utilities (maven).
 We recommend using sufficiently strong hardware, otherwise sensitive timing parameters such as response waiting time might become too low, causing learning to fail.
-The original experiments were run on a many-core server, however, we expect (though haven't tested thoroughly) that learning should be possible also on a dual-core or quad-core (virtual-)machine with 4 GB of memory or more.
+The original experiments were run on a many-core server, however, we expect (though haven't tested thoroughly) that learning should be possible on a desktop with an i7 processor.
 Finally, visualizing models or even exporting them to .pdf requires installing the [graphviz library][graphviz].
 It is assumed that the 'dot' utility is located in the system PATH.
 
 In a nutshell, the advised pre-requisites are:
 
 - recent Linux distribution
-- dual-core CPU or stronger
+- desktop CPU or stronger for reliable learning
 - (>=) 4 GB RAM
 - JVM (>=) 8, maven
 - graphviz
