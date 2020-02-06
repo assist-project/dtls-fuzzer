@@ -128,6 +128,26 @@ To start learning for an SUT using a argument file, run:
 
 The output folder will be stored in a generated 'output' directory.
 
+### Parameter adaptations
+Compared to experiments in the paper, we increased the response timeout for several SUTs as an adaptation to less powerful hardware.
+To shorten learning time, we suggest decreasing the test bound of the random walk algorithm from 20000 to 5000.
+This can be done by:
+
+    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -queries 5000
+
+This will overwrite the bound setting in the argument file. 
+Aside from GnuTLS, PionDTLS and JSSE, we expect learning to produce the same models for this lower bound.
+
+Timing can become an issue, causing non-determinism, followed by abrupt termination with an informative 'error.msg' file.
+In such cases, there are two knobs which can be tweaked: 
+
+1. the *response timeout* (time waited for each response before concluding that server is silent);
+2. the *start timeout* (time waited for the server to start).
+
+These parameters can be adjusted by overwriting (likely with a higher value) the corresponding settings in the argument file:
+
+    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeout new_response_timeout -runWait new_start_timeout
+
 ### Concurrent experiments and port collisions
 It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
 A simple way is via the 'disown' utility, for example:
@@ -135,10 +155,11 @@ A simple way is via the 'disown' utility, for example:
     > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk > /dev/null 2>&1 & disown
 
 However, running more than a few (>2) instances increases the chance of learning failure due to accidental port collision.
-In most configurations, servers are configured to listen to some hard-coded port over localhost, the configurations provided use distinct hard-coded ports. 
-For JSSE and Scandium configurations, where custom server programs were provided, on every test, servers dynamically select the listening port and communicate it over TCP sockets to **dtls-fuzzer**.
-This has the advantage of letting **dtls-fuzzer** know for sure when the server is ready to receive packets (rather than having to blindly wait an arbitrary amount of time for the server to start).
-The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein server thread has recently been stopped and no new thread has been started yet (mearning the hard-coded port could be used in dynamic allocation).
+In most configurations, servers are configured to listen to some hard-coded port over localhost, the configurations provided using distinct hard-coded ports. 
+For JSSE and Scandium configurations, the setup is different. 
+On every test, the SUT launches a server listening to a dynamically chosen port and communicates the port over TCP sockets to **dtls-fuzzer**.
+This has the advantage of notifying **dtls-fuzzer** when the server is ready to receive packets (lacking this, **dtls-fuzzer** would have to blindly wait an arbitrary amount of time for the server to start).
+The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein a server thread has recently been stopped and a new thread has not been started yet (mearning the hard-coded port could be used in dynamic allocation).
 To avoid this form of collision, we advise running Scandium and JSSE experiments seperately from all others.
 
 
@@ -191,6 +212,25 @@ Once learning is done, things to analyze in the output directory are:
 The .dot learned model can be visualized using the graphviz library, by conversion to .pdf:
 
     > dot -Tpdf learnedModel.dot  > learnedModel.pdf
+
+Unfortunately, as models grow is size, the .pdfs generated using this method become increasingly difficult to read. 
+
+Hence we developed/used/imported prunning scripts which are accessed by 'trim_model.sh'. 
+We advise using it in its most basic form, whic is:
+
+    > bash trim_model.dot learnedModel.dot trimmedLearnedModel.dot 
+
+The script:
+
+1. compactifies states and input/output labels
+2. colors paths leading to handshake completion
+    - the user should then determine whether the handshakes were legal given the configuration
+3. merges 3 or more transitions connecting the same state states with same outputs but different inputs, under the 'Other' input
+4. (optionally) prunes states from which a handshake can no longer be completed (particularly useful for JSSE)
+5. (optionally) positions transitions connecting the same states on a single edge
+
+(5) requires installing the custom mypydot library found in 'experiments\scripts' which requires Python 3. 
+All other steps use the [dot-trimmer][dottrimmer] Java library, a .jar for which is included in 'experiments\scripts'.
 
 
 # General dtls-fuzzer walkthrough
@@ -258,3 +298,4 @@ This provides a useful means of debugging learning experiments, i.e. finding out
 [graphviz]:https://www.graphviz.org
 [jsse]:https://github.com/pfg666/jsse-dtls-server
 [scandium]:https://github.com/pfg666/scandium-dtls-server
+[dottrimmer]:https://github.com/pfg666/dot-trimmer
