@@ -1,54 +1,57 @@
-**dtls-fuzzer** is a Java tool which performs protocol state fuzzing of DTLS servers. To that end, it supports the following functionality:
-1. given an alphabet, can automatically generate a model of a local/remote DTLS server implementation.
-2. given a test (sequence of inputs) and an alphabet, can execute the test on a DTLS server implementation.
-3. run a batch learning task, involving multiple 
+**dtls-fuzzer** is a Java tool which performs protocol state fuzzing of DTLS servers. More concretely, it supports the following functionality:
+1. given an alphabet, can automatically generate a model of a local/remote DTLS server implementation;
+2. given a test (sequence of inputs) and an alphabet, can execute the test on a DTLS server implementation;
+3. run a batch learning task, involving multiple learning runs.
 
-**dtls-fuzzer** uses **TLS-Attacker** to generate/parse DTLS messages as well as to maintain state. 
-To that end, as part of the work, **TLS-Attacker** has been extended with support for DTLS.
-The extension is available in the version 3.0 of **TLS-Attacker**.
+**dtls-fuzzer** uses [TLS-Attacker][tlsattacker] to generate/parse DTLS messages as well as to maintain state. 
+To that end, **TLS-Attacker** has been extended with support for DTLS.
+**dtls-fuzzer** relies on version 3.0 of **TLS-Attacker**, a version implementing the DTLS enhancement.
 
 # Artifact contents
 The artifact contains:
-1. a description of the file structure of **dtls-fuzzer**, including source code and experimental data consistent with that displayed in the paper.
+1. a description of the file structure of **dtls-fuzzer**, including source code and experimental data consistent with that displayed in the paper;
 2. a walkthrough for evaluating **dtls-fuzzer** on a chosen SUT (System Under Test)/ DTLS server implementation. 
 
 # dtls-fuzzer file structure
 The most important folders in **dtls-fuzzer**'s root directory are:
-1. 'src', directory containing the Java source code of **dtls-fuzzer**. 
-2. 'examples', directory containing examples of alphabets, tests, specifications (i.e. models) and example of arguments that can be supplied to **dtls-fuzzer**, to launch learning experiments. Files here are used as inputs for learning experiments.
-3. 'experiments', directory containing data pertaining to experiments. Some of this data also serves as input during learning experiments. The most notable folders are:
-    1. 'suts', with binaries for Java SUTs. These SUTs are custom-made DTLS server programs whose source code is publically available. 
-    2. 'patches', patches that were applied to some SUTs (particularly to utilities) before the source code was compiled. The primary purpose of these patches was to prevent timing induced-behavior during learning, enable/disable functionality in the SUT, and configure parameters such as the pre-shared key.
-    4. 'keystore', key material (e.g. public-private key pairs, Java keystores) used during learning
-    5. 'results', experimental results
+1. 'src', directory containing the Java source code of **dtls-fuzzer**;
+2. 'examples', directory containing examples of alphabets, tests, specifications (i.e. models), and, argument files that can be supplied to **dtls-fuzzer** in order to launch learning experiments. Files in this directory are used as inputs for learning experiments;
+3. 'experiments', directory containing data relating to experiments. Some of this data also serves as input for learning experiments. The most notable folders are:
+    1. 'suts', with binaries for Java SUTs. These SUTs are custom-made DTLS server programs whose source code is publically available;
+    2. 'patches', patches that were applied to some SUTs (particularly to utilities) before the source code was compiled. The primary purpose of these patches was to prevent timing induced-behavior during learning, enable/disable functionality in the SUT, and configure parameters such as the pre-shared key;
+    4. 'keystore', key material (e.g. public-private key pairs, Java keystores) used during learning;
+    5. 'results', experimental results.
 
 ## Experimental results
 'experiments/results' contains experimental results, which are the main output of the work. In particular
-- 'all_ciphers' contains output folders for all the experiments run
+- 'all_ciphers' contains output folders for all the experiments run;
     - 'mapper' contains experimental results which help justify some of the mapper decisions made (see Section 5.2)
-- 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). Note that not all experiments in 'all_ciphers' converged
-- 'archive' contains previous experiments not considered in the work
+- 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). Note that not all experiments in 'all_ciphers' converged;
+- 'archive' contains previous experiments not considered in the work.
 
 Output folders are named based on the experiment configuration, that is: 
-- the SUT/implementation tested, 
-- the alphabet used, 
-- where applicable whether client certification was required (req), optional (nreq) or disabled (none), 
-- the testing algorithm: random walk (rwalk) or an adaptation of it (stests). Experiments using the adaptation have not been included in the paper.
+- the SUT/implementation tested;
+- the alphabet used;
+- where applicable whether client certification was required (req), optional (nreq) or disabled (none);
+- the testing algorithm: random walk (rwalk) or an adaptation of it (stests);
+    - experiments using the adaptation have not been included in the paper
 - optionally, whether retransmissions were included (incl or excl). Retransmissions were included by default. 
 
 An output folder contains:
-- 'alphabet.xml', the alphabet 
-- 'command.args', the arguments file used
-- 'sul.config', SUT-dependant configuration for **TLS-Attacker**,  the same configuration could be used to execute workflow traces on the SUT using **TLS-Attacker** alone
-- 'hyp[0-9]+.dot', intermediate hypotheses 
-- 'statistics.txt', experiment statistics such as the total number of tests, learning time. Table 4 displays this data
-- 'nondet.log', logs of encountered non-deterministic behavior
-- 'learnedModel.dot', in case learning converged, the learned model (or final hypothesis)
-- 'error.msg', an error message generated in case the experiment failed/learning was stopped and hence, did not converge to a final model. The main culprit is non-determinism.
+- 'alphabet.xml', the alphabet;
+- 'command.args', the arguments file used;
+- 'sul.config', SUT-dependant configuration for **TLS-Attacker**,  the same configuration could be used to execute workflow traces on the SUT using **TLS-Attacker** alone;
+- 'hyp[0-9]+.dot', intermediate hypotheses;
+- 'statistics.txt', experiment statistics such as the total number of tests, learning time;
+    - Table 4 displays this data
+- 'nondet.log', logs of encountered non-deterministic behavior;
+- 'learnedModel.dot', in case learning converged, the learned model (or final hypothesis);
+- 'error.msg', an error message generated in case the experiment failed/learning was stopped and hence, did not converge to a final model. 
+    - The main culprit is time-related non-determinism (same inputs lead to different results).
 
 The evaluator can check (for example) that experimental results in 'included' correspond to those displayed in Table 4, or that configurations tested in Table 2 also appear in 'all_ciphers'.
 Note that models appearing in the paper were the result of significant pruning. 
-See more here **TODO**. 
+Hence the learned models may not be reflective of the models displayed in the paper.
 
 # dtls-fuzzer evaluation steps
 For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the following steps:
@@ -68,8 +71,16 @@ The original experiments were run on a many-core server, however, we expect (tho
 Finally, visualizing models or even exporting them to .pdf requires installing the [graphviz library][graphviz].
 It is assumed that the 'dot' utility is located in the system PATH.
 
+In a nutshell, the advised pre-requisites are:
+
+    - recent Linux distribution
+    - dual-core CPU or stronger
+    -  >= 4 GB RAM
+    - JVM (>=) 8, maven
+    - graphviz
+
 ## Installing dtls-fuzzer
-Run the prepare script which will deploy the local .jars dtls-fuzzer depends to your local maven repository, then install the tool itself.
+Run the prepare script which will deploy the local .jars **dtls-fuzzer** depends to your local maven repository, then install the tool itself.
 Thus on a POSIX system would be:
 
     > bash prepare.sh
@@ -95,15 +106,15 @@ The script will generate two folders in **dtls-fuzzer** root directory.
 - 'modules', where any dependencies are deployed
 
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
-For Java SUTs we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
+For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Note that the source code of the SUTs (server applications) is publically available online, see [Scandium][scandium] and [JSSE][jsse].
-Also, we don't currently automatically install dependencies.
-Unmet dependencies will cause building to fail.
-GnuTLS in particular relies on several libraries which will have to be installed manually.
+Also, we don't automatically install dependencies.
+Missing dependencies will cause building to fail.
+GnuTLS in particular relies on several external libraries which will have to be installed manually.
 Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
 If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) and re-running the setup script may solve the problem.
 
-## Learning a SUT configuration
+## Learning an SUT configuration
 We are now ready to learn an SUT configuration.
 Argument files for various SUT configurations are provided in the 'args' directory located in **dtls-fuzzer**'s home directory.
 Each argument filename describes the experiment setup (SUT, alphabet, authentication) as described by the output folder names in 'experiments/results/'.
@@ -115,11 +126,11 @@ The output folder will be stored in a generated 'output' directory.
 
 ### Concurrent experiments and port collisions
 It is possible to learn multiple SUTs at a time assuming that different server listening ports are used. 
-However, running more than a few (>2) instances increase the chance of learning failure due to accidental port collision.
+However, running more than a few (>2) instances increases the chance of learning failure due to accidental port collision.
 In most configurations, servers are configured to listen to some hard-coded port over localhost, the configurations provided use distinct hard-coded ports. 
-For JSSE and Scandium configurations, where custom server programs were provided, servers dynamically select the listening port and communicate it over TCP sockets to **dtls-fuzzer**.
+For JSSE and Scandium configurations, where custom server programs were provided, on every test, servers dynamically select the listening port and communicate it over TCP sockets to **dtls-fuzzer**.
 This has the advantage of letting **dtls-fuzzer** know for sure when the server is ready to receive packets (rather than having to blindly wait an arbitrary amount of time for the server to start).
-The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein server thread has recently been stopped and no new thread has been started yet (hence the listening port is free to be allocated).
+The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein server thread has recently been stopped and no new thread has been started yet (mearning the hard-coded port could be used in dynamic allocation).
 To avoid this form of collision, we suggest running Scandium and JSSE experiments seperately from all others.
 
 
@@ -130,7 +141,7 @@ Make sure you set up the SUT before running the command provided.
 ### OpenSSL 1.1.1b
 Any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl') can be tried out.
 The SUT exhibits stable timing making non-determinism unlikely,
-Experiments terminate quickly,  exercising all key exchange algorithms. 
+Experiments terminate quickly (~half a day),  exercising all key exchange algorithms. 
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
 
     > java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl 
@@ -145,7 +156,7 @@ Command for client certificate authentication disabled configuration using all k
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
 The model exposes important bugs.
-The experiments  should not be run in parallel with experiments not involving Scandium or JSSE.
+The experiment should not be run in parallel with experiments not involving Scandium or JSSE.
 Command:
 
     > java -jar target/dtls-fuzzer.jar @args/scandium-2.0.0/learn_scandium-2.0.0_psk_rwalk
@@ -153,9 +164,9 @@ Command:
 ### JSSE 12.0.2 with authentication required 
 A redacted version of the model obtained for this configuration appears in the paper.
 The model exposes important bugs.
-The experiments  should not be run in parallel with experiments not involving Scandium or JSSE.
-Note that learning for this system does not finish/converge, and will continue on endlessly, building hypotheses with more and more states. 
-We hence configured experiments to automatically terminate after one day.
+The experiment should not be run in parallel with experiments not involving Scandium or JSSE.
+Note that learning for JSSE does not finish/converge, building hypotheses with more and more states. 
+We hence configured JSSE experiments to automatically terminate after one day (two days in the paper).
 Command for RSA key exchange:
 
     > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl 
@@ -235,7 +246,7 @@ Finally, if you have the arguments file for a learning experiment, you can use t
 
 This provides a useful means of debugging learning experiments, i.e. finding out what went wrong, or of simply ensuring that parameters in the argument file are correctly configured.
 
-
+[tlsattacker]:https://github.com/RUB-NDS/TLS-Attacker
 [graphviz]:https://www.graphviz.org
 [jsse]:https://github.com/pfg666/jsse-dtls-server
 [scandium]:https://github.com/pfg666/scandium-dtls-server
