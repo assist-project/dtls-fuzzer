@@ -7,6 +7,8 @@
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # dir where the suts are stored
 readonly SUTS_DIR="$SCRIPT_DIR/suts"
+# where binaries are located
+readonly BIN_DIR="$SCRIPT_DIR/bin"
 # dir where precomplied suts are stored
 readonly SUT_JAR_DIR="$SCRIPT_DIR/experiments/suts"
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
@@ -36,6 +38,9 @@ readonly SCANDIUM_NEW='scandium-2.0.0_latest'
 readonly SCANDIUM_NEW_JAR_PATH="$SUT_JAR_DIR/scandium-2.0.0-dtls-server_latest.jar"
 readonly JSSE_12="jsse-12.0.2"
 readonly JSSE_12_JVM_URL="https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz"
+
+readonly LIB_NETTLE_ARCH_URL="https://ftp.gnu.org/gnu/nettle/nettle-3.4.1.tar.gz"
+readonly LIB_NETTLE="nettle-3.4.1"
 
 sutvarnames=("OPENSSL" "MBEDTLS" "ETINYDTLS" "CTINYDTLS" "GNUTLS_OLD" "GNUTLS_NEW" "SCANDIUM_OLD" "SCANDIUM_NEW" "JSSE_12")
 sut_strings=($OPENSSL $MBEDTLS $ETINYDTLS $CTINYDTLS $GNUTLS_OLD $GNUTLS_NEW $SCANDIUM_OLD $SCANDIUM_NEW $JSSE_12)
@@ -73,9 +78,10 @@ function get_rep_url() {
     echo $rep_url
 }
 
+# ./configure --with-guile-site-dir=no --prefix=/bin/ --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-doc
 function solve_arch() {
-    target_dir=$1
-    arch_url=$2
+    arch_url=$1
+    target_dir=$2
     temp_dir=/tmp/`(basename $arch_url)`
     echo $temp_dir
     echo "Fetching/unpacking from $arch_url into $target_dir"
@@ -95,7 +101,11 @@ function solve_arch() {
         tar_param="zxvf"
     fi
     echo $tar_param
-    tar $tar_param $temp_dir -C $target_dir --strip-components=1
+    if [ $target_dir ] ; then
+        tar $tar_param $temp_dir -C $target_dir --strip-components=1
+    else 
+        tar $tar_param $temp_dir
+    fi
 }
 
 function clone_rep() {
@@ -131,7 +141,7 @@ function download_sut() {
     arch_url_var="$return_var"_ARCH_URL
     arch_url="${!arch_url_var}"
     if [[ -n "$arch_url" ]]; then 
-        solve_arch $sut_dir $arch_url
+        solve_arch $arch_url $sut_dir
     fi
 
     ## maybe the SUT is packaged as a .jar so we simply have to copy it
@@ -164,6 +174,13 @@ function apply_patch() {
     fi
 }
 
+# Makes bin directory if it doesn't exist
+function make_bin() {
+    if [[ ! -d $BIN_DIR ]]; then
+        mkdir $BIN_DIR
+    fi
+}
+
 # Builds the SUT. In this process also installs/deploys any necessary dependancies
 function make_sut() {
     sut=$1
@@ -178,24 +195,28 @@ function make_sut() {
     if [[ $sut == $JSSE_12 ]]; then
         echo "Downloading/deploying JVM"
         jvm_dir="$MODULES_DIR/jdk-12.0.2" # FIXME
-        solve_arch $jvm_dir $JSSE_12_JVM_URL
+        solve_arch $JSSE_12_JVM_URL $jvm_dir 
         # unfortunately, the keystore is hardcoded into the SUT, so needs to be copied
         cp $SCRIPT_DIR/experiments/keystore/rsa2048.jks $SCRIPT_DIR 
         return 1
     fi
 
-    if [[ $sut == $ETINYDTLS ]]; then 
-        ( cd $sut_dir ; autoconf ; autoheader ; )
-    fi
-
-    config_path="$sut_dir/configure"
-    if [[ -f "$config_path" ]]; then
-        ( cd $sut_dir ; ./configure )
-    fi
-
-    if [[ $sut == $OPENSSL ]]; then
+    if [[ $sut == $GNUTLS_NEW ]]; then
+        make_bin
+        nettle_dir="$MODULES_DIR/$LIB_NETTLE"
+        solve_arch $LIB_NETTLE_ARCH_URL $nettle_dir
+        (cd $nettle_dir ; ./configure --prefix=$BIN_DIR ; ./make install )
+        (cd $sut_dir ; ./configure --with-guile-site-dir=no --prefix=$BIN_DIR --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-doc )
+    elif [[ $sut == $ETINYDTLS ]]; then 
+        ( cd $sut_dir ; autoconf ; autoheader ; ./configure )
+    elif [[ $sut == $OPENSSL ]]; then
         ( cd $sut_dir ; ./config )
     fi  
+
+    #config_path="$sut_dir/configure"
+    #if [[ -f "$config_path" ]]; then
+    #    ( cd $sut_dir ; ./configure )
+    #fi
 
     make_path="$sut_dir/Makefile"
     if [[ -f "$make_path" ]]; then
