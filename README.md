@@ -59,6 +59,8 @@ For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the fol
 4. Use dtls-fuzzer to generate models for the SUT
 5. Analyze results
 
+This evaluation section is followed by a guide on using **dtls-fuzzer** which introduces the main use cases.
+
 ## Ensuring pre-requisites
 **dtls-fuzzer** has been tested on a Ubuntu 18.04 distribution. It should work on any recent Linux distribution. Support for other platforms has not been tested.
 It is assumed that a recent (>=8) JDK distribution of Java VM is installed, plus associated utilities (maven).
@@ -72,7 +74,8 @@ Thus on a POSIX system would be:
     > bash prepare.sh
     > mvn clean install
 
-Following these steps, a 'target' directory should have been built containing dtls-fuzzer.jar . 
+Following these steps, a 'target' directory should have been built containing 'dtls-fuzzer.jar'.
+From this point onward it is assumed that commands are run from **dtls-fuzzer**'s root directory. 
 
 ## Setting up the SUT
 We provide a script for setting up the SUT.
@@ -90,13 +93,13 @@ The script will generate two folders in **dtls-fuzzer** root directory.
 - 'suts', where the SUT binaries are deployed
 - 'modules', where any dependencies are deployed
 
-Unfortunately, automating SUT setup can be a complicated process, hence we take the following shortcuts. 
+Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
 For Java libraries we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Right now we don't automatically install dependencies.
 Unmet dependencies will cause building to fail.
 GnuTLS in particular relies on several libraries which will have to be installed manually.
 Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
-If things stop working, deleting the 'suts' folder (or the 'suts/SUT_SPEC' folder) might so
+If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) might solve the problem.
 
 ## Learning a SUT configuration
 We are now ready to learn an SUT configuration.
@@ -112,50 +115,51 @@ However, running more than a few (>3) instances may lead to learning failure due
 ## Suggested configurations
 We suggest configurations for which automatic building is reliable, learning is faster or interesting bugs have been found.
 
+# General dtls-fuzzer walkthrough
 
-# Displaying help page
+## Displaying help page
 Run:
 
-    > java -jar dtls-fuzzer.jar -help
+    > java -jar target/dtls-fuzzer.jar -help
 
-# Learning DTLS implementations
+## Learning DTLS implementations
 
 The number of options might be overbearing. 
 To learn a DTLS server implementation, one only needs to specify a few options, namely: "-connect ip_address:port" which is the address the running DTLS server is listening to.
 All other options are set to default values, including the alphabet.
 
-## Single learning run
+### Single learning run
 To launch a learning run for an existing say local server implementation listening at port 20000, run:
 
-    > java -jar dtls-fuzzer.jar -connect localhost:20000
+    > java -jar target/dtls-fuzzer.jar -connect localhost:20000
 
 There will likely be issues with this type of learning. 
 Learning requires that one is able to reset the server after each test.
 Some servers will carry some state from one test to another. 
-This may lead to non-determinism during learning, hence it is suggested that a command is provided by which the server can be launched.
-A new server thread will be then launched on every test and killed once the test is run, ensuring proper reset.
+This may lead to non-determinism during learning, hence a better approach is launching a new server thread on every test using a provided command.
+The server thread is killed once the test is run, ensuring proper reset.
 Example for OpenSSL:
 
-    > java -jar dtls-fuzzer.jar -connect localhost:20000 -cmd "openssl s_server -accept 20000 -dtls1_2"
+    > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -cmd "openssl s_server -accept 20000 -dtls1_2"
     
-With so many paraments, commands can get very long. 
+With so many paraments, commands can become very long. 
 dtls-fuzzer uses JCommander to parse arguments, which can also read parameters from a file.
 Go to 'experiments/args' for examples of arguments.
 To supply an argument file to dtls-fuzzer provide it as parameter prepended by "@".
-You can also add other explicit arguments to the commands (which will overwrite those in the arguments file)
+You can also add other explicit arguments to commands (which will overwrite those in the arguments file)
 
-    > java -jar dtls-fuzzer.jar @arg_file ...overwriting params...
+    > java -jar target/dtls-fuzzer.jar @arg_file ...overwriting params...
 
-## Batch learning     
+### Batch learning     
 To launch a batch of learning runs, one can use the 'launcher.py' script in 'experiments/scripts'. 
 Provided a directory with argument files, the tool will launch a learning process for each argument file.
 
     > python3 launcher.py -a args_dir
     
-# Running single test
-To run a single test on a server using a default alphabet/one provided, you can run
+## Running a single test
+To run a single test on a server using a default alphabet/one provided, you can run:
 
-    > java -jar dtls-fuzzer.jar -connect localhost:20000 -test test_file
+    > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file
     
 For example of test files, go to 'examples/tests'. 
 A test file comprises a newline separated list of inputs. 
@@ -164,10 +168,13 @@ The end of the test is either the end of the file, or an empty new line.
 
 If you have a model/specification, you can also run the test and compare the output with that in a specification.
 
-    > java -jar dtls-fuzzer.jar -connect localhost:20000 -test test_file -specification model
+    > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file -specification model
 
+Finally, if you have the arguments file for a learning experiment, you can use them to run a test on the SUT involved by just adding the necessary test arguments: 
 
+    > java -jar target/dtls-fuzzer.jar @learning_arg_file -test test_file
 
+This provides a useful means of debugging learning experiments, i.e. finding out what went wrong, or of simply ensuring that parameters in the argument file are correctly configured.
 
 
 
