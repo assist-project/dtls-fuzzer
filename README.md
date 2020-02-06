@@ -83,7 +83,7 @@ To view SUTs for which automatic setup is provided run:
 
     > bash setup_sut.sh
 
-To setup, for example, contiki-ng's tinydtls implementation run:
+To set up, for example, contiki-ng's tinydtls implementation run:
 
     > bash setup_sut.sh ctinydtls
 
@@ -121,10 +121,10 @@ To avoid this form of collision, we suggest running Scandium and JSSE experiment
 
 ## Suggested configurations
 We suggest the following configurations for which automatic building is reliable, learning is faster or interesting bugs have been found.
-Make sure you set up the SUT before running the given command.
+Make sure you set up the SUT before running the command provided.
 
 ### OpenSSL 1.1.1b
-Any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl') will do.
+Any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl') can be tried out.
 The SUT exhibits stable timing making non-determinism unlikely,
 Experiments terminate quickly,  exercising all key exchange algorithms. 
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
@@ -136,7 +136,7 @@ Any mbedtls-2.16.1 configuration can be used for the same reasons as OpenSSL.
 Experiments take more time to complete since the SUT is slower.
 Command for client certificate authentication disabled configuration using all key exchange algorithms:
 
-    > java -jar target/dtls-fuzzer.jar @args/learn_mbedtls_all_cert_none_rwalk_incl
+    > java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_all_cert_none_rwalk_incl
 
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
@@ -152,7 +152,7 @@ The model exposes important bugs.
 The experiments  should not be run in parallel with experiments not involving Scandium or JSSE.
 Note that learning for this system does not finish/converge, and will continue on endlessly, building hypotheses with more and more states. 
 We hence configured experiments to automatically terminate after one day.
-Command:
+Command for RSA key exchange:
 
     > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl 
 
