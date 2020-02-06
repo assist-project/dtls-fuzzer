@@ -1,0 +1,159 @@
+{
+	rules:[
+        {
+            replaceIf:".*",
+            function:"UPPER_SNAKE_TO_UPPER_CAMEL"
+        },
+    
+        {
+            replacee:"Fatal\\,",
+            replacement:""
+        },
+        
+        { 
+            replacee:"Warning\\,",
+            replacement:""
+        },
+    
+        {
+            replaceIf:".*Alert\\(.*\\).*", 
+            replacee:"Alert\\(.*\\)",
+            function:"UPPER_CAMEL_TO_LOWER_SNAKE"
+        },
+
+        {
+            replacee: "certificate",
+            replacement: "cert"
+        },
+        
+        {
+            replacee: "message",
+            replacement: "msg"
+        },
+        
+        {
+            replaceIf:"alert\\(\\_.*", 
+            replacee:"alert\\(\\_",
+            replacement: "A(",
+            isFinal: true
+        },
+        
+        {
+            replaceIf:"alert\\(\\_.*", 
+            replacee:"alert\\(\\_",
+            replacement: "A(",
+            isFinal: true
+        },
+        
+        {
+            replacee:"([A-Z][a-z]*)ClientHello",
+			replacement:"CH($1)"
+		},
+        
+        {
+            replacee:"([A-Z][a-z]*)ClientKeyExchange",
+			replacement:"CKE($1)"
+		},
+
+        {
+            replacee:"CertificateVerify",
+			replacement:"CertVer"
+		},
+        
+        {
+            replacee:"CertificateRequest",
+			replacement:"CertReq"
+		},
+        
+        {
+            replacee:"EmptyCertificate",
+			replacement:"Cert(empty)"
+		},
+        
+        {
+            replacee:"Certificate",
+			replacement:"Cert(RSA)"
+		},
+        
+        {
+            replacee:"ChangeCipherSpec",
+			replacement:"CCS"
+		},
+        
+        {
+            replacee:"Finished",
+			replacement:"F"
+		},
+        
+        {
+            replacee:"ServerHelloDone",
+			replacement:"SHD"
+		},
+        
+        {
+            replacee:"ServerHello",
+			replacement:"SH"
+		},
+
+        {
+            replacee:"([A-Z][a-z]*)ServerKeyExchange",
+			replacement:"SKE($1)"
+		},
+        
+        {
+            replacee:"Rsa",
+			replacement:"RSA"
+		},
+        
+        {
+            replacee:"Psk",
+			replacement:"PSK"
+		},
+        
+        {
+            replacee:"Ecdhe",
+			replacement:"ECDH"
+		},
+        
+        {
+            replacee:"Ecdh",
+			replacement:"ECDH"
+		},
+        
+        {
+            replacee:"Dhe",
+			replacement:"DH"
+		},
+        
+        {
+            replacee:"Dh",
+			replacement:"DH"
+		},
+        
+        {
+            replaceIf:"Timeout",
+            replacee:"Timeout",
+			replacement:"-"
+		},
+        
+        {
+            replacee:"SocketClosed",
+			replacement:"Disabled"
+		},
+        
+        {
+            replacee:"HelloVerifyRequest",
+			replacement:"HVR"
+		},
+        
+        {
+            replacee:"UnknownMessage",
+			replacement:"UM"
+		},
+        
+        {
+            replacee:"Application",
+			replacement:"App"
+		}
+	]
+}
