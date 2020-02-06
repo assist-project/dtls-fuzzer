@@ -124,9 +124,15 @@ We suggest the following configurations for which automatic building is reliable
 
 - any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl')
     - terminates quickly, reliable timing making non-determinism unlikely, exercises all key exchange algorithms
-- any mbedtls-2.16.1 configuration (same reasons, though it takes more time to complete because SUT is slower)
-- scandium psk configuration 'args/scandium-2.0.0/learn_scandium-2.0.0_psk_rwalk'
-    - redacted version of the model in paper, exposes bugs, should not be run alongside non-Scandium or non-JSSE experiments
+- any mbedtls-2.16.1 configuration (same reasons, though it takes more time to complete because the SUT is slower)
+- a Scandium PSK configuration, 'args/scandium-2.0.0/learn_scandium-2.0.0_psk_rwalk'
+    - redacted version of the model in paper, exposes important bugs, should not be run in parallel with experiments not involving Scandium or JSSE
+- JSSE-12 RSA client authentication required, 'args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl'
+    - redacted version of the model in paper, exposes important bugs, should not be run in parallel with experiments not involving Scandium or JSSE
+    - note that learning for this system does not finish/converge, and will continue on endlessly, building hypotheses with more and more states. We hence configured it to automatically terminate after one day.
+
+## Visualizing results
+
 
 # General dtls-fuzzer walkthrough
 
