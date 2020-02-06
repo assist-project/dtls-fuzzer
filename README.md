@@ -10,23 +10,22 @@ The extension is available in the version 3.0 of **TLS-Attacker**.
 # Artifact contents
 The artifact contains:
 1. a description of the file structure of **dtls-fuzzer**, including source code and experimental data consistent with that displayed in the paper.
-2. a **dtls-fuzzer** walkthrough, consisting of a step-by-step guideto generating a model for a given SUT (System Under Test)/ DTLS server implementation. 
+2. a walkthrough for evaluating **dtls-fuzzer** on a chosen SUT (System Under Test)/ DTLS server implementation. 
 
 # dtls-fuzzer file structure
-There are many files/folders, the most relevant are:
+The most important folders in **dtls-fuzzer**'s root directory are:
 1. 'src', directory containing the Java source code of **dtls-fuzzer**. 
 2. 'examples', directory containing examples of alphabets, tests, specifications (i.e. models) and example of arguments that can be supplied to **dtls-fuzzer**, to launch learning experiments. Files here are used as inputs for learning experiments.
 3. 'experiments', directory containing data pertaining to experiments. Some of this data also serves as input during learning experiments. The most notable folders are:
     1. 'suts', with binaries for Java SUTs. These SUTs are custom-made DTLS server programs whose source code is publically available. 
-    2. 'patches', patches that were applied to some SUTs (particularly to utilities) before the source code was compiled. The primary purpose of these patches was to prevent timing induced-behavior during learning. They also unlocked functionality in the SUT.
-    3. 'results', the experimental results
+    2. 'patches', patches that were applied to some SUTs (particularly to utilities) before the source code was compiled. The primary purpose of these patches was to prevent timing induced-behavior during learning, enable/disable functionality in the SUT, and configure parameters such as the pre-shared key.
     4. 'keystore', key material (e.g. public-private key pairs, Java keystores) used during learning
-    5. 'results', experimental results following the learning
+    5. 'results', experimental results
 
 ## Experimental results
 'experiments/results' contains experimental results, which are the main output of the work. In particular
 - 'all_ciphers' contains output folders for all the experiments run
-    - 'mapper' contains output folders for experiments which help justify some of the mapper decisions made ()
+    - 'mapper' contains experimental results which help justify some of the mapper decisions made (see Section 5.2)
 - 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). Note that not all experiments in 'all_ciphers' converged
 - 'archive' contains previous experiments not considered in the work
 
@@ -34,18 +33,18 @@ Output folders are named based on the experiment configuration, that is:
 - the SUT/implementation tested, 
 - the alphabet used, 
 - where applicable whether client certification was required (req), optional (nreq) or disabled (none), 
-- the testing algorithm: random walk (rwalk) or and adaptation of it (stests). Experiments using the adaptation have not been considered in the paper.
+- the testing algorithm: random walk (rwalk) or an adaptation of it (stests). Experiments using the adaptation have not been included in the paper.
 - optionally, whether retransmissions were included (incl or excl). Retransmissions were included by default. 
 
-An output folder contains of:
+An output folder contains:
 - 'alphabet.xml', the alphabet 
-- 'command.args', the arguments used
+- 'command.args', the arguments file used
 - 'sul.config', SUT-dependant configuration for **TLS-Attacker**,  the same configuration could be used to execute workflow traces on the SUT using **TLS-Attacker** alone
-- 'hyp[0-9]*.dot', intermediate hypotheses 
+- 'hyp[0-9]+.dot', intermediate hypotheses 
 - 'statistics.txt', experiment statistics such as the total number of tests, learning time. Table 4 displays this data
 - 'nondet.log', logs of encountered non-deterministic behavior
 - 'learnedModel.dot', in case learning converged, the learned model (or final hypothesis)
-- 'error.msg', an error message in case learning did not converge, either because it was stopped or because an exception happened. 
+- 'error.msg', an error message generated in case the experiment failed/learning was stopped and hence, did not converge to a final model. The main culprit is non-determinism.
 
 The evaluator can check (for example) that experimental results in 'included' correspond to those displayed in Table 4, or that configurations tested in Table 2 also appear in 'all_ciphers'.
 Note that models appearing in the paper were the result of significant pruning. 
@@ -59,7 +58,7 @@ For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the fol
 4. Use dtls-fuzzer to generate models for the SUT
 5. Analyze results
 
-This evaluation section is followed by a guide on using **dtls-fuzzer** which introduces the main use cases.
+This evaluation section is followed by a guide on using **dtls-fuzzer** which introduces its main use cases.
 
 ## Ensuring pre-requisites
 **dtls-fuzzer** has been tested on a Ubuntu 18.04 distribution. It should work on any recent Linux distribution. Support for other platforms has not been tested.
@@ -94,12 +93,13 @@ The script will generate two folders in **dtls-fuzzer** root directory.
 - 'modules', where any dependencies are deployed
 
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
-For Java libraries we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
-Right now we don't automatically install dependencies.
+For Java SUTs we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
+Note that the source code of the SUTs (server applications) is publically available online, see [Scandium][scandium] and [JSSE][jsse].
+Also, we don't currently automatically install dependencies.
 Unmet dependencies will cause building to fail.
 GnuTLS in particular relies on several libraries which will have to be installed manually.
 Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
-If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) might solve the problem.
+If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) and re-running the setup script may solve the problem.
 
 ## Learning a SUT configuration
 We are now ready to learn an SUT configuration.
@@ -191,3 +191,5 @@ This provides a useful means of debugging learning experiments, i.e. finding out
 
 
 
+[jsse]:https://github.com/pfg666/jsse-dtls-server
+[scandium]:https://github.com/pfg666/scandium-dtls-server
