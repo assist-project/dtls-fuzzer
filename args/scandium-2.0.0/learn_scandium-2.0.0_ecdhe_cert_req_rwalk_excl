@@ -1,9 +1,9 @@
 -connect
 localhost:50005
 -runWait
-2000
+4000
 -alphabet
-../examples/alphabets/scandium_ecdhe_cert.xml
+examples/alphabets/scandium_ecdhe_cert.xml
 -timeout
 100
 -randLength
@@ -13,16 +13,15 @@ localhost:50005
 -protocol
 DTLS12
 -output
-scandium-2.0.0_ecdhe_cert_req_rwalk_excl
+output/scandium-2.0.0_ecdhe_cert_req_rwalk_excl
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -cmd
-"java -jar scandium-2.0.0-dtls-server.jar -port 50005 -timeout 20000000 -clientAuth NEEDED -starterAddress localhost:50015 -starterAck"
+"java -jar ${fuzzer.dir}/experiments/suts/scandium-2.0.0-dtls-server.jar -port 50005 -timeout 20000000 -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -clientAuth NEEDED -starterAddress localhost:50015 -starterAck"
 -depth
 1
 -sulConfig
-scandium_exclude_oo.config
--dontCacheTests
+experiments/configs/scandium_exclude_oo.config
 -resetPort
 50015
 -resetAck
@@ -31,5 +30,3 @@ START
 -resetCommandWait          
 50
 -skipNonDetTests
-#-memQueryRuns
-#3
