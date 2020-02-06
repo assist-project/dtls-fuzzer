@@ -75,7 +75,7 @@ In a nutshell, the advised pre-requisites are:
 
 - recent Linux distribution
 - dual-core CPU or stronger
--  >= 4 GB RAM
+- (>=) 4 GB RAM
 - JVM (>=) 8, maven
 - graphviz
 
