@@ -144,7 +144,7 @@ In such cases, there are two knobs which can be tweaked:
 1. the *response timeout* (time waited for each response before concluding that server is silent);
 2. the *start timeout* (time waited for the server to start).
 
-These parameters can be adjusted by overwriting the corresponding settings in the argument file:
+These parameters can be adjusted by overwriting (likely with a higher value) the corresponding settings in the argument file:
 
     > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeout new_response_timeout -runWait new_start_timeout
 
