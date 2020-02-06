@@ -138,10 +138,15 @@ This can be done by:
 This will overwrite the bound setting in the argument file. 
 Aside from GnuTLS, PionDTLS and JSSE, we expect learning to produce the same models for this lower bound.
 
-If timing becomes an issue (causing non-determinism, followed by abrupt termination with an informative 'error.msg' file), there are two knobs which can be tweaked: the response timeout (time waited for each response before concluding that server is silent) and the start timeout (time waited for the server to start).
+Timing can become an issue, causing non-determinism, followed by abrupt termination with an informative 'error.msg' file.
+In such cases, there are two knobs which can be tweaked: 
+
+1. the *response timeout* (time waited for each response before concluding that server is silent);
+2. the *start timeout* (time waited for the server to start).
+
 These parameters can be adjusted by overwriting the corresponding settings in the argument file:
 
-    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -runWait new_value -timeout new_v
+    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeout new_response_timeout -runWait new_start_timeout
 
 ### Concurrent experiments and port collisions
 It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
