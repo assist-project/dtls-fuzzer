@@ -202,11 +202,10 @@ function make_sut() {
     fi
 
     if [[ $sut == $GNUTLS_NEW ]]; then
-        make_bin
         nettle_dir="$MODULES_DIR/$LIB_NETTLE"
         solve_arch $LIB_NETTLE_ARCH_URL $nettle_dir
-        (cd $nettle_dir ; ./configure --prefix=$BIN_DIR ; ./make install )
-        (cd $sut_dir ; ./configure --with-guile-site-dir=no --prefix=$BIN_DIR --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-doc )
+        (cd $nettle_dir ; ./configure  ; sudo ./make install )
+        (cd $sut_dir ; ./configure --with-guile-site-dir=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-doc )
     elif [[ $sut == $ETINYDTLS ]]; then 
         ( cd $sut_dir ; autoconf ; autoheader ; ./configure )
     elif [[ $sut == $OPENSSL ]]; then
