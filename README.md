@@ -29,13 +29,17 @@ The most important folders in **dtls-fuzzer**'s root directory are:
 - 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). Note that not all experiments in 'all_ciphers' converged;
 - 'archive' contains previous experiments not considered in the work.
 
+### Output folders 
 Output folders are named based on the experiment configuration, that is: 
 - the SUT/implementation tested;
 - the alphabet used;
 - where applicable whether client certification was required (req), optional (nreq) or disabled (none);
 - the testing algorithm: random walk (rwalk) or an adaptation of it (stests);
     - experiments using the adaptation have not been included in the paper
-- optionally, whether retransmissions were included (incl or excl). Retransmissions were included by default. 
+- optionally, whether retransmissions were included (incl or excl).
+    - retransmissions were included by default
+
+As an example, the folder name 'jsse-12_rsa_cert_none_rwalk_incl' indicates an experiment on the JSSE 12 implementation of DTLS, using an alphabet including inputs for performing an RSA handshake, client certificate authentication is disabled, the test algorithm is random walk and retransmissions are included.
 
 An output folder contains:
 - 'alphabet.xml', the alphabet;
