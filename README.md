@@ -218,7 +218,7 @@ Unfortunately, as models grow is size, the .pdfs generated using this method bec
 Hence we developed/used/imported prunning scripts which are accessed by 'trim_model.sh'. 
 We advise using it in its most basic form, whic is:
 
-    > bash trim_model.dot learnedModel.dot trimmedLearnedModel.dot 
+    > bash trim_model.sh learnedModel.dot trimmedLearnedModel.dot 
 
 The script:
 
@@ -230,7 +230,8 @@ The script:
 5. (optionally) positions transitions connecting the same states on a single edge
 
 (5) requires installing the custom mypydot library found in 'experiments\scripts' which requires Python 3. 
-All other steps use the [dot-trimmer][dottrimmer] Java library, a .jar for which is included in 'experiments\scripts'.
+All other steps use plain 'sed' plus the [dot-trimmer][dottrimmer] Java library. 
+A .jar for this library is included in 'experiments\scripts'.
 
 
 # General dtls-fuzzer walkthrough
