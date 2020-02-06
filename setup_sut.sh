@@ -37,7 +37,7 @@ readonly SCANDIUM_NEW_JAR_PATH="$SUT_JAR_DIR/scandium-2.0.0-dtls-server_latest.j
 readonly JSSE_12="jsse-12.0.2"
 readonly JSSE_12_JVM_URL="https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz"
 
-sutvarnames=("OPENSSL" "MBEDTLS" "ETINYDTLS" "CTINYDTLS" "GNUTLS_OLD" "GNUTLS_NEW" "SCANDIUM_OLD" "SCANDIUM_NEW" "JSSE-12")
+sutvarnames=("OPENSSL" "MBEDTLS" "ETINYDTLS" "CTINYDTLS" "GNUTLS_OLD" "GNUTLS_NEW" "SCANDIUM_OLD" "SCANDIUM_NEW" "JSSE_12")
 sut_strings=($OPENSSL $MBEDTLS $ETINYDTLS $CTINYDTLS $GNUTLS_OLD $GNUTLS_NEW $SCANDIUM_OLD $SCANDIUM_NEW $JSSE_12)
 
 function get_sutvarname() {
@@ -116,7 +116,7 @@ function download_sut() {
     echo "Downloading files for $sut"
     # updates $sut_varname
     return_var=`get_sutvarname $sut`
-    
+
     # ok, is our SUT fetched from a repository?
     rep_url_var="$return_var"_REP_URL
     rep_url="${!rep_url_var}"
@@ -164,7 +164,7 @@ function apply_patch() {
     fi
 }
 
-# Builds the SUT. In this process also installs any necessary dependancies
+# Builds the SUT. In this process also installs/deploys any necessary dependancies
 function make_sut() {
     sut=$1
     sut_dir=$2
@@ -173,12 +173,14 @@ function make_sut() {
         mkdir $MODULES_DIR
     fi
 
-    # Java SUT, meaning all we need to ensure is that the right vm is installed
+    # JSSE SUT, meaning all we need to ensure is that the right vm is installed
     jar_path=`get_jar_path $sut`
-    if [[ -n "$jar_path" ]]; then
+    if [[ $sut == $JSSE_12 ]]; then
         echo "Downloading/deploying JVM"
-        jvm_dir=$MODULES_DIR/$JSSE_12
+        jvm_dir="$MODULES_DIR/jdk-12.0.2" # FIXME
         solve_arch $jvm_dir $JSSE_12_JVM_URL
+        # unfortunately, the keystore is hardcoded into the SUT, so needs to be copied
+        cp $SCRIPT_DIR/experiments/keystore/rsa2048.jks $SCRIPT_DIR 
         return 1
     fi
 
