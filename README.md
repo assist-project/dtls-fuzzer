@@ -65,6 +65,8 @@ This evaluation section is followed by a guide on using **dtls-fuzzer** which in
 It is assumed that a recent (>=8) JDK distribution of Java VM is installed, plus associated utilities (maven).
 We recommend using sufficiently strong hardware, otherwise sensitive timing parameters such as response waiting time might become too low, causing learning to fail.
 The original experiments were run on a many-core server, however, we expect (though haven't tested thoroughly) that learning should be possible also on a dual-core or quad-core (virtual-)machine with 4 GB of memory or more.
+Finally, visualizing models or even exporting them to .pdf requires installing the [graphviz library][graphviz].
+It is assumed that the 'dot' utility is located in the system PATH.
 
 ## Installing dtls-fuzzer
 Run the prepare script which will deploy the local .jars dtls-fuzzer depends to your local maven repository, then install the tool itself.
@@ -107,12 +109,14 @@ Argument files for various SUT configurations are provided in the 'args' directo
 Each argument filename describes the experiment setup (SUT, alphabet, authentication) as described by the output folder names in 'experiments/results/'.
 To start learning for an SUT using a argument file, run:
 
-    > java -jar target/dtls-fuzzer.jar @arg_file
+    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file
 
+The output folder will be stored in a generated 'output' directory.
+
+### Concurrent experiments and port collisions
 It is possible to learn multiple SUTs at a time assuming that different server listening ports are used. 
 However, running more than a few (>2) instances increase the chance of learning failure due to accidental port collision.
-
-In most configurations, servers are configured to listen to some hard-coded port over localhost. 
+In most configurations, servers are configured to listen to some hard-coded port over localhost, the configurations provided use distinct hard-coded ports. 
 For JSSE and Scandium configurations, where custom server programs were provided, servers dynamically select the listening port and communicate it over TCP sockets to **dtls-fuzzer**.
 This has the advantage of letting **dtls-fuzzer** know for sure when the server is ready to receive packets (rather than having to blindly wait an arbitrary amount of time for the server to start).
 The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein server thread has recently been stopped and no new thread has been started yet (hence the listening port is free to be allocated).
@@ -156,7 +160,18 @@ Command for RSA key exchange:
 
     > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl 
 
-## Visualizing results
+## Analyzing results
+Once learning is done, things to analyze in the output directory are:
+- 'statistics.txt', experiment statistics such as the total number of tests, learning time
+- 'nondet.log', logs of encountered non-deterministic behavior, if all went fine this should be empty
+- 'learnedModel.dot', the learned model (or final hypothesis) generated on successful termination,
+- 'hyp[0-9]+.dot', intermediate hypotheses
+- 'error.msg', in case something bad happened causing learning to stop. Also generated if the learning experiment times out.
+
+### Visualizing the model
+The .dot learned model can be visualized using the graphviz library, by conversion to .pdf:
+
+    > dot -Tpdf learnedModel.dot  > learnedModel.pdf
 
 
 # General dtls-fuzzer walkthrough
@@ -221,6 +236,6 @@ Finally, if you have the arguments file for a learning experiment, you can use t
 This provides a useful means of debugging learning experiments, i.e. finding out what went wrong, or of simply ensuring that parameters in the argument file are correctly configured.
 
 
-
+[graphviz]:https://www.graphviz.org
 [jsse]:https://github.com/pfg666/jsse-dtls-server
 [scandium]:https://github.com/pfg666/scandium-dtls-server
