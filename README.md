@@ -192,6 +192,25 @@ The .dot learned model can be visualized using the graphviz library, by conversi
 
     > dot -Tpdf learnedModel.dot  > learnedModel.pdf
 
+Unfortunately, as models grow is size, the .pdfs generated using this method become increasingly difficult to read. 
+
+Hence we developed/used/imported prunning scripts which are accessed by 'trim_model.sh'. 
+We advise using it in its most basic form, whic is:
+
+    > bash trim_model.dot learnedModel.dot trimmedLearnedModel.dot 
+
+The script:
+
+1. compactifies states and input/output labels
+2. colors paths leading to handshake completion
+    - the user should then determine whether the handshakes were legal given the configuration
+3. merges 3 or more transitions connecting the same state states with same outputs but different inputs, under the 'Other' input
+4. (optionally) prunes states from which a handshake can no longer be completed (particularly useful for JSSE)
+5. (optionally) positions transitions connecting the same states on a single edge
+
+(5) requires installing the custom mypydot library found in 'experiments\scripts' which requires Python 3. 
+All other steps use the [dot-trimmer][dottrimmer] Java library, a .jar for which is included in 'experiments\scripts'.
+
 
 # General dtls-fuzzer walkthrough
 
@@ -258,3 +277,4 @@ This provides a useful means of debugging learning experiments, i.e. finding out
 [graphviz]:https://www.graphviz.org
 [jsse]:https://github.com/pfg666/jsse-dtls-server
 [scandium]:https://github.com/pfg666/scandium-dtls-server
+[dottrimmer]:https://github.com/pfg666/dot-trimmer
