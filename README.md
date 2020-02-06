@@ -73,11 +73,11 @@ It is assumed that the 'dot' utility is located in the system PATH.
 
 In a nutshell, the advised pre-requisites are:
 
-    - recent Linux distribution
-    - dual-core CPU or stronger
-    -  >= 4 GB RAM
-    - JVM (>=) 8, maven
-    - graphviz
+- recent Linux distribution
+- dual-core CPU or stronger
+-  >= 4 GB RAM
+- JVM (>=) 8, maven
+- graphviz
 
 ## Installing dtls-fuzzer
 Run the prepare script which will deploy the local .jars **dtls-fuzzer** depends to your local maven repository, then install the tool itself.
