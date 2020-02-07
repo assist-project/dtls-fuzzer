@@ -80,7 +80,8 @@ In a nutshell, the advised pre-requisites are:
 - recent Linux distribution
 - desktop CPU or stronger for reliable learning
 - (>=) 4 GB RAM
-- JVM 8, maven
+- JVM 8
+- maven 
 - graphviz
 
 ## Installing dtls-fuzzer
@@ -91,7 +92,7 @@ The resulting commands on a POSIX system will be:
     > bash prepare.sh
     > mvn clean install
 
-Following these steps, a 'target' directory should have been built containing 'dtls-fuzzer.jar'.
+Following these steps, directory named 'target' should have been built containing 'dtls-fuzzer.jar'.
 This is our executable library.
 From this point onward it is assumed that commands are run from **dtls-fuzzer**'s root directory. 
 
