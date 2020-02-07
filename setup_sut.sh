@@ -197,7 +197,9 @@ function make_sut() {
     if [[ $sut == $GNUTLS_NEW || $sut == $GNUTLS_OLD ]]; then
         nettle_dir="$MODULES_DIR/$LIB_NETTLE"
         solve_arch $LIB_NETTLE_ARCH_URL $nettle_dir
-        (cd $nettle_dir ; ./configure  ; sudo make install )
+        if [[ ! -f "$nettle_dir/libnettle.so" ]]; then
+            (cd $nettle_dir ; ./configure  ; sudo make install )
+        fi
         (cd $sut_dir ; ./configure --with-guile-site-dir=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-doc )
     elif [[ $sut == $ETINYDTLS ]]; then 
         ( cd $sut_dir ; autoconf ; autoheader ; ./configure )
