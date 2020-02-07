@@ -223,7 +223,7 @@ Also, in case of building failure, the source code of the implementation should 
 A workaround is to build the implementation manually.
 As long as the implementation is built, our setup should work.
 
-We hereby give an incomplete list of dependencies. 
+We hereby give an incomplete tree of dependencies. 
 Those in italics are dependencies which 'setup_sut.sh' tries to install using sudo access.
 
 - GnuTLS:
@@ -238,6 +238,7 @@ Those in italics are dependencies which 'setup_sut.sh' tries to install using su
     - *autoconf*
     - libtool
  - nettle
+    - *m4*  
     - *pkg-config*
  - autoconf
     - aclocal
