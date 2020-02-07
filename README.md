@@ -113,8 +113,8 @@ Otherwise, we need to perform the full installation as done at the start.
     
 ### Others
 With Java set, we proceed install the other dependencies, maven and graphviz.
-What's left is to clone **dtls-fuzzer**'s repository to a folder of choice, 
-and then make that folder our current directory.
+We follow that by cloning **dtls-fuzzer**'s repository to a folder of choice, 
+and making that folder our current directory.
 
     > sudo apt-get install maven
     > sudo apt-get install graphviz
