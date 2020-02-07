@@ -124,7 +124,7 @@ We then clone **dtls-fuzzer**'s repository to a folder of choice, checking out t
 To finish, we make that folder our current directory.
 
     > sudo apt-get install maven graphviz autotools-dev automake libtool
-    > git clone  -b usenix20-artifact https://gitlab.com/pfg666/dtls-fuzzer.git ~/dtls-fuzzer
+    > git clone  -b usenix20-artifact https://github.com/assist-project/dtls-fuzzer.git ~/dtls-fuzzer
     > cd ~/dtls-fuzzer
 
 ## Installing dtls-fuzzer
