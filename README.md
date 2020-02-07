@@ -31,7 +31,7 @@ The most important folders in **dtls-fuzzer**'s root directory are:
 ### Output folders 
 Output folders are named based on the experiment configuration, that is: 
 - the SUT/implementation tested;
-- the alphabet used;
+- the alphabet used, in terms of key exchange algorithms covered, where 'all' indicates all 4 key exchange algorithms were used;
 - where applicable whether client certification was required (req), optional (nreq) or disabled (none);
 - the testing algorithm: random walk (rwalk) or an adaptation of it (stests);
     - experiments using the adaptation have not been included in the paper
@@ -103,46 +103,48 @@ This is our executable library.
 From this point onward it is assumed that commands are run from **dtls-fuzzer**'s root directory. 
 
 ## Quickrun
-Assume we want to generate a model for Contiki-NG TinyDTLS using PSK (Pre-Shared Keys).
+Assume we want to generate a model for OpenSSL 1.1.1b using only PSK (Pre-Shared Keys).
 A quickrun of **dtls-fuzzer** goes as follows.
 
 First we set up the SUT, which is automatically by a 'setup_sut.sh' script.
 
-    > bash setup_sut.sh ctinydtls
+    > bash setup_sut.sh openssl-1.1.1b
     
-Then we select an argument file form the 'args/ctinydtls' folder, where ctinydtls is just a shorthand for the implementation.
+Then we select an argument file form the 'args/openssl-1.1.1b' folder.
 We notice there are several argument files to chose from, namely:
 
-    learn_ctinydtls_ecdhe_cert_none_rwalk  
-    learn_ctinydtls_ecdhe_cert_req_rwalk  
-    learn_ctinydtls_psk_rwalk
+    learn_openssl-1.1.1b_all_cert_none_rwalk_incl  
+    learn_openssl-1.1.1b_all_cert_nreq_rwalk_incl  
+    learn_openssl-1.1.1b_all_cert_req_rwalk_incl  
+    learn_openssl-1.1.1b_psk_rwalk_incl
 
-The argument file of interest is 'learn_ctinydtls_psk_rwalk', since its filename indicates PSK. 
+The argument file of interest is 'learn_openssl-1.1.1b_psk_rwalk_incl', since its filename indicates PSK.
 We thus select it, and run the fuzzer on it.
-We additionally cap the number of tests to 3000, to shorten learning time.
-The command to execute becomes:
+We additionally cap the number of tests to 200, to shorten learning time.
+Finally, for OpenSSL, LD_LIBRARY_PATH has to be set to the implementation's directory ('suts/openssl-1.1.1b/').
+The command to execute thus becomes:
 
-    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk -queries 3000
+    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl -queries 200
 
-We notice that an output directory, 'output/ctinydtls_psk_rwalk' for the experiment has been created.
-We can 'ls' this directory to check on the status of the experiment (the number of hypotheses generated...).
+We notice that an output directory, 'output/openssl-1.1.1b_psk_rwalk_incl/' for the experiment has been created.
+We can 'ls' this directory to check the current status of the experiment (the number of hypotheses generated...).
 
-    > ls output/ctinydtls_psk_rwalk
+    > ls output/openssl-1.1.1b_psk_rwalk_incl/
 
 
 ### When things go right
 If all goes well, after many hours, the output directory should contain a 'learnedModel.dot' file.
 We can visualize the file using the graphviz 'dot' utility, by exporting to .pdf and opening the .pdf with our favorite .pdf viewer.
 
-    > dot -Tpdf output/ctinydtls_psk_rwalk/learnedModel.dot > output/ctinydtls_psk_rwalk/learnedModel.pdf
-    > evince output/ctinydtls_psk_rwalk/learnedModel.pdf
+    > dot -Tpdf output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.dot > output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.pdf
+    > evince output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.pdf
 
 Finally, we can use 'trim_model.sh' to generater a better/trimmer version of the model.
 This can be done as follows:
 
-    > bash trim_model.sh output/ctinydtls_psk_rwalk/learnedModel.dot output/ctinydtls_psk_rwalk/nicerLearnedModel.dot
-    > dot -Tpdf output/ctinydtls_psk_rwalk/nicerLearnedModel.dot > output/ctinydtls_psk_rwalk/nicerLearnedModel.pdf
-    > evince output/ctinydtls_psk_rwalk/nicerLearnedModel.pdf
+    > bash trim_model.sh output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.dot output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.dot
+    > dot -Tpdf output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.dot > output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.pdf
+    > evince output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.pdf
 
 We can now determine conformance of the system by checking the model against the specification...
 
@@ -151,7 +153,7 @@ While 'ls'-ing the output directory we might find 'error.msg'.
 That's a sign that the experiment failed and learning terminated abruptly
 In such cases displaying the contents reveals the reason behind the failure
 
-    > cat output/ctinydtls_psk_rwalk/error.msg
+    > cat output/openssl-1.1.1b_psk_rwalk_incl/error.msg
     
 Note that checking conformance can still be performed on the last generated hypothesis, as long as potential findings are validated against the system (as they should be anyway).
 
@@ -175,11 +177,24 @@ Unfortunately, automating SUT setup is a complicated process, hence we take the 
 For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Note that the source code of the SUTs (server applications) is publically available online, see [Scandium][scandium] and [JSSE][jsse].
 Also, automatically installing dependencies may prompt 'sudo' access.
-This is the case for GnuTLS which relies on the external libraries such as libnettle, or Eclipse's TinyDTLS which relies on autoconf.
+This is the case for GnuTLS which relies on external libraries such as libnettle, or for Eclipse's TinyDTLS, which relies on autoconf.
 Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
 
 ### Troubleshooting
 If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) and re-running the setup script may solve the problem.
+Also, in case of building failure, the source code of the implementation should still be downloaded to the 'suts' directory.
+A workaround is to build the implementation manually.
+Our setup should work if the implementation is built.
+
+The dependencies which 'setup_sut.sh' tries to install using sudo access are:
+
+- GnuTLS:
+    - m4
+    - pkg-config
+    - nettle
+- Eclipse's TinyDTLS
+    - m4
+    - autoconf
 
 ## Learning an SUT configuration
 We are now ready to learn an SUT configuration.
