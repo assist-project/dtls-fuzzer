@@ -90,6 +90,37 @@ In a nutshell, the advised pre-requisites are:
 - maven 
 - graphviz
 
+## Setting up the environment
+### Java 8
+**dtls-fuzzer** requires Java 8 JDK (Java Development Kit).
+If Java is not installed, we install the OpenJDK implementation via 'apt-get':
+
+    > sudo apt-get install openjdk-8-jdk
+
+If a version of java is installed, we can check which version it is by running:
+
+    > java -version
+
+The version code should start with 1.8 (e.g. 1.8.0_242), and the Virtual Machine should be "Server VM" (indicating that the full JDK was installed, rather than only the runtime environment).
+If it is not we can check if Java 8 JDK is installed on our platform but not currently selected, by listing installed Java VMs via:
+
+    > update-java-alternatives --list
+
+If Java 8 JDK does appear, we can use the same command to configure the Java 8 JDK to be default Java implementation. 
+Otherwise, we need to perform the full installion as done at the start.
+
+    > update-java-alternatives --set java-1.8.0-openjdk-amd64
+    
+### Others
+With Java set, we proceed install the other dependencies, maven and graphviz.
+What's left is to clone **dtls-fuzzer**'s repository to a folder of choice, 
+and then make that folder our current directory.
+
+    > sudo apt-get install maven
+    > sudo apt-get install graphviz
+    > git clone https://gitlab.com/pfg666/dtls-fuzzer.git ~/dtls-fuzzer
+    > cd ~/dtls-fuzzer
+
 ## Installing dtls-fuzzer
 We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and TLS-Attacker 3.0b.
 We then install the tool itself.
