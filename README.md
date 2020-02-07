@@ -112,13 +112,13 @@ Otherwise, we need to perform the full installation as done at the start.
     > update-java-alternatives --set java-1.8.0-openjdk-amd64
     
 ### Others
-With Java set, we proceed install the other dependencies, maven and graphviz.
-We follow that by cloning **dtls-fuzzer**'s repository to a folder of choice, 
-and making that folder our current directory.
+With Java set, we proceed to install the other dependencies, maven and graphviz.
+We then clone **dtls-fuzzer**'s repository to a folder of choice, checking out the artifact branch.
+To finish, we make that folder our current directory.
 
     > sudo apt-get install maven
     > sudo apt-get install graphviz
-    > git clone https://gitlab.com/pfg666/dtls-fuzzer.git ~/dtls-fuzzer
+    > git clone  -b usenix20-artifact https://gitlab.com/pfg666/dtls-fuzzer.git ~/dtls-fuzzer
     > cd ~/dtls-fuzzer
 
 ## Installing dtls-fuzzer
