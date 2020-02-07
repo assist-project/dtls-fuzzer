@@ -41,6 +41,10 @@ readonly JSSE_12_JVM_URL="https://download.java.net/java/GA/jdk12.0.2/e482c34c86
 
 readonly LIB_NETTLE_ARCH_URL="https://ftp.gnu.org/gnu/nettle/nettle-3.4.1.tar.gz"
 readonly LIB_NETTLE="nettle-3.4.1"
+readonly AUTOCONF_ARCH_URL="https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz"
+readonly AUTOCONF="autoconf-2.69"
+readonly M4_ARCH_URL="https://ftp.gnu.org/gnu/m4/m4-1.4.18.tar.gz"
+readonly M4="m4-1.4.18"
 
 sutvarnames=("OPENSSL" "MBEDTLS" "ETINYDTLS" "CTINYDTLS" "GNUTLS_OLD" "GNUTLS_NEW" "SCANDIUM_OLD" "SCANDIUM_NEW" "JSSE_12")
 sut_strings=($OPENSSL $MBEDTLS $ETINYDTLS $CTINYDTLS $GNUTLS_OLD $GNUTLS_NEW $SCANDIUM_OLD $SCANDIUM_NEW $JSSE_12)
@@ -174,6 +178,17 @@ function make_bin() {
     fi
 }
 
+# Generic dependency install function
+function install_dep() {
+    dep_dir="$MODULES_DIR/$1"
+    dep_url=$2
+    nettle_dir="$MODULES_DIR/$LIB_NETTLE"
+    if [[ ! -d "$dep_dir" ]]; then
+        solve_arch $LIB_NETTLE_ARCH_URL $nettle_dir
+        ( cd $dep_dir ; ./configure ; sudo make install )
+    fi
+}
+
 # Builds the SUT. In this process also installs/deploys any necessary dependancies
 function make_sut() {
     sut=$1
@@ -195,13 +210,12 @@ function make_sut() {
     fi
 
     if [[ $sut == $GNUTLS_NEW || $sut == $GNUTLS_OLD ]]; then
-        nettle_dir="$MODULES_DIR/$LIB_NETTLE"
-        solve_arch $LIB_NETTLE_ARCH_URL $nettle_dir
-        if [[ ! -f "$nettle_dir/libnettle.so" ]]; then
-            (cd $nettle_dir ; ./configure  ; sudo make install )
-        fi
+        install_dep $M4 $M4_ARCH_URL
+        sudo apt-get install pkg-config
+        install_dep $LIB_NETTLE $LIB_NETTLE_ARCH_URL
         (cd $sut_dir ; ./configure --with-guile-site-dir=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-doc )
-    elif [[ $sut == $ETINYDTLS ]]; then 
+    elif [[ $sut == $ETINYDTLS ]]; then
+        install_dep $AUTOCONF $AUTOCONF_ARCH_URL  
         ( cd $sut_dir ; autoconf ; autoheader ; ./configure )
     elif [[ $sut == $OPENSSL ]]; then
         ( cd $sut_dir ; ./config )
