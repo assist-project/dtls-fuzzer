@@ -1,11 +1,11 @@
 -connect
 localhost:60005
 -runWait
-100
+200
 -alphabet
 examples/alphabets/psk.xml
 -timeout
-100
+200
 -randLength
 10
 -queries
