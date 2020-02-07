@@ -1,0 +1,21 @@
+# Given this config:
+<config>
+</config>
+
+# And this input trace
+<workflowTrace>
+</workflowTrace>
+
+# We expect this normalized trace
+<workflowTrace>
+    <OutboundConnection>
+        <alias>client</alias>
+        <port>443</port>
+        <hostname>localhost</hostname>
+        <timeout>1000</timeout>
+        <transportHandlerType>TCP</transportHandlerType>
+    </OutboundConnection>
+</workflowTrace>
+
+# And this after default filter application:
+<workflowTrace/>

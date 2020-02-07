@@ -1,0 +1,32 @@
+Test custom connection in workflow trace
+
+# Given this config:
+<config>
+</config>
+
+# And this input trace
+<workflowTrace>
+    <OutboundConnection>
+        <alias>custom</alias>
+        <timeout>44</timeout>
+    </OutboundConnection>
+</workflowTrace>
+
+# We expect this normalized trace
+<workflowTrace>
+    <OutboundConnection>
+        <alias>custom</alias>
+        <port>443</port>
+        <hostname>localhost</hostname>
+        <timeout>44</timeout>
+        <transportHandlerType>TCP</transportHandlerType>
+    </OutboundConnection>
+</workflowTrace>
+
+# And this after default filter application:
+<workflowTrace>
+    <OutboundConnection>
+        <alias>custom</alias>
+        <timeout>44</timeout>
+    </OutboundConnection>
+</workflowTrace>

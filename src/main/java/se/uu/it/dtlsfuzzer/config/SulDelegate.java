@@ -3,7 +3,9 @@ package se.uu.it.dtlsfuzzer.config;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.beust.jcommander.Parameter;
 
@@ -62,22 +64,32 @@ public class SulDelegate extends ClientDelegate {
 	@Parameter(names = "-repeatingOutputs", required = false, description = "Specifies the outputs that the SUL is expected to repeat an arbitrary number of times, in response to an input. ")
 	private List<String> repeatingOutputs = null;
 
+	// so we don't replaceAll each time
+	private Map<String, String> resolutionCache = new HashMap<>();
+	
 	public SulDelegate() {
 		super();
 	}
 	
+	
+	
 	/*
-	 * Replaces instances of ${FUZZER_HOME} in strings 
+	 * Replaces instances of ${FUZZER_DIR} in strings 
 	 */
 	private String resolveHomeTemplate(String str) {
 		if (str == null || !str.contains(FUZZER_DIR)) 
 			return str;
 		
+		if (resolutionCache.containsKey(str))
+			return resolutionCache.get(str);
+		
 		String homeVal = System.getProperty(FUZZER_DIR);
 		if (homeVal == null)
 			homeVal = System.getProperty("user.dir");
 		
-		return str.replaceAll("\\$\\{"+FUZZER_DIR+"\\}", homeVal);
+		String resolvedStr = str.replaceAll("\\$\\{"+FUZZER_DIR+"\\}", homeVal);
+		resolutionCache.put(str, resolvedStr);
+		return resolvedStr;
 	}
 
 	public void applyDelegate(Config config) throws ConfigurationException {

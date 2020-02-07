@@ -33,12 +33,6 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>de.rub.nds.tlsattacker</groupId>
-			<artifactId>Attacks</artifactId>
-			<version>3.0</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
             <groupId>de.learnlib.distribution</groupId>
             <artifactId>learnlib-distribution</artifactId>
             <type>pom</type>
