@@ -143,13 +143,6 @@ function download_sut() {
     if [[ -n "$arch_url" ]]; then 
         solve_arch $arch_url $sut_dir
     fi
-
-    ## maybe the SUT is packaged as a .jar so we simply have to copy it
-    #jar_path=`get_jar_path $sut`
-    #if [[ -n "$jar_path"]]; then
-    #    mkdir $sut_dir
-    #    echo "Copying sut"
-    #fi
 }
 
 

@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>de.rub.nds.tlsattacker</groupId>
 			<artifactId>TLS-Core</artifactId>
-			<version>3.0</version>
+			<version>3.0b</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
