@@ -46,8 +46,11 @@ readonly AUTOCONF="autoconf-2.69"
 readonly M4_ARCH_URL="https://ftp.gnu.org/gnu/m4/m4-1.4.18.tar.gz"
 readonly M4="m4-1.4.18"
 
-sutvarnames=("OPENSSL" "MBEDTLS" "ETINYDTLS" "CTINYDTLS" "GNUTLS_OLD" "GNUTLS_NEW" "SCANDIUM_OLD" "SCANDIUM_NEW" "JSSE_12")
-sut_strings=($OPENSSL $MBEDTLS $ETINYDTLS $CTINYDTLS $GNUTLS_OLD $GNUTLS_NEW $SCANDIUM_OLD $SCANDIUM_NEW $JSSE_12)
+readonly WOLFSSL="wolfssl-4.0.0"
+readonly WOLFSSL_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/v4.0.0-stable.tar.gz'
+
+sutvarnames=("OPENSSL" "MBEDTLS" "ETINYDTLS" "CTINYDTLS" "GNUTLS_OLD" "GNUTLS_NEW" "SCANDIUM_OLD" "SCANDIUM_NEW" "JSSE_12" "WOLFSSL")
+sut_strings=($OPENSSL $MBEDTLS $ETINYDTLS $CTINYDTLS $GNUTLS_OLD $GNUTLS_NEW $SCANDIUM_OLD $SCANDIUM_NEW $JSSE_12 $WOLFSSL)
 
 function get_sutvarname() {
     for varname in ${sutvarnames[*]}
@@ -182,14 +185,13 @@ function make_bin() {
 function install_dep() {
     dep_dir="$MODULES_DIR/$1"
     dep_url=$2
-    nettle_dir="$MODULES_DIR/$LIB_NETTLE"
     if [[ ! -d "$dep_dir" ]]; then
-        solve_arch $LIB_NETTLE_ARCH_URL $nettle_dir
+        solve_arch $dep_url $dep_dir
         ( cd $dep_dir ; ./configure ; sudo make install )
     fi
 }
 
-# Builds the SUT. In this process also installs/deploys any necessary dependancies
+# Builds the SUT. In this process also installs/deploys all necessary dependencies
 function make_sut() {
     sut=$1
     sut_dir=$2
@@ -215,11 +217,15 @@ function make_sut() {
         install_dep $LIB_NETTLE $LIB_NETTLE_ARCH_URL
         (cd $sut_dir ; ./configure --with-guile-site-dir=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-doc )
     elif [[ $sut == $ETINYDTLS ]]; then
+        install_dep $M4 $M4_ARCH_URL
         install_dep $AUTOCONF $AUTOCONF_ARCH_URL  
         ( cd $sut_dir ; autoconf ; autoheader ; ./configure )
     elif [[ $sut == $OPENSSL ]]; then
         ( cd $sut_dir ; ./config )
-    fi  
+    elif [[ $sut == $WOLFSSL ]]; then
+        # this configuration is for PSK wolfssl
+        ( cd $sut_dir ; bash autogen.sh ; AM_CFLAGS='-DHAVE_AES_CBC -DWOLFSSL_AES_128' ./configure --enable-dtls --enable-psk --enable-pwdbased --enable-rsa --enable-sha --enable-debug --disable-dh --disable-ecc --enable-static C_EXTRA_FLAGS=-DWOLFSSL_STATIC_PSK )
+    fi
 
     #config_path="$sut_dir/configure"
     #if [[ -f "$config_path" ]]; then
