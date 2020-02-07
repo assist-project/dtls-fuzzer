@@ -91,7 +91,7 @@ In a nutshell, the advised pre-requisites are:
 - graphviz
 
 ## Setting up the environment
-### Java 8
+### Java 8 JDK
 **dtls-fuzzer** requires Java 8 JDK (Java Development Kit).
 If Java is not installed, we install the OpenJDK implementation (via 'apt-get' on Ubuntu), and can skip the rest of this subsection.
 
