@@ -1,11 +1,11 @@
 **dtls-fuzzer** is a Java tool which performs protocol state fuzzing of DTLS servers. More concretely, it supports the following functionality:
-1. given an alphabet, it can automatically generate a model of a local/remote DTLS server implementation;
+1. given an alphabet, it can automatically generate a model of a local DTLS server implementation;
 2. given a test (sequence of inputs) and an alphabet, it can execute the test on a DTLS server implementation;
 3. it can run a batch learning task, involving multiple learning runs.
 
 **dtls-fuzzer** uses [TLS-Attacker][tlsattacker] to generate/parse DTLS messages as well as to maintain state. 
 To that end, **TLS-Attacker** has been extended with support for DTLS.
-**dtls-fuzzer** relies on version 3.0 of **TLS-Attacker**, a version implementing the DTLS enhancement.
+**dtls-fuzzer** relies on [version 3.0b][tlsattackerver] of **TLS-Attacker**, a version implementing the DTLS enhancement.
 
 # Artifact contents
 The artifact contains:
@@ -27,7 +27,6 @@ The most important folders in **dtls-fuzzer**'s root directory are:
 - 'all_ciphers' contains output folders for all the experiments run;
     - 'mapper' contains experimental results which help justify some of the mapper decisions made (see Section 5.2)
 - 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). Note that not all experiments in 'all_ciphers' converged;
-- 'archive' contains previous experiments not considered in the work.
 
 ### Output folders 
 Output folders are named based on the experiment configuration, that is: 
@@ -69,7 +68,7 @@ This evaluation section is followed by a guide on using **dtls-fuzzer** which in
 
 ## Ensuring pre-requisites
 **dtls-fuzzer** has been tested on a Ubuntu 18.04 distribution. It should work on any recent Linux distribution. Support for other platforms has not been tested.
-It is assumed that a recent (>=8) JDK distribution of Java VM is installed, plus associated utilities (maven).
+It is assumed that a recent 8 JDK distribution of Java VM is installed, plus associated utilities (maven).
 We recommend using sufficiently strong hardware, otherwise sensitive timing parameters such as response waiting time might become too low, causing learning to fail.
 The original experiments were run on a many-core server, however, we expect (though haven't tested thoroughly) that learning should be possible on a desktop with an i7 processor.
 Learning is also possible on weaker systems if timing parameters are tweaked accordingly.
@@ -81,18 +80,73 @@ In a nutshell, the advised pre-requisites are:
 - recent Linux distribution
 - desktop CPU or stronger for reliable learning
 - (>=) 4 GB RAM
-- JVM (>=) 8, maven
+- JVM 8, maven
 - graphviz
 
 ## Installing dtls-fuzzer
-Run the prepare script which will deploy the local .jars **dtls-fuzzer** depends to your local maven repository, then install the tool itself.
-Thus on a POSIX system would be:
+We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and TLS-Attacker 3.0b.
+We then install the tool itself.
+The resulting commands on a POSIX system will be:
 
     > bash prepare.sh
     > mvn clean install
 
 Following these steps, a 'target' directory should have been built containing 'dtls-fuzzer.jar'.
+This is our executable library.
 From this point onward it is assumed that commands are run from **dtls-fuzzer**'s root directory. 
+
+## Quickrun
+Assume we want to generate a model for Contiki-NG TinyDTLS using PSK (Pre-Shared Keys).
+A quickrun of **dtls-fuzzer** goes as follows.
+
+First we set up the SUT, which is automatically by a 'setup_sut.sh' script.
+
+    > bash setup_sut.sh ctinydtls
+    
+Then we select an argument file form the 'args/ctinydtls' folder, where ctinydtls is just a shorthand for the implementation.
+We notice there are several argument files to chose from, namely:
+
+    learn_ctinydtls_ecdhe_cert_none_rwalk  
+    learn_ctinydtls_ecdhe_cert_req_rwalk  
+    learn_ctinydtls_psk_rwalk
+
+The argument file of interest is 'learn_ctinydtls_psk_rwalk', since its filename indicates PSK. 
+We thus select it, and run the fuzzer on it.
+We additionally cap the number of tests to 3000, to shorten learning time.
+The command to execute becomes:
+
+    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk -queries 3000
+
+We notice that an output directory, 'output/ctinydtls_psk_rwalk' for the experiment has been created.
+We can 'ls' this directory to check on the status of the experiment (the number of hypotheses generated...).
+
+    > ls output/ctinydtls_psk_rwalk
+
+
+### When things go right
+If all goes well, after many hours, the output directory should contain a 'learnedModel.dot' file.
+We can visualize the file using the graphviz 'dot' utility, by exporting to .pdf and opening the .pdf with our favorite .pdf viewer.
+
+    > dot -Tpdf output/ctinydtls_psk_rwalk/learnedModel.dot > output/ctinydtls_psk_rwalk/learnedModel.pdf
+    > evince output/ctinydtls_psk_rwalk/learnedModel.pdf
+
+Finally, we can use 'trim_model.sh' to generater a better/trimmer version of the model.
+This can be done as follows:
+
+    > bash trim_model.sh output/ctinydtls_psk_rwalk/learnedModel.dot output/ctinydtls_psk_rwalk/nicerLearnedModel.dot
+    > dot -Tpdf output/ctinydtls_psk_rwalk/nicerLearnedModel.dot > output/ctinydtls_psk_rwalk/nicerLearnedModel.pdf
+    > evince output/ctinydtls_psk_rwalk/nicerLearnedModel.pdf
+
+We can now determine conformance of the system by checking the model against the specification...
+
+### When things go wrong
+While 'ls'-ing the output directory we might find 'error.msg'. 
+That's a sign that the experiment failed and learning terminated abruptly
+In such cases displaying the contents reveals the reason behind the failure
+
+    > cat output/ctinydtls_psk_rwalk/error.msg
+    
+Note that checking conformance can still be performed on the last generated hypothesis, as long as potential findings are validated against the system (as they should be anyway).
 
 ## Setting up the SUT
 We provide a script for setting up the SUT.
@@ -113,10 +167,11 @@ The script will generate two folders in **dtls-fuzzer** root directory.
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
 For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Note that the source code of the SUTs (server applications) is publically available online, see [Scandium][scandium] and [JSSE][jsse].
-Also, we don't automatically install dependencies.
-Missing dependencies will cause building to fail.
-GnuTLS in particular relies on several external libraries which will have to be installed manually.
+Also, dependencies are automatically installed using may prompt 'sudo' access.
+This is the case for GnuTLS which relies on the external libnettle.
 Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
+
+### Troubleshooting
 If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) and re-running the setup script may solve the problem.
 
 ## Learning an SUT configuration
@@ -286,28 +341,39 @@ To launch a batch of learning runs, one can use the 'launcher.py' script in 'exp
 Provided a directory with argument files, the tool will launch a learning process for each argument file.
 
     > python3 experiments/scripts/launcher.py --jar target/dtls-fuzzer.jar --args args_folder
-    
-## Running a single test
-To run a single test on a server using a default alphabet/one provided, you can run:
+
+## Running a test suite
+Before running learning experiments, it helps to check that arguments are correctly set, particularly timing parameters.
+To that end, **dtls-attacker** can execute a custom test suite (collection of tests) on the SUT, and provide a summary of the outputs.
+This functionality can also be used when diagnozing failed learning experiments, i.e. finding out what went wrong.
+
+To run the test suite on a server using a default alphabet, you can run:
 
     > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file
     
 For example of test files, go to 'examples/tests'. 
-A test file comprises a newline separated list of inputs. 
-The end of the test is either the end of the file, or an empty new line.
+A test file comprises a newline-separated list of inputs. 
+Tests are seperated by empty new lines.
+The end of each test is either the end of the file, or an empty new line.
 "#" is used to comment out a line.
 
-If you have a model/specification, you can also run the test and compare the output with that in a specification.
+If you have a model/specification, you can also run the test suite and compare the output with that in a specification.
 
     > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file -specification model
+    
+The number of times tests are run is configurable by the '-times' parameter, which defaults to 1.
+Setting it to a high number helps detect non-determinism in learning configurations, by comparing the output of each test.
 
-Finally, if you have the arguments file for a learning experiment, you can use them to run a test on the SUT involved by just adding the necessary test arguments: 
+    > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file -times 10
+
+Finally, if you have the arguments file for a learning experiment, you can use them to run tests on the SUT involved by just adding the necessary test arguments: 
 
     > java -jar target/dtls-fuzzer.jar @learning_arg_file -test test_file
 
-This provides a useful means of debugging learning experiments, i.e. finding out what went wrong, or of simply ensuring that parameters in the argument file are correctly configured.
+
 
 [tlsattacker]:https://github.com/RUB-NDS/TLS-Attacker
+[tlsattackerver]:https://github.com/RUB-NDS/TLS-Attacker/releases/tag/3.0b
 [graphviz]:https://www.graphviz.org
 [jsse]:https://github.com/pfg666/jsse-dtls-server
 [scandium]:https://github.com/pfg666/scandium-dtls-server
