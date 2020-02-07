@@ -17,7 +17,7 @@ The most important folders in **dtls-fuzzer**'s root directory are:
 1. 'src', directory containing the Java source code of **dtls-fuzzer**;
 2. 'examples', directory containing examples of alphabets, tests, specifications (i.e. models), and, argument files that can be supplied to **dtls-fuzzer** in order to launch learning experiments. Files in this directory are used as inputs for learning experiments;
 3. 'experiments', directory containing data relating to experiments. Some of this data also serves as input for learning experiments. The most notable folders are:
-    1. 'suts', with binaries for Java SUTs. These SUTs are custom-made DTLS server programs whose source code is publically available;
+    1. 'suts', with binaries for Java SUTs. These SUTs are custom-made DTLS server programs whose source code is publicly available;
     2. 'patches', patches that were applied to some SUTs (particularly to utilities) before the source code was compiled. The primary purpose of these patches was to prevent timing induced-behavior during learning, enable/disable functionality in the SUT, and configure parameters such as the pre-shared key;
     4. 'keystore', key material (e.g. public-private key pairs, Java keystores) used during learning;
     5. 'results', experimental results.
@@ -43,7 +43,7 @@ As an example, the folder name 'jsse-12_rsa_cert_none_rwalk_incl' indicates an e
 An output folder contains:
 - 'alphabet.xml', the alphabet;
 - 'command.args', the arguments file used;
-- 'sul.config', SUT-dependant configuration for **TLS-Attacker**,  the same configuration could be used to execute workflow traces on the SUT using **TLS-Attacker** alone;
+- 'sul.config', SUT-dependent configuration for **TLS-Attacker**,  the same configuration could be used to execute workflow traces on the SUT using **TLS-Attacker** alone;
 - 'hyp[0-9]+.dot', intermediate hypotheses;
 - 'statistics.txt', experiment statistics such as the total number of tests, learning time;
     - Table 4 displays this data
@@ -107,7 +107,7 @@ If it is not we can check if Java 8 JDK is installed on our platform but not cur
     > update-java-alternatives --list
 
 If Java 8 JDK does appear, we can use the same command to configure the Java 8 JDK to be default Java implementation. 
-Otherwise, we need to perform the full installion as done at the start.
+Otherwise, we need to perform the full installation as done at the start.
 
     > update-java-alternatives --set java-1.8.0-openjdk-amd64
     
@@ -142,7 +142,7 @@ First we set up the SUT, which is automatically by a 'setup_sut.sh' script.
     > bash setup_sut.sh openssl-1.1.1b
     
 Then we select an argument file form the 'args/openssl-1.1.1b' folder.
-We notice there are several argument files to chose from, namely:
+We notice there are several argument files to choose from, namely:
 
     learn_openssl-1.1.1b_all_cert_none_rwalk_incl  
     learn_openssl-1.1.1b_all_cert_nreq_rwalk_incl  
@@ -170,7 +170,7 @@ We can visualize the file using the graphviz 'dot' utility, by exporting to .pdf
     > dot -Tpdf output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.dot > output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.pdf
     > evince output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.pdf
 
-Finally, we can use 'trim_model.sh' to generater a better/trimmer version of the model.
+Finally, we can use 'trim_model.sh' to generated a better/trimmer version of the model.
 This can be done as follows:
 
     > bash trim_model.sh output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.dot output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.dot
@@ -206,16 +206,16 @@ The script will generate two folders in **dtls-fuzzer** root directory.
 
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
 For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
-Note that the source code of the SUTs (server applications) is publically available online, see [Scandium][scandium] and [JSSE][jsse].
+Note that the source code of the SUTs (server applications) is publicly available online, see [Scandium][scandium] and [JSSE][jsse].
 Also, automatically installing dependencies may prompt 'sudo' access.
-This is the case for GnuTLS which relies on external libraries such as libnettle, or for Eclipse's TinyDTLS, which relies on autoconf.
+This is the case for GnuTLS which relies on external libraries such as nettle, or for Eclipse's TinyDTLS, which relies on autoconf.
 Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
 
 ### Troubleshooting
 If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) and re-running the setup script may solve the problem.
 Also, in case of building failure, the source code of the implementation should still be downloaded to the 'suts' directory.
 A workaround is to build the implementation manually.
-Our setup should work if the implementation is built.
+As long as the implementation is built, our setup should work.
 
 The dependencies which 'setup_sut.sh' tries to install using sudo access are:
 
@@ -268,8 +268,8 @@ In most configurations, servers are configured to listen to some hard-coded port
 For JSSE and Scandium configurations, the setup is different. 
 On every test, the SUT launches a server listening to a dynamically chosen port and communicates the port over TCP sockets to **dtls-fuzzer**.
 This has the advantage of notifying **dtls-fuzzer** when the server is ready to receive packets (lacking this, **dtls-fuzzer** would have to blindly wait an arbitrary amount of time for the server to start).
-The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein a server thread has recently been stopped and a new thread has not been started yet (mearning the hard-coded port could be used in dynamic allocation).
-To avoid this form of collision, we advise running Scandium and JSSE experiments seperately from all others.
+The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein a server thread has recently been stopped and a new thread has not been started yet (meaning the hard-coded port could be used in dynamic allocation).
+To avoid this form of collision, we advise running Scandium and JSSE experiments separately from all others.
 
 
 ## Suggested configurations
@@ -335,8 +335,8 @@ The .dot learned model can be visualized using the graphviz library, by conversi
 
 Unfortunately, as models grow is size, the .pdfs generated using this method become increasingly difficult to read. 
 
-Hence we developed/used/imported prunning scripts which are accessed by 'trim_model.sh'. 
-We advise using it in its most basic form, whic is:
+Hence we developed/used/imported pruning scripts which are accessed by 'trim_model.sh'. 
+We advise using it in its most basic form, which is:
 
     > bash trim_model.sh learnedModel.dot trimmedLearnedModel.dot 
 
@@ -398,7 +398,7 @@ Provided a directory with argument files, the tool will launch a learning proces
 ## Running a test suite
 Before running learning experiments, it helps to check that arguments are correctly set, particularly timing parameters.
 To that end, **dtls-attacker** can execute a custom test suite (collection of tests) on the SUT, and provide a summary of the outputs.
-This functionality can also be used when diagnozing failed learning experiments, i.e. finding out what went wrong.
+This functionality can also be used when diagnosing failed learning experiments, i.e. finding out what went wrong.
 
 To run the test suite on a server using a default alphabet, you can run:
 
@@ -406,7 +406,7 @@ To run the test suite on a server using a default alphabet, you can run:
     
 For example of test files, go to 'examples/tests'. 
 A test file comprises a newline-separated list of inputs. 
-Tests are seperated by empty new lines.
+Tests are separated by empty new lines.
 The end of each test is either the end of the file, or an empty new line.
 "#" is used to comment out a line.
 
