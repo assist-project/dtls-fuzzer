@@ -125,15 +125,15 @@ We can 'ls' this directory to check on the status of the experiment (the number 
 If all goes well, after many hours, the output directory should contain a 'learnedModel.dot' file.
 We can visualize the file using the graphviz 'dot' utility, by exporting to .pdf and opening the .pdf with our favorite .pdf viewer.
 
-    > dot -Tpdf output/learnedModel.dot > output/learnedModel.pdf
-    > evince output/learnedModel.pdf
+    > dot -Tpdf output/ctinydtls_psk_rwalk/learnedModel.dot > output/ctinydtls_psk_rwalk/learnedModel.pdf
+    > evince output/ctinydtls_psk_rwalk/learnedModel.pdf
 
 Finally, we can use 'trim_model.sh' to generater a better/trimmer version of the model.
 The commands for are:
 
-    > bash trim_model.sh output/learnedModel.dot output/nicerLearnedModel.dot
-    > dot -Tpdf output/nicerLearnedModel.dot > output/nicerLearnedModel.pdf
-    > evince output/nicerLearnedModel.pdf
+    > bash trim_model.sh output/ctinydtls_psk_rwalk/learnedModel.dot output/ctinydtls_psk_rwalk/nicerLearnedModel.dot
+    > dot -Tpdf output/ctinydtls_psk_rwalk/nicerLearnedModel.dot > output/ctinydtls_psk_rwalk/nicerLearnedModel.pdf
+    > evince output/ctinydtls_psk_rwalk/nicerLearnedModel.pdf
 
 We can now determine conformance of the system by checking the model against the specification...
 
@@ -142,7 +142,7 @@ While 'ls'-ing the output directory we might find 'error.msg'.
 That's a sign that the experiment failed and learning terminated abruptly
 In such cases displaying the contents reveals the reason behind the failure
 
-    > cat output/error.msg
+    > cat output/ctinydtls_psk_rwalk/error.msg
     
 Note that checking conformance can still be performed on the last generated hypothesis, as long as potential findings are validated against the system (as they should be anyway).
 
