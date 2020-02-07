@@ -67,11 +67,17 @@ For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the fol
 This evaluation section is followed by a guide on using **dtls-fuzzer** which introduces its main use cases.
 
 ## Ensuring pre-requisites
-**dtls-fuzzer** has been tested on a Ubuntu 18.04 distribution. It should work on any recent Linux distribution. Support for other platforms has not been tested.
-It is assumed that a recent 8 JDK distribution of Java VM is installed, plus associated utilities (maven).
-We recommend using sufficiently strong hardware, otherwise sensitive timing parameters such as response waiting time might become too low, causing learning to fail.
+**dtls-fuzzer** has been tested on Ubuntu 18.04 and Debian distributions of Linux. 
+It should work on any recent Linux distribution. 
+Support for other platforms has not been tested.
+It is assumed that a recent 8 JDK distribution of Java VM is installed.
+The version used to run experiments is 1.8.0_222, though later Java 8 version should also work.
+We also rely on maven (the 'mvn' utility) for dependency management/deployment.
+Note that the tool may not build on Java 9 or later.
+
+We recommend using a sufficiently powerful machine, otherwise sensitive timing parameters such as response waiting time might become too low, causing learning to fail.
 The original experiments were run on a many-core server, however, we expect (though haven't tested thoroughly) that learning should be possible on a desktop with an i7 processor.
-Learning is also possible on weaker systems if timing parameters are tweaked accordingly.
+Learning is also possible on weaker systems if timing parameters are adjusted accordingly.
 Finally, visualizing models or even exporting them to .pdf requires installing the [graphviz library][graphviz].
 It is assumed that the 'dot' utility is located in the system PATH.
 
@@ -80,7 +86,7 @@ In a nutshell, the advised pre-requisites are:
 - recent Linux distribution
 - desktop CPU or stronger for reliable learning
 - (>=) 4 GB RAM
-- JVM 8
+- Java 8 JDK
 - maven 
 - graphviz
 
@@ -168,8 +174,8 @@ The script will generate two folders in **dtls-fuzzer** root directory.
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
 For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Note that the source code of the SUTs (server applications) is publically available online, see [Scandium][scandium] and [JSSE][jsse].
-Also, dependencies are automatically installed using may prompt 'sudo' access.
-This is the case for GnuTLS which relies on the external libnettle.
+Also, automatically installing dependencies may prompt 'sudo' access.
+This is the case for GnuTLS which relies on the external libraries such as libnettle, or Eclipse's TinyDTLS which relies on autoconf.
 Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
 
 ### Troubleshooting
