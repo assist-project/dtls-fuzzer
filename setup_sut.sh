@@ -45,6 +45,8 @@ readonly AUTOCONF_ARCH_URL="https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.g
 readonly AUTOCONF="autoconf-2.69"
 readonly M4_ARCH_URL="https://ftp.gnu.org/gnu/m4/m4-1.4.18.tar.gz"
 readonly M4="m4-1.4.18"
+readonly LIBTOOL_ARCH_URL="http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz"
+readonly LIBTOOL="libtool-2.4.6"
 
 readonly WOLFSSL="wolfssl-4.0.0"
 readonly WOLFSSL_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/v4.0.0-stable.tar.gz'
@@ -223,9 +225,11 @@ function make_sut() {
     elif [[ $sut == $OPENSSL ]]; then
         ( cd $sut_dir ; ./config )
     elif [[ $sut == $WOLFSSL ]]; then
+	install_dep $M4 $M4_ARCH_URL
         install_dep $AUTOCONF $AUTOCONF_ARCH_URL
+	install_dep $LIBTOOL $LIBTOOL_ARCH_URL
         # this configuration is for PSK wolfssl
-        ( cd $sut_dir ; bash autogen.sh ; AM_CFLAGS='-DHAVE_AES_CBC -DWOLFSSL_AES_128' ./configure --enable-dtls --enable-psk --enable-pwdbased --enable-rsa --enable-sha --enable-debug --disable-dh --disable-ecc --enable-static C_EXTRA_FLAGS=-DWOLFSSL_STATIC_PSK )
+        ( cd $sut_dir ; bash autogen.sh ; AM_CFLAGS='-DHAVE_AES_CBC -DWOLFSSL_AES_128' ./configure --enable-dtls --enable-psk --enable-pwdbased --enable-rsa --enable-sha --enable-debug --disable-dh --disable-ecc C_EXTRA_FLAGS=-DWOLFSSL_STATIC_PSK )
     fi
 
     #config_path="$sut_dir/configure"
