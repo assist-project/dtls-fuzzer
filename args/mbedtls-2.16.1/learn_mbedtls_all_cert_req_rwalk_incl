@@ -7,7 +7,7 @@ examples/alphabets/dhe_ecdhe_psk_rsa_cert.xml
 -runWait 
 100 
 -timeout  
-50 
+100 
 -randLength
 10
 -queries
