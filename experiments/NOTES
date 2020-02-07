@@ -1,0 +1,32 @@
+Model observations:
+GnuTLS 
+    - responds to most messages with HelloVerify (even those that aren't clienthello's)
+OpenSSL 
+    - does not always terminate upon receiving alert messages
+
+
+2018-11-21
+We changed the parameters slightly so one can provide ciphersuites with which to instantiate the learning alphabet.
+This means to replicate experiments, we drop the prefix RSA_ from the input strings and instead specify  
+TLS_RSA_WITH_AES_128_CBC_SHA as cipher (which is what was used for experiments thus far).
+
+This change was actually rolled back after some consideration, might still be a good idea, especially in view of 
+merging to main.
+
+2018-11-18
+Learning was performed on an adapted version of GNUTLS in which the constant
+DTLS_RETRANS_TIMEOUT was set to 100000 (a large value). This change
+required editing 'src/gnutls_int.h'. 
+
+2019-05-07
+OpenSSL was adjusted so as to increase the DTLS timeout from 1 second to 10.
+This removed non-determinism which occurred in longer traces, or when using client-side certificates.
+The change was made by adjusting 'timeout_duration_us' in 'ssl/d1_lib.c' to 10000000. 
+
+2019-09-03
+Some timing values for Scandium in ms. Notice how initializing is a lot more expensive time-wise than starting/stopping the connector.
+Init Start: 1567597117358
+Init Done: 1567597117839
+Connector Start: 1567597117839
+Connector Stop: 1567597117847
+Connector Start: 1567597117852

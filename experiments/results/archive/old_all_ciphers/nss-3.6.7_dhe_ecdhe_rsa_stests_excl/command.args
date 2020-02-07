@@ -1,0 +1,26 @@
+-protocol 
+DTLS12 
+-connect 
+localhost:60001 
+-alphabet 
+../examples/alphabets/nss_dhe_ecdhe_rsa.xml 
+-runWait 
+100 
+-timeout  
+100 
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms
+WP_SAMPLED_TESTS,WP_METHOD
+-testFile
+../examples/tests/dhe_ecdhe_rsa
+-output
+nss-3.6.7_dhe_ecdhe_rsa_stests_excl 
+-processDir
+/root/dist/Linux4.15_x86_64_cc_glibc_PTH_64_DBG.OBJ/bin/
+-cmd
+"./tstclnt -p 60001 -h 127.0.0.1 -f -d nssdb -P server -W password.txt -n TLS-Attacker -V :tls1.2 -I P384,P521,FF2048 -O -r 100"
+-sulConfig
+exclude_oo.config

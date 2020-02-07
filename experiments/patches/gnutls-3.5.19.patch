@@ -1,0 +1,12 @@
+diff -ruN suts/gnutls-3.5.19/lib/gnutls_int.h suts/gnutls-3.5.19_patched/lib/gnutls_int.h
+--- suts/gnutls-3.5.19/lib/gnutls_int.h	2020-02-05 16:37:28.894001000 +0100
++++ suts/gnutls-3.5.19_patched/lib/gnutls_int.h	2020-02-05 16:38:06.854001000 +0100
+@@ -132,7 +132,7 @@
+ #define GNUTLS_RANDOM_SIZE 32
+ 
+ /* DTLS */
+-#define DTLS_RETRANS_TIMEOUT 1000
++#define DTLS_RETRANS_TIMEOUT 100000
+ 
+ /* TLS Extensions */
+ /* we can receive up to MAX_EXT_TYPES extensions.

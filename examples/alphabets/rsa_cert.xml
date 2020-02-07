@@ -1,0 +1,72 @@
+<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes. 
+client authentication.-->
+<alphabet>
+    <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
+    <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>
+    <ChangeCipherSpecInput/>
+    <FinishedInput name="FINISHED"/>
+    <GenericTlsInput name="CERTIFICATE">
+        <Certificate/>
+    </GenericTlsInput>
+    <GenericTlsInput name="EMPTY_CERTIFICATE">
+        <Certificate>
+            <certificatesList>
+            </certificatesList>
+        </Certificate>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE_VERIFY">
+        <CertificateVerify/>
+    </GenericTlsInput>
+    <GenericTlsInput name="APPLICATION">
+        <Application>
+            <data>
+                <byteArrayExplicitValueModification>
+                        <!--HEX(This is a hello message!)-->
+                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                </byteArrayExplicitValueModification>
+            </data>
+        </Application>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE">
+        <Certificate/>
+    </GenericTlsInput>
+    <GenericTlsInput name="EMPTY_CERTIFICATE">
+        <Certificate>
+            <certificatesList>
+            </certificatesList>
+        </Certificate>
+    </GenericTlsInput>
+    <GenericTlsInput name="CERTIFICATE_VERIFY">
+        <CertificateVerify/>
+    </GenericTlsInput>
+    <!-- Alert(WARNING,CLOSE_NOTIFY) -->
+    <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
+        <Alert>
+            <level>
+                <byteExplicitValueModification>
+                        <explicitValue>1</explicitValue>
+                </byteExplicitValueModification>
+            </level>
+            <description>
+                <byteExplicitValueModification>
+                        <explicitValue>0</explicitValue>
+                </byteExplicitValueModification>
+            </description>
+        </Alert>
+    </GenericTlsInput>
+    <!-- Alert(FATAL,UNEXPECTED_MESSAGE) -->
+    <GenericTlsInput name="Alert(FATAL,UNEXPECTED_MESSAGE)">
+        <Alert>
+            <level>
+                <byteExplicitValueModification>
+                        <explicitValue>2</explicitValue>
+                </byteExplicitValueModification>
+            </level>
+            <description>
+                <byteExplicitValueModification>
+                        <explicitValue>10</explicitValue>
+                </byteExplicitValueModification>
+            </description>
+        </Alert>
+    </GenericTlsInput>
+</alphabet>

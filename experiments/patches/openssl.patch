@@ -1,0 +1,13 @@
+diff --git a/ssl/d1_lib.c b/ssl/d1_lib.c
+index d3f681ba41..0f80260098 100644
+--- a/ssl/d1_lib.c
++++ b/ssl/d1_lib.c
+@@ -260,7 +260,7 @@ void dtls1_start_timer(SSL *s)
+         if (s->d1->timer_cb != NULL)
+             s->d1->timeout_duration_us = s->d1->timer_cb(s, 0);
+         else
+-            s->d1->timeout_duration_us = 1000000;
++            s->d1->timeout_duration_us = 10000000;
+     }
+ 
+     /* Set timeout to current time */

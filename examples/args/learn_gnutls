@@ -1,0 +1,20 @@
+-protocol 
+DTLS12 
+-connect 
+localhost:20000 
+-alphabet 
+alphabet.xml 
+-runWait 
+100 
+-timeout  
+200 
+-randLength
+5
+-queries
+20000
+-equivalenceAlgorithm 
+RANDOM_WP_METHOD
+-output
+gnutls
+-cmd 
+"/home/paul/Modules/gnutls-3.5.19/src/gnutls-serv  --udp --x509keyfile /home/paul/Keys/RSA2048/server-key.pem --x509certfile /home/paul/Keys/RSA2048/server-cert.pem --x509cafile /home/paul/GitHub/TLS-Attacker-Development/TLS-Core/src/main/resources/certs/rsa1024_cert.pem --mtu 1500 -p 20000"

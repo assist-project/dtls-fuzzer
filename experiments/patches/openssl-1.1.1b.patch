@@ -1,0 +1,12 @@
+diff -ruN suts/openssl-1.1.1b/ssl/d1_lib.c suts/openssl-1.1.1b_patched/ssl/d1_lib.c
+--- suts/openssl-1.1.1b/ssl/d1_lib.c	2019-02-26 15:15:30.000000000 +0100
++++ suts/openssl-1.1.1b_patched/ssl/d1_lib.c	2020-02-05 17:23:29.315519392 +0100
+@@ -260,7 +260,7 @@
+         if (s->d1->timer_cb != NULL)
+             s->d1->timeout_duration_us = s->d1->timer_cb(s, 0);
+         else
+-            s->d1->timeout_duration_us = 1000000;
++            s->d1->timeout_duration_us = 10000000;
+     }
+ 
+     /* Set timeout to current time */

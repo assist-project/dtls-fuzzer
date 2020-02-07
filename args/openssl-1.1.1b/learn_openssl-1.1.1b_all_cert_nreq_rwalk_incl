@@ -1,0 +1,22 @@
+-protocol
+DTLS12
+-connect
+localhost:30003
+-runWait 
+200
+-timeout
+20
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms 
+RANDOM_WP_METHOD,WP_METHOD 
+-alphabet 
+examples/alphabets/dhe_ecdhe_psk_rsa_cert.xml
+-output 
+output/openssl-1.1.1b_all_cert_nreq_rwalk_incl
+-cmd 
+"${fuzzer.dir}/suts/openssl-1.1.1b/apps/openssl s_server -psk 1234 -key ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem -cert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -CAfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -verify 1 -accept 30003 -dtls1_2 -timeout 5000 -mtu 5000"
+-sulConfig
+experiments/configs/include_oo.config

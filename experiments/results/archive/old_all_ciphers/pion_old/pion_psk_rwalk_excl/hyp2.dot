@@ -1,0 +1,39 @@
+digraph g {
+
+	s0 [shape="circle" label="s0"];
+	s1 [shape="circle" label="s1"];
+	s2 [shape="circle" label="s2"];
+	s3 [shape="circle" label="s3"];
+	s0 -> s2 [label="PSK_CLIENT_HELLO / HELLO_VERIFY_REQUEST"];
+	s0 -> s1 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s0 -> s1 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s0 -> s1 [label="FINISHED / TIMEOUT"];
+	s0 -> s1 [label="APPLICATION / TIMEOUT"];
+	s0 -> s3 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(FATAL,CLOSE_NOTIFY)"];
+	s0 -> s3 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
+	s1 -> s1 [label="PSK_CLIENT_HELLO / TIMEOUT"];
+	s1 -> s1 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s1 -> s1 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s1 -> s1 [label="FINISHED / TIMEOUT"];
+	s1 -> s1 [label="APPLICATION / TIMEOUT"];
+	s1 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
+	s1 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
+	s2 -> s1 [label="PSK_CLIENT_HELLO / SERVER_HELLO,PSK_SERVER_KEY_EXCHANGE,SERVER_HELLO_DONE"];
+	s2 -> s1 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s2 -> s1 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s2 -> s1 [label="FINISHED / TIMEOUT"];
+	s2 -> s1 [label="APPLICATION / TIMEOUT"];
+	s2 -> s3 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(FATAL,CLOSE_NOTIFY)"];
+	s2 -> s3 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
+	s3 -> s3 [label="PSK_CLIENT_HELLO / SOCKET_CLOSED"];
+	s3 -> s3 [label="PSK_CLIENT_KEY_EXCHANGE / SOCKET_CLOSED"];
+	s3 -> s3 [label="CHANGE_CIPHER_SPEC / SOCKET_CLOSED"];
+	s3 -> s3 [label="FINISHED / SOCKET_CLOSED"];
+	s3 -> s3 [label="APPLICATION / SOCKET_CLOSED"];
+	s3 -> s3 [label="Alert(WARNING,CLOSE_NOTIFY) / SOCKET_CLOSED"];
+	s3 -> s3 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / SOCKET_CLOSED"];
+
+__start0 [label="" shape="none" width="0" height="0"];
+__start0 -> s0;
+
+}

@@ -1,0 +1,24 @@
+-connect 
+localhost:50005 
+-runWait 
+100
+-alphabet
+examples/alphabets/psk8.xml
+-timeout  
+100  
+-sulConfig 
+experiments/configs/tinydtls.config
+-randLength
+10
+-queries
+20000
+-protocol 
+DTLS12 
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-output 
+output/etinydtls_psk_rwalk
+-cmd 
+"${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p 50005"
+-depth
+1

@@ -1,0 +1,1 @@
+./configure --enable-dtls --enable-psk --enable-pwdbased --enable-rsa --enable-sha --enable-debug --disable-dh --disable-ecc --enable-static C_EXTRA_FLAGS=-DWOLFSSL_STATIC_PSK

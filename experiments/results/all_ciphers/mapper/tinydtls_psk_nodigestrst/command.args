@@ -1,0 +1,24 @@
+-connect 
+localhost:40007 
+-runWait 
+100
+-alphabet
+../examples/alphabets/psk8_nodigestrst.xml
+-timeout  
+50  
+-randLength
+10
+-queries
+20000
+-protocol 
+DTLS12 
+-output 
+tinydtls_psk_nodigestrst
+-equivalenceAlgorithms
+WP_SAMPLED_TESTS,WP_METHOD
+-cmd 
+"/home/pfg666/GitHub/tinydtls/tests/dtls-server -p 40007"
+-testFile
+../examples/tests/psk
+-depth
+1

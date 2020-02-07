@@ -1,0 +1,52 @@
+<!-- DTLS alphabet comprising the messages necessary to perform handshakes 
+using PSK, RSA and DH key exchange mechanisms. -->
+<alphabet>
+    <ClientHelloWord suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO"/>
+    <ClientHelloWord suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
+    <ClientHelloWord suite="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" name="DHE_CLIENT_HELLO"/>
+    <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
+    <ClientKeyExchangeInput name="DH_CLIENT_KEY_EXCHANGE" algorithm="DH"/>
+    <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>
+    <ChangeCipherSpecWord/>
+    <FinishedWord/>
+   <GenericTlsInput name="APPLICATION">
+        <Application>
+            <data>
+                <byteArrayExplicitValueModification>
+                        <!--HEX(This is a hello message!)-->
+                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                </byteArrayExplicitValueModification>
+            </data>
+        </Application>
+    </GenericTlsInput>
+    <!-- Alert(WARNING,CLOSE_NOTIFY) -->
+    <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
+        <Alert>
+            <level>
+                <byteExplicitValueModification>
+                        <explicitValue>1</explicitValue>
+                </byteExplicitValueModification>
+            </level>
+            <description>
+                <byteExplicitValueModification>
+                        <explicitValue>0</explicitValue>
+                </byteExplicitValueModification>
+            </description>
+        </Alert>
+    </GenericTlsInput>
+    <!-- Alert(FATAL,UNEXPECTED_MESSAGE) -->
+    <GenericTlsInput name="Alert(FATAL,UNEXPECTED_MESSAGE)">
+        <Alert>
+            <level>
+                <byteExplicitValueModification>
+                        <explicitValue>2</explicitValue>
+                </byteExplicitValueModification>
+            </level>
+            <description>
+                <byteExplicitValueModification>
+                        <explicitValue>10</explicitValue>
+                </byteExplicitValueModification>
+            </description>
+        </Alert>
+    </GenericTlsInput>
+</alphabet>

@@ -1,0 +1,17 @@
+2019-07-04 17:07:00.860 [dtls] WARN - unsupported tls extension: 15
+2019-07-04 17:07:00.860 [dtls] WARN - unsupported tls extension: 0
+2019-07-04 17:07:00.860 [dtls] WARN - unsupported tls extension: 13
+2019-07-04 17:07:01.240 [dtls] WARN - expected ChangeCipherSpec during handshake
+2019-07-04 17:08:44.725 [dtls] WARN - unsupported tls extension: 15
+2019-07-04 17:08:44.725 [dtls] WARN - unsupported tls extension: 0
+2019-07-04 17:08:44.725 [dtls] WARN - unsupported tls extension: 13
+2019-07-04 17:08:45.063 [dtls] WARN - expected ChangeCipherSpec during handshake
+2019-07-04 17:12:08.231 [dtls] WARN - unsupported tls extension: 15
+2019-07-04 17:12:08.231 [dtls] WARN - unsupported tls extension: 0
+2019-07-04 17:12:08.231 [dtls] WARN - unsupported tls extension: 13
+2019-07-04 17:12:08.703 [dtls] ERR  - No security context for epoch: 1
+2019-07-04 17:12:08.703 [dtls] INFO - decrypt_verify() failed
+2019-07-04 17:12:08.704 [dtls] WARN - expected ChangeCipherSpec during handshake
+2019-07-04 17:12:08.704 [dtls] WARN - If there is no peer only ClientHello is allowed
+2019-07-04 17:12:08.704 [dtls] WARN - error while handling handshake packet
+

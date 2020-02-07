@@ -1,0 +1,1 @@
+ls -1 */statistics.txt | xargs -i sh -c 'echo {} ; awk NR==14,NR==23 {}'
