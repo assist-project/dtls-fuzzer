@@ -93,6 +93,60 @@ Thus on a POSIX system would be:
 Following these steps, a 'target' directory should have been built containing 'dtls-fuzzer.jar'.
 From this point onward it is assumed that commands are run from **dtls-fuzzer**'s root directory. 
 
+## Quickrun
+Assume we want to generate a model for Contiki-NG TinyDTLS using PSK.
+A quickrun of **dtls-fuzzer** goes as follows.
+
+First we set up the SUT, which is automatically by a 'setup_sut.sh' script.
+
+    > bash setup_sut.sh ctinydtls
+    
+Then we select an argument file form the 'args/ctinydtls' folder, where ctinydtls is just a shorthand for the implementation.
+We notice there are several argument files to chose from, namely:
+
+    learn_ctinydtls_ecdhe_cert_none_rwalk  
+    learn_ctinydtls_ecdhe_cert_req_rwalk  
+    learn_ctinydtls_psk_rwalk
+
+Only one is of interest, since its filename indicates PSK. 
+We thus select it, and run the fuzzer on it.
+We additionally cap number of tests to 3000, to shorten learning time.
+The command to execute becomes:
+
+    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk -queries 3000
+
+We notice that an output directory, 'output/ctinydtls_psk_rwalk' for the experiment has been created.
+We can 'ls' this directory to check on the status of the experiment (the number of hypotheses generated...).
+
+    > ls output/ctinydtls_psk_rwalk
+
+
+### When things go right
+If all goes well, after many hours, the output directory should contain a 'learnedModel.dot' file.
+We can visualize the file using the graphviz 'dot' utility, by exporting to .pdf and opening the .pdf with our favorite .pdf viewer.
+
+    > dot -Tpdf output/learnedModel.dot > output/learnedModel.pdf
+    > evince output/learnedModel.pdf
+
+Finally, we can use 'trim_model.sh' to generater a better/trimmer version of the model.
+The commands for are:
+
+    > bash trim_model.sh output/learnedModel.dot output/nicerLearnedModel.dot
+    > dot -Tpdf output/nicerLearnedModel.dot > output/nicerLearnedModel.pdf
+    > evince output/nicerLearnedModel.pdf
+
+We can now determine conformance of the system by checking the model against the specification...
+
+### When things go wrong
+While 'ls'-ing the output directory we might find 'error.msg'. 
+That's a sign that the experiment failed and learning terminated abruptly
+In such cases displaying the contents reveals the reason behind the failure
+
+    > cat output/error.msg
+    
+Note that checking conformance can still be performed on the last generated hypothesis, as long as potential findings are validated against the system (as they should be anyway).
+
+
 ## Setting up the SUT
 We provide a script for setting up the SUT.
 This script downloads the source files, installs some dependencies (jvm) and builds the SUT.
