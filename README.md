@@ -174,8 +174,8 @@ The script will generate two folders in **dtls-fuzzer** root directory.
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
 For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Note that the source code of the SUTs (server applications) is publically available online, see [Scandium][scandium] and [JSSE][jsse].
-Also, dependencies are automatically installed using may prompt 'sudo' access.
-This is the case for GnuTLS which relies on the external libnettle.
+Also, automatically installing dependencies may prompt 'sudo' access.
+This is the case for GnuTLS which relies on the external libraries such as libnettle, or Eclipse's TinyDTLS which relies on autoconf.
 Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
 
 ### Troubleshooting
