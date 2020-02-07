@@ -275,13 +275,17 @@ These parameters can be adjusted by overwriting (likely with a higher value) the
 
     > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeout new_response_timeout -runWait new_start_timeout
 
+To avoid issues to do with timing, we suggest running experiments on a sufficiently powerful machine.
+The main cause of non-determinism is the SUT taking too long to start or to generate a response.
+This likelyhood is minimized if more computing power is provided.
+
 ### Concurrent experiments and port collisions
 It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
 A simple way is via the 'disown' utility, for example:
 
     > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk > /dev/null 2>&1 & disown
 
-However, running more than a few (>2) instances increases the chance of learning failure due to accidental port collision.
+However, running more than a few (>2) places additional burden on the machine, and increases the chance of learning failure due to accidental port collision.
 In most configurations, servers are configured to listen to some hard-coded port over localhost, the configurations provided using distinct hard-coded ports. 
 For JSSE and Scandium configurations, the setup is different. 
 On every test, the SUT launches a server listening to a dynamically chosen port and communicates the port over TCP sockets to **dtls-fuzzer**.
@@ -299,8 +303,7 @@ That is because PSK with small passwords requires significantly less processing 
 
 ### OpenSSL 1.1.1b
 Any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl') can be tried out.
-The SUT exhibits stable timing making non-determinism unlikely,
-Experiments terminate quickly (~half a day),  exercising all key exchange algorithms. 
+Experiments terminate quickly (less than a day),  exercising all key exchange algorithms. 
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
 
     > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl 
@@ -320,9 +323,15 @@ A redacted version of the model obtained for this configuration appears in the a
 
     > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk
 
+### WolfSSL using PSK
+For WolfSSL we provide a PSK configuration for which learning should terminate relatively quickly.
+
+    > java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_psk_rwalk
+
+
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
-The model exposes important bugs.
+The model exposes important bugs, unfortunately, the experiment is quite lengthy.
 The experiment should not be run in parallel with experiments not involving Scandium or JSSE.
 Command:
 
