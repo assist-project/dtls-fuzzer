@@ -93,7 +93,7 @@ In a nutshell, the advised pre-requisites are:
 ## Setting up the environment
 ### Java 8
 **dtls-fuzzer** requires Java 8 JDK (Java Development Kit).
-If Java is not installed, we install the OpenJDK implementation via 'apt-get':
+If Java is not installed, we install the OpenJDK implementation (via 'apt-get' on Ubuntu), and can skip the rest of this subsection.
 
     > sudo apt-get install openjdk-8-jdk
 
@@ -102,22 +102,28 @@ If a version of java is installed, we can check which version it is by running:
     > java -version
 
 The version code should start with 1.8 (e.g. 1.8.0_242), and the Virtual Machine should be "Server VM" (indicating that the full JDK was installed, rather than only the runtime environment).
+If it does, we are done with Java.
 If it is not we can check if Java 8 JDK is installed on our platform but not currently selected, by listing installed Java VMs via:
 
     > update-java-alternatives --list
 
 If Java 8 JDK does appear, we can use the same command to configure the Java 8 JDK to be default Java implementation. 
-Otherwise, we need to perform the full installation as done at the start.
 
-    > update-java-alternatives --set java-1.8.0-openjdk-amd64
+    > sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
     
+Otherwise, we need to perform the full installation as done at the start.
+Unfortunately, 'update-java-alternatives' can annoyingly fail (generally due to missing alternatives).
+If such a case arises, we can use 'update-alternives' to interactively configure which Java VM is selected by 'java' (interpreter) and 'javac' (compiler).
+
+    > sudo update-alternatives --config java
+    > sudo update-alternatives --config javac
+
 ### Others
-With Java set, we proceed to install the other dependencies, maven and graphviz.
+With Java set, we proceed to install the other dependencies, maven, graphviz plus some common SUT dependencies.
 We then clone **dtls-fuzzer**'s repository to a folder of choice, checking out the artifact branch.
 To finish, we make that folder our current directory.
 
-    > sudo apt-get install maven
-    > sudo apt-get install graphviz
+    > sudo apt-get install maven graphviz autotools-dev automake libtool
     > git clone  -b usenix20-artifact https://gitlab.com/pfg666/dtls-fuzzer.git ~/dtls-fuzzer
     > cd ~/dtls-fuzzer
 
@@ -217,15 +223,27 @@ Also, in case of building failure, the source code of the implementation should 
 A workaround is to build the implementation manually.
 As long as the implementation is built, our setup should work.
 
-The dependencies which 'setup_sut.sh' tries to install using sudo access are:
+We hereby give an incomplete tree of dependencies. 
+Those in italics are dependencies which 'setup_sut.sh' tries to install using sudo access.
 
 - GnuTLS:
-    - m4
-    - pkg-config
-    - nettle
+    - *m4*  
+    - *pkg-config*
+    - *nettle*
 - Eclipse's TinyDTLS
-    - m4
-    - autoconf
+    - *m4*
+    - *autoconf*
+- WolfSSL
+    - *m4*
+    - *autoconf*
+    - libtool
+ - nettle
+    - *m4*  
+    - *pkg-config*
+ - autoconf
+    - aclocal
+        - automake
+        - autotools-dev
 
 ## Learning an SUT configuration
 We are now ready to learn an SUT configuration.
