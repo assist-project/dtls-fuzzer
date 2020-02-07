@@ -128,7 +128,7 @@ To finish, we make that folder our current directory.
     > cd ~/dtls-fuzzer
 
 ## Installing dtls-fuzzer
-We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and TLS-Attacker 3.0b.
+We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and **TLS-Attacker** 3.0b.
 We then install the tool itself.
 The resulting commands on a POSIX system will be:
 
@@ -327,7 +327,6 @@ A redacted version of the model obtained for this configuration appears in the a
 For WolfSSL we provide a PSK configuration for which learning should terminate relatively quickly.
 
     > java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_psk_rwalk
-
 
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
