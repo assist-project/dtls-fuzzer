@@ -223,6 +223,7 @@ function make_sut() {
     elif [[ $sut == $OPENSSL ]]; then
         ( cd $sut_dir ; ./config )
     elif [[ $sut == $WOLFSSL ]]; then
+        install_dep $AUTOCONF $AUTOCONF_ARCH_URL
         # this configuration is for PSK wolfssl
         ( cd $sut_dir ; bash autogen.sh ; AM_CFLAGS='-DHAVE_AES_CBC -DWOLFSSL_AES_128' ./configure --enable-dtls --enable-psk --enable-pwdbased --enable-rsa --enable-sha --enable-debug --disable-dh --disable-ecc --enable-static C_EXTRA_FLAGS=-DWOLFSSL_STATIC_PSK )
     fi
