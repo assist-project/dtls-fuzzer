@@ -5,7 +5,7 @@
 
 **dtls-fuzzer** uses [TLS-Attacker][tlsattacker] to generate/parse DTLS messages as well as to maintain state. 
 To that end, **TLS-Attacker** has been extended with support for DTLS.
-**dtls-fuzzer** relies on version 3.0b of **TLS-Attacker**, a version implementing the DTLS enhancement.
+**dtls-fuzzer** relies on [version 3.0b][tlsattackerver] of **TLS-Attacker**, a version implementing the DTLS enhancement.
 
 # Artifact contents
 The artifact contains:
@@ -84,17 +84,19 @@ In a nutshell, the advised pre-requisites are:
 - graphviz
 
 ## Installing dtls-fuzzer
-Run the prepare script which will deploy the local .jars **dtls-fuzzer** depends to your local maven repository, then install the tool itself.
-Thus on a POSIX system would be:
+We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and TLS-Attacker 3.0b.
+We then install the tool itself.
+The resulting commands on a POSIX system will be:
 
     > bash prepare.sh
     > mvn clean install
 
 Following these steps, a 'target' directory should have been built containing 'dtls-fuzzer.jar'.
+This is our executable library.
 From this point onward it is assumed that commands are run from **dtls-fuzzer**'s root directory. 
 
 ## Quickrun
-Assume we want to generate a model for Contiki-NG TinyDTLS using PSK.
+Assume we want to generate a model for Contiki-NG TinyDTLS using PSK (Pre-Shared Keys).
 A quickrun of **dtls-fuzzer** goes as follows.
 
 First we set up the SUT, which is automatically by a 'setup_sut.sh' script.
@@ -108,9 +110,9 @@ We notice there are several argument files to chose from, namely:
     learn_ctinydtls_ecdhe_cert_req_rwalk  
     learn_ctinydtls_psk_rwalk
 
-Only one is of interest, since its filename indicates PSK. 
+The argument file of interest is 'learn_ctinydtls_psk_rwalk', since its filename indicates PSK. 
 We thus select it, and run the fuzzer on it.
-We additionally cap number of tests to 3000, to shorten learning time.
+We additionally cap the number of tests to 3000, to shorten learning time.
 The command to execute becomes:
 
     > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk -queries 3000
@@ -129,7 +131,7 @@ We can visualize the file using the graphviz 'dot' utility, by exporting to .pdf
     > evince output/ctinydtls_psk_rwalk/learnedModel.pdf
 
 Finally, we can use 'trim_model.sh' to generater a better/trimmer version of the model.
-The commands for are:
+This can be done as follows:
 
     > bash trim_model.sh output/ctinydtls_psk_rwalk/learnedModel.dot output/ctinydtls_psk_rwalk/nicerLearnedModel.dot
     > dot -Tpdf output/ctinydtls_psk_rwalk/nicerLearnedModel.dot > output/ctinydtls_psk_rwalk/nicerLearnedModel.pdf
@@ -145,7 +147,6 @@ In such cases displaying the contents reveals the reason behind the failure
     > cat output/ctinydtls_psk_rwalk/error.msg
     
 Note that checking conformance can still be performed on the last generated hypothesis, as long as potential findings are validated against the system (as they should be anyway).
-
 
 ## Setting up the SUT
 We provide a script for setting up the SUT.
@@ -372,6 +373,7 @@ Finally, if you have the arguments file for a learning experiment, you can use t
 
 
 [tlsattacker]:https://github.com/RUB-NDS/TLS-Attacker
+[tlsattackerver]:https://github.com/RUB-NDS/TLS-Attacker/releases/tag/3.0b
 [graphviz]:https://www.graphviz.org
 [jsse]:https://github.com/pfg666/jsse-dtls-server
 [scandium]:https://github.com/pfg666/scandium-dtls-server
