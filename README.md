@@ -340,11 +340,17 @@ We can use a low test bound of 2000 since the input alphabet is small, making te
 
     > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk -queries 2000
 
-### WolfSSL using PSK
+### WolfSSL 4.0.0 using PSK
 For WolfSSL we provide a PSK configuration for which learning should terminate relatively quickly.
 
     > java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_psk_rwalk -queries 2000
 
+### GnuTLS 3.6.7 with client authentication disabled
+The more recent GnuTLS version we analyzed produced nice, compact models.
+Unfortunately, enabling client authentication lead to a sharp increase in the number of required tests.
+We hence run learning where authentication is disabled:
+
+    > java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_all_cert_none_rwalk_incl -queries 2000
 
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
@@ -367,7 +373,7 @@ Command for RSA key exchange:
 Instead of arduous learning, we may want to simply test if a handshake can be completed in this setting without sending any certificate messages. 
 This can be done by running:
 
-    > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl -test examples/rsa
+    > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl -test examples/tests/rsa
 
 
 ## Analyzing results
@@ -384,7 +390,6 @@ The .dot learned model can be visualized using the graphviz library, by conversi
     > dot -Tpdf learnedModel.dot  > learnedModel.pdf
 
 Unfortunately, as models grow is size, the .pdfs generated using this method become increasingly difficult to read. 
-
 Hence we developed/used/imported pruning scripts which are accessed by 'trim_model.sh'. 
 We advise using it in its most basic form, which is:
 
