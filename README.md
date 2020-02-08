@@ -26,7 +26,8 @@ The most important folders in **dtls-fuzzer**'s root directory are:
 'experiments/results' contains experimental results, which are the main output of the work. In particular
 - 'all_ciphers' contains output folders for all the experiments run;
     - 'mapper' contains experimental results which help justify some of the mapper decisions made (see Section 5.2)
-- 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). Note that not all experiments in 'all_ciphers' converged;
+- 'included' contains output folders for converging experiments (converging means that learning successfully generates a model). 
+    -  note that not all experiments in 'all_ciphers' were successful/terminated with a final model (we say in such cases that learning did not converge)
 
 ### Output folders 
 Output folders are named based on the experiment configuration, that is: 
@@ -35,26 +36,28 @@ Output folders are named based on the experiment configuration, that is:
 - where applicable whether client certification was required (req), optional (nreq) or disabled (none);
 - the testing algorithm: random walk (rwalk) or an adaptation of it (stests);
     - experiments using the adaptation have not been included in the paper
-- optionally, whether retransmissions were included (incl or excl).
+- optionally, whether retransmissions were included in/excluded from outputs (incl or excl).
     - retransmissions were included by default
 
-As an example, the folder name 'jsse-12_rsa_cert_none_rwalk_incl' indicates an experiment on the JSSE 12 implementation of DTLS, using an alphabet including inputs for performing an RSA handshake, client certificate authentication is disabled, the test algorithm is random walk and retransmissions are included.
+As an example, the folder name 'jsse-12_rsa_cert_none_rwalk_incl' indicates an experiment on the JSSE 12 implementation of DTLS, using an alphabet including inputs for performing RSA handshakes, client certificate authentication is disabled, the test algorithm is random walk and retransmissions are included.
 
 An output folder contains:
-- 'alphabet.xml', the alphabet;
-- 'command.args', the arguments file used;
-- 'sul.config', SUT-dependent configuration for **TLS-Attacker**,  the same configuration could be used to execute workflow traces on the SUT using **TLS-Attacker** alone;
+- 'alphabet.xml', the input alphabet;
+- 'command.args', the arguments file used containing various experiment parameters, most notably:
+    - *queries*, the bound on the number of random walk tests which need to pass for a hypothesis to be deemed final
+    - *equivalenceAlgorithms*, model-based test algorithms employed
+    - *runWait* and *timeout*, the start and response timeout respectively (we touch on them later)
+- 'sul.config', SUT-dependent configuration for **TLS-Attacker**,  the same configuration can be used to execute workflow traces on the SUT using **TLS-Attacker** alone;
 - 'hyp[0-9]+.dot', intermediate hypotheses;
 - 'statistics.txt', experiment statistics such as the total number of tests, learning time;
     - Table 4 displays this data
 - 'nondet.log', logs of encountered non-deterministic behavior;
-- 'learnedModel.dot', in case learning converged, the learned model (or final hypothesis);
+- 'learnedModel.dot', in case learning converged, the learned model (i.e. final hypothesis);
 - 'error.msg', an error message generated in case the experiment failed/learning was stopped and hence, did not converge to a final model. 
-    - The main culprit is time-related non-determinism (same inputs lead to different results).
+    - the main culprit is time-related non-determinism (same inputs lead to different results).
 
 The evaluator can check (for example) that experimental results in 'included' correspond to those displayed in Table 4, or that configurations tested in Table 2 also appear in 'all_ciphers'.
-Note that models appearing in the paper were the result of significant pruning. 
-Hence the learned models may not be reflective of the models displayed in the paper.
+Note that models appearing in the paper were the result of significant pruning/triming, whereas the models appearing in output folders are unaltered.
 
 # dtls-fuzzer evaluation steps
 For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the following steps:
@@ -67,24 +70,27 @@ For the purpose of evaluating **dtls-fuzzer** it is necessary to perform the fol
 This evaluation section is followed by a guide on using **dtls-fuzzer** which introduces its main use cases.
 
 ## Ensuring pre-requisites
-**dtls-fuzzer** has been tested on Ubuntu 18.04 and Debian distributions of Linux. 
+**dtls-fuzzer** has been tested on Ubuntu 18.04 and Debian 9 distributions of Linux. 
 It should work on any recent Linux distribution. 
 Support for other platforms has not been tested.
-It is assumed that a recent 8 JDK distribution of Java VM is installed.
-The version used to run experiments is 1.8.0_222, though later Java 8 version should also work.
-We also rely on maven (the 'mvn' utility) for dependency management/deployment.
-Note that the tool may not build on Java 9 or later.
+This guide assumes a Debian-based distribution is used (which has 'apt-get').
 
-We recommend using a sufficiently powerful machine, otherwise sensitive timing parameters such as response waiting time might become too low, causing learning to fail.
+A Java 8 JDK (Java Development Kit) Virtual Machine (VM) is required.
+The version used to run experiments is 1.8.0_222, though later Java 8 versions should also work.
+Note that the tool does not build on Java 9 or later.
+We also rely on maven (the 'mvn' utility) for dependency management/deployment.
+
+We recommend using a sufficiently powerful machine, otherwise sensitive timing parameters such as response waiting time, might become too low, causing different outputs to the ones obtained in the paper. 
+Worse yet, they can cause learning  experiments to fail.
 The original experiments were run on a many-core server, however, we expect (though haven't tested thoroughly) that learning should be possible on a desktop with an i7 processor.
-Learning is also possible on weaker systems if timing parameters are adjusted accordingly.
-Finally, visualizing models or even exporting them to .pdf requires installing the [graphviz library][graphviz].
-It is assumed that the 'dot' utility is located in the system PATH.
+Learning is also possible on weaker systems if timing parameters are tuned accordingly.
+Finally, visualizing .dot models by exporting them to .pdf requires installing the [graphviz library][graphviz].
+It is assumed that the 'dot' utility provided by graphviz is located in the system PATH.
 
 In a nutshell, the advised pre-requisites are:
 
-- recent Linux distribution
-- desktop CPU or stronger for reliable learning
+- recent Linux distribution, preferably Debian-based
+- desktop/server machine for experiment reproduction/reliable learning
 - (>=) 4 GB RAM
 - Java 8 JDK
 - maven 
@@ -101,7 +107,7 @@ If a version of java is installed, we can check which version it is by running:
 
     > java -version
 
-The version code should start with 1.8 (e.g. 1.8.0_242), and the Virtual Machine should be "Server VM" (indicating that the full JDK was installed, rather than only the runtime environment).
+The version code should start with 1.8 (e.g. 1.8.0_242), and the Virtual Machine should be "Server VM" (indicating that the full JDK is installed, rather than only the runtime environment).
 If it does, we are done with Java.
 If it is not we can check if Java 8 JDK is installed on our platform but not currently selected, by listing installed Java VMs via:
 
@@ -111,15 +117,15 @@ If Java 8 JDK does appear, we can use the same command to configure the Java 8 J
 
     > sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
     
-Otherwise, we need to perform the full installation as done at the start.
-Unfortunately, 'update-java-alternatives' can annoyingly fail (generally due to missing alternatives).
+Otherwise, we need to perform the full installation as shown at the start.
+Unfortunately, 'update-java-alternatives' sometimes is not successful, indicated by "error" messages.
 If such a case arises, we can use 'update-alternives' to interactively configure which Java VM is selected by 'java' (interpreter) and 'javac' (compiler).
 
     > sudo update-alternatives --config java
     > sudo update-alternatives --config javac
 
 ### Others
-With Java set, we proceed to install the other dependencies, maven, graphviz plus some common SUT dependencies.
+With Java 8 set, we proceed to install the other dependencies, maven, graphviz plus some common SUT dependencies.
 We then clone **dtls-fuzzer**'s repository to a folder of choice, checking out the artifact branch.
 To finish, we make that folder our current directory.
 
@@ -135,12 +141,12 @@ The resulting commands on a POSIX system will be:
     > bash prepare.sh
     > mvn clean install
 
-Following these steps, directory named 'target' should have been built containing 'dtls-fuzzer.jar'.
+Following these steps, a directory named 'target' should have been built containing 'dtls-fuzzer.jar'.
 This is our executable library.
 From this point onward it is assumed that commands are run from **dtls-fuzzer**'s root directory. 
 
 ## Quickrun
-Assume we want to generate a model for OpenSSL 1.1.1b using only PSK (Pre-Shared Keys).
+Suppose we want to generate a model for OpenSSL 1.1.1b using only PSK (Pre-Shared Keys).
 A quickrun of **dtls-fuzzer** goes as follows.
 
 First we set up the SUT, which is automatically by a 'setup_sut.sh' script.
@@ -159,9 +165,17 @@ The argument file of interest is 'learn_openssl-1.1.1b_psk_rwalk_incl', since it
 We thus select it, and run the fuzzer on it.
 We additionally cap the number of tests to 200, to shorten learning time.
 Finally, for OpenSSL, LD_LIBRARY_PATH has to be set to the implementation's directory ('suts/openssl-1.1.1b/').
-The command to execute thus becomes:
+Before we run learning, we might want to execute a simple test to check that our setup is functioning.
+A good test is just completing a handshake. 
+We supply the argument file, along with a corresponding test from 'examples/tests' as parameter.
+We get:
 
-    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl -queries 200
+    >  LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_psk_rwalk_incl -test examples/tests/psk
+
+If all goes well, the server should have printed out "This is a hello message", a message we send after completing the handshake.
+Knowing our setup functions, we can now start learning by running:
+
+    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_psk_rwalk_incl -queries 200
 
 We notice that an output directory, 'output/openssl-1.1.1b_psk_rwalk_incl/' for the experiment has been created.
 We can 'ls' this directory to check the current status of the experiment (the number of hypotheses generated...).
@@ -170,7 +184,7 @@ We can 'ls' this directory to check the current status of the experiment (the nu
 
 
 ### When things go right
-If all goes well, after many hours, the output directory should contain a 'learnedModel.dot' file.
+If all goes well, after 20-30 minutes, the output directory should contain a 'learnedModel.dot' file.
 We can visualize the file using the graphviz 'dot' utility, by exporting to .pdf and opening the .pdf with our favorite .pdf viewer.
 
     > dot -Tpdf output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.dot > output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.pdf
@@ -186,7 +200,7 @@ This can be done as follows:
 We can now determine conformance of the system by checking the model against the specification...
 
 ### When things go wrong
-While 'ls'-ing the output directory we might find 'error.msg'. 
+When 'ls'-ing the output directory we might find 'error.msg'. 
 That's a sign that the experiment failed and learning terminated abruptly
 In such cases displaying the contents reveals the reason behind the failure
 
