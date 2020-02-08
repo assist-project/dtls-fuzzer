@@ -215,11 +215,11 @@ To view SUTs for which automatic setup is provided run:
 
     > bash setup_sut.sh
 
-To set up, for example, contiki-ng's tinydtls implementation run:
+To set up, for example, Contiki-NG's tinydtls implementation run:
 
     > bash setup_sut.sh ctinydtls
 
-The script will generate two folders in **dtls-fuzzer** root directory.
+The script will generate two folders in **dtls-fuzzer**'s root directory.
 
 - 'suts', where the SUT binaries are deployed
 - 'modules', where any dependencies are deployed
@@ -229,7 +229,7 @@ For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we us
 Note that the source code of the SUTs (server applications) is publicly available online, see [Scandium][scandium] and [JSSE][jsse].
 Also, automatically installing dependencies may prompt 'sudo' access.
 This is the case for GnuTLS which relies on external libraries such as nettle, or for Eclipse's TinyDTLS, which relies on autoconf.
-Finally, we do not provide automatic setup for NSS and PionDTLS due to how complicated setup for these systems is.
+Finally, we do not provide automatic setup/argument files for NSS and PionDTLS due to how complicated setup for these systems is.
 
 ### Troubleshooting
 If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) and re-running the setup script may solve the problem.
@@ -237,8 +237,8 @@ Also, in case of building failure, the source code of the implementation should 
 A workaround is to build the implementation manually.
 As long as the implementation is built, our setup should work.
 
-We hereby give an incomplete tree of dependencies. 
-Those in italics are dependencies which 'setup_sut.sh' tries to install using sudo access.
+We hereby give an incomplete tree of dependencies the various SUTs have. 
+Those in italics are dependencies which 'setup_sut.sh' tries to install using 'sudo' access.
 
 - GnuTLS:
     - *m4*  
@@ -282,7 +282,7 @@ Aside from GnuTLS, PionDTLS and JSSE, we expect learning to produce the same mod
 Timing can become an issue, causing non-determinism, followed by abrupt termination with an informative 'error.msg' file.
 In such cases, there are two knobs which can be tweaked: 
 
-1. the *response timeout* (time waited for each response before concluding that server is silent);
+1. the *response timeout* (time waited for each response before concluding that the server is silent);
 2. the *start timeout* (time waited for the server to start).
 
 These parameters can be adjusted by overwriting (likely with a higher value) the corresponding settings in the argument file:
@@ -291,16 +291,18 @@ These parameters can be adjusted by overwriting (likely with a higher value) the
 
 To avoid issues to do with timing, we suggest running experiments on a sufficiently powerful machine.
 The main cause of non-determinism is the SUT taking too long to start or to generate a response.
-This likelyhood is minimized if more computing power is provided.
+This likelihood decreases as more computing power is provided.
 
 ### Concurrent experiments and port collisions
 It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
-A simple way is via the 'disown' utility, for example:
+We can choose to launch each experiment in a separate terminal.
+Alternatively, we can launch experiments in a single terminal using the 'disown' utility:
 
-    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk > /dev/null 2>&1 & disown
+    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk 1>/dev/null 2>&1 & disown
 
-However, running more than a few (>2) places additional burden on the machine, and increases the chance of learning failure due to accidental port collision.
-In most configurations, servers are configured to listen to some hard-coded port over localhost, the configurations provided using distinct hard-coded ports. 
+However, running more than a few (>2) places additional burden on the machine.
+It also increases the chance of learning failure due to accidental port collision.
+In most configurations, servers are configured to listen to some hard-coded port over localhost, the configurations provided in 'args' using distinct hard-coded ports. 
 For JSSE and Scandium configurations, the setup is different. 
 On every test, the SUT launches a server listening to a dynamically chosen port and communicates the port over TCP sockets to **dtls-fuzzer**.
 This has the advantage of notifying **dtls-fuzzer** when the server is ready to receive packets (lacking this, **dtls-fuzzer** would have to blindly wait an arbitrary amount of time for the server to start).
@@ -320,7 +322,7 @@ Any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl
 Experiments terminate quickly (less than a day),  exercising all key exchange algorithms. 
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
 
-    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl 
+    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl -queries 5000
 
 Note, when learning OpenSSL it is necessary to point the LD_LIBRARY_PATH variable to the installation directory.
 
@@ -329,27 +331,28 @@ Any mbedtls-2.16.1 configuration can be used for the same reasons as OpenSSL.
 Experiments take more time to complete since the SUT is slower.
 Command for client certificate authentication disabled configuration using all key exchange algorithms:
 
-    > java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_all_cert_none_rwalk_incl
+    > java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_all_cert_none_rwalk_incl -queries 5000
 
 
 ### Contiki-NG TinyDTLS using PSK
 A redacted version of the model obtained for this configuration appears in the appendix.
+We can use a low test bound of 2000 since the input alphabet is small, making testing easier.
 
-    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk
+    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk -queries 2000
 
 ### WolfSSL using PSK
 For WolfSSL we provide a PSK configuration for which learning should terminate relatively quickly.
 
-    > java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_psk_rwalk
+    > java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_psk_rwalk -queries 2000
 
 
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
-The model exposes important bugs, unfortunately, the experiment is quite lengthy.
+The model exposes important bugs, unfortunately, the experiment is lengthy.
 The experiment should not be run in parallel with experiments not involving Scandium or JSSE.
 Command:
 
-    > java -jar target/dtls-fuzzer.jar @args/scandium-2.0.0/learn_scandium-2.0.0_psk_rwalk
+    > java -jar target/dtls-fuzzer.jar @args/scandium-2.0.0/learn_scandium-2.0.0_psk_rwalk -queries 2000
 
 ### JSSE 12.0.2 with authentication required 
 A redacted version of the model obtained for this configuration appears in the paper.
@@ -361,12 +364,18 @@ Command for RSA key exchange:
 
     > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl 
 
+Instead of arduous learning, we may want to simply test if a handshake can be completed in this setting without sending any certificate messages. 
+This can be done by running:
+
+    > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl -test examples/rsa
+
+
 ## Analyzing results
 Once learning is done, things to analyze in the output directory are:
-- 'statistics.txt', experiment statistics such as the total number of tests, learning time
-- 'nondet.log', logs of encountered non-deterministic behavior, if all went fine this should be empty
-- 'learnedModel.dot', the learned model (or final hypothesis) generated on successful termination,
-- 'hyp[0-9]+.dot', intermediate hypotheses
+- 'statistics.txt', experiment statistics such as the total number of tests, learning time;
+- 'nondet.log', logs of encountered non-deterministic behavior, if all went fine this should be empty;
+- 'learnedModel.dot', the learned model (or final hypothesis) generated on successful termination;
+- 'hyp[0-9]+.dot', intermediate hypotheses;
 - 'error.msg', in case something bad happened causing learning to stop. Also generated if the learning experiment times out.
 
 ### Visualizing the model
@@ -385,12 +394,12 @@ The script:
 
 1. compactifies states and input/output labels
 2. colors paths leading to handshake completion
-    - the user should then determine whether the handshakes were legal given the configuration
-3. merges 3 or more transitions connecting the same state states with same outputs but different inputs, under the 'Other' input
+    - the user should then determine whether the handshakes are legal given the configuration
+3. merges groups of 3 or more transitions connecting the same state states, and having the same outputs but different inputs, under the 'Other' input
 4. (optionally) prunes states from which a handshake can no longer be completed (particularly useful for JSSE)
 5. (optionally) positions transitions connecting the same states on a single edge
 
-(5) requires installing the custom mypydot library found in 'experiments\scripts' which requires Python 3. 
+(5) requires installing the custom mypydot Python 3 library found in 'experiments\scripts'. 
 All other steps use plain 'sed' plus the [dot-trimmer][dottrimmer] Java library. 
 A .jar for this library is included in 'experiments\scripts'.
 
@@ -423,9 +432,9 @@ Example for OpenSSL:
     > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -cmd "openssl s_server -accept 20000 -dtls1_2"
     
 With so many paraments, commands can become very long. 
-dtls-fuzzer uses JCommander to parse arguments, which can also read parameters from a file.
+**dtls-fuzzer** uses JCommander to parse arguments, which can also read parameters from a file.
 Go to 'experiments/args' for examples of arguments.
-To supply an argument file to dtls-fuzzer provide it as parameter prepended by "@".
+To supply an argument file to **dtls-fuzzer** provide it as parameter prepended by "@".
 You can also add other explicit arguments to commands (which will overwrite those in the arguments file)
 
     > java -jar target/dtls-fuzzer.jar @arg_file ...overwriting params...
@@ -438,10 +447,10 @@ Provided a directory with argument files, the tool will launch a learning proces
 
 ## Running a test suite
 Before running learning experiments, it helps to check that arguments are correctly set, particularly timing parameters.
-To that end, **dtls-attacker** can execute a custom test suite (collection of tests) on the SUT, and provide a summary of the outputs.
+To that end, **dtls-fuzzerr** can execute a custom test suite (collection of tests) on the SUT, and provide a summary of the outputs.
 This functionality can also be used when diagnosing failed learning experiments, i.e. finding out what went wrong.
 
-To run the test suite on a server using a default alphabet, you can run:
+To run the test suite on a server using the default alphabet, you can run:
 
     > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file
     
