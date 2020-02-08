@@ -226,9 +226,9 @@ The script will generate two folders in **dtls-fuzzer**'s root directory.
 
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
 For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
-Note that the source code of the SUTs (server applications) is publicly available online, see [Scandium][scandium] and [JSSE][jsse].
-Also, automatically installing dependencies may prompt 'sudo' access.
-This is the case for GnuTLS which relies on external libraries such as nettle, or for Eclipse's TinyDTLS, which relies on autoconf.
+Note that the source code of these Java SUTs (server applications) is publicly available online, see [Scandium][scandium] and [JSSE][jsse], which is also the case for [PionDTLS][piondtls].
+Automatically installing dependencies may prompt 'sudo' access.
+This happens for GnuTLS which relies on external libraries such as nettle, and for Eclipse's TinyDTLS, which relies on autoconf.
 Finally, we do not provide automatic setup/argument files for NSS and PionDTLS due to how complicated setup for these systems is.
 
 ### Troubleshooting
@@ -270,6 +270,7 @@ To start learning for an SUT using a argument file, run:
 The output folder will be stored in a generated 'output' directory.
 
 ### Parameter adaptations
+#### Test bound
 Compared to experiments in the paper, we increased the response timeout for several SUTs as an adaptation to less powerful hardware.
 To shorten learning time, we suggest decreasing the test bound of the random walk algorithm from 20000 to 5000.
 This can be done by:
@@ -279,6 +280,7 @@ This can be done by:
 This will overwrite the bound setting in the argument file. 
 Aside from GnuTLS, PionDTLS and JSSE, we expect learning to produce the same models for this lower bound.
 
+#### Timing parameters
 Timing can become an issue, causing non-determinism, followed by abrupt termination with an informative 'error.msg' file.
 In such cases, there are two knobs which can be tweaked: 
 
@@ -292,6 +294,14 @@ These parameters can be adjusted by overwriting (likely with a higher value) the
 To avoid issues to do with timing, we suggest running experiments on a sufficiently powerful machine.
 The main cause of non-determinism is the SUT taking too long to start or to generate a response.
 This likelihood decreases as more computing power is provided.
+
+#### Learning time
+We may wish to automatically terminate experiments after a certain period, particularly experiments that are not expected to ever terminate.
+Setting this period is possible via the **time limit** parameter which is assigned the maximum duration the experiment is allowed to run for.
+This duration is provided in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
+To cap execution time of an experiment to 60 minutes, we would run:
+
+    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeLimit "PT60M"
 
 ### Concurrent experiments and port collisions
 It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
@@ -348,7 +358,7 @@ For WolfSSL we provide a PSK configuration for which learning should terminate r
 ### GnuTLS 3.6.7 with client authentication disabled
 The more recent GnuTLS version we analyzed produced nice, compact models.
 Unfortunately, enabling client authentication lead to a sharp increase in the number of required tests.
-We hence run learning where authentication is disabled:
+We suggest a configuration which disables it to shorten learning time:
 
     > java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_all_cert_none_rwalk_incl -queries 2000
 
@@ -485,4 +495,5 @@ Finally, if you have the arguments file for a learning experiment, you can use t
 [graphviz]:https://www.graphviz.org
 [jsse]:https://github.com/pfg666/jsse-dtls-server
 [scandium]:https://github.com/pfg666/scandium-dtls-server
+[piondtls]:https://github.com/pfg666/pion-dtls-server
 [dottrimmer]:https://github.com/pfg666/dot-trimmer
