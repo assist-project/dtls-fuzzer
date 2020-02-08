@@ -17,7 +17,7 @@ DTLS12
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -output 
-pion_psk_ecdhe_none_rwalk_incl
+pion_ecdhe_none_rwalk_incl
 -cmd 
 "/home/pfg666/GitHub/pion-dtls-server/main/main 10002 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 DISABLED /home/pfg666/GitHub/dtls-fuzzer/experiments/keystore/rsa2048_cert.pem"
 -termCmd
