@@ -1,3 +1,10 @@
-Here we include experimental results. 
-In 'old/' we have results obtained using a version of StateVulnFinder which was adjusted for learning DTLS.
-This tool builds on this version, reusing most of the added functionality.
+This folder contains data pertaining to experiments. 
+
+- 'configs': configuration files for SUTs
+- 'keystore': key material provided in different formats 
+- 'results': experimental results
+- 'models': models generated 
+- 'scripts': some useful scripts that we used to e.g. beautify model
+- 'bugs': some of the bugs reported, ocasionally with .pcap files for reproduction
+- 'args': argument files used during experiments
+  - these files have hard-coded paths, which would have to be adjusted if the files were reused
