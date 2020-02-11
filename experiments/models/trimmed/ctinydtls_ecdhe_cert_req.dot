@@ -1,0 +1,162 @@
+digraph g {
+s0 [label="0", shape="circle"];
+s1 [label="1", shape="circle"];
+s2 [label="2", shape="circle"];
+s3 [label="3", shape="circle"];
+s4 [label="4", shape="circle"];
+s5 [label="5", shape="circle"];
+s6 [label="6", shape="circle"];
+s7 [label="7", shape="circle"];
+s8 [label="8", shape="circle"];
+s9 [label="9", shape="circle"];
+s10 [label="10", shape="circle"];
+s11 [label="11", shape="circle"];
+s12 [label="12", shape="circle"];
+s13 [label="13", shape="circle"];
+s14 [label="14", shape="circle"];
+s15 [label="15", shape="circle"];
+s16 [label="16", shape="circle"];
+s17 [label="17", shape="circle"];
+s18 [label="18", shape="circle"];
+s19 [label="19", shape="circle"];
+s20 [label="20", shape="circle"];
+s21 [label="21", shape="circle"];
+s22 [label="22", shape="circle"];
+s23 [label="23", shape="circle"];
+s24 [label="24", shape="circle"];
+s25 [label="25", shape="circle"];
+s26 [label="26", shape="circle"];
+s27 [label="27", shape="circle"];
+s28 [label="28", shape="circle"];
+s29 [label="29", shape="circle"];
+s0 -> s1  [color="deepskyblue", label="CH(ECDH) / HVR"];
+s0 -> s24  [label="CKE(ECDH) / -"];
+s0 -> s15  [label="CCS / -"];
+s0 -> s0  [label="Other / -"];
+s1 -> s2  [color="deepskyblue", label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s1 -> s21  [label="CKE(ECDH) / -"];
+s1 -> s6  [label="CCS / -"];
+s1 -> s1  [label="Other / -"];
+s2 -> s3  [label="CH(ECDH) / A(unexpected_msg)
+F / A(unexpected_msg)
+CertVer / A(unexpected_msg)"];
+s2 -> s13  [label="CKE(ECDH) / A(unexpected_msg)"];
+s2 -> s4  [label="CCS / -"];
+s2 -> s2  [label="App / -"];
+s2 -> s5  [color="deepskyblue", label="Cert(RSA) / -
+Cert(empty) / -"];
+s2 -> s10  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s3 -> s13  [label="CKE(ECDH) / -"];
+s3 -> s7  [label="CCS / -"];
+s3 -> s10  [label="A(close_notify) / -
+A(unexpected_msg) / -"];
+s3 -> s3  [label="Other / -"];
+s4 -> s9  [label="CKE(ECDH) / A(decrypt_error)"];
+s4 -> s8  [label="Other / A(decrypt_error)"];
+s5 -> s17  [color="deepskyblue", label="CKE(ECDH) / -"];
+s5 -> s4  [label="CCS / -"];
+s5 -> s5  [label="App / -"];
+s5 -> s10  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s5 -> s3  [label="Other / A(unexpected_msg)"];
+s6 -> s4  [label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s6 -> s14  [label="CKE(ECDH) / -"];
+s6 -> s6  [label="Other / -"];
+s7 -> s7  [label="Other / -"];
+s8 -> s4  [label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s8 -> s9  [label="CKE(ECDH) / -"];
+s8 -> s8  [label="Other / -"];
+s9 -> s11  [label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s9 -> s7  [label="CCS / -"];
+s9 -> s9  [label="Other / -"];
+s10 -> s2  [label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s10 -> s12  [label="CKE(ECDH) / -"];
+s10 -> s8  [label="CCS / -"];
+s10 -> s10  [label="Other / -"];
+s11 -> s7  [label="CCS / A(decrypt_error)"];
+s11 -> s9  [label="Other / A(decrypt_error)"];
+s12 -> s16  [label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s12 -> s7  [label="CCS / -"];
+s12 -> s12  [label="Other / -"];
+s13 -> s7  [label="CCS / -"];
+s13 -> s12  [label="A(close_notify) / -
+A(unexpected_msg) / -"];
+s13 -> s13  [label="Other / -"];
+s14 -> s11  [label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s14 -> s14  [label="Other / -"];
+s15 -> s6  [label="CH(ECDH) / HVR"];
+s15 -> s22  [label="CKE(ECDH) / -"];
+s15 -> s15  [label="Other / -"];
+s16 -> s19  [label="CCS / -"];
+s16 -> s16  [label="App / -"];
+s16 -> s20  [label="Cert(RSA) / -
+Cert(empty) / -"];
+s16 -> s12  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s16 -> s13  [label="Other / A(unexpected_msg)"];
+s17 -> s19  [label="CCS / -"];
+s17 -> s17  [label="App / -"];
+s17 -> s18  [color="deepskyblue", label="CertVer / -"];
+s17 -> s12  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s17 -> s13  [label="Other / A(unexpected_msg)"];
+s18 -> s23  [color="deepskyblue", label="CCS / -"];
+s18 -> s18  [label="App / -"];
+s18 -> s12  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s18 -> s13  [label="Other / A(unexpected_msg)"];
+s19 -> s7  [label="Other / A(decrypt_error)"];
+s20 -> s17  [label="CKE(ECDH) / -"];
+s20 -> s19  [label="CCS / -"];
+s20 -> s20  [label="App / -"];
+s20 -> s12  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s20 -> s13  [label="Other / A(unexpected_msg)"];
+s21 -> s16  [label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s21 -> s14  [label="CCS / -"];
+s21 -> s21  [label="Other / -"];
+s22 -> s14  [label="CH(ECDH) / HVR"];
+s22 -> s22  [label="Other / -"];
+s23 -> s19  [label="CCS / -"];
+s23 -> s25  [color="deepskyblue", label="F / CCS,F"];
+s23 -> s23  [label="App / -"];
+s23 -> s7  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s24 -> s21  [label="CH(ECDH) / HVR"];
+s24 -> s22  [label="CCS / -"];
+s24 -> s24  [label="Other / -"];
+s25 -> s26  [label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s25 -> s7  [label="CCS / -
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s25 -> s25  [label="App / App
+Other / -"];
+s26 -> s19  [label="CCS / -"];
+s26 -> s26  [label="App / -"];
+s26 -> s27  [label="Cert(RSA) / -
+Cert(empty) / -"];
+s26 -> s7  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s27 -> s28  [label="CKE(ECDH) / -"];
+s27 -> s19  [label="CCS / -"];
+s27 -> s27  [label="App / -"];
+s27 -> s7  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s28 -> s19  [label="CCS / -"];
+s28 -> s28  [label="App / -"];
+s28 -> s29  [label="CertVer / -"];
+s28 -> s7  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s29 -> s23  [label="CCS / -"];
+s29 -> s29  [label="App / -"];
+s29 -> s7  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+__start0 [height="0", label="", shape="none", width="0"];
+__start0 -> s0;
+}

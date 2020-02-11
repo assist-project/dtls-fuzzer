@@ -1,0 +1,108 @@
+digraph g {
+s0 [label="0", shape="circle"];
+s1 [label="1", shape="circle"];
+s2 [label="2", shape="circle"];
+s3 [label="3", shape="circle"];
+s4 [label="4", shape="circle"];
+s5 [label="5", shape="circle"];
+s6 [label="6", shape="circle"];
+s7 [label="7", shape="circle"];
+s8 [label="8", shape="circle"];
+s9 [label="9", shape="circle"];
+s10 [label="10", shape="circle"];
+s11 [label="11", shape="circle"];
+s12 [label="12", shape="circle"];
+s13 [label="13", shape="circle"];
+s0 -> s2  [color="deepskyblue", label="CH(ECDH) / HVR
+CH(DH) / HVR
+CH(PSK) / HVR
+CH(RSA) / HVR"];
+s0 -> s4  [label="CCS / -"];
+s0 -> s1  [label="F / A(internal_error)
+Other / A(unexpected_msg)"];
+s0 -> s0  [label="App / A(unexpected_msg)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s1 -> s4  [label="CCS / -"];
+s1 -> s1  [label="App / A(unexpected_msg)
+Other / -"];
+s2 -> s3  [color="deepskyblue", label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),SHD"];
+s2 -> s5  [color="deepskyblue", label="CH(DH) / SH,Cert(RSA),SKE(DH),SHD"];
+s2 -> s8  [color="deepskyblue", label="CH(PSK) / SH,SHD"];
+s2 -> s7  [color="deepskyblue", label="CH(RSA) / SH,Cert(RSA),SHD"];
+s2 -> s4  [label="CCS / -"];
+s2 -> s1  [label="F / A(internal_error)
+A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s3 -> s6  [color="deepskyblue", label="CKE(ECDH) / -"];
+s3 -> s1  [label="CKE(DH) / A(decode_error)
+CKE(PSK) / A(decode_error)
+CKE(RSA) / A(decode_error)
+F / A(internal_error)
+A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s3 -> s4  [label="CCS / -"];
+s4 -> s4  [label="Other / -"];
+s5 -> s1  [label="CKE(ECDH) / A(decode_error)
+F / A(internal_error)
+A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s5 -> s6  [color="deepskyblue", label="CKE(DH) / -"];
+s5 -> s9  [label="CKE(PSK) / -
+CKE(RSA) / -"];
+s5 -> s4  [label="CCS / -"];
+s6 -> s10  [color="deepskyblue", label="CCS / -"];
+s6 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s7 -> s1  [label="CKE(ECDH) / A(decode_error)
+CKE(DH) / A(decrypt_error)
+F / A(internal_error)
+A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s7 -> s9  [label="CKE(PSK) / -"];
+s7 -> s6  [color="deepskyblue", label="CKE(RSA) / -"];
+s7 -> s4  [label="CCS / -"];
+s8 -> s1  [label="CKE(ECDH) / A(decode_error)
+CKE(DH) / A(decode_error)
+CKE(RSA) / A(decode_error)
+F / A(internal_error)
+A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s8 -> s6  [color="deepskyblue", label="CKE(PSK) / -"];
+s8 -> s4  [label="CCS / -"];
+s9 -> s4  [label="CCS / -"];
+s9 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s10 -> s4  [label="CCS / -
+Other / A(unexpected_msg)"];
+s10 -> s11  [color="deepskyblue", label="F / CCS,F"];
+s10 -> s10  [label="App / -"];
+s10 -> s13  [label="A(close_notify) / -
+A(unexpected_msg) / -"];
+s11 -> s4  [label="CCS / -
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s11 -> s11  [label="F / CCS,F
+App / -"];
+s11 -> s12  [label="Other / -"];
+s12 -> s4  [label="CCS / -
+App / A(unexpected_msg)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s12 -> s12  [label="Other / -"];
+s13 -> s4  [label="CCS / -
+F / CCS,F
+Other / A(unexpected_msg)"];
+s13 -> s13  [label="App / -
+A(close_notify) / -
+A(unexpected_msg) / -"];
+__start0 [height="0", label="", shape="none", width="0"];
+__start0 -> s0;
+}

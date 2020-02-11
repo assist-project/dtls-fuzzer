@@ -1,0 +1,68 @@
+digraph g {
+node [fixedsize="true" fontsize=16]
+s0 [label="0", shape="circle"];
+s1 [label="1", shape="circle"];
+s2 [label="2", shape="circle"];
+s3 [label="3", shape="circle"];
+s4 [label="4", shape="circle"];
+s5 [label="5", shape="circle"];
+s6 [label="6", shape="circle"];
+s7 [label="7", shape="circle"];
+s8 [label="8", shape="circle"];
+s9 [label="9", shape="circle"];
+s0 -> s2  [color="red", label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),SHD"];
+s0 -> s4  [color="red", label="CH(DH) / SH,Cert(RSA),SKE(DH),SHD"];
+s0 -> s8  [color="red", label="CH(RSA) / SH,Cert(RSA),SHD"];
+s0 -> s3  [label="CCS / -"];
+s0 -> s0  [label="App / -"];
+s0 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s1 -> s1  [label="Other / Disabled"];
+s2 -> s5  [color="red", label="CKE(ECDH) / -"];
+s2 -> s1  [label="CKE(DH) / A(handshake_failure)
+CKE(RSA) / A(handshake_failure)
+A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s2 -> s3  [label="CCS / -"];
+s2 -> s2  [label="App / -"];
+s3 -> s3  [label="Other / -"];
+s4 -> s1  [label="CKE(ECDH) / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s4 -> s5  [color="red", label="CKE(DH) / -"];
+s4 -> s7  [label="CKE(RSA) / -"];
+s4 -> s3  [label="CCS / -"];
+s4 -> s4  [label="App / -"];
+s5 -> s6  [color="red", label="CCS / -"];
+s5 -> s5  [label="App / -"];
+s5 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s6 -> s3  [label="CCS / -"];
+s6 -> s9  [color="red", label="F / CCS,F"];
+s6 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s7 -> s3  [label="CCS / -"];
+s7 -> s7  [label="App / -"];
+s7 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s8 -> s7  [label="CKE(ECDH) / -
+CKE(DH) / -"];
+s8 -> s5  [color="red", label="CKE(RSA) / -"];
+s8 -> s3  [label="CCS / -"];
+s8 -> s8  [label="App / -"];
+s8 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s9 -> s3  [label="CCS / -
+A(close_notify) / -"];
+s9 -> s1  [label="A(unexpected_msg) / A(close_notify)"];
+s9 -> s9  [label="Other / -"];
+__start0 [height="0", label="", shape="none", width="0"];
+__start0 -> s0;
+}

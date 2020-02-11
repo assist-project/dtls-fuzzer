@@ -1,0 +1,133 @@
+digraph g {
+s0 [label="0", shape="circle"];
+s1 [label="1", shape="circle"];
+s2 [label="2", shape="circle"];
+s3 [label="3", shape="circle"];
+s4 [label="4", shape="circle"];
+s5 [label="5", shape="circle"];
+s6 [label="6", shape="circle"];
+s7 [label="7", shape="circle"];
+s8 [label="8", shape="circle"];
+s9 [label="9", shape="circle"];
+s10 [label="10", shape="circle"];
+s11 [label="11", shape="circle"];
+s12 [label="12", shape="circle"];
+s13 [label="13", shape="circle"];
+s14 [label="14", shape="circle"];
+s15 [label="15", shape="circle"];
+s16 [label="16", shape="circle"];
+s17 [label="17", shape="circle"];
+s18 [label="18", shape="circle"];
+s19 [label="19", shape="circle"];
+s0 -> s1  [color="deepskyblue", label="CH(ECDH) / HVR
+CH(DH) / HVR
+CH(PSK) / HVR
+CH(RSA) / HVR"];
+s0 -> s3  [label="CCS / -"];
+s0 -> s0  [label="Other / -"];
+s1 -> s7  [color="deepskyblue", label="CH(ECDH) / SH,Cert(RSA),SKE(ECDH),CertReq,SHD"];
+s1 -> s14  [color="deepskyblue", label="CH(DH) / SH,Cert(RSA),SKE(DH),CertReq,SHD"];
+s1 -> s4  [color="deepskyblue", label="CH(PSK) / SH,SHD"];
+s1 -> s2  [color="deepskyblue", label="CH(RSA) / SH,Cert(RSA),CertReq,SHD"];
+s1 -> s3  [label="CCS / -"];
+s1 -> s1  [label="Other / -"];
+s2 -> s3  [label="CCS / -"];
+s2 -> s2  [label="App / -"];
+s2 -> s10  [color="deepskyblue", label="Cert(RSA) / -"];
+s2 -> s6  [color="deepskyblue", label="Cert(empty) / -"];
+s2 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(decode_error)"];
+s3 -> s3  [label="Other / -"];
+s4 -> s1  [label="CKE(DH) / A(unknown_psk_identity)
+CKE(RSA) / A(unknown_psk_identity)
+Other / -"];
+s4 -> s5  [color="deepskyblue", label="CKE(PSK) / -"];
+s4 -> s3  [label="CCS / -"];
+s4 -> s4  [label="App / -"];
+s5 -> s11  [color="deepskyblue", label="CCS / -"];
+s5 -> s5  [label="App / -"];
+s5 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s6 -> s17  [label="CKE(ECDH) / -
+CKE(DH) / -
+CKE(PSK) / -"];
+s6 -> s5  [color="deepskyblue", label="CKE(RSA) / -"];
+s6 -> s3  [label="CCS / -"];
+s6 -> s6  [label="App / -"];
+s6 -> s1  [label="Other / -"];
+s7 -> s3  [label="CCS / -"];
+s7 -> s7  [label="App / -"];
+s7 -> s8  [color="deepskyblue", label="Cert(RSA) / -"];
+s7 -> s13  [color="deepskyblue", label="Cert(empty) / -"];
+s7 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(decode_error)"];
+s8 -> s9  [color="deepskyblue", label="CKE(ECDH) / -"];
+s8 -> s3  [label="CCS / -"];
+s8 -> s8  [label="App / -"];
+s8 -> s1  [label="Other / -"];
+s9 -> s3  [label="CCS / -"];
+s9 -> s9  [label="App / -"];
+s9 -> s5  [color="deepskyblue", label="CertVer / -"];
+s9 -> s1  [label="Other / -"];
+s10 -> s19  [label="CKE(ECDH) / -
+CKE(DH) / -
+CKE(PSK) / -"];
+s10 -> s9  [color="deepskyblue", label="CKE(RSA) / -"];
+s10 -> s3  [label="CCS / -"];
+s10 -> s10  [label="App / -"];
+s10 -> s1  [label="Other / -"];
+s11 -> s3  [label="CCS / -
+A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(decode_error)"];
+s11 -> s12  [color="deepskyblue", label="F / CCS,F"];
+s11 -> s11  [label="App / -"];
+s12 -> s12  [label="CH(ECDH) / A(no_renegotiation)
+CH(DH) / A(no_renegotiation)
+CH(PSK) / A(no_renegotiation)
+CH(RSA) / A(no_renegotiation)
+App / App
+Other / -"];
+s12 -> s3  [label="CCS / -
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s13 -> s5  [color="deepskyblue", label="CKE(ECDH) / -"];
+s13 -> s3  [label="CCS / -"];
+s13 -> s13  [label="App / -"];
+s13 -> s1  [label="Other / -"];
+s14 -> s3  [label="CCS / -"];
+s14 -> s14  [label="App / -"];
+s14 -> s15  [color="deepskyblue", label="Cert(RSA) / -"];
+s14 -> s16  [color="deepskyblue", label="Cert(empty) / -"];
+s14 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(decode_error)"];
+s15 -> s9  [color="deepskyblue", label="CKE(DH) / -"];
+s15 -> s19  [label="CKE(PSK) / -
+CKE(RSA) / -"];
+s15 -> s3  [label="CCS / -"];
+s15 -> s15  [label="App / -"];
+s15 -> s1  [label="Other / -"];
+s16 -> s5  [color="deepskyblue", label="CKE(DH) / -"];
+s16 -> s17  [label="CKE(PSK) / -
+CKE(RSA) / -"];
+s16 -> s3  [label="CCS / -"];
+s16 -> s16  [label="App / -"];
+s16 -> s1  [label="Other / -"];
+s17 -> s18  [label="CCS / -"];
+s17 -> s17  [label="App / -"];
+s17 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s18 -> s18  [label="App / -"];
+s18 -> s3  [label="Other / A(bad_record_mac)"];
+s19 -> s3  [label="CCS / -"];
+s19 -> s19  [label="App / -"];
+s19 -> s17  [label="CertVer / -"];
+s19 -> s1  [label="Other / -"];
+__start0 [height="0", label="", shape="none", width="0"];
+__start0 -> s0;
+}

@@ -1,0 +1,133 @@
+digraph g {
+node [fixedsize="true" fontsize=16]
+s0 [label="0", shape="circle"];
+s1 [label="1", shape="circle"];
+s2 [label="2", shape="circle"];
+s3 [label="3", shape="circle"];
+s4 [label="4", shape="circle"];
+s5 [label="5", shape="circle"];
+s6 [label="6", shape="circle"];
+s7 [label="7", shape="circle"];
+s8 [label="8", shape="circle"];
+s9 [label="9", shape="circle"];
+s10 [label="10", shape="circle"];
+s11 [label="11", shape="circle"];
+s12 [label="12", shape="circle"];
+s13 [label="13", shape="circle"];
+s14 [label="14", shape="circle"];
+s15 [label="15", shape="circle"];
+s16 [label="16", shape="circle"];
+s17 [label="17", shape="circle"];
+s18 [label="18", shape="circle"];
+s19 [label="19", shape="circle"];
+s20 [label="20", shape="circle"];
+s21 [label="21", shape="circle"];
+s22 [label="22", shape="circle"];
+s23 [label="23", shape="circle"];
+s24 [label="24", shape="circle"];
+s0 -> s1  [color="deepskyblue", label="CH(PSK) / HVR"];
+s0 -> s18  [label="CKE(PSK) / -"];
+s0 -> s12  [color="red" label="CCS / -"];
+s0 -> s0  [label="Other / -"];
+s1 -> s2  [color="deepskyblue", label="CH(PSK) / SH,SHD"];
+s1 -> s19  [label="CKE(PSK) / -"];
+s1 -> s5  [label="CCS / -"];
+s1 -> s1  [label="Other / -"];
+s2 -> s3  [label="CH(PSK) / A(unexpected_msg)
+F / A(unexpected_msg)"];
+s2 -> s13  [color="deepskyblue", label="CKE(PSK) / -"];
+s2 -> s4  [label="CCS / -"];
+s2 -> s2  [label="App / -"];
+s2 -> s10  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s3 -> s3  [label="CH(PSK) / -
+F / -
+App / -"];
+s3 -> s15  [label="CKE(PSK) / -"];
+s3 -> s9  [label="CCS / -"];
+s3 -> s10  [label="A(close_notify) / -
+A(unexpected_msg) / -"];
+s4 -> s8  [label="CKE(PSK) / A(decrypt_error)"];
+s4 -> s16  [label="Other / A(decrypt_error)"];
+s5 -> s4  [color="red" label="CH(PSK) / SH,SHD"];
+s5 -> s6  [label="CKE(PSK) / -"];
+s5 -> s5  [label="Other / -"];
+s6 -> s7  [label="CH(PSK) / SH,SHD"];
+s6 -> s6  [label="Other / -"];
+s7 -> s9  [label="CCS / A(decrypt_error)"];
+s7 -> s8  [label="Other / A(decrypt_error)"];
+s8 -> s7  [label="CH(PSK) / SH,SHD"];
+s8 -> s9  [label="CCS / -"];
+s8 -> s8  [label="Other / -"];
+s9 -> s9  [label="Other / -"];
+s10 -> s2  [label="CH(PSK) / SH,SHD"];
+s10 -> s11  [label="CKE(PSK) / -"];
+s10 -> s16  [label="CCS / -"];
+s10 -> s10  [label="Other / -"];
+s11 -> s14  [label="CH(PSK) / SH,SHD"];
+s11 -> s9  [label="CCS / -"];
+s11 -> s11  [label="Other / -"];
+s12 -> s5  [color="red" label="CH(PSK) / HVR"];
+s12 -> s17  [label="CKE(PSK) / -"];
+s12 -> s12  [label="Other / -"];
+s13 -> s15  [label="CH(PSK) / A(unexpected_msg)
+CKE(PSK) / A(unexpected_msg)
+F / A(unexpected_msg)"];
+s13 -> s21  [color="deepskyblue", label="CCS / -"];
+s13 -> s13  [label="App / -"];
+s13 -> s11  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s14 -> s15  [label="CH(PSK) / A(unexpected_msg)
+F / A(unexpected_msg)"];
+s14 -> s13  [label="CKE(PSK) / -"];
+s14 -> s20  [label="CCS / -"];
+s14 -> s14  [label="App / -"];
+s14 -> s11  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s15 -> s9  [label="CCS / -"];
+s15 -> s11  [label="A(close_notify) / -
+A(unexpected_msg) / -"];
+s15 -> s15  [label="Other / -"];
+s16 -> s4  [label="CH(PSK) / SH,SHD"];
+s16 -> s8  [label="CKE(PSK) / -"];
+s16 -> s16  [label="Other / -"];
+s17 -> s6  [label="CH(PSK) / HVR"];
+s17 -> s17  [label="Other / -"];
+s18 -> s19  [label="CH(PSK) / HVR"];
+s18 -> s17  [label="CCS / -"];
+s18 -> s18  [label="Other / -"];
+s19 -> s14  [label="CH(PSK) / SH,SHD"];
+s19 -> s6  [label="CCS / -"];
+s19 -> s19  [label="Other / -"];
+s20 -> s9  [label="Other / A(decrypt_error)"];
+s21 -> s9  [label="CH(PSK) / A(unexpected_msg)
+CKE(PSK) / A(unexpected_msg)
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s21 -> s20  [label="CCS / -"];
+s21 -> s22  [color="deepskyblue", label="F / CCS,F"];
+s21 -> s21  [label="App / -"];
+s22 -> s23  [color="red" style="dashed" label="CH(PSK) / SH,SHD"];
+s22 -> s22  [label="CKE(PSK) / -
+F / -
+App / App"];
+s22 -> s9  [label="CCS / -
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s23 -> s9  [label="CH(PSK) / A(unexpected_msg)
+F / A(unexpected_msg)
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s23 -> s24  [color="red" style="dashed" label="CKE(PSK) / -"];
+s23 -> s20  [label="CCS / -"];
+s23 -> s23  [label="App / -"];
+s24 -> s9  [label="CH(PSK) / A(unexpected_msg)
+CKE(PSK) / A(unexpected_msg)
+F / A(unexpected_msg)
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s24 -> s21  [color="red" style="dashed" label="CCS / -"];
+s24 -> s24  [label="App / -"];
+__start0 [height="0", label="", shape="none", width="0"];
+__start0 -> s0;
+}

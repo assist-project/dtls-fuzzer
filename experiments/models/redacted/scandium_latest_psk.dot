@@ -1,0 +1,89 @@
+digraph g {
+node [fixedsize="true" fontsize=16]
+s0 [label="0", shape="circle"];
+s1 [label="1", shape="circle"];
+s2 [label="2", shape="circle"];
+s3 [label="3", shape="circle"];
+s4 [label="4", shape="circle"];
+s5 [label="5", shape="circle"];
+s6 [label="6", shape="circle"];
+s7 [label="7", shape="circle"];
+s8 [label="8", shape="circle"];
+s9 [label="9", shape="circle"];
+s10 [label="10", shape="circle"];
+s11 [label="11", shape="circle"];
+s12 [label="12", shape="circle"];
+s0 -> s2  [color="deepskyblue", label="CH(PSK) / HVR"];
+s0 -> s1  [label="CCS / -"];
+s0 -> s0  [label="Other / -"];
+s1 -> s1  [label="Other / -"];
+s2 -> s3  [color="deepskyblue", label="CH(PSK) / SH,SHD"];
+s2 -> s1  [label="CCS / -"];
+s2 -> s2  [label="Other / -"];
+s3 -> s7  [label="CH(PSK) / -"];
+s3 -> s4  [color="deepskyblue", label="CKE(PSK) / -"];
+s3 -> s1  [label="CCS / -"];
+s3 -> s2  [label="F / A(internal_error)
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s3 -> s3  [label="App / -"];
+s4 -> s8  [label="CH(PSK) / -"];
+s4 -> s2  [label="CKE(PSK) / A(internal_error)
+F / A(internal_error)
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s4 -> s5  [color="deepskyblue", label="CCS / -"];
+s4 -> s4  [label="App / -"];
+s5 -> s1  [label="CH(PSK) / A(internal_error)
+CKE(PSK) / A(internal_error)
+CCS / A(internal_error)
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s5 -> s6  [color="deepskyblue", label="F / CCS,F"];
+s5 -> s12  [label="App / -"];
+s6 -> s6  [label="CH(PSK) / A(no_renegotiation)
+CKE(PSK) / -
+F / -"];
+s6 -> s1  [label="CCS / A(internal_error)
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s6 -> s11  [label="App / App"];
+s7 -> s1  [label="CCS / -"];
+s7 -> s2  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s7 -> s7  [label="Other / -"];
+s8 -> s8  [label="CH(PSK) / -
+App / -"];
+s8 -> s9  [label="CKE(PSK) / -
+F / -"];
+s8 -> s10  [label="CCS / -"];
+s8 -> s2  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s9 -> s1  [label="CCS / A(handshake_failure)"];
+s9 -> s2  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s9 -> s9  [label="Other / -"];
+s10 -> s1  [label="CH(PSK) / A(internal_error)
+CCS / A(internal_error)
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s10 -> s10  [label="CKE(PSK) / -
+F / -
+App / -"];
+s11 -> s11  [label="CH(PSK) / A(no_renegotiation)
+CKE(PSK) / -
+F / -
+App / App"];
+s11 -> s1  [label="CCS / -
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s12 -> s1  [label="CH(PSK) / A(internal_error)
+CKE(PSK) / A(internal_error)
+CCS / A(internal_error)
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s12 -> s11  [label="F / CCS,F,App"];
+s12 -> s12  [label="App / -"];
+__start0 [height="0", label="", shape="none", width="0"];
+__start0 -> s0;
+}
