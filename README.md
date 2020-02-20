@@ -134,7 +134,7 @@ To finish, we make that folder our current directory.
     > cd ~/dtls-fuzzer
 
 ## Installing dtls-fuzzer
-We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and TLS-Attacker 3.0b.
+We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and **TLS-Attacker** 3.0b.
 We then install the tool itself.
 The resulting commands on a POSIX system will be:
 
@@ -361,6 +361,7 @@ Unfortunately, enabling client authentication lead to a sharp increase in the nu
 We suggest a configuration which disables it to shorten learning time:
 
     > java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_all_cert_none_rwalk_incl -queries 2000
+
 
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
