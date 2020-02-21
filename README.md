@@ -321,7 +321,7 @@ To run **dtls-fuzzer** with a specific configuration file, run:
 'experiments/configs' contains configuration files used in learning experiments.
 A few SUTs have specific needs (TinyDTLS uses raw keys for example), hence they require tailored configuration files (which typically, bear the SUT's name, e.g. 'tinydtls.config').
 
-** Retransmission inclusion ** determines whether retransmissions are included in the output.
+**Retransmission inclusion** determines whether retransmissions are included in the output.
 Enabling this option is preferred provided the SUT does not generate timeout-triggered retransmissions, which will lead to non-determinism, often resulting in learning failure.
 Disabling this option excludes from outputs/discards retransmissions, making learning more reliable at the expense of less informative models.
 Information is lost because also discarded are retransmissions which are input-triggered and which do not cause non-determinism.
@@ -371,21 +371,21 @@ These can appear as outputs at different points during test execution, causing n
 Preventing non-determinism in this case is synonimous to eliminating timeout-triggered retransmissions.
 So what are ways to do this?
 
-1. Exclude retransmissions: This assumes retransmissions weren't initially excluded. For most SUTs, this is done by supplying 'experiments/configs/exclude_oo.config" as argument to **-sulConfig**. It does come at the cost of less informative models
-2. Edit SUT program: This involves editing the SUT code so that timeout-triggered retransmissions are not generated or are delayed long enough so they don't occur during test execution.
-3. Lower response timeout: Doing so might help tests finish before the retransmission is received. Care must be taken (see other cause).
-4. Do nothing: Analyze behavior based on the last generated hypothesis.
+1. **Exclude retransmissions** This assumes retransmissions weren't initially excluded. For most SUTs, this is done by supplying 'experiments/configs/exclude_oo.config" as argument to **-sulConfig**. It does come at the cost of less informative models
+2. **Edit SUT program** This involves editing the SUT code so that timeout-triggered retransmissions are not generated or are delayed long enough so they don't occur during test execution.
+3. **Lower response timeout** Doing so might help tests finish before the retransmission is received. Care must be taken (see other cause).
+4. **Do nothing** Analyze behavior based on the last generated hypothesis.
 
 ##### Timeout parameter values are too low
 Setting the start and/or response timeout to low values may cause non-determinism.
 The response timeout should be long enough for the fuzzer to receive an output from the SUT if such an output is generated.
 Similarly, the start timeout should be long enough that after it, the SUT is ready to process packets.
-Increasing these values provides the remedy.
+**Increasing these values** provides the remedy.
 
 ##### Port collisions
 This is prevelant when running multiple experiments at the time.
 It is particularly insidious since the non-determinism it causes is not easily reproduced.
-The solution is to run fewer experiments at a time.
+The solution is to **execute fewer experiments in parallel**.
 
 ## Suggested configurations
 We suggest the following configurations for which automatic building is reliable, learning is faster or interesting bugs have been found.
