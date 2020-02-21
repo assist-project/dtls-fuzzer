@@ -224,12 +224,26 @@ The script will generate two folders in **dtls-fuzzer**'s root directory.
 - 'suts', where the SUT binaries are deployed
 - 'modules', where any dependencies are deployed
 
+### Limitations
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
 For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Note that the source code of these Java SUTs (server applications) is publicly available online, see [Scandium][scandium] and [JSSE][jsse], which is also the case for [PionDTLS][piondtls].
 Automatically installing dependencies may prompt 'sudo' access.
 This happens for GnuTLS which relies on external libraries such as nettle, and for Eclipse's TinyDTLS, which relies on autoconf.
 Finally, we do not provide automatic setup/argument files for NSS and PionDTLS due to how complicated setup for these systems is.
+
+### Setting up unsupported SUT
+If automatic deployment for the SUT is not provided, assuming the vendor is included (OpenSSL, GnuTLS...), a simple workaround is adjusting corresponding SUT URL download variable in 'prepare_sut.sh', which points to the URL the SUT is downloaded from. 
+This URL can point to an archive or a repository, in which case, there should also be an associated COMMIT variable.
+
+For OpenSSL (and most other vendors) the URL variable is $OPENSSL_ARCH_URL. 
+This should be adjusted to the download URL of the OpenSSL version we want tested (we call this, the *URL-adjusted version*).
+Nothing else needs to be done.
+
+Note, the SUT will be selected by supplying the same string as before the edit, which now may contain an inconsistent version (say 1.1.1b, the original version, instead of 1.1.1d, the URL-adjusted version). 
+The output folder and SUT deployment folder will also have names inconsistent with the URL-adjusted version.
+What is important is that the experimental results are for the URL-adjusted version.
+It is a makeshift fix, but it works.
 
 ### Troubleshooting
 If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) and re-running the setup script may solve the problem.
