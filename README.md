@@ -363,31 +363,31 @@ Suppose you run an experiment, and the output summarizing the experiment contain
 What can you do to fix it?
 
 By far the most common reason for experimental failure is **non-determinism**, meaning, for a given sequence of inputs, the SUT can generate different responses/sequences of outputs.
-Non-determinism can be confirmed by checking for suggestive messages the content of 'error.msg', a file generated whenever the experiment is abruptly terminated.
-If confirmed, we should first zero in on the non-determinism causing test.
-The file should give us the sequence of inputs leading to failure. 
+Non-determinism can be confirmed by checking for suggestive messages ((i.e. "non-determinism detected") the content of 'error.msg', a file generated whenever the experiment is abruptly terminated.
+If confirmed, we should first zero in on the non-determinism-causing test.
 
+The 'error.msg' file should give us the sequence of inputs leading to failure. 
 We can re-run these inputs using the test runner functionality. 
-This is done by copying the space-separated input sequence to a file (say 'nodet.test'), and executing it by supplying the file to the test runner.
+This is done by copying the space-separated input sequence to a file (say 'nondet.test'), and executing it by supplying the file to the test runner.
 For non-determinism to show up, we run the sequence a number of times (say 10), number configurable by the **-times** option.
 We thus would run:
 
     > java -jar target/dtls-fuzzer.jar @args_file -test nondet.test -times 10
 
 The test runner will display all distinct results.
-If we get more than one distinct result, we know we have a non-determinism.
-With the above command we can also determine whether we have found a solution, in which case, only one distinct result is generated.
+If we get more than one distinct result, we know we have non-determinism.
+With the above command we can also determine whether we have fixed the problem, in which case only one distinct result should be generated.
 
 Causes for non-determinism are many, we hereby discuss the most common. 
 
 ##### Timeout-triggered retransmissions appearing as outputs
 These can appear as outputs at different points during test execution, causing non-determinism to occur.
-Preventing non-determinism in this case is synonimous to eliminating timeout-triggered retransmissions.
+Preventing non-determinism in this case is synonymous to eliminating timeout-triggered retransmissions.
 So what are ways to do this?
 
-1. **Exclude retransmissions** This assumes retransmissions weren't initially excluded. For most SUTs, this is done by supplying 'experiments/configs/exclude_oo.config" as argument to **-sulConfig**. It does come at the cost of less informative models
+1. **Exclude retransmissions** This assumes retransmissions weren't initially excluded. For most SUTs, this is done by supplying 'experiments/configs/exclude_oo.config" as argument to **-sulConfig**. It does come at the cost of less informative models, however, since the fuzzer will also discard input-triggered retransmissions.
 2. **Edit SUT program** This involves editing the SUT code so that timeout-triggered retransmissions are not generated or are delayed long enough so they don't occur during test execution.
-3. **Lower response timeout** Doing so might help tests finish before the retransmission is received. Care must be taken (see other cause).
+3. **Lower response timeout** Doing so might help tests finish before the retransmission is received. Care must be taken to prevent non-determinism by lowering too much (see next cause).
 4. **Do nothing** Analyze behavior based on the last generated hypothesis.
 
 ##### Timeout parameter values are too low
@@ -398,7 +398,7 @@ Similarly, the start timeout should be long enough that after it, the SUT is rea
 
 ##### Port collisions
 This is prevelant when running multiple experiments at the time.
-It is particularly insidious since the non-determinism it causes is not easily reproduced.
+It is particularly insidious since the non-determinism it causes cannot be easily reproduced.
 The solution is to **execute fewer experiments in parallel**.
 
 ## Suggested configurations
