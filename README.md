@@ -224,12 +224,26 @@ The script will generate two folders in **dtls-fuzzer**'s root directory.
 - 'suts', where the SUT binaries are deployed
 - 'modules', where any dependencies are deployed
 
+### Limitations
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
 For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Note that the source code of these Java SUTs (server applications) is publicly available online, see [Scandium][scandium] and [JSSE][jsse], which is also the case for [PionDTLS][piondtls].
 Automatically installing dependencies may prompt 'sudo' access.
 This happens for GnuTLS which relies on external libraries such as nettle, and for Eclipse's TinyDTLS, which relies on autoconf.
 Finally, we do not provide automatic setup/argument files for NSS and PionDTLS due to how complicated setup for these systems is.
+
+### Setting up unsupported SUT
+If automatic deployment for the SUT is not provided, assuming the vendor is included (OpenSSL, GnuTLS...), a simple workaround is adjusting corresponding SUT URL download variable in 'prepare_sut.sh', which points to the URL the SUT is downloaded from. 
+This URL can point to an archive or a repository, in which case, there should also be an associated COMMIT variable.
+
+For OpenSSL (and most other vendors) the URL variable is $OPENSSL_ARCH_URL. 
+This should be adjusted to the download URL of the OpenSSL version we want tested (we call this, the *URL-adjusted version*).
+Nothing else needs to be done.
+
+Note, the SUT will be selected by supplying the same string as before the edit, which now may contain an inconsistent version (say 1.1.1b, the original version, instead of 1.1.1d, the URL-adjusted version). 
+The output folder and SUT deployment folder will also have names inconsistent with the URL-adjusted version.
+What is important is that the experimental results are for the URL-adjusted version.
+It is a makeshift fix, but it works.
 
 ### Troubleshooting
 If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) and re-running the setup script may solve the problem.
@@ -297,11 +311,36 @@ This likelihood decreases as more computing power is provided.
 
 #### Learning time
 We may wish to automatically terminate experiments after a certain period, particularly experiments that are not expected to ever terminate.
-Setting this period is possible via the **time limit** parameter which is assigned the maximum duration the experiment is allowed to run for.
+Setting this period is possible via the *time limit* parameter (**-time**) which is assigned the maximum duration the experiment is allowed to run for.
 This duration is provided in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
 To cap execution time of an experiment to 60 minutes, we would run:
 
     > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeLimit "PT60M"
+
+#### TLS-Attacker configuration
+**dtls-fuzzer** relies on **TLS-Attacker** to generate/parse messages, and is therefore affected by its configuration. 
+Configuring **TLS-Attacker** is done via the **-sulConfig** option, which takes as value a path to a **TLS-Attacker** configuration file.
+This file allows a user to adjust important settings such:
+- default keys, passwords, supported cipher suites and algorithms
+    - which ideally should be correspond/be compatible those use used by the SUT
+- retransmission inclusion/exclusion
+    - important in addressing non-determinism
+- extensions 
+    - heartblead, renegotiation, extended pre-master secret...
+
+To run **dtls-fuzzer** with a specific configuration file, run:
+
+    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -sulConfig path_to_config
+ 
+'experiments/configs' contains configuration files used in learning experiments.
+A few SUTs have specific needs (TinyDTLS uses raw keys for example), hence they require tailored configuration files (which typically, bear the SUT's name, e.g. 'tinydtls.config').
+
+**Retransmission inclusion** determines whether retransmissions are included in the output.
+Enabling this option is preferred provided the SUT does not generate timeout-triggered retransmissions, which will lead to non-determinism, often resulting in learning failure.
+Disabling this option excludes from outputs/discards retransmissions, making learning more reliable at the expense of less informative models.
+Information is lost because also discarded are retransmissions which are input-triggered and which do not cause non-determinism.
+
+'include_oo.config' and 'exclude_oo.config' are standard configuration files, usable with most SUTs, with retransmission inclusion enabled and disabled, respectively. 
 
 ### Concurrent experiments and port collisions
 It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
@@ -319,6 +358,48 @@ This has the advantage of notifying **dtls-fuzzer** when the server is ready to 
 The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein a server thread has recently been stopped and a new thread has not been started yet (meaning the hard-coded port could be used in dynamic allocation).
 To avoid this form of collision, we advise running Scandium and JSSE experiments separately from all others.
 
+### Troubleshooting non-determinism
+Suppose you run an experiment, and the output summarizing the experiment contains the string "Learning successful: false".
+What can you do to fix it?
+
+By far the most common reason for experimental failure is **non-determinism**, meaning, for a given sequence of inputs, the SUT can generate different responses/sequences of outputs.
+Non-determinism can be confirmed by checking for suggestive messages the content of 'error.msg', a file generated whenever the experiment is abruptly terminated.
+If confirmed, we should first zero in on the non-determinism causing test.
+The file should give us the sequence of inputs leading to failure. 
+
+We can re-run these inputs using the test runner functionality. 
+This is done by copying the space-separated input sequence to a file (say 'nodet.test'), and executing it by supplying the file to the test runner.
+For non-determinism to show up, we run the sequence a number of times (say 10), number configurable by the **-times** option.
+We thus would run:
+
+    > java -jar target/dtls-fuzzer.jar @args_file -test nondet.test -times 10
+
+The test runner will display all distinct results.
+If we get more than one distinct result, we know we have a non-determinism.
+With the above command we can also determine whether we have found a solution, in which case, only one distinct result is generated.
+
+Causes for non-determinism are many, we hereby discuss the most common. 
+
+##### Timeout-triggered retransmissions appearing as outputs
+These can appear as outputs at different points during test execution, causing non-determinism to occur.
+Preventing non-determinism in this case is synonimous to eliminating timeout-triggered retransmissions.
+So what are ways to do this?
+
+1. **Exclude retransmissions** This assumes retransmissions weren't initially excluded. For most SUTs, this is done by supplying 'experiments/configs/exclude_oo.config" as argument to **-sulConfig**. It does come at the cost of less informative models
+2. **Edit SUT program** This involves editing the SUT code so that timeout-triggered retransmissions are not generated or are delayed long enough so they don't occur during test execution.
+3. **Lower response timeout** Doing so might help tests finish before the retransmission is received. Care must be taken (see other cause).
+4. **Do nothing** Analyze behavior based on the last generated hypothesis.
+
+##### Timeout parameter values are too low
+Setting the start and/or response timeout to low values may cause non-determinism.
+The response timeout should be long enough for the fuzzer to receive an output from the SUT if such an output is generated.
+Similarly, the start timeout should be long enough that after it, the SUT is ready to process packets.
+**Increasing these values** provides the remedy.
+
+##### Port collisions
+This is prevelant when running multiple experiments at the time.
+It is particularly insidious since the non-determinism it causes is not easily reproduced.
+The solution is to **execute fewer experiments in parallel**.
 
 ## Suggested configurations
 We suggest the following configurations for which automatic building is reliable, learning is faster or interesting bugs have been found.
