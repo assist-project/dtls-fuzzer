@@ -52,7 +52,7 @@ public class LearningConfig {
 
 	@Parameter(names = "-cacheTests", description = "Cache tests, which increases the memory footprint but improves performance. It also renders useless most forms of non-determinism sanitization")
 	private boolean cacheTests = false;
-	
+
 	@Parameter(names = "-dontCacheTests", description = "Deprecated parameter with no effect, kept for backwards compatibility. Use -cacheTests.")
 	private boolean dontCacheTests = false;
 

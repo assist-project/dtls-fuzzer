@@ -66,28 +66,27 @@ public class SulDelegate extends ClientDelegate {
 
 	// so we don't replaceAll each time
 	private Map<String, String> resolutionCache = new HashMap<>();
-	
+
 	public SulDelegate() {
 		super();
 	}
-	
-	
-	
+
 	/*
-	 * Replaces instances of ${FUZZER_DIR} in strings 
+	 * Replaces instances of ${FUZZER_DIR} in strings
 	 */
 	private String resolveHomeTemplate(String str) {
-		if (str == null || !str.contains(FUZZER_DIR)) 
+		if (str == null || !str.contains(FUZZER_DIR))
 			return str;
-		
+
 		if (resolutionCache.containsKey(str))
 			return resolutionCache.get(str);
-		
+
 		String homeVal = System.getProperty(FUZZER_DIR);
 		if (homeVal == null)
 			homeVal = System.getProperty("user.dir");
-		
-		String resolvedStr = str.replaceAll("\\$\\{"+FUZZER_DIR+"\\}", homeVal);
+
+		String resolvedStr = str.replaceAll("\\$\\{" + FUZZER_DIR + "\\}",
+				homeVal);
 		resolutionCache.put(str, resolvedStr);
 		return resolvedStr;
 	}

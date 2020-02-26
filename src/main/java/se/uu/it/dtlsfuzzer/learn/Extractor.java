@@ -44,10 +44,14 @@ import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 
 /**
- * Taken/adapted from StateVulnFinder tool.
+ * 
+ * Class utilizing model learning to generate models for a given DTLS server
+ * implementations.
+ *
  */
 public class Extractor {
 
+	// Names of some generated output files
 	public static final String LEARNED_MODEL_FILENAME = "learnedModel.dot";
 	public static final String STATISTICS_FILENAME = "statistics.txt";
 	public static final String SUL_CONFIG_FILENAME = "sul.config";
@@ -84,10 +88,14 @@ public class Extractor {
 				new BasicInputExecutor());
 		SUL<TlsInput, TlsOutput> tlsSystemUnderTest = actualTlsSul;
 
+		// setting up wrapper which launches the SUT given a command
 		if (fuzzerConfig.getSulDelegate().getCommand() != null) {
 			tlsSystemUnderTest = new TlsProcessWrapper(tlsSystemUnderTest,
 					fuzzerConfig.getSulDelegate());
 		}
+
+		// setting up wrapper which resets the SUT by delivering 'reset' strings
+		// to a given address
 		if (fuzzerConfig.getSulDelegate().getResetPort() != null) {
 			ResettingWrapper<TlsInput, TlsOutput> resetWrapper = new ResettingWrapper<TlsInput, TlsOutput>(
 					tlsSystemUnderTest, fuzzerConfig.getSulDelegate(),
@@ -95,28 +103,37 @@ public class Extractor {
 			actualTlsSul.setDynamicPortProvider(resetWrapper);
 			tlsSystemUnderTest = resetWrapper;
 		}
+
+		// setting up wrapper which terminates learning after a given amount of
+		// time has passed
 		if (fuzzerConfig.getLearningConfig().getTimeLimit() != null) {
 			tlsSystemUnderTest = new TimeoutWrapper<TlsInput, TlsOutput>(
 					tlsSystemUnderTest, fuzzerConfig.getLearningConfig()
 							.getTimeLimit());
 		}
+
+		// setting up wrapper which speeds up test execution, by providing quick
+		// responses to inputs sent after the SUT is no longer alive
 		tlsSystemUnderTest = new IsAliveWrapper(tlsSystemUnderTest);
 
+		// setting up counter wrappers for inputs (a.k.a. symbols) and resets
 		SymbolCounterSUL<TlsInput, TlsOutput> symbolCounterSul = new SymbolCounterSUL<>(
 				"symbol counter", tlsSystemUnderTest);
 		ResetCounterSUL<TlsInput, TlsOutput> resetCounterSul = new ResetCounterSUL<>(
 				"reset counter", symbolCounterSul);
 
+		// setting up statistics tracker which does just that
 		StatisticsTracker tracker = new StatisticsTracker(
 				symbolCounterSul.getStatisticalData(),
 				resetCounterSul.getStatisticalData());
 		tlsSystemUnderTest = resetCounterSul;
 
+		// setting up SULOracle wrapper, which provides a generic API for asking
+		// queries
 		MealyMembershipOracle<TlsInput, TlsOutput> learningSulOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSystemUnderTest);
 
-		// TODO the LOGGER instances should handle this, instead of us passing
-		// non det writers as arguments.
+		// setting up file we log non-determinism occurrences to
 		FileWriter nonDetWriter = null;
 		try {
 			nonDetWriter = new FileWriter(new File(outputFolder,
@@ -126,6 +143,7 @@ public class Extractor {
 					"Could not create non-determinism file writer");
 		}
 
+		// setting up majority-vote-enabled execution oracle
 		if (fuzzerConfig.getLearningConfig().getRunsPerMembershipQuery() > 1) {
 			learningSulOracle = new MultipleRunsSULOracle<TlsInput, TlsOutput>(
 					fuzzerConfig.getLearningConfig()
@@ -136,17 +154,19 @@ public class Extractor {
 		// the cache is an observation tree
 		ObservationTree<TlsInput, TlsOutput> cache = new ObservationTree<>();
 
-		// a SUL oracle which uses the cache to check for non-determinism
+		// setting up a SUL oracle which uses the cache to check for
+		// non-determinism
 		// and re-runs queries if non-det is detected
 		learningSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(
 				learningSulOracle, cache, fuzzerConfig.getLearningConfig()
 						.getMembershipQueryRetries(), true, nonDetWriter);
 
 		// we are adding a cache so that executions of same inputs aren't
-		// repeated
+		// repeated. The cache is updated with new observations.
 		learningSulOracle = new CachingSULOracle<TlsInput, TlsOutput>(
 				learningSulOracle, cache, false, TlsOutput.socketClosed());
 
+		// setting up file for logging queries
 		if (fuzzerConfig.getLearningConfig().getQueryFile() != null) {
 			FileWriter queryWriter = null;
 			try {
@@ -179,10 +199,14 @@ public class Extractor {
 					nonDetWriter);
 		}
 
+		// we use a cache also during testing, however, updating the cache with
+		// new observations is not done by default
+		// and is enabled by a command-line option
 		testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle,
 				cache, !fuzzerConfig.getLearningConfig().isCacheTests(),
 				TlsOutput.socketClosed());
 
+		// building equivalence oracle
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory
 				.loadTester(fuzzerConfig.getLearningConfig(),
 						tlsSystemUnderTest, testOracle, alphabet);
@@ -236,7 +260,7 @@ public class Extractor {
 			}
 		}
 
-		// building results:
+		// building results
 		StateMachine stateMachine = new StateMachine(hypothesis, alphabet);
 		tracker.finishedLearning(stateMachine, success);
 		Statistics statistics = tracker.generateStatistics();
@@ -253,11 +277,6 @@ public class Extractor {
 			serializeHypothesis(stateMachine, outputFolder,
 					LEARNED_MODEL_FILENAME, true, false);
 
-			// we disable this feature for now, as models are too large for it
-			// serializeHypothesis(stateMachine, outputFolder,
-			// LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
-			// false, true);
-
 			extractorResult.setLearnedModelFile(new File(outputFolder,
 					LEARNED_MODEL_FILENAME));
 		}
@@ -271,6 +290,10 @@ public class Extractor {
 		return extractorResult;
 	}
 
+	/*
+	 * copies input files necessary for experiment reproduction to output
+	 * directory
+	 */
 	private void copyInputsToOutputFolder(File outputFolder) {
 		try {
 			Files.copy(AlphabetFactory.getAlphabetFile(fuzzerConfig), new File(
@@ -298,6 +321,9 @@ public class Extractor {
 		}
 	}
 
+	/*
+	 * dumps input stream contents to a file
+	 */
 	private void dumpToFile(InputStream is, File outputFile) throws IOException {
 		InputStream inputStream = fuzzerConfig.getSulDelegate()
 				.getSulConfigInputStream();
@@ -311,6 +337,9 @@ public class Extractor {
 		}
 	}
 
+	/*
+	 * exports hypothesis to a .dot file
+	 */
 	private void serializeHypothesis(StateMachine hypothesis, File folder,
 			String name, boolean genPdf, boolean fullOutput) {
 		File graphFile = new File(folder, name);

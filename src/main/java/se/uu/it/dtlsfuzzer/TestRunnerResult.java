@@ -5,7 +5,8 @@ import java.util.Map;
 import net.automatalib.words.Word;
 
 /**
- * Result for a single test
+ * Result for a single test comprising the sequence of inputs and a summary of
+ * the sequences of outputs generated.
  */
 public class TestRunnerResult<I, O> {
 	private Word<I> inputWord;

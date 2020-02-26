@@ -11,7 +11,6 @@ public class DtlsFuzzerConfig {
 			+ "If a debug test is executed (via -test), the test will be run both on the system and on the model.")
 	private String specification = null;
 
-
 	@Parameter(names = "-alphabet", required = false, description = "An .xml file defining the input alphabet. "
 			+ "The alphabet is used to interpret inputs from a given specification, as well as to learn. "
 			+ "Each input in the alphabet has a name under which it appears in the specification."
@@ -53,7 +52,6 @@ public class DtlsFuzzerConfig {
 	public LearningConfig getLearningConfig() {
 		return learningConfig;
 	}
-
 
 	public TestRunnerConfig getTestRunnerConfig() {
 		return testRunnerConfig;

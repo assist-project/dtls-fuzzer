@@ -41,13 +41,15 @@ public class TestParser {
 		}
 	}
 
-	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH) throws IOException {
+	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH)
+			throws IOException {
 		List<String> inputStrings = readTestStrings(PATH);
 		Word<TlsInput> test = readTest(alphabet, inputStrings, true);
 		return test;
 	}
 
-	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, List<String> testInputStrings, boolean throwOnMissing) {
+	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet,
+			List<String> testInputStrings, boolean throwOnMissing) {
 		Map<String, TlsInput> inputs = new LinkedHashMap<>();
 		alphabet.stream().forEach(i -> inputs.put(i.toString(), i));
 		Word<TlsInput> inputWord = Word.epsilon();
@@ -55,9 +57,11 @@ public class TestParser {
 			inputString = inputString.trim();
 			if (!inputs.containsKey(inputString)) {
 				if (throwOnMissing)
-					throw new RuntimeException("Input is missing from the alphabet " + inputString);
+					throw new RuntimeException(
+							"Input is missing from the alphabet " + inputString);
 				else {
-					LOGGER.warn("Input is missing from the alphabet " + inputString);
+					LOGGER.warn("Input is missing from the alphabet "
+							+ inputString);
 					return null;
 				}
 			}
@@ -68,15 +72,18 @@ public class TestParser {
 	}
 
 	/**
-	 * Reads reset-seperated tests
+	 * Reads reset-separated tests (sequences of inputs). Inputs in a test can
+	 * either be new-line- or space-separated.
 	 */
-	public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet, String PATH) throws IOException {
+	public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet,
+			String PATH) throws IOException {
 		List<String> inputStrings = readTestStrings(PATH);
 		List<Word<TlsInput>> tests = new LinkedList<>();
 		LinkedList<String> currentTestStrings = new LinkedList<>();
 		for (String inputString : inputStrings) {
 			if (inputString.equals("reset")) {
-				Word<TlsInput> test = readTest(alphabet, currentTestStrings, false);
+				Word<TlsInput> test = readTest(alphabet, currentTestStrings,
+						false);
 				if (test != null)
 					tests.add(test);
 				else {
@@ -105,7 +112,7 @@ public class TestParser {
 		ListIterator<String> it = trace.listIterator();
 		while (it.hasNext()) {
 			String line = it.next();
-			if (line.startsWith("#") || line.startsWith("!")) {
+			if (line.startsWith("#")) {
 				it.remove();
 			} else {
 				if (line.isEmpty()) {
