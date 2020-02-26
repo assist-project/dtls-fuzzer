@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 
 /**
- * A serializable list of input definitions which are name-TlsInput pairs.
+ * A serializable list of input definitions, which are name-TlsInput pairs.
  * Currently used as a mere mapping from input names to TlsInputs.
  */
 @XmlRootElement(name = "Definitions")

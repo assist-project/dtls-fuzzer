@@ -284,9 +284,13 @@ To start learning for an SUT using a argument file, run:
 The output folder will be stored in a generated 'output' directory.
 
 ### Parameter adaptations
+This section discusses important parameters for state fuzzing which we may wish to tweak.
+Note that all parameters are explained on the **dtls-fuzer** help page.
+
 #### Test bound
-Compared to experiments in the paper, we increased the response timeout for several SUTs as an adaptation to less powerful hardware.
-To shorten learning time, we suggest decreasing the test bound of the random walk algorithm from 20000 to 5000.
+The test bound is used by randomized test algorithms (such as those used in the argument files provided) and represents the number of passing tests before a hypothesis is assumed to be correct.
+Using a higher test bound results in more confidence in the model at the expense of increased learning time.
+To shorten learning time, we suggest decreasing the test bound from 20000 to 5000.
 This can be done by:
 
     > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -queries 5000
@@ -295,7 +299,7 @@ This will overwrite the bound setting in the argument file.
 Aside from GnuTLS, PionDTLS and JSSE, we expect learning to produce the same models for this lower bound.
 
 #### Timing parameters
-Timing can become an issue, causing non-determinism, followed by abrupt termination with an informative 'error.msg' file.
+Timing can become an issue, causing non-determinism which is followed by abrupt termination with an informative 'error.msg' file.
 In such cases, there are two knobs which can be tweaked: 
 
 1. the *response timeout* (time waited for each response before concluding that the server is silent);
@@ -335,10 +339,51 @@ To run **dtls-fuzzer** with a specific configuration file, run:
 'experiments/configs' contains configuration files used in learning experiments.
 A few SUTs have specific needs (TinyDTLS uses raw keys for example), hence they require tailored configuration files (which typically, bear the SUT's name, e.g. 'tinydtls.config').
 
+#### Learning alphabet
+The learning alphabet is an .xml file which defines all the inputs used, where each input is associated implicitly or explicitly with a message that is sent on executing the input.
+We can provide our own alphabet instead of the one supplied by the argument file.
+Example alphabets are available in 'examples/alphabets'.
+Each input has an optional the optional parameters: 
+
+1. **name** the string by which the input will appear on the model
+2. **extendedWait** amount of time waited in addition to the response timeout executing this particular input
+
+An alphabet will typically comprise one or more ClientHelloInputs using different cipher suites, ClientKeyExchangeInputs using different key exchange algorithms which normally correspond to the cipher suites in ClientHelloInputs, a FinishedInput, a ChangeCipherSpecInput and several GenericTlsInputs.
+These latter inputs are used for (sending) custom **TLS-Attacker** messages whose contents should not change between executions. 
+Hence, they are used for Alert and Certificate messages. 
+They should not be used for messages whose contents will change (such as ClientHello or ClientKeyExchange messages).
+A big advantage of these inputs is that they benefit from **TLS-Attacker**'s field-level costumization which is enabled by modifiable variables.
+This is showcased in the example below of an input for a specific Alert message.
+
+    > <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
+    >     <Alert>
+    >         <level>
+    >             <byteExplicitValueModification>
+    >                     <explicitValue>1</explicitValue>
+    >             </byteExplicitValueModification>
+    >         </level>
+    >         <description>
+    >             <byteExplicitValueModification>
+    >                     <explicitValue>0</explicitValue>
+    >             </byteExplicitValueModification>
+    >         </description>
+    >     </Alert>
+    > </GenericTlsInput>
+
+A user may modify an existing alphabet by adding new/deleting/modifying inputs. 
+Examples are adding ClientHelloInputs for new cipher suites, or GenericTlsInputs for new Alert messages.
+Once the alphabet is ready, it can be supplied by running:
+
+    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -alphabet path_to_new_alphabet
+
+Note the contents of many generated messages is configured by the **TLS-Attacker** configuration file. 
+For example, the *defaultClientSupportedSignatureAndHashAlgorithms* element in this file specifies signature and hash algorithms contained in ClientHello messages. 
+Before starting learning, it is best use the test runner functionality to check that inputs exercise the expected behavior on the SUT.
+
 **Retransmission inclusion** determines whether retransmissions are included in the output.
 Enabling this option is preferred provided the SUT does not generate timeout-triggered retransmissions, which will lead to non-determinism, often resulting in learning failure.
 Disabling this option excludes from outputs/discards retransmissions, making learning more reliable at the expense of less informative models.
-Information is lost because also discarded are retransmissions which are input-triggered and which do not cause non-determinism.
+Information is lost because also discarded are input-triggered retransmissions which do not cause non-determinism.
 
 'include_oo.config' and 'exclude_oo.config' are standard configuration files, usable with most SUTs, with retransmission inclusion enabled and disabled, respectively. 
 
