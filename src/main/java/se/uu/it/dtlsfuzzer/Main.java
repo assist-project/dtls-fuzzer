@@ -24,8 +24,11 @@ public class Main {
 	private static String ARGS_FILE = "command.args";
 
 	public static void main(String args[]) throws IOException {
+		// necessary for TLS-Attacker to function
 		UnlimitedStrengthEnabler.enable();
 		Security.addProvider(new BouncyCastleProvider());
+
+		// parse arguments
 		DtlsFuzzerConfig config = new DtlsFuzzerConfig();
 		JCommander commander = new JCommander(config);
 		commander.setAllowParameterOverwriting(true);
@@ -47,7 +50,6 @@ public class Main {
 			} catch (Exception E) {
 				LOGGER.error("Encountered an exception. See debug for more info.");
 				E.printStackTrace();
-				// TODO ^^ what says here :)
 				LOGGER.error(E);
 			}
 		} catch (ParameterException E) {

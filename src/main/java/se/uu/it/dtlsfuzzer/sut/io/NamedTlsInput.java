@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 public abstract class NamedTlsInput extends TlsInput {
 	/**
-	 * The name with which the input can be referred
+	 * The name by which the input can be referred
 	 */
 	@XmlAttribute(name = "name", required = true)
 	private String name = null;

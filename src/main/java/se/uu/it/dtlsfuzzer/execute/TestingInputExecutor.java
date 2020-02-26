@@ -14,6 +14,9 @@ import de.rub.nds.tlsattacker.core.state.State;
  * 
  * It provides over-writable methods for every stage of the message sending
  * process, and updates the execution context.
+ * 
+ * This can form a good basis for conformance testing of learned models, since
+ * one can vary how inputs are executed or mutate the messages generated.
  */
 public class TestingInputExecutor extends AbstractInputExecutor {
 

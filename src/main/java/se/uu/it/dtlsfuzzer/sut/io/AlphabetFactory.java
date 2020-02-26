@@ -1,9 +1,9 @@
 package se.uu.it.dtlsfuzzer.sut.io;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
@@ -43,13 +43,13 @@ public class AlphabetFactory {
 		return alphabet;
 	}
 
-	// TODO this probably doesn't work when executing via .jar
-	public static File getAlphabetFile(DtlsFuzzerConfig config) {
-		if (config.getAlphabet() != null) {
-			return new File(config.getAlphabet());
+	public static InputStream getAlphabetInputStream(DtlsFuzzerConfig config)
+			throws IOException {
+		if (config.getAlphabet() == null) {
+			return AlphabetFactory.class.getResource(DEFAULT_ALPHABET)
+					.openStream();
 		} else {
-			return new File(AlphabetFactory.class.getResource(DEFAULT_ALPHABET)
-					.getFile());
+			return new FileInputStream(config.getAlphabet());
 		}
 	}
 

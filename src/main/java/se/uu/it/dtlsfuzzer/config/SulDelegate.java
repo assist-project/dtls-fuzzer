@@ -17,15 +17,21 @@ import se.uu.it.dtlsfuzzer.sut.ProcessLaunchTrigger;
 
 public class SulDelegate extends ClientDelegate {
 	public static final String SUL_CONFIG = "/sul.config";
+	/**
+	 * Template variable for fuzzer root directory which can be used in path
+	 * specification (e.g. when supplying the alphabet) and is solved at
+	 * runtime. This avoids the use of hard-coded absolute paths which tie SUL
+	 * arguments to the local environment in which the SUL is run.
+	 */
 	public static final String FUZZER_DIR = "fuzzer.dir";
 
 	@Parameter(names = "-protocol", required = false, description = "Protocol analyzed, determines transport layer used", converter = ProtocolVersionConverter.class)
 	private ProtocolVersion protocolVersion = ProtocolVersion.DTLS12;
 
-	@Parameter(names = "-timeout", required = false, description = "Time the SUL spends waiting for a response")
+	@Parameter(names = "-timeout", required = false, description = "Time the SUL spends waiting for a response (response timeout)")
 	private Integer timeout = 100;
 
-	@Parameter(names = "-rstWait", required = false, description = "Time the SUL waits after executing each query")
+	@Parameter(names = "-rstWait", required = false, description = "Time the SUL waits after executing each query (reset timeout)")
 	private Long resetWait = 0L;
 
 	@Parameter(names = {"-command", "-cmd"}, required = false, description = "Command for starting the (D)TLS process")
@@ -40,7 +46,7 @@ public class SulDelegate extends ClientDelegate {
 	@Parameter(names = {"-processTrigger"}, required = false, description = "When is the process launched")
 	private ProcessLaunchTrigger processTrigger = ProcessLaunchTrigger.NEW_TEST;
 
-	@Parameter(names = "-runWait", required = false, description = "Time waited after running each TLS command")
+	@Parameter(names = "-runWait", required = false, description = "Time the SUL waits after running each TLS command (start timeout)")
 	private Long runWait = 0L;
 
 	@Parameter(names = "-resetPort", required = false, description = "Port to which to send a reset command")

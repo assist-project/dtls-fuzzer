@@ -9,6 +9,10 @@ import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 import se.uu.it.dtlsfuzzer.sut.io.definitions.Definitions;
 
+/**
+ * A TLS processor is used by dot-parser to load a model specified in .dot file
+ * which uses a given alphabet.
+ */
 public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput> {
 	private Map<String, TlsInput> cache;
 	private Definitions definitions;

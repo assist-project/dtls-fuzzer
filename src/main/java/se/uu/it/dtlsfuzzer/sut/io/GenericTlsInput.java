@@ -54,7 +54,11 @@ import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 
 /**
- * 
+ * A GenericTlsInput is executed by sending a supplied TLS-Attacker protocol
+ * message. Note that the encapsulated message is currently re-used. This makes
+ * the input unsuitable for messages whose contents can change between
+ * executions (such as Finished or ClientHello). For these messages,
+ * corresponding TlsInput subclasses should be defined.
  */
 public class GenericTlsInput extends NamedTlsInput {
 	@XmlElements(value = {
@@ -135,7 +139,7 @@ public class GenericTlsInput extends NamedTlsInput {
 	}
 
 	/*
-	 * Sets the original value of all mvar fields to null.
+	 * Sets the original value of all modifiable variable fields to null.
 	 */
 	private void stripFields(ProtocolMessage message) {
 		List<ModifiableVariableHolder> holders = new LinkedList<>();

@@ -17,6 +17,8 @@ public class ChangeCipherSpecInput extends NamedTlsInput {
 		return ccs;
 	}
 
+	// TODO these updates are unnecessary since TLS-Attacker should perform them
+	// by default.
 	@Override
 	public void postSendUpdate(State state, ExecutionContext context) {
 		state.getTlsContext().getRecordLayer().updateEncryptionCipher();

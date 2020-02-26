@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * POJO class used for .xml de-serialization.
+ * POJO class used for .xml (de-)serialization.
  */
 @XmlRootElement(name = "alphabet")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -9,7 +9,23 @@ import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.execute.AbstractInputExecutor;
 import se.uu.it.dtlsfuzzer.execute.ExecutionContext;
-
+/**
+ * A TlsInput corresponds to an input in the learning alphabet. The class
+ * defines:
+ * <p>
+ * <li>a method which generates the protocol message to be sent:
+ * {@link TlsInput#generateMessage(State)};
+ * <li>hook methods implementing the context updates performed in addition to
+ * the default updates of TLS-Attacker when sending the generated
+ * message/receiving response:
+ * {@link TlsInput#postReceiveUpdate(TlsOutput, State, ExecutionContext)},
+ * {@link TlsInput#postSendUpdate(State, ExecutionContext)};
+ * <li>an optional preferred executor;
+ * <li>an optional amount of time the harness waits in addition to the general
+ * response time before concluding a timeout.
+ * <p>
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class TlsInput {
 
@@ -52,6 +68,10 @@ public abstract class TlsInput {
 	public void postSendUpdate(State state, ExecutionContext context) {
 	}
 
+	/**
+	 * @return additional wait time before concluding a timeout (i.e. that the
+	 *         SUT has produced no response)
+	 */
 	public Integer getExtendedWait() {
 		return extendedWait;
 	}
@@ -59,8 +79,6 @@ public abstract class TlsInput {
 	/**
 	 * Updates the context after receiving an output.
 	 */
-	// TODO it would be better to have abstracting/concretizing mapper
-	// components.
 	public void postReceiveUpdate(TlsOutput output, State state,
 			ExecutionContext context) {
 	}

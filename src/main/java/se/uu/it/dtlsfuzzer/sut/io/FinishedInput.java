@@ -25,7 +25,9 @@ public class FinishedInput extends NamedTlsInput {
 	@Override
 	public void postSendUpdate(State state, ExecutionContext context) {
 		state.getTlsContext().getDigest().reset();
-		// we have to make this change for learning to scale
+		// TLS-Attacker by default sets the message sequence number to 0, rather
+		// than increment it
+		// we have to revert this change for learning to scale
 		state.getTlsContext().setDtlsNextSendSequenceNumber(
 				state.getTlsContext().getDtlsCurrentSendSequenceNumber() + 1);
 	}

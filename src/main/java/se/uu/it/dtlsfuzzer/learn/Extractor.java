@@ -46,7 +46,7 @@ import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
 /**
  * 
  * Class utilizing model learning to generate models for a given DTLS server
- * implementations.
+ * implementation.
  *
  */
 public class Extractor {
@@ -296,8 +296,8 @@ public class Extractor {
 	 */
 	private void copyInputsToOutputFolder(File outputFolder) {
 		try {
-			Files.copy(AlphabetFactory.getAlphabetFile(fuzzerConfig), new File(
-					outputFolder, ALPHABET_FILENAME));
+			dumpToFile(AlphabetFactory.getAlphabetInputStream(fuzzerConfig),
+					new File(outputFolder, ALPHABET_FILENAME));
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Could not copy alphabet to output folder");
 		}
@@ -325,15 +325,16 @@ public class Extractor {
 	 * dumps input stream contents to a file
 	 */
 	private void dumpToFile(InputStream is, File outputFile) throws IOException {
-		InputStream inputStream = fuzzerConfig.getSulDelegate()
-				.getSulConfigInputStream();
 		try (FileOutputStream fw = new FileOutputStream(outputFile)) {
 			byte[] bytes = new byte[1000];
-			while (inputStream.read(bytes) > 0) {
+
+			while (is.read(bytes) > 0) {
 				fw.write(bytes);
+				// we need to reinitialize the array
+				bytes = new byte[1000];
 			}
 		} finally {
-			inputStream.close();
+			is.close();
 		}
 	}
 
