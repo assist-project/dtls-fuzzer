@@ -61,7 +61,6 @@
 	</dependencies>
 	<build>
 	    <finalName>dtls-fuzzer</finalName>
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
