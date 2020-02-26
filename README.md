@@ -339,14 +339,21 @@ To run **dtls-fuzzer** with a specific configuration file, run:
 'experiments/configs' contains configuration files used in learning experiments.
 A few SUTs have specific needs (TinyDTLS uses raw keys for example), hence they require tailored configuration files (which typically, bear the SUT's name, e.g. 'tinydtls.config').
 
+
+**Retransmission inclusion** determines whether retransmissions are included in the output.
+Enabling this option is preferred provided the SUT does not generate timeout-triggered retransmissions, which will lead to non-determinism, often resulting in learning failure.
+Disabling this option excludes from outputs/discards retransmissions, making learning more reliable at the expense of less informative models.
+Information is lost because also discarded are input-triggered retransmissions which do not cause non-determinism.
+
+'include_oo.config' and 'exclude_oo.config' are standard configuration files, usable with most SUTs, with retransmission inclusion enabled and disabled, respectively. 
+
 #### Learning alphabet
 The learning alphabet is an .xml file which defines all the inputs used, where each input is associated implicitly or explicitly with a message that is sent on executing the input.
-We can provide our own alphabet instead of the one supplied by the argument file.
 Example alphabets are available in 'examples/alphabets'.
-Each input has an optional the optional parameters: 
+Each input has the following optional parameters: 
 
-1. **name** the string by which the input will appear on the model
-2. **extendedWait** amount of time waited in addition to the response timeout executing this particular input
+1. **name**, string by which the input is referred in models, tests, logs...  It serves as the input's unique identifier;
+2. **extendedWait**, amount of time waited in addition to the response timeout executing this particular input.
 
 An alphabet will typically comprise one or more ClientHelloInputs using different cipher suites, ClientKeyExchangeInputs using different key exchange algorithms which normally correspond to the cipher suites in ClientHelloInputs, a FinishedInput, a ChangeCipherSpecInput and several GenericTlsInputs.
 These latter inputs are used for (sending) custom **TLS-Attacker** messages whose contents should not change between executions. 
@@ -355,37 +362,29 @@ They should not be used for messages whose contents will change (such as ClientH
 A big advantage of these inputs is that they benefit from **TLS-Attacker**'s field-level costumization which is enabled by modifiable variables.
 This is showcased in the example below of an input for a specific Alert message.
 
-    > <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
-    >     <Alert>
-    >         <level>
-    >             <byteExplicitValueModification>
-    >                     <explicitValue>1</explicitValue>
-    >             </byteExplicitValueModification>
-    >         </level>
-    >         <description>
-    >             <byteExplicitValueModification>
-    >                     <explicitValue>0</explicitValue>
-    >             </byteExplicitValueModification>
-    >         </description>
-    >     </Alert>
-    > </GenericTlsInput>
+    <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
+        <Alert>
+            <level>
+                <byteExplicitValueModification>
+                        <explicitValue>1</explicitValue>
+                </byteExplicitValueModification>
+            </level>
+            <description>
+                <byteExplicitValueModification>
+                        <explicitValue>0</explicitValue>
+                </byteExplicitValueModification>
+            </description>
+        </Alert>
+    </GenericTlsInput>
 
-A user may modify an existing alphabet by adding new/deleting/modifying inputs. 
-Examples are adding ClientHelloInputs for new cipher suites, or GenericTlsInputs for new Alert messages.
-Once the alphabet is ready, it can be supplied by running:
+An existing alphabet can be adjusted in various ways, e.g. by adding ClientHelloInputs for new cipher suites, or GenericTlsInputs for new Alert messages.
+Once the new alphabet is ready, it can be supplied by running:
 
     > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -alphabet path_to_new_alphabet
 
 Note the contents of many generated messages is configured by the **TLS-Attacker** configuration file. 
 For example, the *defaultClientSupportedSignatureAndHashAlgorithms* element in this file specifies signature and hash algorithms contained in ClientHello messages. 
 Before starting learning, it is best use the test runner functionality to check that inputs exercise the expected behavior on the SUT.
-
-**Retransmission inclusion** determines whether retransmissions are included in the output.
-Enabling this option is preferred provided the SUT does not generate timeout-triggered retransmissions, which will lead to non-determinism, often resulting in learning failure.
-Disabling this option excludes from outputs/discards retransmissions, making learning more reliable at the expense of less informative models.
-Information is lost because also discarded are input-triggered retransmissions which do not cause non-determinism.
-
-'include_oo.config' and 'exclude_oo.config' are standard configuration files, usable with most SUTs, with retransmission inclusion enabled and disabled, respectively. 
 
 ### Concurrent experiments and port collisions
 It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
