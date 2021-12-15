@@ -1,0 +1,59 @@
+digraph g {
+
+	s0 [shape="circle" label="0"];
+	s1 [shape="circle" label="1"];
+	s2 [shape="circle" label="2"];
+	s3 [shape="circle" label="3"];
+	s4 [shape="circle" label="4"];
+	s5 [shape="circle" label="5"];
+	s6 [shape="circle" label="6"];
+	s7 [shape="circle" label="7"];
+	s0 -> s4 [color="deepskyblue" label="HVR / CH+"];
+	s0 -> s2 [color="chartreuse3" label="SH(PSK) / CH"];
+	s0 -> s1 [label="SHD / CH|A(decode_error)"];
+	s0 -> s3 [label="CCS / CH"];
+	s0 -> s1 [label="F / CH|A(decode_error)"];
+	s0 -> s4 [label="App / CH"];
+	s0 -> s1 [label="A(close_notify) / CH"];
+	s0 -> s1 [label="A(unexpected_msg) / CH"];
+	s1 -> s1 [label="Other / Disabled"];
+	s2 -> s1 [label="HVR / A(decode_error)"];
+	s2 -> s1 [label="SH(PSK) / A(decode_error)"];
+	s2 -> s5 [color="deepskyblue" label="SHD / CKE(PSK)|CCS|F"];
+	s2 -> s3 [label="CCS / -"];
+	s2 -> s1 [label="F / A(decode_error)"];
+	s2 -> s2 [label="App / -"];
+	s2 -> s1 [label="A(close_notify) / -"];
+	s2 -> s1 [label="A(unexpected_msg) / -"];
+	s3 -> s3 [label="Other / -"];
+	s4 -> s4 [label="HVR / CH"];
+	s4 -> s2 [color="deepskyblue" label="SH(PSK) / -"];
+	s4 -> s1 [label="SHD / A(decode_error)"];
+	s4 -> s3 [label="CCS / -"];
+	s4 -> s1 [label="F / A(decode_error)"];
+	s4 -> s4 [label="App / -"];
+	s4 -> s1 [label="A(close_notify) / -"];
+	s4 -> s1 [label="A(unexpected_msg) / -"];
+	s5 -> s6 [color="deepskyblue" label="CCS / -"];
+	s5 -> s5 [label="App / -"];
+	s5 -> s1 [label="A(close_notify) / -"];
+	s5 -> s1 [label="A(unexpected_msg) / -"];
+	s5 -> s1 [label="Other / A(unexpected_msg)"];
+	s6 -> s1 [label="HVR / A(decode_error)"];
+	s6 -> s1 [label="SH(PSK) / A(decode_error)"];
+	s6 -> s1 [label="SHD / A(decode_error)"];
+	s6 -> s3 [label="CCS / -"];
+	s6 -> s7 [color="deepskyblue" label="F / -"];
+	s6 -> s6 [label="App / -"];
+	s6 -> s1 [label="A(close_notify) / -"];
+	s6 -> s1 [label="A(unexpected_msg) / -"];
+	s7 -> s1 [label="CCS / -"];
+	s7 -> s7 [label="App / App"];
+	s7 -> s1 [label="A(close_notify) / A(close_notify)"];
+	s7 -> s1 [label="A(unexpected_msg) / -"];
+	s7 -> s7 [label="Other / -"];
+
+__start0 [label="" shape="none" width="0" height="0"];
+__start0 -> s0;
+
+}

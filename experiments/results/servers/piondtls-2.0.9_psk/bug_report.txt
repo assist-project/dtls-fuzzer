@@ -1,0 +1,82 @@
+
+================================================================================
+Bug Report
+================================================================================
+
+Total Number of Bugs Found: 2
+
+--------------------------------------------------------------------------------
+Listing Bugs
+--------------------------------------------------------------------------------
+
+Bug Id: 1
+Detected the following bug patterns in flow
+Pattern: HelloVerifyRequest Retransmission
+Severity: LOW
+Description: HelloVerifyRequest is retransmitted, indicating that the server is storing state when it should not.
+Flow: PSK_CLIENT_HELLO/HELLO_VERIFY_REQUEST+ 
+Verification Status: VERIFICATION_SUCCESSFUL
+
+Bug Id: 2
+Detected the following bug patterns in flow
+Pattern: Crash on CCS
+Severity: LOW
+Description: The server crashes after processing a CCS message.
+Flow: PSK_CLIENT_KEY_EXCHANGE/TIMEOUT Alert(FATAL,UNEXPECTED_MESSAGE)/TIMEOUT CHANGE_CIPHER_SPEC/SOCKET_CLOSED 
+Verification Status: VERIFICATION_SUCCESSFUL
+
+
+================================================================================
+Run Description
+================================================================================
+
+
+--------------------------------------------------------------------------------
+Bug Checking Parameters
+--------------------------------------------------------------------------------
+
+SUT: server
+Alphabet: [PSK_CLIENT_HELLO, PSK_CLIENT_KEY_EXCHANGE, CHANGE_CIPHER_SPEC, FINISHED, APPLICATION, Alert(WARNING,CLOSE_NOTIFY), Alert(FATAL,UNEXPECTED_MESSAGE)]
+Loaded Bug Patterns (21): [Early Finished, CertificateVerify-less Client Authentication, Certificate-less Client Authentication, ClientKeyExchange before Certificate, Unauthenticated ClientKeyExchange, ChangeCipherSpec before CertificateVerify, Finished before ChangeCipherSpec, Multiple ChangeCipherSpec, Handshake Restarted, Invalid Finished as Retransmission, Non-conforming Cookie, Invalid HelloVerifyRequest Response, HelloVerifyRequest Retransmission, Crash on CCS, Insecure Renegotiation, Invalid DecryptError Alert, Internal Error on Finished, Invalid Handshake Start, Multiple Certificate, Continue After CloseNotify, Continue After Fatal Alert]
+Bug Verification Enabled: true
+Uncategorized Bug Bound: 10
+
+--------------------------------------------------------------------------------
+TLS SUL Parameters
+--------------------------------------------------------------------------------
+
+Protocol: DTLS12
+ResetWait: 100
+Timeout: 100
+RunWait: 100
+Command: /home/pfg666/GitHub/dtls-fuzzer/suts/piondtls-2.0.9/dtls-clientserver -role server -port 23000 -cipherSuite TLS_PSK_WITH_AES_128_CCM_8
+
+================================================================================
+Statistics
+================================================================================
+
+
+--------------------------------------------------------------------------------
+General
+--------------------------------------------------------------------------------
+
+Number of inputs: 4
+Number of resets: 2
+Number of bugs: 2
+Time bug-checking took (ms): 1749
+
+--------------------------------------------------------------------------------
+Model Bug Finder
+--------------------------------------------------------------------------------
+
+Bug patterns loaded (21): [Early Finished, CertificateVerify-less Client Authentication, Certificate-less Client Authentication, ClientKeyExchange before Certificate, Unauthenticated ClientKeyExchange, ChangeCipherSpec before CertificateVerify, Finished before ChangeCipherSpec, Multiple ChangeCipherSpec, Handshake Restarted, Invalid Finished as Retransmission, Non-conforming Cookie, Invalid HelloVerifyRequest Response, HelloVerifyRequest Retransmission, Crash on CCS, Insecure Renegotiation, Invalid DecryptError Alert, Internal Error on Finished, Invalid Handshake Start, Multiple Certificate, Continue After CloseNotify, Continue After Fatal Alert]
+Bug patterns found (2): [HelloVerifyRequest Retransmission, Crash on CCS]
+Bug patterns verified successfully (2): [HelloVerifyRequest Retransmission, Crash on CCS]
+Verification Inputs per Bug Pattern
+   HelloVerifyRequest Retransmission : 1
+   Crash on CCS : 3
+
+Verification Resets per Bug Pattern
+   HelloVerifyRequest Retransmission : 1
+   Crash on CCS : 1
+

@@ -1,5 +1,5 @@
-**dtls-fuzzer** is a Java tool which performs protocol state fuzzing of DTLS servers. More concretely, it supports the following functionality:
-1. given an alphabet, it can automatically generate a model of a local DTLS server implementation;
+**dtls-fuzzer** is a Java tool which performs protocol state fuzzing of DTLS servers and clients (in a recent extension). More concretely, it supports the following functionality:
+1. given an alphabet, it can automatically generate a model of a local DTLS server/clients implementation;
 2. given a test (sequence of inputs) and an alphabet, it can execute the test on a DTLS server implementation;
 3. it can run a batch learning task, involving multiple learning runs.
 
@@ -134,7 +134,7 @@ To finish, we make that folder our current directory.
     > cd ~/dtls-fuzzer
 
 ## Installing dtls-fuzzer
-We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and **TLS-Attacker** 3.0b.
+We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and TLS-Attacker 3.0b.
 We then install the tool itself.
 The resulting commands on a POSIX system will be:
 
@@ -193,7 +193,7 @@ We can visualize the file using the graphviz 'dot' utility, by exporting to .pdf
 Finally, we can use 'trim_model.sh' to generated a better/trimmer version of the model.
 This can be done as follows:
 
-    > bash trim_model.sh output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.dot output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.dot
+    > bash trim_model.sh --output output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.dot output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.dot 
     > dot -Tpdf output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.dot > output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.pdf
     > evince output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.pdf
 
@@ -224,26 +224,12 @@ The script will generate two folders in **dtls-fuzzer**'s root directory.
 - 'suts', where the SUT binaries are deployed
 - 'modules', where any dependencies are deployed
 
-### Limitations
 Unfortunately, automating SUT setup is a complicated process, hence we take the following shortcuts. 
 For Java SUTs (JSSE, Scandium) we don't build the implementations, instead we use the compiled .jars from the 'experiments/suts' directory.
 Note that the source code of these Java SUTs (server applications) is publicly available online, see [Scandium][scandium] and [JSSE][jsse], which is also the case for [PionDTLS][piondtls].
 Automatically installing dependencies may prompt 'sudo' access.
 This happens for GnuTLS which relies on external libraries such as nettle, and for Eclipse's TinyDTLS, which relies on autoconf.
 Finally, we do not provide automatic setup/argument files for NSS and PionDTLS due to how complicated setup for these systems is.
-
-### Setting up unsupported SUT
-If automatic deployment for the SUT is not provided, assuming the vendor is included (OpenSSL, GnuTLS...), a simple workaround is adjusting corresponding SUT URL download variable in 'prepare_sut.sh', which points to the URL the SUT is downloaded from. 
-This URL can point to an archive or a repository, in which case, there should also be an associated COMMIT variable.
-
-For OpenSSL (and most other vendors) the URL variable is $OPENSSL_ARCH_URL. 
-This should be adjusted to the download URL of the OpenSSL version we want tested (we call this, the *URL-adjusted version*).
-Nothing else needs to be done.
-
-Note, the SUT will be selected by supplying the same string as before the edit, which now may contain an inconsistent version (say 1.1.1b, the original version, instead of 1.1.1d, the URL-adjusted version). 
-The output folder and SUT deployment folder will also have names inconsistent with the URL-adjusted version.
-What is important is that the experimental results are for the URL-adjusted version.
-It is a makeshift fix, but it works.
 
 ### Troubleshooting
 If things in the setup process stop working, deleting the 'suts' folder (or the 'suts/SUT' folder specific to the SUT) and re-running the setup script may solve the problem.
@@ -284,13 +270,9 @@ To start learning for an SUT using a argument file, run:
 The output folder will be stored in a generated 'output' directory.
 
 ### Parameter adaptations
-This section discusses important parameters for state fuzzing which we may wish to tweak.
-Note that all parameters are explained on the **dtls-fuzer** help page.
-
 #### Test bound
-The test bound is used by randomized test algorithms (such as those used in the argument files provided) and represents the number of passing tests before a hypothesis is assumed to be correct.
-Using a higher test bound results in more confidence in the model at the expense of increased learning time.
-To shorten learning time, we suggest decreasing the test bound from 20000 to 5000.
+Compared to experiments in the paper, we increased the response timeout for several SUTs as an adaptation to less powerful hardware.
+To shorten learning time, we suggest decreasing the test bound of the random walk algorithm from 20000 to 5000.
 This can be done by:
 
     > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -queries 5000
@@ -299,7 +281,7 @@ This will overwrite the bound setting in the argument file.
 Aside from GnuTLS, PionDTLS and JSSE, we expect learning to produce the same models for this lower bound.
 
 #### Timing parameters
-Timing can become an issue, causing non-determinism which is followed by abrupt termination with an informative 'error.msg' file.
+Timing can become an issue, causing non-determinism, followed by abrupt termination with an informative 'error.msg' file.
 In such cases, there are two knobs which can be tweaked: 
 
 1. the *response timeout* (time waited for each response before concluding that the server is silent);
@@ -315,76 +297,11 @@ This likelihood decreases as more computing power is provided.
 
 #### Learning time
 We may wish to automatically terminate experiments after a certain period, particularly experiments that are not expected to ever terminate.
-Setting this period is possible via the *time limit* parameter (**-time**) which is assigned the maximum duration the experiment is allowed to run for.
+Setting this period is possible via the **time limit** parameter which is assigned the maximum duration the experiment is allowed to run for.
 This duration is provided in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
 To cap execution time of an experiment to 60 minutes, we would run:
 
     > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeLimit "PT60M"
-
-#### TLS-Attacker configuration
-**dtls-fuzzer** relies on **TLS-Attacker** to generate/parse messages, and is therefore affected by its configuration. 
-Configuring **TLS-Attacker** is done via the **-sulConfig** option, which takes as value a path to a **TLS-Attacker** configuration file.
-This file allows a user to adjust important settings such:
-- default keys, passwords, supported cipher suites and algorithms
-    - which ideally should be correspond/be compatible those use used by the SUT
-- retransmission inclusion/exclusion
-    - important in addressing non-determinism
-- extensions 
-    - heartblead, renegotiation, extended pre-master secret...
-
-To run **dtls-fuzzer** with a specific configuration file, run:
-
-    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -sulConfig path_to_config
- 
-'experiments/configs' contains configuration files used in learning experiments.
-A few SUTs have specific needs (TinyDTLS uses raw keys for example), hence they require tailored configuration files (which typically, bear the SUT's name, e.g. 'tinydtls.config').
-
-
-**Retransmission inclusion** determines whether retransmissions are included in the output.
-Enabling this option is preferred provided the SUT does not generate timeout-triggered retransmissions, which will lead to non-determinism, often resulting in learning failure.
-Disabling this option excludes from outputs/discards retransmissions, making learning more reliable at the expense of less informative models.
-Information is lost because also discarded are input-triggered retransmissions which do not cause non-determinism.
-
-'include_oo.config' and 'exclude_oo.config' are standard configuration files, usable with most SUTs, with retransmission inclusion enabled and disabled, respectively. 
-
-#### Learning alphabet
-The learning alphabet is an .xml file which defines all the inputs used, where each input is associated implicitly or explicitly with a message that is sent on executing the input.
-Example alphabets are available in 'examples/alphabets'.
-Each input has the following optional parameters: 
-
-1. **name**, string by which the input is referred in models, tests, logs...  It serves as the input's unique identifier;
-2. **extendedWait**, amount of time waited in addition to the response timeout executing this particular input.
-
-An alphabet will typically comprise one or more ClientHelloInputs using different cipher suites, ClientKeyExchangeInputs using different key exchange algorithms which normally correspond to the cipher suites in ClientHelloInputs, a FinishedInput, a ChangeCipherSpecInput and several GenericTlsInputs.
-These latter inputs are used for (sending) custom **TLS-Attacker** messages whose contents should not change between executions. 
-Hence, they are used for Alert and Certificate messages. 
-They should not be used for messages whose contents will change (such as ClientHello or ClientKeyExchange messages).
-A big advantage of these inputs is that they benefit from **TLS-Attacker**'s field-level costumization which is enabled by modifiable variables.
-This is showcased in the example below of an input for a specific Alert message.
-
-    <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
-        <Alert>
-            <level>
-                <byteExplicitValueModification>
-                        <explicitValue>1</explicitValue>
-                </byteExplicitValueModification>
-            </level>
-            <description>
-                <byteExplicitValueModification>
-                        <explicitValue>0</explicitValue>
-                </byteExplicitValueModification>
-            </description>
-        </Alert>
-    </GenericTlsInput>
-
-An existing alphabet can be adjusted in various ways, e.g. by adding ClientHelloInputs for new cipher suites, or GenericTlsInputs for new Alert messages.
-Once the new alphabet is ready, it can be supplied by running:
-
-    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -alphabet path_to_new_alphabet
-
-Note the contents of many generated messages is configured by the **TLS-Attacker** configuration file. 
-For example, the *defaultClientSupportedSignatureAndHashAlgorithms* element in this file specifies signature and hash algorithms contained in ClientHello messages. 
-Before starting learning, it is best use the test runner functionality to check that inputs exercise the expected behavior on the SUT.
 
 ### Concurrent experiments and port collisions
 It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
@@ -402,48 +319,6 @@ This has the advantage of notifying **dtls-fuzzer** when the server is ready to 
 The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein a server thread has recently been stopped and a new thread has not been started yet (meaning the hard-coded port could be used in dynamic allocation).
 To avoid this form of collision, we advise running Scandium and JSSE experiments separately from all others.
 
-### Troubleshooting non-determinism
-Suppose you run an experiment, and the output summarizing the experiment contains the string "Learning successful: false".
-What can you do to fix it?
-
-By far the most common reason for experimental failure is **non-determinism**, meaning, for a given sequence of inputs, the SUT can generate different responses/sequences of outputs.
-Non-determinism can be confirmed by checking for suggestive messages ((i.e. "non-determinism detected") the content of 'error.msg', a file generated whenever the experiment is abruptly terminated.
-If confirmed, we should first zero in on the non-determinism-causing test.
-
-The 'error.msg' file should give us the sequence of inputs leading to failure. 
-We can re-run these inputs using the test runner functionality. 
-This is done by copying the space-separated input sequence to a file (say 'nondet.test'), and executing it by supplying the file to the test runner.
-For non-determinism to show up, we run the sequence a number of times (say 10), number configurable by the **-times** option.
-We thus would run:
-
-    > java -jar target/dtls-fuzzer.jar @args_file -test nondet.test -times 10
-
-The test runner will display all distinct results.
-If we get more than one distinct result, we know we have non-determinism.
-With the above command we can also determine whether we have fixed the problem, in which case only one distinct result should be generated.
-
-Causes for non-determinism are many, we hereby discuss the most common. 
-
-##### Timeout-triggered retransmissions appearing as outputs
-These can appear as outputs at different points during test execution, causing non-determinism to occur.
-Preventing non-determinism in this case is synonymous to eliminating timeout-triggered retransmissions.
-So what are ways to do this?
-
-1. **Exclude retransmissions** This assumes retransmissions weren't initially excluded. For most SUTs, this is done by supplying 'experiments/configs/exclude_oo.config" as argument to **-sulConfig**. It does come at the cost of less informative models, however, since the fuzzer will also discard input-triggered retransmissions.
-2. **Edit SUT program** This involves editing the SUT code so that timeout-triggered retransmissions are not generated or are delayed long enough so they don't occur during test execution.
-3. **Lower response timeout** Doing so might help tests finish before the retransmission is received. Care must be taken to prevent non-determinism by lowering too much (see next cause).
-4. **Do nothing** Analyze behavior based on the last generated hypothesis.
-
-##### Timeout parameter values are too low
-Setting the start and/or response timeout to low values may cause non-determinism.
-The response timeout should be long enough for the fuzzer to receive an output from the SUT if such an output is generated.
-Similarly, the start timeout should be long enough that after it, the SUT is ready to process packets.
-**Increasing these values** provides the remedy.
-
-##### Port collisions
-This is prevelant when running multiple experiments at the time.
-It is particularly insidious since the non-determinism it causes cannot be easily reproduced.
-The solution is to **execute fewer experiments in parallel**.
 
 ## Suggested configurations
 We suggest the following configurations for which automatic building is reliable, learning is faster or interesting bugs have been found.
@@ -487,7 +362,6 @@ We suggest a configuration which disables it to shorten learning time:
 
     > java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_all_cert_none_rwalk_incl -queries 2000
 
-
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
 The model exposes important bugs, unfortunately, the experiment is lengthy.
@@ -527,9 +401,13 @@ The .dot learned model can be visualized using the graphviz library, by conversi
 
 Unfortunately, as models grow is size, the .pdfs generated using this method become increasingly difficult to read. 
 Hence we developed/used/imported pruning scripts which are accessed by 'trim_model.sh'. 
-We advise using it in its most basic form, which is:
+The scripts provides usage information by running:
 
-    > bash trim_model.sh learnedModel.dot trimmedLearnedModel.dot 
+    > bash trim_model.sh
+
+We advise using the script in its most basic form, which is:
+
+    > bash trim_model.sh learnedModel.dot 
 
 The script:
 
@@ -542,8 +420,7 @@ The script:
 
 (5) requires installing the custom mypydot Python 3 library found in 'experiments\scripts'. 
 All other steps use plain 'sed' plus the [dot-trimmer][dottrimmer] Java library. 
-A .jar for this library is included in 'experiments\scripts'.
-
+A .jar for this library is included in 'experiments\scripts'. 
 
 # General dtls-fuzzer walkthrough
 

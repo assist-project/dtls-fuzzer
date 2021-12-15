@@ -37,6 +37,7 @@ public class ProcessHandler {
 		this.runWait = runWait;
 		output = System.out;
 		error = System.err;
+		LOGGER.info("Command to launch SUT: {}", command);
 	}
 
 	public ProcessHandler(SulDelegate sulConfig) {
@@ -45,6 +46,9 @@ public class ProcessHandler {
 			setDirectory(new File(sulConfig.getProcessDir()));
 		}
 		terminateCommand = sulConfig.getTerminateCommand();
+		if (terminateCommand != null) {
+			LOGGER.info("Command to terminate SUT: {}", terminateCommand);
+		}
 	}
 
 	public void redirectOutput(OutputStream toOutput) {
@@ -89,6 +93,7 @@ public class ProcessHandler {
 
 		} catch (IOException | InterruptedException E) {
 			LOGGER.error("Couldn't start process due to exec:", E);
+			throw new RuntimeException(E);
 		}
 	}
 

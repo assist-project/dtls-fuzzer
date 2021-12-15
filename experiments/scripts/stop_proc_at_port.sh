@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $# = 0 ]; then
-    echo "usage: bash script port_num"
+    echo "usage: bash script port_num client|server|both"
     exit 1
 else
     port="$1"

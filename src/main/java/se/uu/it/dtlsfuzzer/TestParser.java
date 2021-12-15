@@ -13,16 +13,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
-import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
+import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 
 /**
  * Reads tests from a file and writes them to a file using an alphabet.
+ * 
+ * Mutations of an input are encoded in the following way: {@literal @} + input
+ * name + JSON encoding of the mutations.
+ * 
  */
 
 public class TestParser {
@@ -33,6 +38,10 @@ public class TestParser {
 
 	public void writeTest(Word<TlsInput> test, String PATH) throws IOException {
 		File file = new File(PATH);
+		writeTest(test, file);
+	}
+
+	public void writeTest(Word<TlsInput> test, File file) throws IOException {
 		file.createNewFile();
 		try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
 			for (TlsInput input : test) {
@@ -41,29 +50,20 @@ public class TestParser {
 		}
 	}
 
-	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH)
-			throws IOException {
+	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH) throws IOException {
 		List<String> inputStrings = readTestStrings(PATH);
-		Word<TlsInput> test = readTest(alphabet, inputStrings, true);
+		Word<TlsInput> test = readTest(alphabet, inputStrings);
 		return test;
 	}
 
-	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet,
-			List<String> testInputStrings, boolean throwOnMissing) {
+	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, List<String> testInputStrings) {
 		Map<String, TlsInput> inputs = new LinkedHashMap<>();
 		alphabet.stream().forEach(i -> inputs.put(i.toString(), i));
 		Word<TlsInput> inputWord = Word.epsilon();
 		for (String inputString : testInputStrings) {
 			inputString = inputString.trim();
 			if (!inputs.containsKey(inputString)) {
-				if (throwOnMissing)
-					throw new RuntimeException(
-							"Input is missing from the alphabet " + inputString);
-				else {
-					LOGGER.warn("Input is missing from the alphabet "
-							+ inputString);
-					return null;
-				}
+				throw new RuntimeException("Input \"" + inputString + "\" is missing from the alphabet ");
 			}
 			inputWord = inputWord.append(inputs.get(inputString));
 		}
@@ -72,36 +72,35 @@ public class TestParser {
 	}
 
 	/**
-	 * Reads reset-separated tests (sequences of inputs). Inputs in a test can
-	 * either be new-line- or space-separated.
+	 * Reads from a file reset-separated tests (test queries to be precise). It
+	 * stops reading once it reaches the EOF, or an empty line. A non-empty line may
+	 * contain:
+	 * <ul>
+	 * <li>reset - marking the end of the current test, and the beginning of a new
+	 * test</li>
+	 * <li>space-separated regular inputs and resets</li>
+	 * <li>a single mutated input (starts with @)</li>
+	 * <li>commented line (starts with # or !)</li>
+	 * </ul>
 	 */
-	public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet,
-			String PATH) throws IOException {
+	public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet, String PATH) throws IOException {
 		List<String> inputStrings = readTestStrings(PATH);
+		List<String> flattenedInputStrings = inputStrings.stream()
+				.map(i -> i.startsWith("@") ? new String[] { i } : i.split("\\s+")).flatMap(a -> Arrays.stream(a))
+				.collect(Collectors.toList());
+
 		List<Word<TlsInput>> tests = new LinkedList<>();
 		LinkedList<String> currentTestStrings = new LinkedList<>();
-		for (String inputString : inputStrings) {
+		for (String inputString : flattenedInputStrings) {
 			if (inputString.equals("reset")) {
-				Word<TlsInput> test = readTest(alphabet, currentTestStrings,
-						false);
-				if (test != null)
-					tests.add(test);
-				else {
-					LOGGER.warn("Excluding invalid test " + currentTestStrings);
-				}
+				tests.add(readTest(alphabet, currentTestStrings));
 				currentTestStrings.clear();
 			} else {
-				String[] spSepInputs = inputString.split("\\s");
-				currentTestStrings.addAll(Arrays.asList(spSepInputs));
+				currentTestStrings.add(inputString);
 			}
 		}
 		if (!inputStrings.isEmpty()) {
-			Word<TlsInput> test = readTest(alphabet, currentTestStrings, false);
-			if (test != null) {
-				tests.add(test);
-			} else {
-				LOGGER.warn("Excluding invalid test " + currentTestStrings);
-			}
+			tests.add(readTest(alphabet, currentTestStrings));
 		}
 		return tests;
 	}
@@ -112,7 +111,7 @@ public class TestParser {
 		ListIterator<String> it = trace.listIterator();
 		while (it.hasNext()) {
 			String line = it.next();
-			if (line.startsWith("#")) {
+			if (line.startsWith("#") || line.startsWith("!")) {
 				it.remove();
 			} else {
 				if (line.isEmpty()) {

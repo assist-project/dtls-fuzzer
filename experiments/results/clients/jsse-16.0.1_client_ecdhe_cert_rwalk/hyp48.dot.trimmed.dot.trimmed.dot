@@ -1,0 +1,42 @@
+digraph g {
+
+	s0 [shape="circle" label="0"];
+	s1 [shape="circle" label="1"];
+	s2 [shape="circle" label="2"];
+	s3 [shape="circle" label="3"];
+	s4 [shape="circle" label="4"];
+	s5 [shape="circle" label="5"];
+	s6 [shape="circle" label="6"];
+	s7 [shape="circle" label="7"];
+	s8 [shape="circle" label="8"];
+	s9 [shape="circle" label="9"];
+	s10 [shape="circle" label="10"];
+	s0 -> s1 [label="Hvr / Ch+"];
+	s0 -> s2 [label="Sh(ECDH) / Ch"];
+	s1 -> s1 [label="Hvr / Ch"];
+	s1 -> s2 [label="Sh(ECDH) / -"];
+	s2 -> s3 [label="Other / -"];
+	s2 -> s9 [label="Cert / -"];
+	s2 -> s3 [label="Other / -"];
+	s3 -> s4 [label="Cert / -"];
+	s4 -> s5 [label="Ske(ECDH) / -"];
+	s5 -> s6 [label="Shd / Cert(RSA)|Cke(ECDH)|CertVer|Ccs|F"];
+	s6 -> s7 [label="Ccs / -"];
+	s7 -> s7 [label="App / -"];
+	s7 -> s7 [label="A(close_notify) / -"];
+	s7 -> s7 [label="A(unexpected_msg) / -"];
+	s7 -> s8 [label="F / -"];
+	s8 -> s8 [label="App / App"];
+	s8 -> s8 [label="Other / -"];
+	s8 -> s8 [label="Other / -"];
+	s9 -> s4 [label="Other / -"];
+	s9 -> s10 [label="Ske(ECDH) / -"];
+	s9 -> s4 [label="Other / -"];
+	s10 -> s5 [label="Other / -"];
+	s10 -> s6 [label="Shd / Cke(ECDH)|Ccs|F"];
+	s10 -> s5 [label="Other / -"];
+
+__start0 [label="" shape="none" width="0" height="0"];
+__start0 -> s0;
+
+}

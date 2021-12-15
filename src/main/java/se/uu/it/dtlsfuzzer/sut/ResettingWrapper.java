@@ -7,6 +7,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
@@ -25,6 +28,9 @@ import se.uu.it.dtlsfuzzer.config.SulDelegate;
  */
 public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 
+	private static final Logger LOGGER = LogManager
+			.getLogger(ResettingWrapper.class);
+	
 	private SUL<I, O> sul;
 
 	private Socket resetSocket;
@@ -81,9 +87,13 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 			if (portString == null) {
 				throw new RuntimeException("Server has closed the socket");
 			}
+			
 			dynamicPort = Integer.valueOf(portString);
-			if (resetCommandWait > 0)
+			if (resetCommandWait > 0) {
 				Thread.sleep(resetCommandWait);
+			}
+			
+			LOGGER.info("Server listening at port {}", portString);
 
 			/*
 			 * We have to pre before the SUT does, so we have a port available

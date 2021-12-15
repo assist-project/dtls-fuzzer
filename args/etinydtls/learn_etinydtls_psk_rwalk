@@ -1,9 +1,11 @@
+state-fuzzer-server
+
 -connect 
-localhost:50005 
+localhost:${sut.port} 
 -runWait 
 100
 -alphabet
-examples/alphabets/psk8.xml
+${alphabets.servers}/psk8.xml
 -timeout  
 100  
 -sulConfig 
@@ -19,6 +21,6 @@ RANDOM_WP_METHOD,WP_METHOD
 -output 
 output/etinydtls_psk_rwalk
 -cmd 
-"${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p 50005"
+"${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sut.port}"
 -depth
 1

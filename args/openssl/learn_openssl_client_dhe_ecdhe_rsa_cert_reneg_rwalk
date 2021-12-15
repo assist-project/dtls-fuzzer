@@ -1,0 +1,31 @@
+state-fuzzer-client
+
+# SUT config
+-protocol
+DTLS12
+-port
+${sut.port}
+-runWait 
+0
+-timeout
+20
+-cmd 
+"${fuzzer.dir}/suts/openssl-${openssl.version}/apps/openssl s_client -psk 1234 -key ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem -cert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -CAfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -port ${sut.port} -dtls1_2 -mtu 5000"
+
+# mapper config
+-socketClosedAsTimeout
+-disabledAsTimeout
+
+# learning config
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms 
+RANDOM_WP_METHOD,WP_METHOD 
+-alphabet 
+${alphabets.clients}/dhe_ecdhe_rsa_cert_reneg.xml
+-output 
+output/openssl-${openssl.version}_client_dhe_ecdhe_rsa_cert_reneg_rwalk
+-timeLimit
+"P2D"

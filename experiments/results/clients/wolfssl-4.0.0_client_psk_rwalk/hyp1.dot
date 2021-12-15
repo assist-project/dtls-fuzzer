@@ -1,0 +1,16 @@
+digraph g {
+
+	s0 [shape="circle" label="s0"];
+	s0 -> s0 [label="HELLO_VERIFY_REQUEST / CLIENT_HELLO+"];
+	s0 -> s0 [label="PSK_SERVER_HELLO / CLIENT_HELLO+"];
+	s0 -> s0 [label="SERVER_HELLO_DONE / CLIENT_HELLO"];
+	s0 -> s0 [label="CHANGE_CIPHER_SPEC / CLIENT_HELLO+"];
+	s0 -> s0 [label="FINISHED / CLIENT_HELLO"];
+	s0 -> s0 [label="APPLICATION / CLIENT_HELLO|Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s0 -> s0 [label="Alert(WARNING,CLOSE_NOTIFY) / CLIENT_HELLO"];
+	s0 -> s0 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / CLIENT_HELLO"];
+
+__start0 [label="" shape="none" width="0" height="0"];
+__start0 -> s0;
+
+}

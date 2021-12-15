@@ -1,0 +1,30 @@
+bug-checker-server
+# SUT config
+-connect 
+localhost:${sut.port}
+-runWait 
+100
+-rstWait
+100
+-timeout  
+100  
+-protocol 
+DTLS12 
+-cmd 
+"${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role server -port ${sut.port} -cipherSuite TLS_PSK_WITH_AES_128_CCM_8"
+-termCmd
+"/bin/bash  ${fuzzer.dir}/experiments/scripts/stop_proc_at_port.sh ${sut.port} server"
+
+# output mapper config
+-repeatingOutputs
+HELLO_VERIFY_REQUEST
+
+# bugchecker config
+-alphabet
+${models.servers}/piondtls-${piondtls.version}_psk/alphabet.xml
+-model
+${models.servers}/piondtls-${piondtls.version}_psk/model.dot
+-output 
+output/bugcheck/piondtls-${piondtls.version}_psk-verifyBugs
+-generationStrategy
+BFS

@@ -1,0 +1,28 @@
+state-fuzzer-client
+
+-port
+${sut.port} 
+-runWait 
+100
+-timeout  
+100  
+-sulConfig 
+experiments/configs/tinydtls_client.config
+-cmd 
+"${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sut.port} localhost"
+-protocol 
+DTLS12 
+
+# learner config
+-alphabet
+${alphabets.clients}/tinydtls_ecdhe8_cert.xml
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-output 
+output/etinydtls_client_ecdhe_cert_rwalk
+-depth
+1

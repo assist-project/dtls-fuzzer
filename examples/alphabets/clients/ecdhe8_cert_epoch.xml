@@ -1,0 +1,63 @@
+<!-- DTLS alphabet comprising the messages necessary to perform RSA, DH and ECDH handshakes-->
+<alphabet>
+	<HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
+	<ServerHelloInput suite="TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8" name="ECDH_SERVER_HELLO"/>
+	<ServerHelloInput suite="TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8" name="ECDH_SERVER_HELLO_EPOCH_1" epoch="1"/>
+    <ServerKeyExchangeInput name="ECDH_SERVER_KEY_EXCHANGE" algorithm="ECDH"/>
+    <CertificateRequestInput certificate="RSA_SIGN" name="RSA_SIGN_CERTIFICATE_REQUEST"/>
+    <CertificateRequestInput certificate="RSA_FIXED_ECDH" name="RSA_FIXED_ECDH_CERTIFICATE_REQUEST"/>
+    <CertificateRequestInput certificate="RSA_FIXED_DH" name="RSA_FIXED_DH_CERTIFICATE_REQUEST"/>
+    <CertificateRequestInput certificate="DSS_SIGN" name="DSS_SIGN_CERTIFICATE_REQUEST"/>
+    <CertificateRequestInput certificate="DSS_FIXED_DH" name="DSS_FIXED_DH_CERTIFICATE_REQUEST"/>
+    <CertificateRequestInput certificate="ECDSA_SIGN" name="ECDSA_SIGN_CERTIFICATE_REQUEST"/>
+    <ServerHelloDoneInput name="SERVER_HELLO_DONE"/>
+    <ChangeCipherSpecInput/>
+    <FinishedInput name="FINISHED"/>
+    <FinishedInput name="FINISHED_EPOCH_0" epoch="0"/>
+    <ApplicationInput name="APPLICATION_EPOCH_0" epoch="0"/>
+    <ApplicationInput name="APPLICATION"/>
+    <GenericTlsInput name="CERTIFICATE">
+        <Certificate/>
+    </GenericTlsInput>
+    <GenericTlsInput name="EMPTY_CERTIFICATE">
+        <Certificate>
+            <certificatesList>
+            </certificatesList>
+            <certificatesListBytes>
+            	<byteArrayExplicitValueModification>
+            		<explicitValue></explicitValue>
+            	</byteArrayExplicitValueModification>
+            </certificatesListBytes>
+        </Certificate>
+    </GenericTlsInput>
+    <!-- Alert(WARNING,CLOSE_NOTIFY) -->
+    <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
+        <Alert>
+            <level>
+                <byteExplicitValueModification>
+                        <explicitValue>1</explicitValue>
+                </byteExplicitValueModification>
+            </level>
+            <description>
+                <byteExplicitValueModification>
+                        <explicitValue>0</explicitValue>
+                </byteExplicitValueModification>
+            </description>
+        </Alert>
+    </GenericTlsInput>
+    <!-- Alert(FATAL,UNEXPECTED_MESSAGE) -->
+    <GenericTlsInput name="Alert(FATAL,UNEXPECTED_MESSAGE)">
+        <Alert>
+            <level>
+                <byteExplicitValueModification>
+                        <explicitValue>2</explicitValue>
+                </byteExplicitValueModification>
+            </level>
+            <description>
+                <byteExplicitValueModification>
+                        <explicitValue>10</explicitValue>
+                </byteExplicitValueModification>
+            </description>
+        </Alert>
+    </GenericTlsInput>
+</alphabet>

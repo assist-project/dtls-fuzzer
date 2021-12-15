@@ -2,16 +2,19 @@ package se.uu.it.dtlsfuzzer.sut;
 
 import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
-import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
-import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
+import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
+import se.uu.it.dtlsfuzzer.sut.output.OutputMapper;
+import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 public class IsAliveWrapper implements SUL<TlsInput, TlsOutput> {
 
 	private SUL<TlsInput, TlsOutput> sut;
 	private boolean isAlive;
+	private OutputMapper outputMapper;
 
-	public IsAliveWrapper(SUL<TlsInput, TlsOutput> sut) {
+	public IsAliveWrapper(SUL<TlsInput, TlsOutput> sut, OutputMapper outputMapper) {
 		this.sut = sut;
+		this.outputMapper = outputMapper;
 	}
 
 	@Override
@@ -32,7 +35,7 @@ public class IsAliveWrapper implements SUL<TlsInput, TlsOutput> {
 			isAlive = out.isAlive();
 			return out;
 		} else {
-			return TlsOutput.socketClosed();
+			return outputMapper.socketClosed(); 
 		}
 	}
 }

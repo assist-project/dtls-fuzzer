@@ -1,9 +1,10 @@
+state-fuzzer-server
 -connect 
-localhost:40005 
+localhost:${sut.port} 
 -runWait 
 100
 -alphabet
-examples/alphabets/psk8.xml
+${alphabets.servers}/psk8.xml
 -timeout  
 100  
 -randLength
@@ -17,6 +18,6 @@ RANDOM_WP_METHOD,WP_METHOD
 -output 
 output/ctinydtls_psk_rwalk
 -cmd 
-"${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p 40005"
+"${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sut.port}"
 -depth
 1

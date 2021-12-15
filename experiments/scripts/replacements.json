@@ -32,24 +32,29 @@
         },
         
         {
-            replaceIf:"alert\\(\\_.*", 
+            replaceIf:".*alert\\(\\_.*", 
             replacee:"alert\\(\\_",
-            replacement: "A(",
-            isFinal: true
+            replacement: "A("
         },
+
         
-        {
-            replaceIf:"alert\\(\\_.*", 
-            replacee:"alert\\(\\_",
-            replacement: "A(",
-            isFinal: true
-        },
         
         {
             replacee:"([A-Z][a-z]*)ClientHello",
 			replacement:"CH($1)"
+        },
+        
+        {
+            replaceIf: ".*ClientHello.*",
+            replacee:"ClientHello",
+			replacement:"CH"
 		},
         
+        {
+            replacee:"HelloRequest",
+			replacement:"HR"
+		},
+
         {
             replacee:"([A-Z][a-z]*)ClientKeyExchange",
 			replacement:"CKE($1)"
@@ -61,6 +66,11 @@
 		},
         
         {
+            replacee:"([A-Z][A-Za-z]*)CertificateRequest",
+			replacement:"CertReq($1)"
+		},
+
+        {
             replacee:"CertificateRequest",
 			replacement:"CertReq"
 		},
@@ -68,11 +78,16 @@
         {
             replacee:"EmptyCertificate",
 			replacement:"Cert(empty)"
+        },
+        
+        {
+            replacee:"([A-Z][A-Za-z]*)Certificate",
+			replacement:"Cert($1)"
 		},
         
         {
             replacee:"Certificate",
-			replacement:"Cert(RSA)"
+			replacement:"Cert"
 		},
         
         {
@@ -88,6 +103,12 @@
         {
             replacee:"ServerHelloDone",
 			replacement:"SHD"
+        },
+        
+
+        {
+            replacee:"([A-Z][a-z]*)ServerHello",
+			replacement:"SH($1)"
 		},
         
         {
@@ -98,8 +119,9 @@
         {
             replacee:"([A-Z][a-z]*)ServerKeyExchange",
 			replacement:"SKE($1)"
-		},
+        },
         
+
         {
             replacee:"Rsa",
 			replacement:"RSA"
@@ -128,6 +150,16 @@
         {
             replacee:"Dh",
 			replacement:"DH"
+        },
+        
+        {
+            replacee:"Dss",
+			replacement:"DSS"
+        },
+        
+        {
+            replacee:"Ecdsa",
+			replacement:"ECDSA"
 		},
         
         {

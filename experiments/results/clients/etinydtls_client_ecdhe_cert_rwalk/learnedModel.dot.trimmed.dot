@@ -1,0 +1,120 @@
+digraph g {
+s0 [label="0", shape="circle"];
+s1 [label="1", shape="circle"];
+s2 [label="2", shape="circle"];
+s3 [label="3", shape="circle"];
+s4 [label="4", shape="circle"];
+s5 [label="5", shape="circle"];
+s6 [label="6", shape="circle"];
+s7 [label="7", shape="circle"];
+s8 [label="8", shape="circle"];
+s9 [label="9", shape="circle"];
+s10 [label="10", shape="circle"];
+s11 [label="11", shape="circle"];
+s12 [label="12", shape="circle"];
+s13 [label="13", shape="circle"];
+s14 [label="14", shape="circle"];
+s15 [label="15", shape="circle"];
+s16 [label="16", shape="circle"];
+s0 -> s3  [color="deepskyblue", label="HVR / CH+
+App / CH"];
+s0 -> s7  [color="chartreuse3", label="SH(ECDH) / CH"];
+s0 -> s2  [label="SKE(ECDH) / CH"];
+s0 -> s4  [label="CCS / CH"];
+s0 -> s6  [label="A(close_notify) / CH|A(close_notify)
+A(unexpected_msg) / CH"];
+s0 -> s1  [label="Other / CH|A(unexpected_msg)"];
+s1 -> s9  [label="CCS / -"];
+s1 -> s6  [label="A(close_notify) / -
+A(unexpected_msg) / -"];
+s1 -> s1  [label="Other / -"];
+s2 -> s1  [label="HVR / A(unexpected_msg)
+SH(ECDH) / A(unexpected_msg)
+F / A(unexpected_msg)
+Cert / A(unexpected_msg)
+Cert(empty) / A(unexpected_msg)"];
+s2 -> s2  [label="SKE(ECDH) / -
+App / -"];
+s2 -> s4  [label="CCS / -"];
+s2 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s2 -> s5  [label="Other / -"];
+s3 -> s3  [label="HVR / CH
+App / -"];
+s3 -> s7  [color="deepskyblue", label="SH(ECDH) / -"];
+s3 -> s2  [label="SKE(ECDH) / -"];
+s3 -> s4  [label="CCS / -"];
+s3 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s3 -> s1  [label="Other / A(unexpected_msg)"];
+s4 -> s6  [label="Other / A(decrypt_error)"];
+s5 -> s5  [label="Other / Disabled"];
+s6 -> s5  [label="CCS / -"];
+s6 -> s6  [label="Other / -"];
+s7 -> s4  [label="CCS / -"];
+s7 -> s7  [label="App / -"];
+s7 -> s8  [color="deepskyblue", label="Cert / -"];
+s7 -> s1  [label="Cert(empty) / A(decode_error)
+Other / A(unexpected_msg)"];
+s7 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s8 -> s10  [color="deepskyblue", label="SKE(ECDH) / -"];
+s8 -> s4  [label="CCS / -"];
+s8 -> s8  [label="App / -"];
+s8 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s8 -> s1  [label="Other / A(unexpected_msg)"];
+s9 -> s9  [label="Other / -"];
+s10 -> s1  [label="CertReq(RSASign) / A(handshake_failure)
+CertReq(RSAFixedECDH) / A(handshake_failure)
+CertReq(RSAFixedDH) / A(handshake_failure)
+CertReq(DSSSign) / A(handshake_failure)
+CertReq(DSSFixedDH) / A(handshake_failure)
+Other / A(unexpected_msg)"];
+s10 -> s16  [label="CertReq(ECDSASign) / -"];
+s10 -> s11  [color="deepskyblue", label="SHD / CKE(ECDH)|CCS|F"];
+s10 -> s4  [label="CCS / -"];
+s10 -> s10  [label="App / -"];
+s10 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s11 -> s13  [label="SH(ECDH) / -"];
+s11 -> s14  [color="deepskyblue", label="CCS / -"];
+s11 -> s11  [label="App / -"];
+s11 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s11 -> s12  [label="Other / -"];
+s12 -> s13  [label="SH(ECDH) / -
+CCS / -"];
+s12 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s12 -> s12  [label="Other / -"];
+s13 -> s4  [label="CCS / -"];
+s13 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s13 -> s13  [label="Other / -"];
+s14 -> s4  [label="CCS / -"];
+s14 -> s15  [color="deepskyblue", label="F / -"];
+s14 -> s14  [label="App / -"];
+s14 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s14 -> s1  [label="Other / A(unexpected_msg)"];
+s15 -> s9  [label="CCS / -"];
+s15 -> s15  [label="App / App
+Other / -"];
+s15 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s16 -> s1  [label="CertReq(RSASign) / A(handshake_failure)
+CertReq(RSAFixedECDH) / A(handshake_failure)
+CertReq(RSAFixedDH) / A(handshake_failure)
+CertReq(DSSSign) / A(handshake_failure)
+CertReq(DSSFixedDH) / A(handshake_failure)
+Other / A(unexpected_msg)"];
+s16 -> s16  [label="CertReq(ECDSASign) / -
+App / -"];
+s16 -> s11  [label="SHD / Cert(RawEcPublicKey)|CKE(ECDH)|CertVer|CCS|F"];
+s16 -> s4  [label="CCS / -"];
+s16 -> s6  [label="A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+__start0 [height="0", label="", shape="none", width="0"];
+__start0 -> s0;
+}

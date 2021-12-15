@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.beust.jcommander.Parameter;
 
-import se.uu.it.dtlsfuzzer.learn.EquivalenceAlgorithmName;
-import se.uu.it.dtlsfuzzer.learn.LearningAlgorithmName;
+import se.uu.it.dtlsfuzzer.learner.EquivalenceAlgorithmName;
+import se.uu.it.dtlsfuzzer.learner.LearningAlgorithmName;
 
 public class LearningConfig {
 	@Parameter(names = "-learningAlgorithm", description = "Which algorithm shold be used for learning")
@@ -52,7 +52,7 @@ public class LearningConfig {
 
 	@Parameter(names = "-cacheTests", description = "Cache tests, which increases the memory footprint but improves performance. It also renders useless most forms of non-determinism sanitization")
 	private boolean cacheTests = false;
-
+	
 	@Parameter(names = "-dontCacheTests", description = "Deprecated parameter with no effect, kept for backwards compatibility. Use -cacheTests.")
 	private boolean dontCacheTests = false;
 

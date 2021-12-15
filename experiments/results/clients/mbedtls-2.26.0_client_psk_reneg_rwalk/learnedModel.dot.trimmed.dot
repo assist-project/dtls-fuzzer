@@ -1,0 +1,142 @@
+digraph g {
+s0 [label="0", shape="circle"];
+s1 [label="1", shape="circle"];
+s2 [label="2", shape="circle"];
+s3 [label="3", shape="circle"];
+s4 [label="4", shape="circle"];
+s5 [label="5", shape="circle"];
+s6 [label="6", shape="circle"];
+s7 [label="7", shape="circle"];
+s8 [label="8", shape="circle"];
+s9 [label="9", shape="circle"];
+s10 [label="10", shape="circle"];
+s11 [label="11", shape="circle"];
+s12 [label="12", shape="circle"];
+s13 [label="13", shape="circle"];
+s14 [label="14", shape="circle"];
+s15 [label="15", shape="circle"];
+s16 [label="16", shape="circle"];
+s0 -> s7  [color="deepskyblue", label="HVR / CH+"];
+s0 -> s2  [color="chartreuse3", label="SH(PSK) / CH"];
+s0 -> s1  [label="SHD / CH|A(decode_error)
+F / CH|A(decode_error)
+HR / CH|A(decode_error)
+A(close_notify) / CH
+A(unexpected_msg) / CH"];
+s0 -> s3  [label="CCS / CH"];
+s0 -> s4  [label="App / CH"];
+s1 -> s1  [label="Other / Disabled"];
+s2 -> s1  [label="HVR / A(decode_error)
+SH(PSK) / A(decode_error)
+F / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s2 -> s6  [color="chartreuse3", label="SHD / CKE(PSK)|CCS|F"];
+s2 -> s3  [label="CCS / -"];
+s2 -> s5  [label="HR / -"];
+s2 -> s2  [label="App / -"];
+s3 -> s5  [label="HR / -"];
+s3 -> s3  [label="Other / -"];
+s4 -> s7  [label="HVR / CH"];
+s4 -> s2  [label="SH(PSK) / -"];
+s4 -> s1  [label="SHD / A(decode_error)
+F / A(decode_error)
+HR / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s4 -> s3  [label="CCS / -"];
+s4 -> s4  [label="App / -"];
+s5 -> s5  [label="Other / Disabled"];
+s6 -> s10  [color="deepskyblue", label="CCS / -"];
+s6 -> s5  [label="HR / -"];
+s6 -> s6  [label="App / -"];
+s6 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s7 -> s8  [label="HVR / CH"];
+s7 -> s9  [color="deepskyblue", label="SH(PSK) / -"];
+s7 -> s1  [label="SHD / A(decode_error)
+F / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s7 -> s3  [label="CCS / -"];
+s7 -> s5  [label="HR / CH"];
+s7 -> s7  [label="App / -"];
+s8 -> s8  [label="HVR / CH
+App / -"];
+s8 -> s2  [label="SH(PSK) / -"];
+s8 -> s1  [label="SHD / A(decode_error)
+F / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s8 -> s3  [label="CCS / -"];
+s8 -> s5  [label="HR / -"];
+s9 -> s1  [label="HVR / A(decode_error)
+SH(PSK) / A(decode_error)
+F / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s9 -> s6  [color="deepskyblue", label="SHD / CKE(PSK)|CCS|F"];
+s9 -> s3  [label="CCS / -"];
+s9 -> s5  [label="HR / CH"];
+s9 -> s9  [label="App / -"];
+s10 -> s1  [label="HVR / A(decode_error)
+SH(PSK) / A(decode_error)
+SHD / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s10 -> s3  [label="CCS / -"];
+s10 -> s11  [color="deepskyblue", label="F / App"];
+s10 -> s5  [label="HR / -"];
+s10 -> s10  [label="App / -"];
+s11 -> s1  [label="CCS / -
+A(close_notify) / A(close_notify)
+A(unexpected_msg) / -"];
+s11 -> s12  [label="HR / CH"];
+s11 -> s11  [label="App / App
+Other / -"];
+s12 -> s12  [label="HVR / CH"];
+s12 -> s14  [label="SH(PSK) / -"];
+s12 -> s1  [label="SHD / A(decode_error)
+F / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s12 -> s3  [label="CCS / -"];
+s12 -> s5  [label="HR / -"];
+s12 -> s13  [label="App / -"];
+s13 -> s13  [label="HVR / CH"];
+s13 -> s2  [label="SH(PSK) / -"];
+s13 -> s1  [label="SHD / A(decode_error)
+F / A(decode_error)
+App / -
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s13 -> s3  [label="CCS / -"];
+s13 -> s5  [label="HR / -"];
+s14 -> s1  [label="HVR / A(decode_error)
+SH(PSK) / A(decode_error)
+F / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s14 -> s15  [label="SHD / CKE(PSK)|CCS|F"];
+s14 -> s3  [label="CCS / -"];
+s14 -> s5  [label="HR / -"];
+s14 -> s14  [label="App / -"];
+s15 -> s16  [label="CCS / -"];
+s15 -> s5  [label="HR / -"];
+s15 -> s15  [label="App / -"];
+s15 -> s1  [label="A(close_notify) / -
+A(unexpected_msg) / -
+Other / A(unexpected_msg)"];
+s16 -> s1  [label="HVR / A(decode_error)
+SH(PSK) / A(decode_error)
+SHD / A(decode_error)
+A(close_notify) / -
+A(unexpected_msg) / -"];
+s16 -> s3  [label="CCS / -"];
+s16 -> s11  [label="F / -"];
+s16 -> s5  [label="HR / -"];
+s16 -> s16  [label="App / -"];
+__start0 [height="0", label="", shape="none", width="0"];
+__start0 -> s0;
+}

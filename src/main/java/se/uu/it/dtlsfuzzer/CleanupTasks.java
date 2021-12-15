@@ -18,7 +18,7 @@ public class CleanupTasks {
 		tasks.add(runnable);
 	}
 
-	void execute() {
+	public void execute() {
 		for (Runnable task : tasks) {
 			task.run();
 		}

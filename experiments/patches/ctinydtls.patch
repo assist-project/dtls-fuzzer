@@ -1,5 +1,5 @@
 diff --git a/tests/dtls-client.c b/tests/dtls-client.c
-index bbb5510..7e1ad2f 100644
+index bbb5510..55ee102 100644
 --- a/tests/dtls-client.c
 +++ b/tests/dtls-client.c
 @@ -26,7 +26,7 @@
@@ -22,6 +22,15 @@ index bbb5510..7e1ad2f 100644
  
  /* This function is the "key store" for tinyDTLS. It is called to
   * retrieve a key for the given identity within this particular
+@@ -192,7 +192,7 @@ read_from_peer(struct dtls_context_t *ctx,
+   size_t i;
+   for (i = 0; i < len; i++)
+     printf("%c", data[i]);
+-  return 0;
++  return dtls_write(ctx, session, data, len);;
+ }
+ 
+ static int
 @@ -348,9 +348,9 @@ main(int argc, char **argv) {
  
  #ifdef DTLS_PSK

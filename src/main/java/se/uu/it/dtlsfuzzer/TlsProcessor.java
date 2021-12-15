@@ -3,52 +3,39 @@ package se.uu.it.dtlsfuzzer;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.pfg666.dotparser.fsm.mealy.MealyProcessor;
+import net.automatalib.commons.util.Pair;
+import se.uu.it.dtlsfuzzer.sut.input.NameTlsInputMapping;
+import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
+import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
-import se.uu.it.dtlsfuzzer.sut.io.TlsInput;
-import se.uu.it.dtlsfuzzer.sut.io.TlsOutput;
-import se.uu.it.dtlsfuzzer.sut.io.definitions.Definitions;
-
-/**
- * A TLS processor is used by dot-parser to load a model specified in .dot file
- * which uses a given alphabet.
- */
-public class TlsProcessor implements MealyProcessor<TlsInput, TlsOutput> {
+public class TlsProcessor implements MealyDotParser.MealyInputOutputProcessor <TlsInput,TlsOutput> {
 	private Map<String, TlsInput> cache;
-	private Definitions definitions;
+	private NameTlsInputMapping definitions;
 
-	public TlsProcessor(Definitions definitions) {
+	public TlsProcessor(NameTlsInputMapping definitions) {
 		cache = new HashMap<>();
 		this.definitions = definitions;
 	}
 
-	@Override
-	public TlsInput processInput(String inputName) {
+	public Pair<TlsInput,TlsOutput> processMealyInputOutput(String inputName, String outputName) {
 		inputName = inputName.trim();
 		if (!cache.containsKey(inputName)) {
-			TlsInput tlsInput = definitions.getInputWithDefinition(inputName);
+			TlsInput tlsInput = definitions.getInput(inputName);
 			if (tlsInput == null) {
 				throw new RuntimeException("Input " + inputName
-						+ " could not be found in the given definitions.\n "
+						+ " could not be found in the given mapping.\n "
 						+ definitions.toString());
 			}
-			cache.put(inputName, definitions.getInputWithDefinition(inputName));
+			cache.put(inputName, definitions.getInput(inputName));
 		}
-		return cache.get(inputName);
-	}
-
-	@Override
-	public TlsOutput processOutput(String output) {
-		// String[] trimmedOutputStrings =
-		// Arrays.stream(output.split(","))
-		// .map(o -> o.trim())
-		// .toArray(String []::new);
-		// TODO This is a quick hack, we don't split the string because it can
-		// get messy with some outputs which already contain commas
-		// the best solution here would be to store actual messages in the
-		// output or message classes.
-
-		return new TlsOutput(new String[]{output.trim()});
-		// new TlsOutput(trimmedOutputStrings);
+		TlsInput input = cache.get(inputName);
+		// FIXME Patchwork to work with models using the old output splitter (,). Should be removed.
+		outputName = outputName.replaceAll("\\,", "|");
+		outputName = outputName.replaceAll("WARNING\\|", "WARNING,");
+		outputName = outputName.replaceAll("FATAL\\|", "FATAL,");
+		
+		TlsOutput output = new TlsOutput(outputName.trim());
+		
+		return Pair.of(input, output);
 	}
 }

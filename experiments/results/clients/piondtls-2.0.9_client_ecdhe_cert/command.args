@@ -1,0 +1,27 @@
+bug-checker-client
+
+#SUL config
+-port 
+${sut.port} 
+-runWait 
+0
+-rstWait
+100
+-timeout  
+100  
+-protocol 
+DTLS12 
+-cmd 
+"${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role client  -key experiments/keystore/piondtls_ec_secp256r1_key.pem -cert experiments/keystore/piondtls_ec_secp256r1_cert.pem -port ${sut.port} -cipherSuite TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 -clientAuth NEEDED -trustCert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -serverName tls-attacker.de"
+
+# bugchecker config
+-alphabet
+${models.clients}/piondtls-${piondtls.version}_client_ecdhe_cert/alphabet.xml
+-model
+${models.clients}/piondtls-${piondtls.version}_client_ecdhe_cert/model.dot
+-output
+output/bugcheck/piondtls-${piondtls.version}_client_ecdhe_cert
+#-algorithms
+#ECDH-verifyBugs
+-generationStrategy
+BFS

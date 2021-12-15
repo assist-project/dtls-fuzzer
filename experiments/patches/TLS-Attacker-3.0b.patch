@@ -1,0 +1,24 @@
+diff -rupN /tmp/TLS-Attacker-3.0b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/extension/ClientCertificateTypeExtensionSerializer.java /tmp/TLS-Attacker-3.0b-patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/extension/ClientCertificateTypeExtensionSerializer.java
+--- /tmp/TLS-Attacker-3.0b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/extension/ClientCertificateTypeExtensionSerializer.java	2020-02-07 11:07:15.000000000 +0100
++++ /tmp/TLS-Attacker-3.0b-patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/extension/ClientCertificateTypeExtensionSerializer.java	2020-08-07 13:42:43.388000000 +0200
+@@ -23,7 +23,7 @@ public class ClientCertificateTypeExtens
+ 
+     @Override
+     public byte[] serializeExtensionContent() {
+-        if (msg.getCertificateTypesLength() != null) {
++        if (msg.getCertificateTypesLength() != null && Boolean.TRUE.equals(msg.getIsClientMessage().getValue())) {
+             appendInt(msg.getCertificateTypesLength().getValue(), ExtensionByteLength.CERTIFICATE_TYPE_TYPE_LENGTH);
+         }
+         appendBytes(msg.getCertificateTypes().getValue());
+diff -rupN /tmp/TLS-Attacker-3.0b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/extension/ServerCertificateTypeExtensionSerializer.java /tmp/TLS-Attacker-3.0b-patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/extension/ServerCertificateTypeExtensionSerializer.java
+--- /tmp/TLS-Attacker-3.0b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/extension/ServerCertificateTypeExtensionSerializer.java	2020-02-07 11:07:15.000000000 +0100
++++ /tmp/TLS-Attacker-3.0b-patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/extension/ServerCertificateTypeExtensionSerializer.java	2020-08-07 13:42:21.152000000 +0200
+@@ -23,7 +23,7 @@ public class ServerCertificateTypeExtens
+ 
+     @Override
+     public byte[] serializeExtensionContent() {
+-        if (msg.getCertificateTypesLength() != null) {
++        if (msg.getCertificateTypesLength() != null && Boolean.TRUE.equals(msg.getIsClientMessage().getValue())) {
+             appendInt(msg.getCertificateTypesLength().getValue(), ExtensionByteLength.CERTIFICATE_TYPE_TYPE_LENGTH);
+         }
+         appendBytes(msg.getCertificateTypes().getValue());

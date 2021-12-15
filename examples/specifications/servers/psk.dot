@@ -1,0 +1,17 @@
+digraph G {
+label=""
+wait_ch1 [color="red"]
+connected [shape="doublecircle"]
+wait_ch1 -> psk_send_hvr [label="?PSK_CLIENT_HELLO"]
+psk_send_hvr -> psk_wait_ch2 [label="!HELLO_VERIFY_REQUEST"]
+psk_wait_ch2 -> psk_send_sh [label="?PSK_CLIENT_HELLO"]
+psk_send_sh -> psk_send_ske_shd [label="!SERVER_HELLO"]
+psk_send_ske_shd -> psk_send_shd [label="!PSK_SERVER_KEY_EXCHANGE"]
+psk_send_ske_shd -> psk_wait_cke [label="!SERVER_HELLO_DONE"]
+psk_send_shd -> psk_wait_cke [label="!SERVER_HELLO_DONE"]
+psk_wait_cke -> wait_ccs [label="?PSK_CLIENT_KEY_EXCHANGE"]
+wait_ccs -> wait_fin [label="?CHANGE_CIPHER_SPEC"]
+wait_fin -> send_ccs [label="?FINISHED"]
+send_ccs -> send_fin [label="!CHANGE_CIPHER_SPEC"]
+send_fin -> connected [label="!FINISHED"] 
+}

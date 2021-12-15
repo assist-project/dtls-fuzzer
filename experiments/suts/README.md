@@ -1,21 +1,43 @@
+# Caution
+This document is meant to be consistent with the current state of the project.
+It may not apply to older versions of the tool.
+
+# Implementations
 The JSSE server is at:
 https://github.com/pfg666/jsse-dtls-server
 
-The SCANDIUM server is at:
-https://github.com/pfg666/scandium-dtls-server
+The SCANDIUM client/server are at:
+https://github.com/assist-project/scandium-dtls-examples
 
-The PionDTLS server is at:
-https://github.com/pfg666/pion-dtls-server
+The PionDTLS client/server are at:
+https://github.com/assist-project/pion-dtls-examples
 
-The jar for scandium 2.0.x is for commit:
-c7895c6455f8f71aee570d754ac1d1542272fd8b
+# Versions/Commits
 
-The jar for scandium 1.0.x is for commit:
-73ad1db1529a937ca7556c7e13a4aa63062117eb
 
-The jar for scandium latest is for commit:
-6979a09365a60b4f3a554f9a53974eacad64c59c
+# Troubleshooting
 
-The PionDTLS version tested is that of commit:
-e4481fc3379a8dd08604d2a1e262efc648a20ea7
+## GnuTLS
+This library can be a pain to get working due to external dependencies, and inconsistencies in how environmental variables are set.
+If the setup_sut.sh script is not working, the following steps can be taken:
+
+1. Manually install all the dependencies, including pkgconfig.
+
+
+2. Set $PKG_CONFIG_PATH in ~/.bashrc to a directory which contains nettle.pc and hogweed.pc. For example:
+
+PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib64/pkgconfig/
+
+3. Ensure $LD_LIBRARY_PATH, variable referring to libraries loaded at runtime, also refers to the directory containing libnettle.so and libhogweed.so. 
+This can be done in two ways, either set LD_LIBRARY_PATH in the command used to launch the SUT:
+
+LD_LIBRARY_PATH=/usr/local/lib64 suts/gnutls/src/gnutls-cli
+
+Or include the directory in /etc/ld.so.config.d/*.conf, files which contain paths to all the directories whose libraries are loaded at runtime.
+
+Then run:
+
+sudo ldconfig
+
+
 

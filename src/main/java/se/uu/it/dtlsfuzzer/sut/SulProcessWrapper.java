@@ -29,9 +29,10 @@ public class SulProcessWrapper<I, O> implements SUL<I, O> {
 	// from ProcessConfig to ProcessHandler.
 	public SulProcessWrapper(SUL<I, O> sul, SulDelegate sulDelegate) {
 		this.sul = sul;
-		if (!handlers.containsKey(sulDelegate.getCommand()))
+		if (!handlers.containsKey(sulDelegate.getCommand())) {
 			handlers.put(sulDelegate.getCommand(), new ProcessHandler(
 					sulDelegate));
+		}
 		this.handler = handlers.get(sulDelegate.getCommand());
 		this.trigger = sulDelegate.getProcessTrigger();
 		if (trigger == ProcessLaunchTrigger.START && !handler.hasLaunched()) {
@@ -41,7 +42,6 @@ public class SulProcessWrapper<I, O> implements SUL<I, O> {
 				public void run() {
 					handler.terminateProcess();
 				}
-
 			}));
 		}
 	}

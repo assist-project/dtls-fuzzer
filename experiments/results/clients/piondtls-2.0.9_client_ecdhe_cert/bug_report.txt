@@ -1,0 +1,82 @@
+
+================================================================================
+Bug Report
+================================================================================
+
+Total Number of Bugs Found: 2
+
+--------------------------------------------------------------------------------
+Listing Bugs
+--------------------------------------------------------------------------------
+
+Bug Id: 1
+Detected the following bug patterns in flow
+Pattern: Handshake completed with invalid message sequence
+Severity: LOW
+Description: The handshake was completed using invalid message sequence numbers.
+Flow: HELLO_VERIFY_REQUEST/CLIENT_HELLO+ HELLO_VERIFY_REQUEST/CLIENT_HELLO ECDH_SERVER_HELLO/TIMEOUT CERTIFICATE/TIMEOUT ECDH_SERVER_KEY_EXCHANGE/TIMEOUT SERVER_HELLO_DONE/ECDH_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED 
+Verification Status: VERIFICATION_SUCCESSFUL
+
+Bug Id: 2
+Detected the following bug patterns in flow
+Pattern: Incorrect CertificateRequest Response
+Severity: LOW
+Description: Responding to a CertificateRequest with the certificate of incompatible type.
+Flow: ECDH_SERVER_HELLO/CLIENT_HELLO CERTIFICATE/TIMEOUT ECDH_SERVER_KEY_EXCHANGE/TIMEOUT RSA_SIGN_CERTIFICATE_REQUEST/TIMEOUT SERVER_HELLO_DONE/ECDSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|FINISHED 
+Verification Status: VERIFICATION_SUCCESSFUL
+
+
+================================================================================
+Run Description
+================================================================================
+
+
+--------------------------------------------------------------------------------
+Bug Checking Parameters
+--------------------------------------------------------------------------------
+
+SUT: client
+Alphabet: [HELLO_VERIFY_REQUEST, ECDH_SERVER_HELLO, ECDH_SERVER_KEY_EXCHANGE, RSA_SIGN_CERTIFICATE_REQUEST, RSA_FIXED_ECDH_CERTIFICATE_REQUEST, RSA_FIXED_DH_CERTIFICATE_REQUEST, DSS_SIGN_CERTIFICATE_REQUEST, DSS_FIXED_DH_CERTIFICATE_REQUEST, SERVER_HELLO_DONE, CHANGE_CIPHER_SPEC, FINISHED, APPLICATION, CERTIFICATE, EMPTY_CERTIFICATE, Alert(WARNING,CLOSE_NOTIFY), Alert(FATAL,UNEXPECTED_MESSAGE)]
+Loaded Bug Patterns (19): [Continue After CloseNotify, Continue After Fatal Alert, Early Finished, Finished Before CCS, Incorrect DecryptError Alert, Handshake completed with invalid message sequence, Multiple ChangeCipherSpec, Multiple Certificate, Multiple CertificateRequest, Multiple ServerKeyExchange, DH without ServerKeyExchange, Premature HelloRequest, Reorder Cert CertReq, Retransmitted Flight 5, ServerHello Flight Restart, Switching Cipher Suite, Unexpected ClientHello Response, Unrequested Certificate, Incorrect CertificateRequest Response]
+Bug Verification Enabled: true
+Uncategorized Bug Bound: 10
+
+--------------------------------------------------------------------------------
+TLS SUL Parameters
+--------------------------------------------------------------------------------
+
+Protocol: DTLS12
+ResetWait: 100
+Timeout: 100
+RunWait: 0
+Command: /home/pfg666/GitHub/dtls-fuzzer/suts/piondtls-2.0.9/dtls-clientserver -role client  -key experiments/keystore/piondtls_ec_secp256r1_key.pem -cert experiments/keystore/piondtls_ec_secp256r1_cert.pem -port 23012 -cipherSuite TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 -clientAuth NEEDED -trustCert /home/pfg666/GitHub/dtls-fuzzer/experiments/keystore/rsa2048_cert.pem -serverName tls-attacker.de
+
+================================================================================
+Statistics
+================================================================================
+
+
+--------------------------------------------------------------------------------
+General
+--------------------------------------------------------------------------------
+
+Number of inputs: 11
+Number of resets: 2
+Number of bugs: 2
+Time bug-checking took (ms): 3357
+
+--------------------------------------------------------------------------------
+Model Bug Finder
+--------------------------------------------------------------------------------
+
+Bug patterns loaded (19): [Continue After CloseNotify, Continue After Fatal Alert, Early Finished, Finished Before CCS, Incorrect DecryptError Alert, Handshake completed with invalid message sequence, Multiple ChangeCipherSpec, Multiple Certificate, Multiple CertificateRequest, Multiple ServerKeyExchange, DH without ServerKeyExchange, Premature HelloRequest, Reorder Cert CertReq, Retransmitted Flight 5, ServerHello Flight Restart, Switching Cipher Suite, Unexpected ClientHello Response, Unrequested Certificate, Incorrect CertificateRequest Response]
+Bug patterns found (2): [Handshake completed with invalid message sequence, Incorrect CertificateRequest Response]
+Bug patterns verified successfully (2): [Handshake completed with invalid message sequence, Incorrect CertificateRequest Response]
+Verification Inputs per Bug Pattern
+   Handshake completed with invalid message sequence : 6
+   Incorrect CertificateRequest Response : 5
+
+Verification Resets per Bug Pattern
+   Handshake completed with invalid message sequence : 1
+   Incorrect CertificateRequest Response : 1
+

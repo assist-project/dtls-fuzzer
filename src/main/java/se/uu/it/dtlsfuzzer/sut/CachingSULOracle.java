@@ -20,7 +20,7 @@ import net.automatalib.words.Word;
  * implementation of LearnLib's cache oracle {@link SULCache} is unstable (the
  * version 0.12.0 at least).
  * 
- * The implementation adds lookahead functionality.
+ * The implementation adds terminating outputs functionality.
  */
 public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
@@ -33,16 +33,16 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
 	private boolean onlyLookup;
 
-	private HashSet<O> lookaheadOutputs;
+	private HashSet<O> terminatingOutputs;
 
 	@SafeVarargs
 	public CachingSULOracle(MembershipOracle<I, Word<O>> sulOracle,
 			ObservationTree<I, O> cache, boolean onlyLookup,
-			O... lookaheadOutputs) {
+			O... terminatingOutputs) {
 		this.root = cache;
 		this.sulOracle = sulOracle;
 		this.onlyLookup = onlyLookup;
-		this.lookaheadOutputs = Sets.newHashSet(lookaheadOutputs);
+		this.terminatingOutputs = Sets.newHashSet(terminatingOutputs);
 	}
 
 	@Override
@@ -70,15 +70,15 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
 	@Nullable
 	private Word<O> answerFromCache(Word<I> input) {
-		if (lookaheadOutputs.isEmpty())
+		if (terminatingOutputs.isEmpty())
 			return root.answerQuery(input);
 		else {
 			Word<O> output = root.answerQuery(input, true);
 			if (output.length() < input.length()) {
-				if (output.isEmpty())
+				if (output.isEmpty()) {
 					return null;
-				else {
-					if (lookaheadOutputs.contains(output.lastSymbol())) {
+				} else {
+					if (terminatingOutputs.contains(output.lastSymbol())) {
 						Word<O> extendedOutput = output;
 						while (extendedOutput.length() < input.length()) {
 							extendedOutput = extendedOutput.append(output

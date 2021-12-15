@@ -1,0 +1,68 @@
+digraph g {
+
+	s0 [shape="circle" label="0"];
+	s1 [shape="circle" label="1"];
+	s2 [shape="circle" label="2"];
+	s3 [shape="circle" label="3"];
+	s4 [shape="circle" label="4"];
+	s5 [shape="circle" label="5"];
+	s6 [shape="circle" label="6"];
+	s7 [shape="circle" label="7"];
+	s8 [shape="circle" label="8"];
+	s9 [shape="circle" label="9"];
+	s10 [shape="circle" label="10"];
+	s0 -> s1 [color="deepskyblue" label="HVR / CH+"];
+	s0 -> s2 [color="chartreuse3" label="SH(ECDH) / CH"];
+	s0 -> s1 [label="App / CH"];
+	s1 -> s1 [label="HVR / CH"];
+	s1 -> s2 [color="deepskyblue" label="SH(ECDH) / -"];
+	s1 -> s1 [label="App / -"];
+	s2 -> s3 [label="CertReq(RSASign) / -"];
+	s2 -> s3 [label="CertReq(RSAFixedECDH) / -"];
+	s2 -> s3 [label="CertReq(RSAFixedDH) / -"];
+	s2 -> s3 [label="CertReq(DSSSign) / -"];
+	s2 -> s3 [label="CertReq(DSSFixedDH) / -"];
+	s2 -> s3 [label="CertReq(ECDSASign) / -"];
+	s2 -> s2 [label="App / -"];
+	s2 -> s9 [color="deepskyblue" label="Cert / -"];
+	s3 -> s3 [label="App / -"];
+	s3 -> s4 [label="Cert / -"];
+	s4 -> s5 [label="SKE(ECDH) / -"];
+	s4 -> s4 [label="App / -"];
+	s5 -> s6 [color="deepskyblue" label="SHD / Cert(RSA)|CKE(ECDH)|CertVer|CCS|F"];
+	s5 -> s5 [label="App / -"];
+	s6 -> s7 [color="deepskyblue" label="CCS / -"];
+	s6 -> s6 [label="App / -"];
+	s7 -> s8 [color="deepskyblue" label="F / -"];
+	s7 -> s7 [label="App / -"];
+	s7 -> s7 [label="A(close_notify) / -"];
+	s7 -> s7 [label="A(unexpected_msg) / -"];
+	s8 -> s8 [label="HVR / -"];
+	s8 -> s8 [label="SH(ECDH) / -"];
+	s8 -> s8 [label="SKE(ECDH) / -"];
+	s8 -> s8 [label="CertReq(RSASign) / -"];
+	s8 -> s8 [label="CertReq(RSAFixedECDH) / -"];
+	s8 -> s8 [label="CertReq(RSAFixedDH) / -"];
+	s8 -> s8 [label="CertReq(DSSSign) / -"];
+	s8 -> s8 [label="CertReq(DSSFixedDH) / -"];
+	s8 -> s8 [label="CertReq(ECDSASign) / -"];
+	s8 -> s8 [label="SHD / -"];
+	s8 -> s8 [label="F / -"];
+	s8 -> s8 [label="App / App"];
+	s8 -> s8 [label="Cert / -"];
+	s8 -> s8 [label="Cert(empty) / -"];
+	s9 -> s10 [color="deepskyblue" label="SKE(ECDH) / -"];
+	s9 -> s9 [label="App / -"];
+	s10 -> s5 [color="deepskyblue" label="CertReq(RSASign) / -"];
+	s10 -> s5 [color="deepskyblue" label="CertReq(RSAFixedECDH) / -"];
+	s10 -> s5 [color="deepskyblue" label="CertReq(RSAFixedDH) / -"];
+	s10 -> s5 [color="deepskyblue" label="CertReq(DSSSign) / -"];
+	s10 -> s5 [label="CertReq(DSSFixedDH) / -"];
+	s10 -> s5 [label="CertReq(ECDSASign) / -"];
+	s10 -> s6 [color="deepskyblue" label="SHD / CKE(ECDH)|CCS|F"];
+	s10 -> s10 [label="App / -"];
+
+__start0 [label="" shape="none" width="0" height="0"];
+__start0 -> s0;
+
+}

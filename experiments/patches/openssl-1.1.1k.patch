@@ -1,0 +1,12 @@
+diff -ruN suts/openssl-1.1.1k/ssl/d1_lib.c suts/openssl-1.1.1k_patched/ssl/d1_lib.c
+--- suts/openssl-1.1.1k/ssl/d1_lib.c	2021-04-26 09:53:41.647159640 +0200
++++ suts/openssl-1.1.1k_patched/ssl/d1_lib.c	2021-04-26 09:55:35.831826653 +0200
+@@ -339,7 +339,7 @@
+     }
+ 
+     /* Timer expired, so return true */
+-    return 1;
++    return 0;
+ }
+ 
+ void dtls1_double_timeout(SSL *s)

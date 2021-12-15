@@ -74,6 +74,51 @@ index fc7016a..d6afca1 100644
    return 0;
  }
  
+diff --git a/tests/dtls-client.c b/tests/dtls-client.c
+index 1979721..c799e42 100644
+--- a/tests/dtls-client.c
++++ b/tests/dtls-client.c
+@@ -23,7 +23,7 @@
+ #define DEFAULT_PORT 20220
+ 
+ #define PSK_DEFAULT_IDENTITY "Client_identity"
+-#define PSK_DEFAULT_KEY      "secretPSK"
++#define PSK_DEFAULT_KEY      "1234"
+ #define PSK_OPTIONS          "i:k:"
+ 
+ #ifdef __GNUC__
+@@ -98,8 +98,8 @@ read_from_file(char *arg, unsigned char *buf, size_t max_buf_len) {
+ #define PSK_MAXLEN 256
+ static unsigned char psk_id[PSK_ID_MAXLEN];
+ static size_t psk_id_length = 0;
+-static unsigned char psk_key[PSK_MAXLEN];
+-static size_t psk_key_length = 0;
++static unsigned char psk_key[] = {0x12, 0x34};
++static size_t psk_key_length = 2;
+ 
+ /* This function is the "key store" for tinyDTLS. It is called to
+  * retrieve a key for the given identity within this particular
+@@ -193,7 +193,7 @@ read_from_peer(struct dtls_context_t *ctx,
+   size_t i;
+   for (i = 0; i < len; i++)
+     printf("%c", data[i]);
+-  return 0;
++  return dtls_write(ctx, session, data, len);
+ }
+ 
+ static int
+@@ -351,9 +351,9 @@ main(int argc, char **argv) {
+ 
+ #ifdef DTLS_PSK
+   psk_id_length = strlen(PSK_DEFAULT_IDENTITY);
+-  psk_key_length = strlen(PSK_DEFAULT_KEY);
++  // psk_key_length = strlen(PSK_DEFAULT_KEY);
+   memcpy(psk_id, PSK_DEFAULT_IDENTITY, psk_id_length);
+-  memcpy(psk_key, PSK_DEFAULT_KEY, psk_key_length);
++  // memcpy(psk_key, PSK_DEFAULT_KEY, psk_key_length);
+ #endif /* DTLS_PSK */
+ 
+   while ((opt = getopt(argc, argv, "p:o:v:" PSK_OPTIONS)) != -1) {
 diff --git a/tests/dtls-server.c b/tests/dtls-server.c
 index 2914d98..1ebc076 100644
 --- a/tests/dtls-server.c
