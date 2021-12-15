@@ -1,5 +1,5 @@
 #!/bin/bash
-# Deploy all of dtls-fuzzer's dependencies.
+# Deploy all of dtls-fuzzer's dependencies and installing DTLS-Fuzzer.
 
 # SCRIPT_DIR should correpond to dtls-fuzzer's root directory
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -161,3 +161,7 @@ if [ $do_keep -eq 0 ]; then
 	echo "Removing $TLSATTACKER_FULLNAME source code post-install"
 	rm -r $TLSATTACKER_DIR
 fi
+
+# installing DTLS-Fuzzer
+echo "Installing DTLS-Fuzzer"
+mvn clean install
