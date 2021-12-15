@@ -11,8 +11,8 @@ readonly TLSATTACKER_ARCH_URL="https://github.com/RUB-NDS/TLS-Attacker/archive/$
 readonly TLSATTACKER_FULLNAME="TLS-Attacker-$TLSATTACKER_VER"
 
 # location to store the downloaded archive file
-readonly TLSATTACKER_TEMP_ARCH="/tmp/$TLSATTACKER_FULLNAME.tar.gz"
-readonly TLSATTACKER_DIR="/tmp/$TLSATTACKER_FULLNAME"
+readonly TLSATTACKER_TEMP_ARCH="$SCRIPT_DIR/$TLSATTACKER_FULLNAME.tar.gz"
+readonly TLSATTACKER_DIR="$SCRIPT_DIR/$TLSATTACKER_FULLNAME"
 readonly TLSATTACKER_PATCH="$PATCHES_DIR/$TLSATTACKER_FULLNAME.patch"
 
 function arch_temp_dir() {
