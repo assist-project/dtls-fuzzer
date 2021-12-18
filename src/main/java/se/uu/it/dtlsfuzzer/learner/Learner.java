@@ -25,7 +25,6 @@ import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
-import se.uu.it.dtlsfuzzer.ModelFactory;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.mapper.PhasedMapper;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
@@ -38,7 +37,6 @@ import se.uu.it.dtlsfuzzer.sut.TlsSULBuilder;
 import se.uu.it.dtlsfuzzer.sut.input.AlphabetFactory;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
-import se.uu.it.smbugfinder.encoding.javacc.ParseException;
 
 /**
  * Taken/adapted from StateVulnFinder tool (Extractor Component).
@@ -317,11 +315,6 @@ public class Learner {
 		hypothesis.export(graphFile, genPdf);
 	}
 	
-	private StateMachine loadStateMachine(File folder, String name) throws ParseException, IOException {
-		MealyMachine<?, TlsInput, ?, TlsOutput> mealy = ModelFactory.buildTlsModel(alphabet, new File(folder, name).getAbsolutePath());
-		return new StateMachine(mealy, alphabet);
-	}
-
 	public static class LearnerResult {
 
 		public StateMachine learnedModel;
