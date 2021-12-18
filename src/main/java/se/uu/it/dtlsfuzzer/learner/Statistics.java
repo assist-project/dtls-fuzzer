@@ -18,6 +18,7 @@ import se.uu.it.dtlsfuzzer.config.SulDelegate;
  */
 public class Statistics {
 	private String runDescription;
+	private int alphabetSize;
 	private int states;
 	private long learnResets;
 	private long learnInputs;
@@ -27,8 +28,9 @@ public class Statistics {
 	private long duration;
 	private long lastHypResets;
 	private long lastHypInputs;
-	private boolean successful;
+	private boolean finished;
 	private List<HypothesisStatistics> hypStats;
+	private String reason;
 
 	protected Statistics() {
 		runDescription = "";
@@ -46,9 +48,13 @@ public class Statistics {
 		PrintWriter out = new PrintWriter(writer);
 		out.println(runDescription);
 		out.println("=== STATISTICS ===");
-		out.println("Learning successful: " + successful);
+		out.println("Learning finished: " + finished);
+		if (!finished) {
+			out.println("Reason: " + reason);	
+		}
+		out.println("Size of the input alphabet: " + alphabetSize);
 		out.println("Number of states: " + states);
-		out.println("Number of hypotheses: " + (counterexamples.size() - 1));
+		out.println("Number of hypotheses: " + hypStats.size());
 		out.println("Number of inputs: " + allInputs);
 		out.println("Number of resets: " + allResets);
 		out.println("Number of learning inputs: " + learnInputs);
@@ -110,6 +116,14 @@ public class Statistics {
 
 	public String getRunDescription() {
 		return runDescription;
+	}
+	
+	public int getAlphabetSize() {
+		return alphabetSize;
+	}
+
+	protected void setAlphabetSize(int alphabetSize) {
+		this.alphabetSize = alphabetSize;
 	}
 
 	public int getStates() {
@@ -180,8 +194,9 @@ public class Statistics {
 		this.counterexamples = counterexamples;
 	}
 
-	protected void setSuccessful(boolean successful) {
-		this.successful = successful;
+	protected void setFinished(boolean finished, String reason) {
+		this.finished = finished;
+		this.reason = reason;
 	}
 
 	public void setHypStats(List<HypothesisStatistics> hypStats) {

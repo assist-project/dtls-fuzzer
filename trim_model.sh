@@ -47,13 +47,16 @@ function relabel_and_color() {
     java -jar $EXP_SCRIPTS_DIR/dot-trimmer.jar -r $REPL_FILE -i $input_model -o $relabelled_model -t $other_thr -cp $COLOR_FILE $extra
 }
 
-# merges transitions connecting the same states by placing them on the same arrow in stacked formation
+# merges (edges of) transitions connecting the same states by placing them on the same arrow in stacked formation
 function merge_transitions() {
     input_model=$1
     condensed_model=$2
 
-    echo "Formatting model by merging transitions"
+    echo "Formatting model by merging edges of transitions connecting same states"
+    orig_edge_num=`grep -ce '->' $input_model`
     python3 $EXP_SCRIPTS_DIR/dotformat.py $input_model $condensed_model
+    condensed_edge_num=`grep -ce '->' $condensed_model`
+    echo "Reduced the number of edges from $orig_edge_num to $condensed_edge_num"
 }
 
 # makes a model more readable by shortening the labels, coloring important paths in it, and optionally prunning superfluous states and merging transitions connecting the same states

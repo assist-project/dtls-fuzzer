@@ -25,7 +25,7 @@ public class StatisticsTracker {
 	long allResets;
 	long lastHypInputs;
 	long lastHypResets;
-	boolean successful;
+	boolean finished;
 
 	// some helper variables
 	long lastInputs;
@@ -50,6 +50,7 @@ public class StatisticsTracker {
 	}
 	
 	private PrintWriter stateWriter;
+	private String notFinishedReason;
 
 	/**
 	 * Creates a statistics tracker using counters which are updated during the
@@ -117,7 +118,7 @@ public class StatisticsTracker {
 		this.config = config;
 		this.alphabet = alphabet;
 		counterexamples = new ArrayList<>();
-		successful = false;
+		finished = false;
 		hypStats = new ArrayList<>();
 		logStateChange(State.REFINEMENT);
 	}
@@ -157,12 +158,13 @@ public class StatisticsTracker {
 	 * is abruptly terminated yet statistics are still desired. In the latter
 	 * case the last hypothesis should be provided.
 	 */
-	public void finishedLearning(StateMachine learnedModel, boolean success) {
+	public void finishedLearning(StateMachine learnedModel, boolean finished, String notFinishedReason) {
 		this.learnedModel = learnedModel;
 		allInputs = inputCounter.getCount();
 		allResets = resetCounter.getCount();
 		duration = System.currentTimeMillis() - time;
-		successful = success;
+		this.finished = finished;
+		this.notFinishedReason = notFinishedReason;
 		logStateChange(State.FINISHED);
 	}
 
@@ -172,7 +174,7 @@ public class StatisticsTracker {
 	 */
 	public Statistics generateStatistics() {
 		Statistics statistics = new Statistics();
-		statistics.setSuccessful(successful);
+		statistics.setFinished(finished, notFinishedReason);
 		statistics.generateRunDescription(config, alphabet);
 		statistics.setAllInputs(allInputs);
 		statistics.setAllResets(allResets);
@@ -182,6 +184,7 @@ public class StatisticsTracker {
 		statistics.setLastHypResets(lastHypResets);
 		statistics.setDuration(duration);
 		statistics.setCounterexamples(counterexamples);
+		statistics.setAlphabetSize(alphabet.size());
 		statistics.setStates(learnedModel.getMealyMachine().size());
 		statistics.setHypStats(hypStats);
 		return statistics;

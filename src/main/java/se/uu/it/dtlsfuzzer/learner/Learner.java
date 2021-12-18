@@ -25,6 +25,7 @@ import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
+import se.uu.it.dtlsfuzzer.ModelFactory;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.mapper.PhasedMapper;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
@@ -37,6 +38,7 @@ import se.uu.it.dtlsfuzzer.sut.TlsSULBuilder;
 import se.uu.it.dtlsfuzzer.sut.input.AlphabetFactory;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
+import se.uu.it.smbugfinder.encoding.javacc.ParseException;
 
 /**
  * Taken/adapted from StateVulnFinder tool (Extractor Component).
@@ -177,8 +179,10 @@ public class Learner {
 
 		// running learning and collecting important statistics
 		MealyMachine<?, TlsInput, ?, TlsOutput> hypothesis = null;
+		StateMachine stateMachine = null;
 		DefaultQuery<TlsInput, Word<TlsOutput>> counterExample = null;
-		boolean success = false;
+		boolean finished = false;
+		String notFinishedReason = null;
 		int rounds = 0;
 
 		try {
@@ -191,8 +195,7 @@ public class Learner {
 		try {
 			do {
 				hypothesis = algorithm.getHypothesisModel();
-				StateMachine stateMachine = new StateMachine(hypothesis,
-						alphabet);
+				stateMachine = new StateMachine(hypothesis, alphabet); 
 				learnerResult.addHypothesis(stateMachine);
 				// it is useful to print intermediate hypothesis as learning is
 				// running
@@ -204,17 +207,23 @@ public class Learner {
 				if (counterExample != null) {
 					LOG.warning("Counterexample: " + counterExample.toString());
 					tracker.newCounterExample(counterExample);
+					// we create a copy, since the hypothesis reference will not be valid after refinement
+					// and we may still need it (if learning abruptly terminates)
+					stateMachine = stateMachine.copy();
 					algorithm.refineHypothesis(counterExample);
 				}
 				rounds++;
 			} while (counterExample != null);
-			success = true;
+			finished = true;
 		} catch (ExperimentTimeoutException exc) {
 			LOG.severe("Learning timed out after a duration of "
 					+ exc.getDuration() + " (i.e. "
-					+ exc.getDuration().toHours() + " hours )");
-			LOG.severe("Logging last hypothesis");
+					+ exc.getDuration().toHours() + " hours, or"
+					+ exc.getDuration().toMinutes() + " minutes"
+							+ " )");
+			notFinishedReason = "learning timed out";			
 		} catch (Exception exc) {
+			notFinishedReason = exc.getMessage();
 			LOG.severe("Exception generated during learning");
 			// useful to log what actually went wrong
 			try (FileWriter fw = new FileWriter(new File(outputFolder,
@@ -229,30 +238,28 @@ public class Learner {
 		}
 
 		// building results:
-		StateMachine stateMachine = new StateMachine(hypothesis, alphabet);
-		tracker.finishedLearning(stateMachine, success);
+		tracker.finishedLearning(stateMachine, finished, notFinishedReason);
 		Statistics statistics = tracker.generateStatistics();
 
-		LOG.log(Level.INFO, "Finished Learning");
+		LOG.log(Level.INFO, "Finished Experiment");
 		LOG.log(Level.INFO, "Number of Rounds:" + rounds);
 		LOG.log(Level.INFO, statistics.toString());
 
 		learnerResult.setLearnedModel(stateMachine);
 		learnerResult.setStatistics(statistics);
 
-		if (success) {
-			// exporting to output files
-			serializeHypothesis(stateMachine, outputFolder,
-					LEARNED_MODEL_FILENAME, true);
-
-			// we disable this feature for now, as models are too large for it
-			// serializeHypothesis(stateMachine, outputFolder,
-			// LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
-			// false, true);
-
-			learnerResult.setLearnedModelFile(new File(outputFolder,
+		// exporting to output files
+		serializeHypothesis(stateMachine, outputFolder,
+				LEARNED_MODEL_FILENAME, true);
+	
+		// we disable this feature for now, as models are too large for it
+		// serializeHypothesis(stateMachine, outputFolder,
+		// LEARNED_MODEL_FILENAME.replace(".dot", "FullOutput.dot"),
+		// false, true);
+	
+		learnerResult.setLearnedModelFile(new File(outputFolder,
 					LEARNED_MODEL_FILENAME));
-		}
+			
 		try {
 			statistics.export(new FileWriter(new File(outputFolder,
 					STATISTICS_FILENAME)));
@@ -262,6 +269,7 @@ public class Learner {
 
 		return learnerResult;
 	}
+	
 
 	private void copyInputsToOutputFolder(File outputFolder) {
 		try {
@@ -307,6 +315,11 @@ public class Learner {
 			String name, boolean genPdf) {
 		File graphFile = new File(folder, name);
 		hypothesis.export(graphFile, genPdf);
+	}
+	
+	private StateMachine loadStateMachine(File folder, String name) throws ParseException, IOException {
+		MealyMachine<?, TlsInput, ?, TlsOutput> mealy = ModelFactory.buildTlsModel(alphabet, new File(folder, name).getAbsolutePath());
+		return new StateMachine(mealy, alphabet);
 	}
 
 	public static class LearnerResult {

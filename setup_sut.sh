@@ -578,7 +578,7 @@ if [[ -z $USE_AS_LIBRARY ]]; then
         echo "--force|-f     if SUT folder exists, delete it and rebuild the SUT instead of generating a message"
         echo ""
         echo "Archived SUT/dependency source code downloaded from the Internet is stored in $DOWNLOAD_DIR, which serves as a cache."
-        echo "Detele this folder or archives in this folder in case the local source code is not up-to-date with the remote code."
+        echo "Delete this folder or archives in this folder in case the local source code is not up-to-date with the remote code."
         exit 1
     else
         while [[ "$1" =~ ^- ]]; do case $1 in
