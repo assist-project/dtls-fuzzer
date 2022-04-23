@@ -18,6 +18,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openjdk-8-jdk
       - name: Before install
-        run: java -version
+        run: |
+          update-java-alternatives --list
+          java -version
       - name: Install
-        run: mvn clean install
+        run: |
+          bash prepare.sh
+          mvn clean install
