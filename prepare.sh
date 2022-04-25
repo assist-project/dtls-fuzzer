@@ -1,12 +1,13 @@
-#!/bin/bash
-# Deploy all of dtls-fuzzer's dependencies and installing DTLS-Fuzzer.
+#!/usr/bin/env bash
+#
+# Deploy all dependencies for installing DTLS-Fuzzer.
 
 # SCRIPT_DIR should correpond to dtls-fuzzer's root directory
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
 # this version should be the same as that in pom.xml
-readonly TLSATTACKER_VER="3.0b"
+readonly TLSATTACKER_VER="3.2b"
 readonly TLSATTACKER_ARCH_URL="https://github.com/RUB-NDS/TLS-Attacker/archive/$TLSATTACKER_VER.tar.gz"
 readonly TLSATTACKER_FULLNAME="TLS-Attacker-$TLSATTACKER_VER"
 
