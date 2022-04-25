@@ -115,11 +115,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <rules>
-                        <!--<requireJavaVersion>
+                    <!--<rules>
+                        <requireJavaVersion>
                             <version>[1.8,1.9)</version>
-                        </requireJavaVersion>-->
-                    </rules>
+                        </requireJavaVersion>
+                    </rules>-->
                     <requireOS>
                         <family>unix</family>
                     </requireOS>
