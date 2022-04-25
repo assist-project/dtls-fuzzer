@@ -29,27 +29,27 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.rub.nds.tlsattacker</groupId>
-			<artifactId>TLS-Core</artifactId>
-			<version>3.0b</version>
-			<type>jar</type>
+			<artifactId>TLS-Attacker</artifactId>
+			<version>3.1</version>
+			<type>pom</type>
 		</dependency>
 		<dependency>
-            <groupId>de.learnlib.distribution</groupId>
-            <artifactId>learnlib-distribution</artifactId>
-            <type>pom</type>
-        </dependency>
+			<groupId>de.learnlib.distribution</groupId>
+			<artifactId>learnlib-distribution</artifactId>
+			<type>pom</type>
+		</dependency>
         
 		<!-- provide an SLF4J implementation -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>runtime</scope>
-        </dependency>
 		<dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.5</version>
-        </dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.5</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
