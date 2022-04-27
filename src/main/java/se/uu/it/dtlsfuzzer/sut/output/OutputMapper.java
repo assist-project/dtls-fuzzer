@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -245,38 +246,10 @@ public class OutputMapper {
 	private String getCertificateTypeString(CertificateMessage message, State state) {
 		String certType = "UNKOWN";
 		if (message.getCertificateKeyPair() == null) {
-			if (CertificateType.RAW_PUBLIC_KEY.equals(getSelectedType(state))) {
-				// parsing to make sure we are right
-				ASN1InputStream asn1Stream = new ASN1InputStream(message.getCertificatesListBytes().getValue());
-		        DLSequence dlSeq;
-				try {
-					dlSeq = (DLSequence) asn1Stream.readObject();
-			        DLSequence identifier = (DLSequence) dlSeq.getObjectAt(0);
-			        ASN1ObjectIdentifier keyType = (ASN1ObjectIdentifier) identifier.getObjectAt(0);
-			        // ok, we recognize this
-			        if (keyType.getId().equals("1.2.840.10045.2.1")) {
-			        	asn1Stream.close();
-			        	// it can be either ECDSA or ECDH
-			        	certType = "RAW_EC_PUBLIC_KEY";
-			        }
-			        asn1Stream.close();
-				} catch (Exception e) {
-				} 
-			}
+			throw new NotImplementedException("Raw public keys not supported");
 		} else {
 			certType =  message.getCertificateKeyPair().getCertPublicKeyType().name();	
 		}
 		return certType;
-	}
-	
-	/* Taken from TLS-Attacker
-	 */
-	private CertificateType getSelectedType(State state) {
-        if (state.getTlsContext().getTalkingConnectionEndType() == ConnectionEndType.SERVER) {
-            return state.getTlsContext().getChooser().getSelectedServerCertificateType();
-        } else {
-            return state.getTlsContext().getChooser().getSelectedClientCertificateType();
-        }
-    }
-	
+	}	
 }
