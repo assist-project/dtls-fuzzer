@@ -22,3 +22,7 @@ jobs:
           sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
           java -version
           ./prepare.sh
+      - name: Test
+        run: |
+          ./setup.sh mbedtls-2.26.0
+          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_psk_rwalk
