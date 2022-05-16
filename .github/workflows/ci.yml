@@ -26,4 +26,4 @@ jobs:
         run: |
           ./setup_sut.sh mbedtls-2.26.0
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_psk_rwalk -timeLimit "PT3M"
-          cd output/mbedtls-2.26.0 && ls -l && diff hyp3.dot learnedModel.dot
+          cd output/mbedtls-2.26.0_client_psk_rwalk && ls -l && diff hyp3.dot learnedModel.dot
