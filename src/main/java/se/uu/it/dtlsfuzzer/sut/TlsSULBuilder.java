@@ -20,6 +20,7 @@ public class TlsSULBuilder {
 	private Counter inputCounter;
 	private Counter resetCounter;
 	private Duration timeLimit;
+	private Long queryLimit;
 	
 	public TlsSULBuilder(SulDelegate delegate, MapperConfig mapperConfig, AbstractMapper defaultExecutor, 
 			CleanupTasks cleanupTasks) {
@@ -71,6 +72,18 @@ public class TlsSULBuilder {
 		} else {
 			throw new RuntimeException("Time limit already set to " + timeLimit.toString());
 		}
+	}
+	
+	public TlsSULBuilder setQueryLimit(long queryLimit) {
+		if (this.queryLimit == null) {
+			this.queryLimit = queryLimit;
+			wrappedTLSSul = new QueryLimitWrapper<TlsInput, TlsOutput>(
+					wrappedTLSSul, queryLimit);
+			return this;
+		} else {
+			throw new RuntimeException("Query limit already set to " + queryLimit);
+		}
+		
 	}
 	
 	public TlsSUL getTLSSul() {
