@@ -72,6 +72,10 @@ public class LearningConfig {
 			+ "learning is stopped and statistics for the incomplete learning run are published", converter = DurationConverter.class)
 	private Duration timeLimit = null;
 
+	@Parameter(names = "-queryLimit", description = "If set, imposes a membership query limit on the learning experiment. Once this limit is reached, "
+			+ "learning is stopped and statistics for the incomplete learning run are published")
+	private Long queryLimit = null;
+
 	public LearningAlgorithmName getLearningAlgorithm() {
 		return learningAlgorithm;
 	}
@@ -138,6 +142,10 @@ public class LearningConfig {
 
 	public Duration getTimeLimit() {
 		return timeLimit;
+	}
+
+	public Long getQueryLimit() {
+		return queryLimit;
 	}
 
 	public int getRunsPerMembershipQuery() {

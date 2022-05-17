@@ -33,6 +33,7 @@ import se.uu.it.dtlsfuzzer.sut.LoggingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.MultipleRunsSULOracle;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
+import se.uu.it.dtlsfuzzer.sut.QueryLimitReachedException;
 import se.uu.it.dtlsfuzzer.sut.TlsSULBuilder;
 import se.uu.it.dtlsfuzzer.sut.input.AlphabetFactory;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
@@ -82,6 +83,10 @@ public class Learner {
 		
 		if (fuzzerConfig.getLearningConfig().getTimeLimit() != null) {
 			sulBuilder.setTimeLimit(fuzzerConfig.getLearningConfig().getTimeLimit());
+		}
+		
+		if (fuzzerConfig.getLearningConfig().getQueryLimit() != null) {
+			sulBuilder.setQueryLimit(fuzzerConfig.getLearningConfig().getQueryLimit());
 		}
 		
 		SUL<TlsInput, TlsOutput> tlsSystemUnderTest =  sulBuilder.getWrappedTlsSUL();
@@ -219,7 +224,11 @@ public class Learner {
 					+ exc.getDuration().toHours() + " hours, or"
 					+ exc.getDuration().toMinutes() + " minutes"
 							+ " )");
-			notFinishedReason = "learning timed out";			
+			notFinishedReason = "learning timed out";
+		} catch (QueryLimitReachedException exc) {
+			LOG.severe("Learning exhausted the number of queries allowed "
+					+ exc.getQueryLimit() + " membership queries)");
+			notFinishedReason = "query limit reached";			
 		} catch (Exception exc) {
 			notFinishedReason = exc.getMessage();
 			LOG.severe("Exception generated during learning");
