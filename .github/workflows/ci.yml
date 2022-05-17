@@ -27,3 +27,7 @@ jobs:
           ./setup_sut.sh mbedtls-2.26.0
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_psk_rwalk -timeLimit "PT3M"
           cd output/mbedtls-2.26.0_client_psk_rwalk && ls -l && diff hyp3.dot learnedModel.dot
+      - name: Test wolfssl-4.7.1r_client_psk
+          ./setup_sut.sh wolfssl-4.7.1r
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk_rwalk -Dwolfssl.version=4.7.1r -queryLimit 1000 
+          diff output/wolfssl_client_psk_rwalk/learnedModel.dot experiments/models/regression/clients/1000_queries/wolfssl-4.7.1r_client_psk/model.dot
