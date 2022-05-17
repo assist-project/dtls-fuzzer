@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.automata.transducers.impl.compact.CompactMealy;
+import net.automatalib.automata.transducers.impl.FastMealy;
 import net.automatalib.serialization.dot.GraphDOT;
 import net.automatalib.util.automata.copy.AutomatonCopyMethod;
 import net.automatalib.util.automata.copy.AutomatonLowLevelCopy;
@@ -79,7 +79,7 @@ public class StateMachine {
 	 * Creates a low level copy of the state machine.
 	 */
 	public StateMachine copy() {
-		CompactMealy<TlsInput,TlsOutput> mealyCopy = new CompactMealy<>(alphabet);
+		FastMealy<TlsInput,TlsOutput> mealyCopy = new FastMealy<>(alphabet);
 		AutomatonLowLevelCopy.copy(AutomatonCopyMethod.STATE_BY_STATE, mealyMachine, alphabet, mealyCopy);
 		return new StateMachine(mealyCopy, new ListAlphabet<TlsInput>(new ArrayList<>(alphabet)));
 	}
