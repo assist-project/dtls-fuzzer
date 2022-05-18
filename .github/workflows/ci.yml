@@ -30,8 +30,8 @@ jobs:
       - name: Test mbedtls-2.26.0_client_dhe_ecdhe_rsa_reneg
         run: |
           ./setup_sut.sh mbedtls-2.26.0
-          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_reneg_rwalk -Dmbedtls.version=2.26.0 -queryLimit 1000 
-          diff output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_reneg_rwalk/learnedModel.dot experiments/models/regression/clients/1000_queries/mbedtls-2.26.0_client_dhe_ecdhe_rsa_reneg/model.dot
+          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg_rwalk -Dmbedtls.version=2.26.0 -queryLimit 1000 
+          diff output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg_rwalk/learnedModel.dot experiments/models/regression/clients/1000_queries/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/model.dot
       - name: Test wolfssl-4.7.1r_psk
         run: |
           ./setup_sut.sh wolfssl-4.7.1r
