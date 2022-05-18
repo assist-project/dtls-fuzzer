@@ -62,7 +62,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 		// ok, we have what appears to be a counterexample
 		if (!originalOutput.equals(autOutput)) {
-			LOGGER.info("Verifying potential counterexample");
+			LOGGER.debug("Confirming potential counterexample by re-running it");
 			// we generate a checked output, that is, an output which has been
 			// confirmed
 			returnedOutput = getCheckedOutput(q.getInput(), originalOutput,

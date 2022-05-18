@@ -52,15 +52,13 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 			Word<O> fullOutput = answerFromCache(fullInput);
 			if (fullOutput == null) {
 				fullOutput = sulOracle.answerQuery(fullInput);
-				if (!onlyLookup)
+				if (!onlyLookup) {
 					storeToCache(fullInput, fullOutput);
-			} else {
-				LOGGER.info("CACHE HIT!");
+				}
 			}
 
 			Word<O> output = fullOutput.suffix(q.getSuffix().size());
 			q.answer(output);
-			LOGGER.info(q.toString());
 		}
 	}
 
@@ -93,7 +91,6 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 				return output;
 			}
 		}
-
 	}
 
 	public Word<O> answerQueryWithoutCache(Word<I> input) {
