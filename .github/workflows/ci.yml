@@ -22,23 +22,23 @@ jobs:
           sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
           java -version
           ./prepare.sh
-      - name: Test mbedtls-2.26.0_all_cert_req
+      - name: Setup Suts
         run: |
           ./setup_sut.sh mbedtls-2.26.0
+          ./setup_sut.sh wolfssl-4.7.1r
+      - name: Test mbedtls-2.26.0_all_cert_req
+        run: |
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_all_cert_req_rwalk -Dmbedtls.version=2.26.0 -queryLimit 1000
           diff output/mbedtls-2.26.0_all_cert_req_rwalk/learnedModel.dot experiments/models/regression/servers/1000_queries/mbedtls-2.26.0_all_cert_req/model.dot
       - name: Test mbedtls-2.26.0_client_dhe_ecdhe_rsa_reneg
         run: |
-          ./setup_sut.sh mbedtls-2.26.0
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg_rwalk -Dmbedtls.version=2.26.0 -queryLimit 1000 
           diff output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg_rwalk/learnedModel.dot experiments/models/regression/clients/1000_queries/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/model.dot
       - name: Test wolfssl-4.7.1r_psk
         run: |
-          ./setup_sut.sh wolfssl-4.7.1r
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_psk_rwalk -Dwolfssl.version=4.7.1r -queryLimit 1000 
           diff output/wolfssl-4.7.1r_psk_rwalk/learnedModel.dot experiments/models/regression/servers/1000_queries/wolfssl-4.7.1r_psk/model.dot
       - name: Test wolfssl-4.7.1r_client_psk
         run: |
-          ./setup_sut.sh wolfssl-4.7.1r
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk_rwalk -Dwolfssl.version=4.7.1r -queryLimit 1000 
           diff output/wolfssl-4.7.1r_client_psk_rwalk/learnedModel.dot experiments/models/regression/clients/1000_queries/wolfssl-4.7.1r_client_psk/model.dot
