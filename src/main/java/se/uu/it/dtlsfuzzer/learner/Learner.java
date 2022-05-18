@@ -53,7 +53,7 @@ public class Learner {
 	private static final String ERROR_FILENAME = "error.msg";
 	private static final String LEARNING_STATE_FILENAME = "state.log";
 
-	private static final Logger LOG = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger();
 	private final StateFuzzerConfig fuzzerConfig;
 	private final Alphabet<TlsInput> alphabet;
 	private final CleanupTasks cleanupTasks;
@@ -177,8 +177,8 @@ public class Learner {
 			throw new RuntimeException("Could not create runtime state tracking output stream");
 		}
 		tracker.startLearning(fuzzerConfig, alphabet);
-		LOG.info("Input alphabet: {}", alphabet);
-		LOG.info("Starting learning");
+		LOGGER.info("Input alphabet: {}", alphabet);
+		LOGGER.info("Starting learning");
 		try {
 			algorithm.startLearning();
 
@@ -190,34 +190,34 @@ public class Learner {
 				// it is useful to print intermediate hypothesis as learning is
 				// running
 				serializeHypothesis(stateMachine, outputFolder, hypName, false);
-				LOG.info("Generated new hypothesis: " + hypName);
+				LOGGER.info("Generated new hypothesis: " + hypName);
 				tracker.newHypothesis(stateMachine);
-				LOG.info("Validating hypothesis");
+				LOGGER.info("Validating hypothesis");
 				counterExample = equivalenceAlgorithm.findCounterExample(hypothesis, alphabet);
 				if (counterExample != null) {
-					LOG.info("Counterexample: " + counterExample.toString());
+					LOGGER.info("Counterexample: " + counterExample.toString());
 					tracker.newCounterExample(counterExample);
 					// we create a copy, since the hypothesis reference will not be valid after
 					// refinement
 					// and we may still need it (if learning abruptly terminates)
 					stateMachine = stateMachine.copy();
-					LOG.info("Refining hypothesis");
+					LOGGER.info("Refining hypothesis");
 					algorithm.refineHypothesis(counterExample);
 				}
 				rounds++;
 			} while (counterExample != null);
 			finished = true;
 		} catch (ExperimentTimeoutException exc) {
-			LOG.warn("Learning timed out after a duration of " + exc.getDuration() + " (i.e. "
+			LOGGER.warn("Learning timed out after a duration of " + exc.getDuration() + " (i.e. "
 					+ exc.getDuration().toHours() + " hours, or" + exc.getDuration().toMinutes() + " minutes" + " )");
 			notFinishedReason = "learning timed out";
 		} catch (QueryLimitReachedException exc) {
-			LOG.warn(
+			LOGGER.warn(
 					"Learning exhausted the number of queries allowed " + exc.getQueryLimit() + " membership queries)");
 			notFinishedReason = "query limit reached";
 		} catch (Exception exc) {
 			notFinishedReason = exc.getMessage();
-			LOG.warn("Exception generated during learning");
+			LOGGER.warn("Exception generated during learning");
 			// useful to log what actually went wrong
 			try (FileWriter fw = new FileWriter(new File(outputFolder, ERROR_FILENAME))) {
 				PrintWriter pw = new PrintWriter(fw);
@@ -225,26 +225,26 @@ public class Learner {
 				exc.printStackTrace(pw);
 				pw.close();
 			} catch (IOException e) {
-				LOG.error("Could not create error file writer");
+				LOGGER.error("Could not create error file writer");
 			}
 		}
 
 		// building results:
 		tracker.finishedLearning(stateMachine, finished, notFinishedReason);
 
-		LOG.info("Finished experiment");
-		LOG.info("Number of refinement rounds:" + rounds);
-		LOG.info("Results stored in {}", outputFolder.getPath());
+		LOGGER.info("Finished experiment");
+		LOGGER.info("Number of refinement rounds:" + rounds);
+		LOGGER.info("Results stored in {}", outputFolder.getPath());
 		if (stateMachine == null) {
-			LOG.info("Could not generate a first hypothesis, so not much to report on");
+			LOGGER.info("Could not generate a first hypothesis, so not much to report on");
 			if (notFinishedReason != null) {
-				LOG.info("Potential cause: {}", notFinishedReason);
+				LOGGER.info("Potential cause: {}", notFinishedReason);
 			}
 			return null;
 		}
 
 		Statistics statistics = tracker.generateStatistics();
-		LOG.info(statistics);
+		LOGGER.info(statistics);
 
 		learnerResult.setLearnedModel(stateMachine);
 		learnerResult.setStatistics(statistics);
@@ -262,7 +262,7 @@ public class Learner {
 		try {
 			statistics.export(new FileWriter(new File(outputFolder, STATISTICS_FILENAME)));
 		} catch (IOException e) {
-			LOG.error("Could not copy statistics to output folder");
+			LOGGER.error("Could not copy statistics to output folder");
 		}
 
 		return learnerResult;
@@ -272,7 +272,7 @@ public class Learner {
 		try {
 			Files.copy(AlphabetFactory.getAlphabetFile(fuzzerConfig), new File(outputFolder, ALPHABET_FILENAME));
 		} catch (IOException e) {
-			LOG.error("Could not copy alphabet to output folder");
+			LOGGER.error("Could not copy alphabet to output folder");
 		}
 		if (fuzzerConfig.getLearningConfig().getEquivalenceAlgorithms()
 				.contains(EquivalenceAlgorithmName.SAMPLED_TESTS)) {
@@ -280,14 +280,14 @@ public class Learner {
 				Files.copy(new File(fuzzerConfig.getLearningConfig().getTestFile()),
 						new File(outputFolder, fuzzerConfig.getLearningConfig().getTestFile()));
 			} catch (IOException e) {
-				LOG.error("Could not copy sampled tests file to output folder");
+				LOGGER.error("Could not copy sampled tests file to output folder");
 			}
 		}
 		try {
 			dumpToFile(fuzzerConfig.getSulDelegate().getSulConfigInputStream(),
 					new File(outputFolder, SUL_CONFIG_FILENAME));
 		} catch (IOException e) {
-			LOG.error("Could not copy sul configuration to output folder");
+			LOGGER.error("Could not copy sul configuration to output folder");
 		}
 	}
 

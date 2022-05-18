@@ -27,7 +27,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 			MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
 	private static final Logger LOGGER = LogManager
-			.getLogger(CESanitizingSULOracle.class);
+			.getLogger();
 
 	// x times cereruns
 	private Supplier<A> automatonProvider;

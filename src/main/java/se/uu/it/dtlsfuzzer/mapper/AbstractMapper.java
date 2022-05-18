@@ -11,8 +11,7 @@ import se.uu.it.dtlsfuzzer.sut.output.OutputMapper;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 public abstract class AbstractMapper implements Mapper{
-	private static final Logger LOGGER = LogManager
-			.getLogger(AbstractMapper.class.getName());
+	private static final Logger LOGGER = LogManager.getLogger();
 	private OutputMapper outputMapper;
 	
 	public AbstractMapper(MapperConfig config) {

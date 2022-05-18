@@ -29,7 +29,7 @@ import se.uu.it.dtlsfuzzer.sut.output.ModelOutputs;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 public class TestRunner {
-	private static final Logger LOGGER = LogManager.getLogger(TestRunner.class);
+	private static final Logger LOGGER = LogManager.getLogger();
 	private MealyMembershipOracle<TlsInput, TlsOutput> sulOracle;
 	private TestRunnerConfig config;
 	private Alphabet<TlsInput> alphabet;

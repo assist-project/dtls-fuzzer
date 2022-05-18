@@ -39,8 +39,7 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
  */
 public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
-	private static final Logger LOGGER = LogManager
-			.getLogger(TlsSUL.class);
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	private State state = null;
 	private ExecutionContext context = null;

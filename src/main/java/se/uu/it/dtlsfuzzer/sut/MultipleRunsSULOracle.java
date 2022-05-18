@@ -9,9 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.query.Query;
 import net.automatalib.words.Word;
@@ -31,9 +28,6 @@ import se.uu.it.dtlsfuzzer.TestRunnerResult;
  * queries.
  */
 public class MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> {
-
-	private static final Logger LOGGER = LogManager
-			.getLogger(MultipleRunsSULOracle.class);
 
 	// x times cereruns
 	private static final int PROBABILISTIC_MIN_MULTIPLIER = 2;

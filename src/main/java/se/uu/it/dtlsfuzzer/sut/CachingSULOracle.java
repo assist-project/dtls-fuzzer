@@ -5,14 +5,13 @@ import java.util.HashSet;
 
 import javax.annotation.Nullable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.collect.Sets;
 
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.query.Query;
+import de.learnlib.filter.cache.sul.SULCache;
+import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.words.Word;
 
 /**
@@ -23,9 +22,6 @@ import net.automatalib.words.Word;
  * The implementation adds terminating outputs functionality.
  */
 public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
-
-	private static final Logger LOGGER = LogManager
-			.getLogger(CachingSULOracle.class);
 
 	private ObservationTree<I, O> root;
 

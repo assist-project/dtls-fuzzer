@@ -38,9 +38,6 @@ import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
  * Also implemented are operations over the mapper such as coalescing to outputs into one or splitting an output into its atoms.
  */
 public class OutputMapper {
-	private static final Logger LOGGER = LogManager
-			.getLogger(OutputMapper.class.getName());
-	
 	/*
 	 * The minimum number of alert/unknown messages before decryption failure is established.
 	 */
