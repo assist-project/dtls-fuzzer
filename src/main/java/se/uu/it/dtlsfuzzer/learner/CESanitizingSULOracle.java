@@ -23,11 +23,9 @@ import se.uu.it.dtlsfuzzer.sut.ObservationTree;
  * insignificant in the context of learning DTLS.
  */
 public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, I, ?, ?, ?> & Output<I, Word<O>>, I, O>
-		extends
-			MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> {
+		extends	MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
-	private static final Logger LOGGER = LogManager
-			.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	// x times cereruns
 	private Supplier<A> automatonProvider;
