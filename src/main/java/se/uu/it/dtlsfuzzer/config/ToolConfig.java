@@ -22,9 +22,14 @@ public class ToolConfig extends GeneralDelegate {
 	public void applyDelegate(Config config) {
 		super.applyDelegate(config);
 		if (isDebug()) {
-			 Configurator.setAllLevels("se.uu.it.dtlsfuzzer", Level.DEBUG);
+		     Configurator.setAllLevels("se.uu.it.dtlsfuzzer", Level.DEBUG);
+			 Configurator.setAllLevels("de.rub.nds.tlsattacker", Level.INFO);
 	    } else if (isQuiet()) {
 			 Configurator.setAllLevels("se.uu.it.dtlsfuzzer", Level.OFF);
+			 Configurator.setAllLevels("de.rub.nds.tlsattacker", Level.OFF);
+	    } else {
+	         Configurator.setAllLevels("de.rub.nds.tlsattacker", Level.WARN);
+	         Configurator.setAllLevels("se.uu.it.dtlsfuzzer", Level.INFO);
 	    }
 	}
 	
