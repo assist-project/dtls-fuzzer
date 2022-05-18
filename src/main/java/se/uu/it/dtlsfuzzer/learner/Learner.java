@@ -198,8 +198,7 @@ public class Learner {
 					LOGGER.info("Counterexample: " + counterExample.toString());
 					tracker.newCounterExample(counterExample);
 					// we create a copy, since the hypothesis reference will not be valid after
-					// refinement
-					// and we may still need it (if learning abruptly terminates)
+					// refinement and we may still need it (if learning abruptly terminates)
 					stateMachine = stateMachine.copy();
 					LOGGER.info("Refining hypothesis");
 					algorithm.refineHypothesis(counterExample);
@@ -212,8 +211,7 @@ public class Learner {
 					+ exc.getDuration().toHours() + " hours, or" + exc.getDuration().toMinutes() + " minutes" + " )");
 			notFinishedReason = "learning timed out";
 		} catch (QueryLimitReachedException exc) {
-			LOGGER.warn(
-					"Learning exhausted the number of queries allowed " + exc.getQueryLimit() + " membership queries)");
+			LOGGER.warn("Learning exhausted the number of queries allowed " + exc.getQueryLimit() + " membership queries)");
 			notFinishedReason = "query limit reached";
 		} catch (Exception exc) {
 			notFinishedReason = exc.getMessage();
