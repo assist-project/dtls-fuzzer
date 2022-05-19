@@ -1,8 +1,8 @@
 package se.uu.it.dtlsfuzzer.learner;
 
 public class StatisticsSnapshot {
-	public long getResets() {
-		return resets;
+	public long getQueries() {
+		return queries;
 	}
 
 	public long getInputs() {
@@ -13,13 +13,13 @@ public class StatisticsSnapshot {
 		return time;
 	}
 
-	private long resets;
+	private long queries;
 	private long inputs;
 	private long time;
-	
-	public StatisticsSnapshot(long resets, long inputs, long time) {
+
+	public StatisticsSnapshot(long queries, long inputs, long time) {
 		super();
-		this.resets = resets;
+		this.queries = queries;
 		this.inputs = inputs;
 		this.time = time;
 	}

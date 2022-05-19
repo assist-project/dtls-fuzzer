@@ -20,13 +20,13 @@ public class Statistics {
 	private String runDescription;
 	private int alphabetSize;
 	private int states;
-	private long learnResets;
+	private long learnQueries;
 	private long learnInputs;
-	private long allResets;
+	private long allQueries;
 	private long allInputs;
 	private List<DefaultQuery<?, ?>> counterexamples;
 	private long duration;
-	private long lastHypResets;
+	private long lastHypQueries;
 	private long lastHypInputs;
 	private boolean finished;
 	private List<HypothesisStatistics> hypStats;
@@ -56,11 +56,11 @@ public class Statistics {
 		out.println("Number of states: " + states);
 		out.println("Number of hypotheses: " + hypStats.size());
 		out.println("Number of inputs: " + allInputs);
-		out.println("Number of resets: " + allResets);
+		out.println("Number of queries: " + allQueries);
 		out.println("Number of learning inputs: " + learnInputs);
-		out.println("Number of learning resets: " + learnResets);
+		out.println("Number of learning queries: " + learnQueries);
 		out.println("Number of inputs up to last hypothesis: " + lastHypInputs);
-		out.println("Number of resets up to last hypothesis: " + lastHypResets);
+		out.println("Number of queries up to last hypothesis: " + lastHypQueries);
 		out.println("Time it took to learn model: " + duration);
 		out.println("Counterexamples:");
 		int ind = 1;
@@ -68,17 +68,17 @@ public class Statistics {
 			out.println("CE " + (ind++) + ":" + ce);
 		}
 		if (!hypStats.isEmpty()) {
-			out.println("Number of inputs when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getInputs()).collect(Collectors.toList()));
-			out.println("Number of resets when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getResets()).collect(Collectors.toList()));
-			out.println("Time when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getTime()).collect(Collectors.toList()));
+			out.println("Number of inputs when hypotheses were generated: " + hypStats.stream().map(s -> s.getSnapshot().getInputs()).collect(Collectors.toList()));
+			out.println("Number of queries when hypotheses were generated: " + hypStats.stream().map(s -> s.getSnapshot().getQueries()).collect(Collectors.toList()));
+			out.println("Time when hypotheses were generated: " + hypStats.stream().map(s -> s.getSnapshot().getTime()).collect(Collectors.toList()));
 			
 			List<HypothesisStatistics> invalidatedHypStates = new ArrayList<>(hypStats);
 			if (invalidatedHypStates.get(invalidatedHypStates.size()-1).getCounterexample() == null) {
 				invalidatedHypStates.remove(invalidatedHypStates.size()-1);
 			}
-			out.println("Number of inputs when counterexample was found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getInputs()).collect(Collectors.toList()));
-			out.println("Number of resets when counterexample was found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getResets()).collect(Collectors.toList()));
-			out.println("Time when counterexample was found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getTime()).collect(Collectors.toList()));
+			out.println("Number of inputs when counterexamples were found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getInputs()).collect(Collectors.toList()));
+			out.println("Number of queries when counterexamples were found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getQueries()).collect(Collectors.toList()));
+			out.println("Time when counterexamples were found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getTime()).collect(Collectors.toList()));
 		}
 		out.close();
 	}
@@ -134,12 +134,12 @@ public class Statistics {
 		this.states = states;
 	}
 
-	public long getLearnResets() {
-		return learnResets;
+	public long getLearnQueries() {
+		return learnQueries;
 	}
 
-	protected void setLearnResets(long learnResets) {
-		this.learnResets = learnResets;
+	protected void setLearnQueries(long learnQueries) {
+		this.learnQueries = learnQueries;
 	}
 
 	public long getLearnInputs() {
@@ -150,12 +150,12 @@ public class Statistics {
 		this.learnInputs = learnInputs;
 	}
 
-	public long getAllResets() {
-		return allResets;
+	public long getAllQueries() {
+		return allQueries;
 	}
 
-	protected void setAllResets(long allResets) {
-		this.allResets = allResets;
+	protected void setAllQueries(long allQueries) {
+		this.allQueries = allQueries;
 	}
 
 	public long getAllInputs() {
@@ -174,12 +174,12 @@ public class Statistics {
 		this.duration = duration;
 	}
 
-	protected long getLastHypResets() {
-		return lastHypResets;
+	protected long getLastHypQueries() {
+		return lastHypQueries;
 	}
 
-	protected void setLastHypResets(long lastHypResets) {
-		this.lastHypResets = lastHypResets;
+	protected void setLastHypQueries(long lastHypQueries) {
+		this.lastHypQueries = lastHypQueries;
 	}
 
 	public long getLastHypInputs() {

@@ -72,9 +72,8 @@ public class TestParser {
 	}
 
 	/**
-	 * Reads from a file reset-separated tests (test queries to be precise). It
-	 * stops reading once it reaches the EOF, or an empty line. A non-empty line may
-	 * contain:
+	 * Reads from a file reset-separated test queries. It stops reading once it
+	 * reaches the EOF or an empty line. A non-empty line may contain:
 	 * <ul>
 	 * <li>reset - marking the end of the current test, and the beginning of a new
 	 * test</li>
