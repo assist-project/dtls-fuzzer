@@ -1,10 +1,10 @@
 -connect 
 localhost:${sut.port}
--runWait 
+-startWait
 100
 -alphabet
 ${alphabets.servers}/ecdhe8_cert.xml
--timeout  
+-responseWait
 100  
 -sulConfig 
 experiments/configs/tinydtls.config

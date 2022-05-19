@@ -177,7 +177,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		
 		state.getTlsContext().initRecordLayer();
 		closed = false;
-		resetWait = delegate.getResetWait();
+		resetWait = delegate.getStartWait();
 		context = new ExecutionContext(delegate, state);
 		disabled = false;
 		LOGGER.debug("Start {}", count++);

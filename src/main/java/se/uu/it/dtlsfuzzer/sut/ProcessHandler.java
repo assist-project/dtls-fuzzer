@@ -27,19 +27,19 @@ public class ProcessHandler {
 	private String terminateCommand;
 	private OutputStream output;
 	private OutputStream error;
-	private long runWait;
+	private long startWait;
 	private boolean hasLaunched;
 
-	private ProcessHandler(String command, long runWait) {
+	private ProcessHandler(String command, long startWait) {
 		// '+' after \\s takes care of multiple consecutive spaces so that they
 		// don't result in empty arguments
 		pb = new ProcessBuilder(command.split("\\s+"));
-		this.runWait = runWait;
+		this.startWait = startWait;
 		LOGGER.info("Command to launch SUT: {}", command);
 	}
 
 	public ProcessHandler(SulDelegate sulConfig) {
-		this(sulConfig.getCommand(), sulConfig.getRunWait());
+		this(sulConfig.getCommand(), sulConfig.getStartWait());
 		if (sulConfig.getProcessDir() != null) {
 			setDirectory(new File(sulConfig.getProcessDir()));
 		}
@@ -73,7 +73,7 @@ public class ProcessHandler {
 	 * the process, making {@link ProcessHandler#hasLaunched()} return true
 	 * thereafter.
 	 * 
-	 * After launching, it sleeps for {@link ProcessHandler#runWait}
+	 * After launching, it sleeps for {@link ProcessHandler#startWait}
 	 * milliseconds.
 	 */
 	public void launchProcess() {
@@ -87,8 +87,8 @@ public class ProcessHandler {
 				if (error != null)
 					inheritIO(currentProcess.getErrorStream(), new PrintStream(
 							error));
-				if (runWait > 0)
-					Thread.sleep(runWait);
+				if (startWait > 0)
+					Thread.sleep(startWait);
 			} else {
 				LOGGER.warn("Process has already been started");
 			}

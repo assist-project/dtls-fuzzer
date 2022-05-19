@@ -3,9 +3,9 @@ state-fuzzer-client
 # SUT config
 -port
 ${sut.port} 
--runWait 
+-startWait
 100
--timeout  
+-responseWait
 100  
 -sulConfig 
 experiments/configs/tinydtls_client.config

@@ -2,13 +2,13 @@
 state-fuzzer-client
 -port 
 ${sut.port} 
--runWait 
+-startWait
 0
 -rstWait
 100
 -alphabet
 ${alphabets.clients}/piondtls_ecdhe_cert.xml
--timeout  
+-responseWait
 100  
 -randLength
 10

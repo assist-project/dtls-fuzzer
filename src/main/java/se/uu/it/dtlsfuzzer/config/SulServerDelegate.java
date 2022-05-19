@@ -23,7 +23,7 @@ public class SulServerDelegate extends SulDelegate {
 	
 	public void applyDelegate(Config config) throws ConfigurationException {
 		serverDelegate.applyDelegate(config);
-		config.getDefaultServerConnection().setTimeout(getTimeout());
+		config.getDefaultServerConnection().setTimeout(getResponseWait());
 	}
 
 	public Long getClientWait() {

@@ -1,11 +1,11 @@
 state-fuzzer-server
 -connect 
 localhost:${sut.port} 
--runWait 
+-startWait
 100
 -alphabet
 ${alphabets.servers}/psk8.xml
--timeout  
+-responseWait
 100  
 -randLength
 10

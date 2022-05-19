@@ -1,11 +1,11 @@
 state-fuzzer-client
 -port
 ${sut.port} 
--runWait 
+-startWait
 0
 -alphabet
 ${alphabets.clients}/tinydtls_psk8.xml
--timeout  
+-responseWait
 100  
 -randLength
 10

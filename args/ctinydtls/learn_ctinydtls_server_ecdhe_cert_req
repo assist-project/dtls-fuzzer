@@ -3,9 +3,9 @@ state-fuzzer-server
 # SUT config
 -connect 
 localhost:${sut.port} 
--runWait 
+-startWait
 100
--timeout  
+-responseWait
 100  
 -cmd 
 "${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sut.port}"

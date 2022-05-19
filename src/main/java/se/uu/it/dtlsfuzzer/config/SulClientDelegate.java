@@ -18,7 +18,7 @@ public class SulClientDelegate extends SulDelegate {
 	
 	public void applyDelegate(Config config) throws ConfigurationException {
 		clientDelegate.applyDelegate(config);
-		config.getDefaultClientConnection().setTimeout(getTimeout());
+		config.getDefaultClientConnection().setTimeout(getResponseWait());
 	}
 
 	

@@ -5,9 +5,9 @@ state-fuzzer-client
 DTLS12
 -port
 ${sut.port}
--runWait 
+-startWait
 0
--timeout
+-responseWait
 20
 -cmd 
 "${fuzzer.dir}/suts/openssl-${openssl.version}/apps/openssl s_client -psk 1234 -key ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem -cert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -CAfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -port ${sut.port} -dtls1_2 -mtu 5000 -debug"
