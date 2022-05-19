@@ -1,0 +1,34 @@
+state-fuzzer-client
+
+# SUT config
+-protocol 
+DTLS12 
+-port
+${sut.port}
+-runWait 
+0 
+-timeout  
+100 
+-cmd 
+"${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-cli --udp --heartbeat --pskusername Client_identity --pskkey 12345678 --priority NORMAL:-KX-ALL:+RSA:+ECDHE-PSK:+DHE-PSK:+PSK:+ECDHE-RSA:+DHE-RSA --x509cafile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --x509keyfile ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem --x509certfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --insecure localhost:${sut.port}"
+-sulConfig
+experiments/configs/gnutls_client_include_oo.config
+
+
+# learning config
+-alphabet 
+${alphabets.clients}/dhe_ecdhe_rsa_cert_reneg.xml 
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms 
+RANDOM_WP_METHOD,WP_METHOD
+-output
+output/gnutls-${gnutls.version}_client_dhe_ecdhe_rsa_cert_reneg
+-depth
+1
+-ceReruns
+3
+-timeLimit
+"P2D"
