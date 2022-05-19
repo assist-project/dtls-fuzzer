@@ -29,23 +29,23 @@ function copy_models() {
         exp_sulconfig="$exp_dir/sul.config"
 
         incorrect="$exp_dir/incorrect_model"
-        if [[ -f $incorrect ]]; then 
+        if [[ -f $incorrect ]]; then
             echo "Ignoring $exp_dirname because of the presence of $incorrect"
             continue
         fi
 
         error="$exp_dir/error.msg"
-        if [[ $opt_incl_error -eq 0 && -f $error ]]; then 
+        if [[ $opt_incl_error -eq 0 && -f $error ]]; then
             echo "Ignoring $exp_dirname because of the presence of $error"
             continue
         fi
 
-        if [[ $opt_excl -eq 1 && $exp_dirname =~ $opt_excl ]]; then 
+        if [[ $opt_excl -eq 1 && $exp_dirname =~ $opt_excl ]]; then
             echo "Ignoring $exp_dirname  due to the exclude option"
             continue
-        fi 
-        
-        if [[ $opt_incl -eq 1 && ! $exp_dirname =~ $opt_incl ]]; then 
+        fi
+
+        if [[ $opt_incl -eq 1 && ! $exp_dirname =~ $opt_incl ]]; then
             echo "Ignoring $exp_dirname  due to the include (only) option"
             continue
         fi
@@ -53,7 +53,7 @@ function copy_models() {
         if [[ ! -f $learned_model ]]; then
             if [[ -f $selected_model ]]; then 
                 learned_model=$selected_model
-            else 
+            else
                 last_hyp_num=` (ls $exp_dir | grep -c hyp*)`
                 if [[ $last_hyp_num  -gt $MAX_HYP_NUM ]]; then
                     last_hyp_num=$MAX_HYP_NUM
@@ -72,19 +72,19 @@ function copy_models() {
 
             cp $learned_model_alphabet "$model_dir/alphabet.xml" 
             cp $exp_sulconfig "$model_dir/sul.config"
-            
+
             model="$model_dir/model.dot"
             cp $learned_model $model
-            
-            if [[ opt_build_trimmed -eq 1 ]]; then 
+
+            if [[ opt_build_trimmed -eq 1 ]]; then
                 trimmed_model="$model_dir/trimmed.dot"
                 n_states=$(num_states $learned_model)
-                if [[ $n_states -le 100 ]]; then  
+                if [[ $n_states -le 100 ]]; then
                     timeout 5s bash $SCRIPT_DIR/trim_model.sh -mt -e -o $trimmed_model $model
                 fi
             fi
 
-            if [[ opt_build_reduced -eq 1 ]]; then 
+            if [[ opt_build_reduced -eq 1 ]]; then
                 reduced_model="$model_dir/reduced.dot"
                 bash $SCRIPT_DIR/trim_model.sh -ps -mt -e -o $reduced_model $model
             fi
@@ -134,11 +134,11 @@ while [[ "$1" =~ ^- ]]; do case $1 in
     echo "unsupported option $1"
     return
     ;;
-esac; shift; done 
+esac; shift; done
 
 
-if [[ -d $2 ]]; then 
-    if [[ opt_delete -eq 1 ]]; then 
+if [[ -d $2 ]]; then
+    if [[ opt_delete -eq 1 ]]; then
         rm -r $2
     elif [[ opt_merge -eq 1 ]]; then
         echo "Will merge with existing"
