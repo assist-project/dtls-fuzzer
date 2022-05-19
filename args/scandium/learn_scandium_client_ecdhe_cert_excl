@@ -19,7 +19,7 @@ ${fuzzer.port}
 -processTrigger
 START
 -resetCommandWait          
-500
+800
 
 # learning config
 -alphabet
