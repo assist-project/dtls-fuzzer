@@ -20,7 +20,7 @@ START
 
 # learning config
 -alphabet
-${alphabets.servers}/scandium_psk.xml
+${alphabets.servers}/scandium_server_psk.xml
 -randLength
 10
 -depth
@@ -28,7 +28,7 @@ ${alphabets.servers}/scandium_psk.xml
 -queries
 20000
 -output
-output/scandium-${scandium.version}_psk
+output/scandium-${scandium.version}_server_psk
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -ceReruns

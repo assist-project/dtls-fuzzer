@@ -23,7 +23,7 @@ HELLO_VERIFY_REQUEST
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -output 
-output/piondtls-${piondtls.version}_psk
+output/piondtls-${piondtls.version}_server_psk
 -alphabet
 ${alphabets.servers}/psk8.xml
 -randLength

@@ -23,11 +23,11 @@ START
 
 # learning config
 -alphabet
-${alphabets.servers}/scandium_ecdhe_cert.xml
+${alphabets.servers}/scandium_server_ecdhe_cert.xml
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -output
-output/scandium-${scandium.version}_ecdhe_cert_req
+output/scandium-${scandium.version}_server_ecdhe_cert_req
 -randLength
 10
 -queries
