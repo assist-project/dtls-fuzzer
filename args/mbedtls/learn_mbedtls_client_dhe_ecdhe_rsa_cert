@@ -6,9 +6,9 @@ DTLS12
 ${sut.port} 
 -alphabet 
 ${alphabets.clients}/dhe_ecdhe_rsa_cert.xml 
--runWait 
+-startWait
 0 
--timeout  
+-responseWait
 100 
 -randLength
 10

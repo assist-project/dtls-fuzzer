@@ -104,10 +104,9 @@ public class Statistics {
 		out.println("TLS SUL Parameters");
 		SulDelegate sulDelegate = config.getSulDelegate();
 		out.println("Protocol: " + sulDelegate.getProtocolVersion());
-		out.println("ResetWait: " + sulDelegate.getResetWait());
-		out.println("Timeout: " + sulDelegate.getTimeout());
+		out.println("Response Wait: " + sulDelegate.getResponseWait());
 		if (sulDelegate.getCommand() != null) {
-			out.println("RunWait: " + sulDelegate.getRunWait());
+			out.println("Start Wait: " + sulDelegate.getStartWait());
 			out.println("Command: " + sulDelegate.getCommand());
 		}
 		out.close();

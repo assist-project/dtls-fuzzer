@@ -3,9 +3,9 @@ state-fuzzer-server
 # SUT config
 -connect
 localhost:${sut.port}
--runWait
+-startWait
 4000
--timeout
+-responseWait
 100
 -protocol
 DTLS12
@@ -23,7 +23,7 @@ START
 
 # learning config
 -alphabet
-${alphabets.servers}/scandium_server_ecdhe_cert.xml
+${alphabets.servers}/scandium_ecdhe_cert.xml
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -output

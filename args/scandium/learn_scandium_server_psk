@@ -3,9 +3,9 @@ state-fuzzer-server
 # SUT config
 -connect
 localhost:${sut.port}
--runWait
+-startWait
 2000
--timeout
+-responseWait
 100
 -protocol
 DTLS12
@@ -20,7 +20,7 @@ START
 
 # learning config
 -alphabet
-${alphabets.servers}/scandium_server_psk.xml
+${alphabets.servers}/scandium_psk.xml
 -randLength
 10
 -depth

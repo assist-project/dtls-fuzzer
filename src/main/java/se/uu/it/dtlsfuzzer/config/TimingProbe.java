@@ -86,7 +86,7 @@ public class TimingProbe {
 	
 	/*
 	 * findDeterministicTimeValues() finds the lowest values for the parameters
-	 * supplied in the -timingProbe parameter. This can be timeout, runWait or
+	 * supplied in the -timingProbe parameter. This can be timeout, startWait or
 	 * an alphabet name (such as PSK_CLIENT_HELLO or HELLO_VERIFY_REQUEST). If
 	 * the parameter is an alphabet name, the extendedWait parameter is found.
 	 * 
@@ -121,11 +121,11 @@ public class TimingProbe {
 	}
 	
 	private void setTimingParameter(String cmd, Integer time) throws IllegalArgumentException {
-		if (cmd.contains("timeout")) {
-			probeTestRunner.getConfig().getSulDelegate().setTimeout(time);
+		if (cmd.contains("responseWait")) {
+			probeTestRunner.getConfig().getSulDelegate().setResponseWait(time);
 		}
-		else if (cmd.contains("runWait"))
-			probeTestRunner.getConfig().getSulDelegate().setRunWait(new Long(time));
+		else if (cmd.contains("startWait"))
+			probeTestRunner.getConfig().getSulDelegate().setStartWait(new Long(time));
 		else {
 			for (TlsInput in : probeTestRunner.getAlphabet()) {
 				if (in.toString().contains(cmd))
@@ -143,7 +143,7 @@ public class TimingProbe {
 		hi = probeLo;
 		lo = probeLo;
 		boolean keepSearching;
-		if (cmd.contains("timeout") && hi == 0) 
+		if (cmd.contains("responseWait") && hi == 0)
 			keepSearching = true;
 		else {
 			setTimingParameter(cmd, hi);
@@ -214,7 +214,7 @@ public class TimingProbe {
 	}
 	
 	public boolean isValid(String cmd) {
-		if (cmd.contains("timeout") || cmd.contains("runWait"))
+		if (cmd.contains("responseWait") || cmd.contains("startWait"))
 			return true;
 		for (TlsInput in : probeTestRunner.getAlphabet()) {
 			if (in.toString().contains(cmd))

@@ -3,9 +3,9 @@ state-fuzzer-server
 # SUT config
 -connect
 localhost:${sut.port}
--runWait
+-startWait
 200
--timeout
+-responseWait
 200
 -protocol
 DTLS12

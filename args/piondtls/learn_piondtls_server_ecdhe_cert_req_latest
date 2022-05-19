@@ -2,13 +2,13 @@
 state-fuzzer-server
 -connect 
 localhost:${sut.port}
--runWait 
+-startWait
 100
 -rstWait
 100
 -alphabet
-${fuzzer.dir}/${alphabets.servers}/piondtls_server_ecdhe_cert.xml
--timeout  
+${fuzzer.dir}/${alphabets.servers}/piondtls_ecdhe_cert.xml
+-responseWait
 100  
 -randLength
 10
