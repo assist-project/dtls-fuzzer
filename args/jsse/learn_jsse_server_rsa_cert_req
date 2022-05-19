@@ -21,13 +21,13 @@ START
 
 # learning config
 -alphabet
-${alphabets.servers}/jsse_rsa.xml
+${alphabets.servers}/jsse_server_rsa.xml
 -randLength
 10
 -queries
 20000
 -output 
-output/jsse-${jsse.version}_rsa_cert_req
+output/jsse-${jsse.version}_server_rsa_cert_req
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -skipNonDetTests

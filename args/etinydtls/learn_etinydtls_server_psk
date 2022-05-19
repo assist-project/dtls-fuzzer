@@ -19,7 +19,7 @@ DTLS12
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -output 
-output/etinydtls_psk
+output/etinydtls_server_psk
 -cmd 
 "${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sut.port}"
 -depth

@@ -17,7 +17,7 @@ DTLS12
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -output 
-output/etinydtls_ecdhe_cert_none
+output/etinydtls_server_ecdhe_cert_none
 -cmd 
 "${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sut.port} -d"
 -depth

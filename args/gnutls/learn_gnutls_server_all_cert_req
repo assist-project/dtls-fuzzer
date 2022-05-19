@@ -22,6 +22,6 @@ ${alphabets.servers}/gnutls_dhe_ecdhe_psk_rsa_cert.xml
 -equivalenceAlgorithms 
 RANDOM_WP_METHOD,WP_METHOD
 -output
-output/gnutls-${gnutls.version}_all_cert_req
+output/gnutls-${gnutls.version}_server_all_cert_req
 -ceReruns
 3

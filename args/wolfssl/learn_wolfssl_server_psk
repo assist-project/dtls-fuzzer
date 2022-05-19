@@ -23,7 +23,7 @@ ${alphabets.servers}/psk.xml
 -queries
 20000
 -output
-output/wolfssl-${wolfssl.version}_psk
+output/wolfssl-${wolfssl.version}_server_psk
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -depth
