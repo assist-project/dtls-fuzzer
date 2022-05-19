@@ -28,8 +28,7 @@ public abstract class SulDelegate {
 	@Parameter(names = "-rstWait", required = false, description = "Time the SUL waits after executing each query")
 	private Long resetWait = 0L;
 
-	@Parameter(names = { "-command",
-			"-cmd" }, required = false, description = "Command for starting the (D)TLS process")
+	@Parameter(names = { "-command", "-cmd" }, required = false, description = "Command for starting the (D)TLS process")
 	private String command = null;
 
 	@Parameter(names = { "-terminateCommand",
