@@ -3,9 +3,6 @@ package se.uu.it.dtlsfuzzer;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.learner.Learner;
@@ -14,8 +11,6 @@ import se.uu.it.dtlsfuzzer.sut.input.AlphabetFactory;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 
 public class StateFuzzer {
-	private static final Logger LOGGER = LogManager.getLogger(StateFuzzer.class);
-
 	private StateFuzzerConfig config;
 	private CleanupTasks cleanupTasks;
 

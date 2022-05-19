@@ -18,6 +18,7 @@ import de.rub.nds.tlsattacker.core.connection.InboundConnection;
 import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
 import de.rub.nds.tlsattacker.core.record.layer.TlsRecordLayer;
 import de.rub.nds.tlsattacker.core.state.State;
+import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.transport.udp.ClientUdpTransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ServerUdpTransportHandler;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
@@ -38,8 +39,7 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
  */
 public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
-	private static final Logger LOGGER = LogManager
-			.getLogger(TlsSUL.class);
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	private State state = null;
 	private ExecutionContext context = null;
@@ -119,7 +119,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		Config config = getNewSulConfig(delegate);
 		delegate.applyDelegate(config);
 
-		state = new State(config);
+		state = new State(config, new WorkflowTrace());
 		state.getTlsContext().setRecordLayer(
 				new TlsRecordLayer(state.getTlsContext()));
 		state.getTlsContext().setTransportHandler(null);
@@ -180,7 +180,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 		resetWait = delegate.getResetWait();
 		context = new ExecutionContext(delegate, state);
 		disabled = false;
-		LOGGER.info("Start {}", count++);
+		LOGGER.debug("Start {}", count++);
 	}
 
 	@Override

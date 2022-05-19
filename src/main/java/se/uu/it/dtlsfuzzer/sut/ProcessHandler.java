@@ -35,8 +35,6 @@ public class ProcessHandler {
 		// don't result in empty arguments
 		pb = new ProcessBuilder(command.split("\\s+"));
 		this.runWait = runWait;
-		output = System.out;
-		error = System.err;
 		LOGGER.info("Command to launch SUT: {}", command);
 	}
 
@@ -44,6 +42,10 @@ public class ProcessHandler {
 		this(sulConfig.getCommand(), sulConfig.getRunWait());
 		if (sulConfig.getProcessDir() != null) {
 			setDirectory(new File(sulConfig.getProcessDir()));
+		}
+		if (sulConfig.isRedirectOutputStreams()) {
+			output = System.out;
+			error = System.err;
 		}
 		terminateCommand = sulConfig.getTerminateCommand();
 		if (terminateCommand != null) {

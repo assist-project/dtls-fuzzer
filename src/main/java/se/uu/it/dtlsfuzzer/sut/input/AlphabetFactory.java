@@ -16,8 +16,7 @@ import se.uu.it.dtlsfuzzer.config.AlphabetOptionProvider;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 
 public class AlphabetFactory {
-	private static final Logger LOGGER = LogManager
-			.getLogger(AlphabetFactory.class);
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	public static final String DEFAULT_ALPHABET = "/default_alphabet.xml";
 

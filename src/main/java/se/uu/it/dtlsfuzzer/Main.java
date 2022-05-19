@@ -30,7 +30,7 @@ import se.uu.it.dtlsfuzzer.config.TimingProbeEnabler;
 import se.uu.it.dtlsfuzzer.config.ToolPropertyAwareConverterFactory;
 
 public class Main {
-	private static final Logger LOGGER = LogManager.getLogger(Main.class.getName());
+	private static final Logger LOGGER = LogManager.getLogger();
 	
 	private static String ARGS_FILE = "command.args";
 	
@@ -80,7 +80,7 @@ public class Main {
 		commander.addConverterFactory(new ToolPropertyAwareConverterFactory());
 		
 		if (args.length > 0 && !commander.getCommands().containsKey(args[0]) && !args[0].startsWith("@")  && new File(args[0]).exists()) {
-			LOGGER.info("Noticed that the first argument is a file. Processing it as an argument file.");
+			LOGGER.info("The first argument is a file path. Processing it as an argument file.");
 			args[0] = "@" + args[0];
 		} 
 		

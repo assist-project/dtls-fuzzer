@@ -11,8 +11,7 @@ import se.uu.it.dtlsfuzzer.sut.output.OutputMapper;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 public abstract class AbstractMapper implements Mapper{
-	private static final Logger LOGGER = LogManager
-			.getLogger(AbstractMapper.class.getName());
+	private static final Logger LOGGER = LogManager.getLogger();
 	private OutputMapper outputMapper;
 	
 	public AbstractMapper(MapperConfig config) {
@@ -20,7 +19,7 @@ public abstract class AbstractMapper implements Mapper{
 	}
 	
 	public final TlsOutput execute(TlsInput input, State state, ExecutionContext context) {
-		LOGGER.info("Executing input symbol {}", input.name());
+		LOGGER.debug("Executing input symbol {}", input.name());
 		TlsOutput output;
 		context.getStepContext().setInput(input);
 		if (context.isExecutionEnabled() && input.isEnabled(state, context)) {
@@ -28,7 +27,7 @@ public abstract class AbstractMapper implements Mapper{
 		} else {
 			output = outputMapper.disabled(); 
 		}
-		LOGGER.info("Produced output symbol {}", output.name());
+		LOGGER.debug("Produced output symbol {}", output.name());
 		return output;
 	}
 

@@ -28,8 +28,7 @@ import se.uu.it.dtlsfuzzer.config.SulDelegate;
  */
 public class ResettingClientWrapper<I, O> implements SUL<I, O> {
 
-	private static final Logger LOGGER = LogManager
-			.getLogger(ResettingClientWrapper.class);
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	private SUL<I, O> sul;
 

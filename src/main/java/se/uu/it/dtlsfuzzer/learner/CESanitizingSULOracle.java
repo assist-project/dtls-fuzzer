@@ -23,11 +23,9 @@ import se.uu.it.dtlsfuzzer.sut.ObservationTree;
  * insignificant in the context of learning DTLS.
  */
 public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, I, ?, ?, ?> & Output<I, Word<O>>, I, O>
-		extends
-			MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> {
+		extends	MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
-	private static final Logger LOGGER = LogManager
-			.getLogger(CESanitizingSULOracle.class);
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	// x times cereruns
 	private Supplier<A> automatonProvider;
@@ -62,7 +60,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 
 		// ok, we have what appears to be a counterexample
 		if (!originalOutput.equals(autOutput)) {
-			LOGGER.info("Verifying potential counterexample");
+			LOGGER.debug("Confirming potential counterexample by re-running it");
 			// we generate a checked output, that is, an output which has been
 			// confirmed
 			returnedOutput = getCheckedOutput(q.getInput(), originalOutput,
