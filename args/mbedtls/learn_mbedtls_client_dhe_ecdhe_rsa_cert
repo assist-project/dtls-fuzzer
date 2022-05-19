@@ -1,0 +1,22 @@
+state-fuzzer-client
+
+-protocol 
+DTLS12 
+-port
+${sut.port} 
+-alphabet 
+${alphabets.clients}/dhe_ecdhe_rsa_cert.xml 
+-runWait 
+0 
+-timeout  
+100 
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms 
+RANDOM_WP_METHOD,WP_METHOD
+-output
+output/mbedtls-${mbedtls.version}_client_dhe_ecdhe_rsa_cert
+-cmd 
+"${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_client2 dtls=1 psk=1234 mtu=5000 key_file=${fuzzer.dir}/experiments/keystore/rsa2048_key.pem crt_file=${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem server_port=${sut.port} exchanges=100 hs_timeout=20000-120000 ca_file=${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem auth_mode=optional"
