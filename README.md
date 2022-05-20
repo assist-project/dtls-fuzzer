@@ -32,13 +32,13 @@ The most important folders in **dtls-fuzzer**'s root directory are:
 ### Output folders 
 Output folders are named based on the experiment configuration, that is: 
 - the SUT/implementation tested;
-- whether it is a server or a client
+- whether the SUT is a server or a client;
 - the alphabet used, in terms of key exchange algorithms covered, where 'all' indicates all 4 key exchange algorithms were used;
 - where applicable whether client certification was required (req), optional (nreq) or disabled (none);
 - optionally, whether retransmissions were included in/excluded from outputs (incl or excl).
     - retransmissions were included by default
 
-As an example, the folder name 'jsse-12_server_rsa_cert_none_incl' indicates an experiment on the JSSE 12 server implementation of DTLS, using an alphabet including inputs for performing RSA handshakes, client certificate authentication is disabled, and that retransmissions are included.
+As an example, the folder name `jsse-12_server_rsa_cert_none_incl` indicates an experiment on the JSSE 12 server implementation of DTLS, using an alphabet including inputs for performing RSA handshakes, client certificate authentication is disabled, and that retransmissions are included.
 
 An output folder contains:
 - 'alphabet.xml', the input alphabet;
