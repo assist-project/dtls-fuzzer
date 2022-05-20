@@ -28,8 +28,8 @@ public class ToolConfig extends GeneralDelegate {
 			Configurator.setAllLevels("se.uu.it.dtlsfuzzer", Level.OFF);
 			Configurator.setAllLevels("de.rub.nds.tlsattacker", Level.OFF);
 	    } else {
-	         Configurator.setAllLevels("de.rub.nds.tlsattacker", Level.WARN);
 	         Configurator.setAllLevels("se.uu.it.dtlsfuzzer", Level.INFO);
+	         Configurator.setAllLevels("de.rub.nds.tlsattacker", Level.ERROR);
 	    }
 	}
 	
