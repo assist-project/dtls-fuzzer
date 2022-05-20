@@ -160,7 +160,7 @@ We notice there are several argument files to choose from, namely:
     learn_openssl-1.1.1b_server_all_cert_req
     learn_openssl-1.1.1b_server_psk
 
-The argument file of interest is 'learn_openssl-1.1.1b_server_psk', since its filename indicates PSK.
+The argument file of interest is `learn_openssl-1.1.1b_server_psk`, since its filename indicates PSK.
 We thus select it, and run the fuzzer on it.
 We additionally cap the number of tests to 200, to shorten learning time.
 Finally, for OpenSSL, LD_LIBRARY_PATH has to be set to the implementation's directory ('suts/openssl-1.1.1b/').
