@@ -15,21 +15,21 @@ import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 public class StatisticsTracker {
 
 	private Counter inputCounter;
-	private Counter resetCounter;
+	private Counter testCounter;
 
 	// some tracked statistics
 	long learnInputs;
-	long learnResets;
+	long learnTests;
 	long duration;
 	long allInputs;
-	long allResets;
+	long allTests;
 	long lastHypInputs;
-	long lastHypResets;
+	long lastHypTests;
 	boolean finished;
 
 	// some helper variables
 	long lastInputs;
-	long lastResets;
+	long lastTests;
 	/* Time (ms) relative to the start of the learning experiment */
 	long time; 
 
@@ -59,14 +59,14 @@ public class StatisticsTracker {
 	 * @param inputCounter
 	 *            counter updated on every input run on the system during both
 	 *            learning and testing.
-	 * @param resetCounter
-	 *            counter updated on every reset run on the system during both
+	 * @param testCounter
+	 *            counter updated on every test executed on the system during both
 	 *            learning and testing.
 	 * 
 	 */
-	public StatisticsTracker(Counter inputCounter, Counter resetCounter) {
+	public StatisticsTracker(Counter inputCounter, Counter testCounter) {
 		this.inputCounter = inputCounter;
-		this.resetCounter = resetCounter;
+		this.testCounter = testCounter;
 	}
 	
 	public void setRuntimeStateTracking(OutputStream stateOutput) {
@@ -109,12 +109,12 @@ public class StatisticsTracker {
 	 */
 	public void startLearning(StateFuzzerConfig config, Alphabet<?> alphabet) {
 		learnInputs = 0;
-		learnResets = 0;
+		learnTests = 0;
 		time = System.currentTimeMillis();
 		allInputs = 0;
-		allResets = 0;
+		allTests = 0;
 		lastHypInputs = 0;
-		lastHypResets = 0;
+		lastHypTests = 0;
 		this.config = config;
 		this.alphabet = alphabet;
 		counterexamples = new ArrayList<>();
@@ -128,9 +128,9 @@ public class StatisticsTracker {
 	 */
 	public void newHypothesis(StateMachine hypothesis) {
 		learnInputs += inputCounter.getCount() - lastInputs;
-		learnResets += resetCounter.getCount() - lastResets;
+		learnTests += testCounter.getCount() - lastTests;
 		lastHypInputs = inputCounter.getCount();
-		lastHypResets = resetCounter.getCount();
+		lastHypTests = testCounter.getCount();
 		lastHyp = hypothesis;
 		lastHypStats = new HypothesisStatistics();
 		lastHypStats.setStates(hypothesis.getMealyMachine().size());
@@ -146,7 +146,7 @@ public class StatisticsTracker {
 	 */
 	public void newCounterExample(DefaultQuery<?, ?> counterexample) {
 		lastInputs = inputCounter.getCount();
-		lastResets = resetCounter.getCount();
+		lastTests = testCounter.getCount();
 		counterexamples.add(counterexample);
 		lastHypStats.setCounterexample(counterexample);
 		lastHypStats.setCounterexampleSnapshot(snapshot());
@@ -161,7 +161,7 @@ public class StatisticsTracker {
 	public void finishedLearning(StateMachine learnedModel, boolean finished, String notFinishedReason) {
 		this.learnedModel = learnedModel;
 		allInputs = inputCounter.getCount();
-		allResets = resetCounter.getCount();
+		allTests = testCounter.getCount();
 		duration = System.currentTimeMillis() - time;
 		this.finished = finished;
 		this.notFinishedReason = notFinishedReason;
@@ -177,11 +177,11 @@ public class StatisticsTracker {
 		statistics.setFinished(finished, notFinishedReason);
 		statistics.generateRunDescription(config, alphabet);
 		statistics.setAllInputs(allInputs);
-		statistics.setAllResets(allResets);
+		statistics.setAllTests(allTests);
 		statistics.setLearnInputs(learnInputs);
-		statistics.setLearnResets(learnResets);
+		statistics.setLearnTests(learnTests);
 		statistics.setLastHypInputs(lastHypInputs);
-		statistics.setLastHypResets(lastHypResets);
+		statistics.setLastHypTests(lastHypTests);
 		statistics.setDuration(duration);
 		statistics.setCounterexamples(counterexamples);
 		statistics.setAlphabetSize(alphabet.size());
@@ -191,6 +191,6 @@ public class StatisticsTracker {
 	}
 	
 	private StatisticsSnapshot snapshot() {
-		return new StatisticsSnapshot(resetCounter.getCount(), inputCounter.getCount(), System.currentTimeMillis() - time);
+		return new StatisticsSnapshot(testCounter.getCount(), inputCounter.getCount(), System.currentTimeMillis() - time);
 	}
 }

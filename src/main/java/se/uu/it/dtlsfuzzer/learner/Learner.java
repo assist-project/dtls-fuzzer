@@ -34,7 +34,7 @@ import se.uu.it.dtlsfuzzer.sut.LoggingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.MultipleRunsSULOracle;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismRetryingSULOracle;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
-import se.uu.it.dtlsfuzzer.sut.QueryLimitReachedException;
+import se.uu.it.dtlsfuzzer.sut.TestLimitReachedException;
 import se.uu.it.dtlsfuzzer.sut.TlsSULBuilder;
 import se.uu.it.dtlsfuzzer.sut.input.AlphabetFactory;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
@@ -84,13 +84,13 @@ public class Learner {
 			sulBuilder.setTimeLimit(fuzzerConfig.getLearningConfig().getTimeLimit());
 		}
 
-		if (fuzzerConfig.getLearningConfig().getQueryLimit() != null) {
-			sulBuilder.setQueryLimit(fuzzerConfig.getLearningConfig().getQueryLimit());
+		if (fuzzerConfig.getLearningConfig().getTestLimit() != null) {
+			sulBuilder.setTestLimit(fuzzerConfig.getLearningConfig().getTestLimit());
 		}
 
 		SUL<TlsInput, TlsOutput> tlsSystemUnderTest = sulBuilder.getWrappedTlsSUL();
 
-		StatisticsTracker tracker = new StatisticsTracker(sulBuilder.getInputCounter(), sulBuilder.getResetCounter());
+		StatisticsTracker tracker = new StatisticsTracker(sulBuilder.getInputCounter(), sulBuilder.getTestCounter());
 
 		MealyMembershipOracle<TlsInput, TlsOutput> learningSulOracle = new SULOracle<TlsInput, TlsOutput>(
 				tlsSystemUnderTest);
@@ -210,7 +210,7 @@ public class Learner {
 			LOGGER.warn("Learning timed out after a duration of " + exc.getDuration() + " (i.e. "
 					+ exc.getDuration().toHours() + " hours, or" + exc.getDuration().toMinutes() + " minutes" + " )");
 			notFinishedReason = "learning timed out";
-		} catch (QueryLimitReachedException exc) {
+		} catch (TestLimitReachedException exc) {
 			LOGGER.warn("Learning exhausted the number of queries allowed " + exc.getQueryLimit() + " membership queries)");
 			notFinishedReason = "query limit reached";
 		} catch (Exception exc) {

@@ -18,7 +18,7 @@ public class TlsSULBuilder {
 	private TlsSUL tlsSul;
 	private SUL<TlsInput, TlsOutput> wrappedTLSSul;
 	private Counter inputCounter;
-	private Counter resetCounter;
+	private Counter testCounter;
 	private Duration timeLimit;
 	private Long queryLimit;
 	
@@ -55,12 +55,12 @@ public class TlsSULBuilder {
 
 		SymbolCounterSUL<TlsInput, TlsOutput> symbolCounterSul = new SymbolCounterSUL<>(
 				"symbol counter", tlsSystemUnderTest);
-		ResetCounterSUL<TlsInput, TlsOutput> resetCounterSul = new ResetCounterSUL<>(
-				"reset counter", symbolCounterSul);
+		ResetCounterSUL<TlsInput, TlsOutput> testCounterSul = new ResetCounterSUL<>(
+				"test counter", symbolCounterSul);
 		inputCounter = symbolCounterSul.getStatisticalData();
-		resetCounter = resetCounterSul.getStatisticalData();
+		testCounter = testCounterSul.getStatisticalData();
 		
-		wrappedTLSSul = resetCounterSul;
+		wrappedTLSSul = testCounterSul;
 	}
 	
 	public TlsSULBuilder setTimeLimit(Duration timeLimit) {
@@ -74,14 +74,14 @@ public class TlsSULBuilder {
 		}
 	}
 	
-	public TlsSULBuilder setQueryLimit(long queryLimit) {
+	public TlsSULBuilder setTestLimit(long queryLimit) {
 		if (this.queryLimit == null) {
 			this.queryLimit = queryLimit;
-			wrappedTLSSul = new QueryLimitWrapper<TlsInput, TlsOutput>(
+			wrappedTLSSul = new TestLimitWrapper<TlsInput, TlsOutput>(
 					wrappedTLSSul, queryLimit);
 			return this;
 		} else {
-			throw new RuntimeException("Query limit already set to " + queryLimit);
+			throw new RuntimeException("Test limit already set to " + queryLimit);
 		}
 		
 	}
@@ -98,7 +98,7 @@ public class TlsSULBuilder {
 		return inputCounter;
 	}
 	
-	public Counter getResetCounter() {
-		return resetCounter;
+	public Counter getTestCounter() {
+		return testCounter;
 	}
 }
