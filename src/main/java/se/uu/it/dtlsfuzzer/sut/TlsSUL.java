@@ -99,7 +99,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 				public void run() {
 					if (state != null && chWaiter != null && chWaiter.isAlive()) {
 						try {
-							LOGGER.info("Causing existing ClientHello waiter thread to terminate by closing the connection.");
+							LOGGER.debug("Causing existing ClientHello waiter thread to terminate by closing the connection.");
 							state.getTlsContext().getTransportHandler().closeConnection();
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -152,12 +152,12 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 				new Runnable () {
 					@Override
 					public void run() {
-						LOGGER.info("Initializing transport handler (waiting ClientHello)");
+						LOGGER.debug("Initializing transport handler (waiting ClientHello)");
 						/*
 						 * ServerUdpTransportHandler#initTransportHandler only returns once a ClientHello message is received
 						 */
 						state.getTlsContext().initTransportHandler();
-						LOGGER.info("Initialized transport handler");
+						LOGGER.debug("Initialized transport handler");
 					}
 					
 				}
