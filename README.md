@@ -176,7 +176,7 @@ Knowing our setup functions, we can now start learning by running:
 
     > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_psk -queries 200
 
-We notice that an output directory, 'output/openssl-1.1.1b_psk/' for the experiment has been created.
+We notice that an output directory, `output/openssl-1.1.1b_psk/` for the experiment has been created.
 We can 'ls' this directory to check the current status of the experiment (the number of hypotheses generated...).
 
     > ls output/openssl-1.1.1b_server_psk/
