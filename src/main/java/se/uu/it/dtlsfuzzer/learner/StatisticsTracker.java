@@ -191,6 +191,6 @@ public class StatisticsTracker {
 	}
 	
 	private StatisticsSnapshot snapshot() {
-		return new StatisticsSnapshot(testCounter.getCount(), inputCounter.getCount(), System.currentTimeMillis() - time);
+		return new StatisticsSnapshot(inputCounter.getCount(), testCounter.getCount(), System.currentTimeMillis() - time);
 	}
 }

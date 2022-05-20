@@ -211,7 +211,7 @@ public class Learner {
 					+ exc.getDuration().toHours() + " hours, or" + exc.getDuration().toMinutes() + " minutes" + " )");
 			notFinishedReason = "learning timed out";
 		} catch (TestLimitReachedException exc) {
-			LOGGER.warn("Learning exhausted the number of queries allowed " + exc.getQueryLimit() + " membership queries)");
+			LOGGER.warn("Learning exhausted the number of tests allowed (" + exc.getQueryLimit() + " tests)");
 			notFinishedReason = "query limit reached";
 		} catch (Exception exc) {
 			notFinishedReason = exc.getMessage();

@@ -137,8 +137,8 @@ public class Statistics {
 		return learnTests;
 	}
 
-	protected void setLearnTests(long learnResets) {
-		this.learnTests = learnResets;
+	protected void setLearnTests(long learnTests) {
+		this.learnTests = learnTests;
 	}
 
 	public long getLearnInputs() {
@@ -153,8 +153,8 @@ public class Statistics {
 		return allTests;
 	}
 
-	protected void setAllTests(long allResets) {
-		this.allTests = allResets;
+	protected void setAllTests(long allTests) {
+		this.allTests = allTests;
 	}
 
 	public long getAllInputs() {
@@ -177,8 +177,8 @@ public class Statistics {
 		return lastHypTests;
 	}
 
-	protected void setLastHypTests(long lastHypResets) {
-		this.lastHypTests = lastHypResets;
+	protected void setLastHypTests(long lastHypTests) {
+		this.lastHypTests = lastHypTests;
 	}
 
 	public long getLastHypInputs() {

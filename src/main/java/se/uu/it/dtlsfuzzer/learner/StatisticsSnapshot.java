@@ -5,14 +5,14 @@ package se.uu.it.dtlsfuzzer.learner;
  */
 public class StatisticsSnapshot {
 
-    private long tests;
     private long inputs;
+    private long tests;
     private long time;
 
-    public StatisticsSnapshot(long tests, long inputs, long time) {
+    public StatisticsSnapshot(long inputs, long tests, long time) {
         super();
-        this.tests = tests;
         this.inputs = inputs;
+        this.tests = tests;
         this.time = time;
     }
 
