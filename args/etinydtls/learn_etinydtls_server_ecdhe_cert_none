@@ -1,0 +1,24 @@
+-connect 
+localhost:${sut.port}
+-startWait
+100
+-alphabet
+${alphabets.servers}/ecdhe8_cert.xml
+-responseWait
+100  
+-sulConfig 
+experiments/configs/tinydtls.config
+-randLength
+10
+-queries
+20000
+-protocol 
+DTLS12 
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-output 
+output/etinydtls_server_ecdhe_cert_none
+-cmd 
+"${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sut.port} -d"
+-depth
+1

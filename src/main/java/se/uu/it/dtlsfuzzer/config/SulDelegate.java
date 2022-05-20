@@ -19,34 +19,29 @@ public abstract class SulDelegate {
 	@Parameter(names = "-protocol", required = false, description = "Protocol analyzed, determines transport layer used", converter = ProtocolVersionConverter.class)
 	private ProtocolVersion protocolVersion = ProtocolVersion.DTLS12;
 
-	@Parameter(names = "-timeout", required = false, description = "Time the SUL spends waiting for a response")
-	private Integer timeout = 100;
+	@Parameter(names = {"-responseWait", "-respWait"}, required = false, description = "Time the SUL spends waiting for a response")
+	private Integer responseWait = 100;
 
 	@Parameter(names = "-inputResponseTimeout", required = false, description = "Time the SUL spends waiting for a response to a particular input. Expected format is: \"input1:value1,input2:value2...\" ", converter = InputResponseTimeoutConverter.class)
 	private InputResponseTimeoutMap inputResponseTimeout;
 
-	@Parameter(names = "-rstWait", required = false, description = "Time the SUL waits after executing each query")
-	private Long resetWait = 0L;
-
-	@Parameter(names = { "-command", "-cmd" }, required = false, description = "Command for starting the (D)TLS process")
+	@Parameter(names = {"-command", "-cmd"}, required = false, description = "Command for starting the (D)TLS process")
 	private String command = null;
 
-	@Parameter(names = { "-terminateCommand",
-			"-termCmd" }, required = false, description = "Command for terminating the (D)TLS process. If specified, it is used instead of java.lang.Process#destroy()")
+	@Parameter(names = {"-terminateCommand", "-termCmd"}, required = false, description = "Command for terminating the (D)TLS process. If specified, it is used instead of java.lang.Process#destroy()")
 	private String terminateCommand = null;
 
-	@Parameter(names = { "-processDir" }, required = false, description = "The directory of the (D)TLS process")
+	@Parameter(names = {"-processDir"}, required = false, description = "The directory of the (D)TLS process")
 	private String processDir = null;
 
-	@Parameter(names = { "-redirectOutputStreams",
-			"-ros" }, required = false, description = "Redirects (D)TLS process output streams to STDOUT and STDERR.")
+	@Parameter(names = {"-redirectOutputStreams", "-ros"}, required = false, description = "Redirects (D)TLS process output streams to STDOUT and STDERR.")
 	private boolean redirectOutputStreams;
 
-	@Parameter(names = { "-processTrigger" }, required = false, description = "When is the process launched")
+	@Parameter(names = {"-processTrigger"}, required = false, description = "When is the process launched")
 	private ProcessLaunchTrigger processTrigger = ProcessLaunchTrigger.NEW_TEST;
 
-	@Parameter(names = "-runWait", required = false, description = "Time waited after running each TLS command")
-	private Long runWait = 0L;
+	@Parameter(names = "-startWait", required = false, description = "Time waited after executing the command to start the SUT process.")
+	private Long startWait = 0L;
 
 	// In case a launch server is used to execute the SUT (as is the case of JSSE
 	// and Scandium)
@@ -79,12 +74,12 @@ public abstract class SulDelegate {
 		}
 	}
 
-	public Integer getTimeout() {
-		return timeout;
+	public Integer getResponseWait() {
+		return responseWait;
 	}
 
-	public void setTimeout(Integer timeout) {
-		this.timeout = timeout;
+	public void setResponseWait(Integer timeout) {
+		this.responseWait = timeout;
 	}
 
 	public ProtocolVersion getProtocolVersion() {
@@ -93,10 +88,6 @@ public abstract class SulDelegate {
 
 	public InputResponseTimeoutMap getInputResponseTimeout() {
 		return inputResponseTimeout;
-	}
-
-	public Long getResetWait() {
-		return resetWait;
 	}
 
 	public String getCommand() {
@@ -115,12 +106,12 @@ public abstract class SulDelegate {
 		return processTrigger;
 	}
 
-	public Long getRunWait() {
-		return runWait;
+	public Long getStartWait() {
+		return startWait;
 	}
 
-	public void setRunWait(Long runWait) {
-		this.runWait = runWait;
+	public void setStartWait(Long runWait) {
+		this.startWait = runWait;
 	}
 
 	public Integer getResetPort() {

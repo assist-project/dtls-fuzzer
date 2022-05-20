@@ -32,21 +32,20 @@ The most important folders in **dtls-fuzzer**'s root directory are:
 ### Output folders 
 Output folders are named based on the experiment configuration, that is: 
 - the SUT/implementation tested;
+- whether the SUT is a server or a client;
 - the alphabet used, in terms of key exchange algorithms covered, where 'all' indicates all 4 key exchange algorithms were used;
 - where applicable whether client certification was required (req), optional (nreq) or disabled (none);
-- the testing algorithm: random walk (rwalk) or an adaptation of it (stests);
-    - experiments using the adaptation have not been included in the paper
 - optionally, whether retransmissions were included in/excluded from outputs (incl or excl).
     - retransmissions were included by default
 
-As an example, the folder name 'jsse-12_rsa_cert_none_rwalk_incl' indicates an experiment on the JSSE 12 implementation of DTLS, using an alphabet including inputs for performing RSA handshakes, client certificate authentication is disabled, the test algorithm is random walk and retransmissions are included.
+As an example, the folder name `jsse-12_server_rsa_cert_none_incl` indicates an experiment on the JSSE 12 server implementation of DTLS, using an alphabet including inputs for performing RSA handshakes, client certificate authentication is disabled, and that retransmissions are included.
 
 An output folder contains:
 - 'alphabet.xml', the input alphabet;
 - 'command.args', the arguments file used containing various experiment parameters, most notably:
     - *queries*, the bound on the number of random walk tests which need to pass for a hypothesis to be deemed final
     - *equivalenceAlgorithms*, model-based test algorithms employed
-    - *runWait* and *timeout*, the start and response timeout respectively (we touch on them later)
+    - *startWait* and *responseWait*, the start and response timeout respectively (we touch on them later)
 - 'sul.config', SUT-dependent configuration for **TLS-Attacker**,  the same configuration can be used to execute workflow traces on the SUT using **TLS-Attacker** alone;
 - 'hyp[0-9]+.dot', intermediate hypotheses;
 - 'statistics.txt', experiment statistics such as the total number of tests, learning time;
@@ -156,12 +155,12 @@ First we set up the SUT, which is automatically by a 'setup_sut.sh' script.
 Then we select an argument file form the 'args/openssl-1.1.1b' folder.
 We notice there are several argument files to choose from, namely:
 
-    learn_openssl-1.1.1b_all_cert_none_rwalk_incl  
-    learn_openssl-1.1.1b_all_cert_nreq_rwalk_incl  
-    learn_openssl-1.1.1b_all_cert_req_rwalk_incl  
-    learn_openssl-1.1.1b_psk_rwalk_incl
+    learn_openssl-1.1.1b_server_all_cert_none  
+    learn_openssl-1.1.1b_server_all_cert_nreq  
+    learn_openssl-1.1.1b_server_all_cert_req
+    learn_openssl-1.1.1b_server_psk
 
-The argument file of interest is 'learn_openssl-1.1.1b_psk_rwalk_incl', since its filename indicates PSK.
+The argument file of interest is `learn_openssl-1.1.1b_server_psk`, since its filename indicates PSK.
 We thus select it, and run the fuzzer on it.
 We additionally cap the number of tests to 200, to shorten learning time.
 Finally, for OpenSSL, LD_LIBRARY_PATH has to be set to the implementation's directory ('suts/openssl-1.1.1b/').
@@ -170,32 +169,32 @@ A good test is just completing a handshake.
 We supply the argument file, along with a corresponding test from 'examples/tests' as parameter.
 We get:
 
-    >  LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_psk_rwalk_incl -test examples/tests/psk
+    >  LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_psk -test examples/tests/psk
 
 If all goes well, the server should have printed out "This is a hello message", a message we send after completing the handshake.
 Knowing our setup functions, we can now start learning by running:
 
-    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_psk_rwalk_incl -queries 200
+    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_psk -queries 200
 
-We notice that an output directory, 'output/openssl-1.1.1b_psk_rwalk_incl/' for the experiment has been created.
+We notice that an output directory, `output/openssl-1.1.1b_psk/` for the experiment has been created.
 We can 'ls' this directory to check the current status of the experiment (the number of hypotheses generated...).
 
-    > ls output/openssl-1.1.1b_psk_rwalk_incl/
+    > ls output/openssl-1.1.1b_server_psk/
 
 
 ### When things go right
 If all goes well, after 20-30 minutes, the output directory should contain a 'learnedModel.dot' file.
 We can visualize the file using the graphviz 'dot' utility, by exporting to .pdf and opening the .pdf with our favorite .pdf viewer.
 
-    > dot -Tpdf output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.dot > output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.pdf
-    > evince output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.pdf
+    > dot -Tpdf output/openssl-1.1.1b_server_psk/learnedModel.dot > output/openssl-1.1.1b_server_psk/learnedModel.pdf
+    > evince output/openssl-1.1.1b_server_psk/learnedModel.pdf
 
 Finally, we can use 'trim_model.sh' to generated a better/trimmer version of the model.
 This can be done as follows:
 
-    > bash trim_model.sh --output output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.dot output/openssl-1.1.1b_psk_rwalk_incl/learnedModel.dot 
-    > dot -Tpdf output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.dot > output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.pdf
-    > evince output/openssl-1.1.1b_psk_rwalk_incl/nicerLearnedModel.pdf
+    > bash trim_model.sh --output output/openssl-1.1.1b_server_psk/nicerLearnedModel.dot output/openssl-1.1.1b_server_psk/learnedModel.dot 
+    > dot -Tpdf output/openssl-1.1.1b_server_psk/nicerLearnedModel.dot > output/openssl-1.1.1b_server_psk/nicerLearnedModel.pdf
+    > evince output/openssl-1.1.1b_server_psk/nicerLearnedModel.pdf
 
 We can now determine conformance of the system by checking the model against the specification...
 
@@ -204,7 +203,7 @@ When 'ls'-ing the output directory we might find 'error.msg'.
 That's a sign that the experiment failed and learning terminated abruptly
 In such cases displaying the contents reveals the reason behind the failure
 
-    > cat output/openssl-1.1.1b_psk_rwalk_incl/error.msg
+    > cat output/openssl-1.1.1b_server_psk/error.msg
     
 Note that checking conformance can still be performed on the last generated hypothesis, as long as potential findings are validated against the system (as they should be anyway).
 
@@ -289,7 +288,7 @@ In such cases, there are two knobs which can be tweaked:
 
 These parameters can be adjusted by overwriting (likely with a higher value) the corresponding settings in the argument file:
 
-    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeout new_response_timeout -runWait new_start_timeout
+    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -responseWait new_response_timeout -startWait new_start_timeout
 
 To avoid issues to do with timing, we suggest running experiments on a sufficiently powerful machine.
 The main cause of non-determinism is the SUT taking too long to start or to generate a response.
@@ -308,7 +307,7 @@ It is possible to run multiple experiments at a time provided that servers are c
 We can choose to launch each experiment in a separate terminal.
 Alternatively, we can launch experiments in a single terminal using the 'disown' utility:
 
-    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk 1>/dev/null 2>&1 & disown
+    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_server_psk 1>/dev/null 2>&1 & disown
 
 However, running more than a few (>2) places additional burden on the machine.
 It also increases the chance of learning failure due to accidental port collision.
@@ -328,11 +327,11 @@ That is because PSK with small passwords requires significantly less processing 
 
 
 ### OpenSSL 1.1.1b
-Any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl') can be tried out.
+Any openssl-1.1.1b configuration (for example 'args/openssl-1.1.1b/learn_openssl-1.1.1b_server_all_cert_req') can be tried out.
 Experiments terminate quickly (less than a day),  exercising all key exchange algorithms. 
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
 
-    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_all_cert_req_rwalk_incl -queries 5000
+    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_all_cert_req -queries 5000
 
 Note, when learning OpenSSL it is necessary to point the LD_LIBRARY_PATH variable to the installation directory.
 
@@ -341,26 +340,26 @@ Any mbedtls-2.16.1 configuration can be used for the same reasons as OpenSSL.
 Experiments take more time to complete since the SUT is slower.
 Command for client certificate authentication disabled configuration using all key exchange algorithms:
 
-    > java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_all_cert_none_rwalk_incl -queries 5000
+    > java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_server_all_cert_none -queries 5000
 
 
 ### Contiki-NG TinyDTLS using PSK
 A redacted version of the model obtained for this configuration appears in the appendix.
 We can use a low test bound of 2000 since the input alphabet is small, making testing easier.
 
-    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_psk_rwalk -queries 2000
+    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_server_ctinydtls_psk -queries 2000
 
 ### WolfSSL 4.0.0 using PSK
 For WolfSSL we provide a PSK configuration for which learning should terminate relatively quickly.
 
-    > java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_psk_rwalk -queries 2000
+    > java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_server_psk -queries 2000
 
 ### GnuTLS 3.6.7 with client authentication disabled
 The more recent GnuTLS version we analyzed produced nice, compact models.
 Unfortunately, enabling client authentication lead to a sharp increase in the number of required tests.
 We suggest a configuration which disables it to shorten learning time:
 
-    > java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_all_cert_none_rwalk_incl -queries 2000
+    > java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_server_all_cert_none -queries 2000
 
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
@@ -368,7 +367,7 @@ The model exposes important bugs, unfortunately, the experiment is lengthy.
 The experiment should not be run in parallel with experiments not involving Scandium or JSSE.
 Command:
 
-    > java -jar target/dtls-fuzzer.jar @args/scandium-2.0.0/learn_scandium-2.0.0_psk_rwalk -queries 2000
+    > java -jar target/dtls-fuzzer.jar @args/scandium-2.0.0/learn_scandium-2.0.0_server_psk -queries 2000
 
 ### JSSE 12.0.2 with authentication required 
 A redacted version of the model obtained for this configuration appears in the paper.
@@ -378,12 +377,12 @@ Note that learning for JSSE does not finish/converge, building hypotheses with m
 We hence configured JSSE experiments to automatically terminate after one day (two days in the paper).
 Command for RSA key exchange:
 
-    > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl 
+    > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_server_rsa_cert_req 
 
 Instead of arduous learning, we may want to simply test if a handshake can be completed in this setting without sending any certificate messages. 
 This can be done by running:
 
-    > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_rsa_cert_req_rwalk_incl -test examples/tests/rsa
+    > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_server_rsa_cert_req -test examples/tests/rsa
 
 
 ## Analyzing results

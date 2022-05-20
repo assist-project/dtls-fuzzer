@@ -1,0 +1,25 @@
+state-fuzzer-server
+
+# SUT config
+-protocol 
+DTLS12 
+-connect 
+localhost:${sut.port}  
+-startWait
+100 
+-responseWait
+100 
+-cmd 
+"${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_server2 dtls=1 psk=1234 mtu=5000 key_file=${fuzzer.dir}/experiments/keystore/rsa2048_key.pem crt_file=${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem server_port=${sut.port} exchanges=100 hs_timeout=20000-120000 ca_file=${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem renegotiation=1"
+
+# learner config
+-alphabet 
+${alphabets.servers}/dhe_ecdhe_psk_rsa_cert.xml
+-randLength
+10
+-queries
+20000
+-equivalenceAlgorithms 
+RANDOM_WP_METHOD,WP_METHOD
+-output
+output/mbedtls-${mbedtls.version}_server_all_cert_none
