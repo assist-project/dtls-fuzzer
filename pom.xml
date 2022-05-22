@@ -80,17 +80,17 @@
 				</configuration>
 			</plugin>
 			<plugin>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <mainClass>se.uu.it.dtlsfuzzer.Main</mainClass>
-                            </manifest>
-                        </archive>
-                        <descriptorRefs>
-                            <descriptorRef>jar-with-dependencies</descriptorRef>
-                        </descriptorRefs>
-                    </configuration>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>se.uu.it.dtlsfuzzer.Main</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
                   <!--  uncomment in case to make a jar with dependencies on calling 'mvn install'  -->   
                   <!--  <executions>
                         <execution>
@@ -101,31 +101,7 @@
                             </goals>
                         </execution> 
                     </executions> -->
-                </plugin>
-            <!-- <plugin> -->
-            <!--     <groupId>org.apache.maven.plugins</groupId> -->
-            <!--     <artifactId>maven-enforcer-plugin</artifactId> -->
-            <!--     <version>1.0.1</version> -->
-            <!--     <executions> -->
-            <!--         <execution> -->
-            <!--             <id>enforce-versions</id> -->
-            <!--         <goals> -->
-            <!--             <goal>enforce</goal> -->
-            <!--         </goals> -->
-            <!--         </execution> -->
-            <!--     </executions> -->
-            <!--     <configuration> -->
-            <!--         <rules> -->
-            <!--             <requireJavaVersion> -->
-            <!--                 <version>[1.8,1.9)</version> -->
-            <!--             </requireJavaVersion> -->
-            <!--         </rules> -->
-            <!--         <requireOS> -->
-            <!--             <family>unix</family> -->
-            <!--         </requireOS> -->
-            <!--         <level>FATAL</level> -->
-            <!--     </configuration> -->
-            <!-- </plugin> -->
+                	</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -141,13 +117,13 @@
 						</configuration>
 					</execution>
 				</executions>
-            </plugin>
+			</plugin>
 			 <!-- Format the Code -->
-            <plugin>
-                <groupId>net.revelc.code</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-                <version>0.5.2</version>
-            </plugin>
+			<plugin>
+				<groupId>net.revelc.code</groupId>
+				<artifactId>formatter-maven-plugin</artifactId>
+				<version>0.5.2</version>
+			</plugin>
 			<plugin>
 				<!-- Build an executable JAR -->
 				<groupId>org.apache.maven.plugins</groupId>
