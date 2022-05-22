@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Setup SUT which may involve downloading, patching, installing dependencies and building
 # The goal is to have a runnable SUT
