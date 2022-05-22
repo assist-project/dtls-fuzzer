@@ -60,19 +60,19 @@ function check_java() {
         then
             echo "Installing java using apt-get"
             sudo apt-get install openjdk-8-jdk
-        else 
+        else
             echo "Install JDK 8, add it to PATH and re-run"
             exit
         fi
     else
         java_ver=`java -version 2>&1 >/dev/null | grep "java version\|openjdk version"  | awk '{print $3}' | tr -d '"'`
         
-        if [[ ! $java_ver == 1.8* ]]
-        then
-            echo "Required Java version 1.8, actual version $java_ver"
-            echo "Install JDK 8, add it to PATH and re-run"
-            exit
-        fi 
+#        if [[ ! $java_ver == 1.8* ]]
+#        then
+#            echo "Required Java version 1.8, actual version $java_ver"
+#            echo "Install JDK 8, add it to PATH and re-run"
+#            exit
+#        fi
         
         java_vm=`java -version 2>&1 >/dev/null | grep -o "Server VM\|Client VM"`
         if [[ ! $java_vm == "Server VM" ]]

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly MAX_HYP_NUM=1000

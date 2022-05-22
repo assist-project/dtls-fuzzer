@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Script for improving the visuals of a learned model
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -142,6 +142,4 @@ else
     echo "Trimming and coloring $1"
     trim $1
 fi 
-
-
 
