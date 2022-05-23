@@ -30,9 +30,9 @@ public abstract class DtlsInput extends TlsInput {
 	public final void preSendUpdate(State state, ExecutionContext context) {
 		alias = context.getSulDelegate().getRole();
 		// if different epoch than current, set the epoch in TLS context
-		if (epoch != null && epoch != state.getTlsContext().getDtlsSendEpoch()) {
-			contextEpoch = state.getTlsContext().getDtlsSendEpoch();
-			state.getTlsContext().setDtlsSendEpoch(epoch);
+		if (epoch != null && epoch != state.getTlsContext().getDtlsWriteEpoch()) {
+			contextEpoch = state.getTlsContext().getDtlsWriteEpoch();
+			state.getTlsContext().setDtlsWriteEpoch(epoch);
 			// if epoch > 0, must deactivate encryption
 			if (contextEpoch > 0  && !encryptionEnabled) {
 				DeactivateEncryptionAction action = new DeactivateEncryptionAction();
@@ -52,7 +52,7 @@ public abstract class DtlsInput extends TlsInput {
 	public final void postSendUpdate(State state, ExecutionContext context) {
 		// reset epoch number and, if original epoch > 0, reactivate encryption
 		if (contextEpoch != null) {
-			state.getTlsContext().setDtlsSendEpoch(contextEpoch);
+			state.getTlsContext().setDtlsWriteEpoch(contextEpoch);
 			if (contextEpoch > 0  && !encryptionEnabled) {
 				ActivateEncryptionAction action = new ActivateEncryptionAction();
 				action.setConnectionAlias(alias);

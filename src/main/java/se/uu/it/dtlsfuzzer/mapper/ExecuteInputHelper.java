@@ -31,11 +31,8 @@ public class ExecuteInputHelper {
 	 */
 	public final FragmentationResult fragmentMessage(HandshakeMessage message,
 			State state) {
-		MessageFragmenter fragmenter = new MessageFragmenter(state
-				.getTlsContext().getConfig());
-		List<DtlsHandshakeMessageFragment> fragments = fragmenter
-				.fragmentMessage((HandshakeMessage) message,
-						state.getTlsContext());
+		MessageFragmenter fragmenter =  new MessageFragmenter(state.getTlsContext().getConfig().getDtlsMaximumFragmentLength());
+		List<DtlsHandshakeMessageFragment> fragments  = fragmenter.fragmentMessage(message, state.getTlsContext());
 		return new FragmentationResult(message, fragments);
 	}
 

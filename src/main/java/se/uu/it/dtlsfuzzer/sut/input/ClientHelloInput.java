@@ -91,8 +91,8 @@ public class ClientHelloInput extends DtlsInput {
 		// (in which case, the clienthello is digested)
 		if (forceDigest
 				&& state.getTlsContext().getDigest().getRawBytes().length == 0) {
-			DtlsHandshakeMessageFragment fragment = new MessageFragmenter(state
-					.getTlsContext().getConfig()).wrapInSingleFragment(
+		    MessageFragmenter fragmenter = new MessageFragmenter(state.getConfig().getDtlsMaximumFragmentLength());
+			DtlsHandshakeMessageFragment fragment = fragmenter.wrapInSingleFragment(
 					(HandshakeMessage) message, state.getTlsContext());
 			state.getTlsContext().getDigest()
 					.append(fragment.getCompleteResultingMessage().getValue());
