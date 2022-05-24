@@ -132,17 +132,14 @@ To finish, we make that folder our current directory.
     > git clone  -b usenix20-artifact https://github.com/assist-project/dtls-fuzzer.git ~/dtls-fuzzer
     > cd ~/dtls-fuzzer
 
-## Installing dtls-fuzzer
-We first run the 'prepare.sh' script which installs libraries **dtls-fuzzer** depends on, namely two local .jars and TLS-Attacker 3.0b.
-We then install the tool itself.
-The resulting commands on a POSIX system will be:
+## Installation
+Run the `install.sh` script which installs libraries DTLS-Fuzzer depends on, and the tool itself.
 
-    > bash prepare.sh
-    > mvn clean install
+    > ./install.sh
 
-Following these steps, a directory named 'target' should have been built containing 'dtls-fuzzer.jar'.
+Following these steps, a directory named `target` should have been built containing `dtls-fuzzer.jar`.
 This is our executable library.
-From this point onward it is assumed that commands are run from **dtls-fuzzer**'s root directory. 
+From this point onward it is assumed that commands are run from DTLS-Fuzzer's root directory.
 
 ## Quickrun
 Suppose we want to generate a model for OpenSSL 1.1.1b using only PSK (Pre-Shared Keys).

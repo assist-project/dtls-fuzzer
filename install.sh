@@ -1,20 +1,11 @@
 #!/usr/bin/env bash
 #
-# Deploy all dependencies for installing DTLS-Fuzzer.
+# Installs some necessary packages to build the tool
+# and then installs DTLS-Fuzzer.
 
-# SCRIPT_DIR should correpond to dtls-fuzzer's root directory
+# SCRIPT_DIR should correpond to DTLS-Fuzzer's root directory
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
-
-# this version should be the same as that in pom.xml
-readonly TLSATTACKER_VER="3.2b"
-readonly TLSATTACKER_ARCH_URL="https://github.com/RUB-NDS/TLS-Attacker/archive/$TLSATTACKER_VER.tar.gz"
-readonly TLSATTACKER_FULLNAME="TLS-Attacker-$TLSATTACKER_VER"
-
-# location to store the downloaded archive file
-readonly TLSATTACKER_TEMP_ARCH="$SCRIPT_DIR/$TLSATTACKER_FULLNAME.tar.gz"
-readonly TLSATTACKER_DIR="$SCRIPT_DIR/$TLSATTACKER_FULLNAME"
-readonly TLSATTACKER_PATCH="$PATCHES_DIR/$TLSATTACKER_FULLNAME.patch"
 
 function arch_temp_dir() {
 	arch_url=$1
@@ -22,7 +13,7 @@ function arch_temp_dir() {
 	echo $temp_dir
 }
 
-# we can afford to copy/paste since this code likely willl not change
+# we can afford to copy/paste since this code likely will not change
 function solve_arch() {
     arch_url=$1
     target_dir=$2
@@ -103,66 +94,7 @@ function check_mvn() {
 check_java
 check_mvn
 
-# we can keep TLS-Attacker source code once the library is installed 
-do_keep=0
-# we can force-install, which means downloading/deploying dependencies 
-# even in cases where these already exist 
-force=0
-if [ $# -gt 0 ]; then
-	while [[ "$1" =~ ^- ]];
-		do case $1 in
-			-k | --keep )
-				do_keep=1
-				;;
-			-f | --force )
-				force=1
-				;;
-			* )
-				echo "Usage: $0 [--keep|-k] [--force|-f]"
-				exit 
-				;;
-		esac; shift; 
-	done;
-	if [[ $1 == '--keep' || $1 == '-k' ]] ; then 
-		do_keep=1
-	fi
-fi
 
-# removing leftover files/dirs from previous installations
-if [ $force -eq 1 ]; then
-	rm -rf `arch_temp_dir $TLSATTACKER_ARCH_URL` $TLSATTACKER_DIR
-fi
-
-# copying TLS-Attacker source code in $TLSATTACKER_DIR directory 
-if [[ ! -d $TLSATTACKER_DIR ]] ; then
-	
-	# downloading TLS-Attacker from remote URL
-	solve_arch $TLSATTACKER_ARCH_URL $TLSATTACKER_DIR
-  
-    # in case a patch exists for the version we rely on, we apply it before installing TLS-Attacker
-	if [[ -f $TLSATTACKER_PATCH ]] ; then
-		echo "Applying patch $TLSATTACKER_PATCH" 
-		( 
-			cd $SCRIPT_DIR 
-			patch -s -p0 < $TLSATTACKER_PATCH 
-		)
-	fi
-else
-	echo "$TLSATTACKER_DIR already exists. Installing $TLSATTACKER_FULLNAME from it."
-fi
-
-# installing enhanced TLS-Attacker without running tests
-echo "Installing $TLSATTACKER_FULLNAME"
-( 
-	cd $TLSATTACKER_DIR 
-	mvn clean install -DskipTests
-)
-
-if [ $do_keep -eq 0 ]; then
-	echo "Removing $TLSATTACKER_FULLNAME source code post-install"
-	rm -r $TLSATTACKER_DIR
-fi
-
-# installing DTLS-Fuzzer
-echo "Installing DTLS-Fuzzer"
+# Install DTLS-Fuzzer
+echo "Installing DTLS-Fuzzer..."
 mvn clean install
