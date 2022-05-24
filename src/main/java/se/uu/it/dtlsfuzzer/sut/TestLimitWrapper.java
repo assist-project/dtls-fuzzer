@@ -2,13 +2,13 @@ package se.uu.it.dtlsfuzzer.sut;
 
 import de.learnlib.api.SUL;
 
-public class QueryLimitWrapper <I, O> implements SUL<I, O> {
+public class TestLimitWrapper <I, O> implements SUL<I, O> {
 
 	private SUL<I, O> sul;
 	private final long limit;
-	private long numQueries;
+	private long numTests;
 
-	public QueryLimitWrapper(SUL<I,O> sul, long limit) {
+	public TestLimitWrapper(SUL<I,O> sul, long limit) {
 		this.sul = sul;
 		this.limit = limit;
 	}
@@ -21,9 +21,9 @@ public class QueryLimitWrapper <I, O> implements SUL<I, O> {
 	@Override
 	public void post() {
 		sul.post();
-		numQueries ++;
-		if (numQueries == limit) {
-			throw new QueryLimitReachedException(limit);
+		numTests ++;
+		if (numTests == limit) {
+			throw new TestLimitReachedException(limit);
 		}
 	}
 

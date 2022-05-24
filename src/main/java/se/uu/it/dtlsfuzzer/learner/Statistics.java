@@ -20,13 +20,13 @@ public class Statistics {
 	private String runDescription;
 	private int alphabetSize;
 	private int states;
-	private long learnResets;
+	private long learnTests;
 	private long learnInputs;
-	private long allResets;
+	private long allTests;
 	private long allInputs;
 	private List<DefaultQuery<?, ?>> counterexamples;
 	private long duration;
-	private long lastHypResets;
+	private long lastHypTests;
 	private long lastHypInputs;
 	private boolean finished;
 	private List<HypothesisStatistics> hypStats;
@@ -56,11 +56,11 @@ public class Statistics {
 		out.println("Number of states: " + states);
 		out.println("Number of hypotheses: " + hypStats.size());
 		out.println("Number of inputs: " + allInputs);
-		out.println("Number of resets: " + allResets);
+		out.println("Number of tests: " + allTests);
 		out.println("Number of learning inputs: " + learnInputs);
-		out.println("Number of learning resets: " + learnResets);
+		out.println("Number of learning tests: " + learnTests);
 		out.println("Number of inputs up to last hypothesis: " + lastHypInputs);
-		out.println("Number of resets up to last hypothesis: " + lastHypResets);
+		out.println("Number of tests up to last hypothesis: " + lastHypTests);
 		out.println("Time it took to learn model: " + duration);
 		out.println("Counterexamples:");
 		int ind = 1;
@@ -69,7 +69,7 @@ public class Statistics {
 		}
 		if (!hypStats.isEmpty()) {
 			out.println("Number of inputs when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getInputs()).collect(Collectors.toList()));
-			out.println("Number of resets when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getResets()).collect(Collectors.toList()));
+			out.println("Number of tests when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getTests()).collect(Collectors.toList()));
 			out.println("Time when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getTime()).collect(Collectors.toList()));
 			
 			List<HypothesisStatistics> invalidatedHypStates = new ArrayList<>(hypStats);
@@ -77,7 +77,7 @@ public class Statistics {
 				invalidatedHypStates.remove(invalidatedHypStates.size()-1);
 			}
 			out.println("Number of inputs when counterexample was found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getInputs()).collect(Collectors.toList()));
-			out.println("Number of resets when counterexample was found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getResets()).collect(Collectors.toList()));
+			out.println("Number of tests when counterexample was found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getTests()).collect(Collectors.toList()));
 			out.println("Time when counterexample was found: " + invalidatedHypStates.stream().map(s -> s.getCounterexampleSnapshot().getTime()).collect(Collectors.toList()));
 		}
 		out.close();
@@ -133,12 +133,12 @@ public class Statistics {
 		this.states = states;
 	}
 
-	public long getLearnResets() {
-		return learnResets;
+	public long getLearnTests() {
+		return learnTests;
 	}
 
-	protected void setLearnResets(long learnResets) {
-		this.learnResets = learnResets;
+	protected void setLearnTests(long learnTests) {
+		this.learnTests = learnTests;
 	}
 
 	public long getLearnInputs() {
@@ -149,12 +149,12 @@ public class Statistics {
 		this.learnInputs = learnInputs;
 	}
 
-	public long getAllResets() {
-		return allResets;
+	public long getAllTests() {
+		return allTests;
 	}
 
-	protected void setAllResets(long allResets) {
-		this.allResets = allResets;
+	protected void setAllTests(long allTests) {
+		this.allTests = allTests;
 	}
 
 	public long getAllInputs() {
@@ -173,12 +173,12 @@ public class Statistics {
 		this.duration = duration;
 	}
 
-	protected long getLastHypResets() {
-		return lastHypResets;
+	protected long getLastHypTests() {
+		return lastHypTests;
 	}
 
-	protected void setLastHypResets(long lastHypResets) {
-		this.lastHypResets = lastHypResets;
+	protected void setLastHypTests(long lastHypTests) {
+		this.lastHypTests = lastHypTests;
 	}
 
 	public long getLastHypInputs() {

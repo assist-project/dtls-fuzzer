@@ -19,9 +19,9 @@ class BugPatternStatus(Enum):
     NOT_LOADED = "not_loaded"
 
 class Statistics:
-    def __init__(self, inputs, resets, time=None):
+    def __init__(self, inputs, tests, time=None):
         self.inputs = inputs
-        self.resets = resets
+        self.tests = tests
         self.time = time
 
 class ResultData:
@@ -71,7 +71,7 @@ class Collator:
         desc = str(result_data.get_bugpattern_status(bp_name).value)
         if result_data.is_validation_done() and result_data.get_bugpattern_stats(bp_name) is not None:
             bp_stats = result_data.get_bugpattern_stats(bp_name)
-            desc = desc + "(inp: {}, rst: {})".format(bp_stats.inputs, bp_stats.resets)
+            desc = desc + "(inp: {}, tests: {})".format(bp_stats.inputs, bp_stats.tests)
         return desc 
 
 class TexCollator(Collator):
@@ -99,7 +99,7 @@ class CsvCollator(Collator):
                 csv_writer.writerow(["-" for _ in range(len(suts)+1)])
 
                 csv_writer.writerow(["Total Inputs"] + [suts_bp[sut].get_exp_stats().inputs if suts_bp[sut].get_exp_stats() is not None else "" for sut in sorted_suts] )
-                csv_writer.writerow(["Total Resets"] + [suts_bp[sut].get_exp_stats().resets if suts_bp[sut].get_exp_stats() is not None else "" for sut in sorted_suts] )
+                csv_writer.writerow(["Total Tests"] + [suts_bp[sut].get_exp_stats().tests if suts_bp[sut].get_exp_stats() is not None else "" for sut in sorted_suts] )
                 csv_writer.writerow(["Total Time(ms)"] + [suts_bp[sut].get_exp_stats().time if suts_bp[sut].get_exp_stats() is not None else "" for sut in sorted_suts] )
 
 
@@ -173,8 +173,8 @@ def get_result_data(result_file):
 
     #if validation:
     #    (_, idx) = get_matching_line("General", lines)
-    #    ([inputs, resets, time], idx) = get_matching_lines_in_order(["Number of inputs", "Number of resets", "Time bug"], lines, from_index=idx)
-    #    stats = Statistics(read_number(inputs), read_number(resets), read_number(time))
+    #    ([inputs, tests, time], idx) = get_matching_lines_in_order(["Number of inputs", "Number of tests", "Time bug"], lines, from_index=idx)
+    #    stats = Statistics(read_number(inputs), read_number(tests), read_number(time))
 
     (line, idx) = get_matching_line("Bug patterns loaded", lines, from_index=idx)
     for loadedbp in read_list_from_line(line):
@@ -195,11 +195,11 @@ def get_result_data(result_file):
         (_, idx) = get_matching_line("Inputs per Bug", lines, from_index=idx)        
         bugpattern_stats = dict()
         (bug_inputs, idx) = get_matching_lines_in_order(found_bp_list, lines, from_index=idx)
-        (_, idx) = get_matching_line("Resets per Bug", lines, from_index=idx)
-        (bug_resets, idx) = get_matching_lines_in_order(found_bp_list, lines, from_index=idx)
+        (_, idx) = get_matching_line("Tests per Bug", lines, from_index=idx)
+        (bug_tests, idx) = get_matching_lines_in_order(found_bp_list, lines, from_index=idx)
 
-        for (bp_name, bug_inputs, bug_resets) in zip(found_bp_list, bug_inputs, bug_resets):
-            bugpattern_stats[bp_name] = Statistics(read_number(bug_inputs), read_number(bug_resets))
+        for (bp_name, bug_inputs, bug_tests) in zip(found_bp_list, bug_inputs, bug_tests):
+            bugpattern_stats[bp_name] = Statistics(read_number(bug_inputs), read_number(bug_tests))
 
     return ResultData(os.path.basename(os.path.dirname(result_file)), validation, bugpatterns, exp_stats=stats, bp_stats=bugpattern_stats)
 
