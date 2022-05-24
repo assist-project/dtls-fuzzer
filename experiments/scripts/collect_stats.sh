@@ -1,7 +1,9 @@
+#!/usr/bin/env bash
+
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 STATS_FILENAME="statistics.txt"
 if [ $# = 0 ]; then
-    echo "Usage: grep_stats.sh dir"
+    echo "Usage: collect_stats.sh dir"
     echo ""
     echo "dir - directory containing output folders resulting from learning experiments"
     exit
