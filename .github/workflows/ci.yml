@@ -21,7 +21,7 @@ jobs:
         run: |
           sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
           java -version
-          ./prepare.sh
+          ./install.sh
       - name: Setup Suts
         run: |
           ./setup_sut.sh mbedtls-2.26.0
