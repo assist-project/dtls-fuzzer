@@ -62,7 +62,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
 		}
 		state.getTlsContext().setReadSequenceNumber(0);
 		if (suite != null) {
-			state.getConfig().setDefaultClientSupportedCiphersuites(suite);
+			state.getConfig().setDefaultClientSupportedCipherSuites(suite);
 		}
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 		if (!isShort) {

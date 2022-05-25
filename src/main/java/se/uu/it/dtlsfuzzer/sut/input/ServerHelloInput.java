@@ -38,9 +38,9 @@ public class ServerHelloInput extends DtlsInput {
 
 	@Override
 	public TlsMessage generateMessage(State state, ExecutionContext context) {
-		state.getConfig().setDefaultServerSupportedCiphersuites(
+		state.getConfig().setDefaultServerSupportedCipherSuites(
 				Arrays.asList(suite));
-		state.getConfig().setDefaultClientSupportedCiphersuites(suite);
+		state.getConfig().setDefaultClientSupportedCipherSuites(suite);
 		if (suite.name().contains("EC")) {
 			state.getConfig().setAddECPointFormatExtension(true);
 			state.getConfig().setAddEllipticCurveExtension(true);

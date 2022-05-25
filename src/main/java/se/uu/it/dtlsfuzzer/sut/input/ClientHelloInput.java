@@ -52,7 +52,7 @@ public class ClientHelloInput extends DtlsInput {
 
 	@Override
 	public TlsMessage generateMessage(State state, ExecutionContext context) {
-		state.getConfig().setDefaultClientSupportedCiphersuites(
+		state.getConfig().setDefaultClientSupportedCipherSuites(
 				Arrays.asList(suite));
 		if (suite.name().contains("EC")) {
 			state.getConfig().setAddECPointFormatExtension(true);

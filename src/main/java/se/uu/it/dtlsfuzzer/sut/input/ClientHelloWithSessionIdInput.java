@@ -51,7 +51,7 @@ public class ClientHelloWithSessionIdInput extends DtlsInput {
 		// reset and resume the connection
 		resetTransportHandler(state);
 		if (suite != null) {
-			state.getConfig().setDefaultClientSupportedCiphersuites(suite);
+			state.getConfig().setDefaultClientSupportedCipherSuites(suite);
 		}
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 		message.setSessionId(state.getTlsContext().getChooser()
