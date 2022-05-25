@@ -3,7 +3,7 @@ package se.uu.it.dtlsfuzzer.sut.input;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import de.rub.nds.tlsattacker.core.protocol.message.HelloVerifyRequestMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
@@ -23,7 +23,7 @@ public class HelloVerifyRequestInput extends DtlsInput {
 	}
 
 	@Override
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		return new HelloVerifyRequestMessage(state.getConfig());
 	}
 

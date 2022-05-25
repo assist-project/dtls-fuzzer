@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +16,7 @@ import org.bouncycastle.asn1.DLSequence;
 import de.rub.nds.tlsattacker.core.constants.CertificateType;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.GenericReceiveAction;
@@ -69,8 +70,9 @@ public class OutputMapper {
 		try {
 			GenericReceiveAction action = new GenericReceiveAction(context.getSulDelegate().getRole());
 			action.execute(state);
+			List<TlsMessage> tlsMessages = action.getReceivedMessages().stream().map(p -> (TlsMessage) p).collect(Collectors.toList());
 			context.getStepContext().setReceivedMessages(
-					action.getMessages());
+					tlsMessages);
 			context.getStepContext().setReceivedRecords(action.getRecords());
 			context.getStepContext().pairReceivedMessagesWithRecords();
 			return extractOutput(state, action);
@@ -112,10 +114,10 @@ public class OutputMapper {
 	 * Failure to decrypt shows up as a longer sequence of alarm messages.
 	 */
 	private int unknownResponseLookahed(int currentIndex,
-			List<ProtocolMessage> messages) {
+			List<TlsMessage> messages) {
 		int nextIndex = currentIndex;
 		
-		ProtocolMessage message = messages.get(nextIndex);
+		TlsMessage message = messages.get(nextIndex);
 		while ( (message instanceof AlertMessage || message instanceof UnknownMessage) && nextIndex < messages.size()) {
 			message = messages.get(nextIndex);
 			nextIndex++;
@@ -132,14 +134,15 @@ public class OutputMapper {
 		if (action.getReceivedMessages().isEmpty()) {
 			return TlsOutput.timeout();
 		} else {
-			List<String> abstractMessageStrings = extractAbstractMessageStrings(action.getMessages(), state);
+		    List<TlsMessage> tlsMessages = action.getReceivedMessages().stream().map(p -> (TlsMessage) p).collect(Collectors.toList());
+			List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages, state);
 			String abstractOutput = toAbstractOutputString(abstractMessageStrings);
 			
-			return new TlsOutput(abstractOutput, action.getReceivedMessages());
+			return new TlsOutput(abstractOutput, tlsMessages);
 		}
 	}
 	
-	private List<String> extractAbstractMessageStrings(List<ProtocolMessage> receivedMessages, State state) {
+	private List<String> extractAbstractMessageStrings(List<TlsMessage> receivedMessages, State state) {
 		List<String> outputStrings = new ArrayList<>(receivedMessages.size());
 		for (int i = 0; i < receivedMessages.size(); i++) {
 			// checking for cases of decryption failures, which which case
@@ -153,7 +156,7 @@ public class OutputMapper {
 				}
 			}
 
-			ProtocolMessage m = receivedMessages.get(i);
+			TlsMessage m = receivedMessages.get(i);
 			String outputString = toOutputString(m, state);
 			outputStrings.add(outputString);
 		}
@@ -209,7 +212,7 @@ public class OutputMapper {
 			return output1;
 		}
 		String abstraction;
-		List<ProtocolMessage> messages = null;
+		List<TlsMessage> messages = null;
 		assert (output1.isRecordResponse() && output2.isRecordResponse()); 
 		List<String> absOutputStrings = new LinkedList<>(output1.getAtomicAbstractionStrings(2));
 		absOutputStrings.addAll(output2.getAtomicAbstractionStrings(2));
@@ -227,7 +230,7 @@ public class OutputMapper {
 		return outputs;
 	}
 	
-	private String toOutputString(ProtocolMessage message, State state) {
+	private String toOutputString(TlsMessage message, State state) {
 		if (message instanceof CertificateMessage) {
 			CertificateMessage cert = (CertificateMessage) message;
 			if ( cert.getCertificatesListLength().getValue() > 0) {

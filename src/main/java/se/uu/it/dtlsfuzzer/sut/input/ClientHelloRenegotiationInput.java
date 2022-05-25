@@ -6,7 +6,7 @@ import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModificatio
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.sut.output.ModelOutputs;
@@ -55,7 +55,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
 	}
 
 	@Override
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		state.getTlsContext().getDigest().reset();
 		if (resetMSeq) {
 			state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);

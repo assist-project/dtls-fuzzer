@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import com.beust.jcommander.internal.Lists;
 
 import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
@@ -51,12 +51,12 @@ public class PhasedMapper extends AbstractMapper {
 		
 		case MESSAGE_GENERATION:
 			unit.getInput().preSendUpdate(state, context);
-			List<ProtocolMessage> messages = Arrays.asList(unit.getInput().generateMessage(state, context));
+			List<TlsMessage> messages = Arrays.asList(unit.getInput().generateMessage(state, context));
 			unit.setMessages(messages);
 			break;
 		
 		case MESSAGE_PREPARATION:
-			for (ProtocolMessage message : unit.getMessages()) {
+			for (TlsMessage message : unit.getMessages()) {
 				helper.prepareMessage(message, state);
 			}
 			break;
@@ -64,8 +64,8 @@ public class PhasedMapper extends AbstractMapper {
 		case FRAGMENT_GENERATION:
 			// We assume this is DTLS
 			List<FragmentationResult> results = new LinkedList<>();
-			List<ProtocolMessage> messagesToPack = new LinkedList<>();
-			for (ProtocolMessage message : unit.getMessages()) {
+			List<TlsMessage> messagesToPack = new LinkedList<>();
+			for (TlsMessage message : unit.getMessages()) {
 				if (message.isHandshakeMessage()) {
 					FragmentationResult result = helper.fragmentMessage(
 							(HandshakeMessage) message, state);
@@ -82,9 +82,9 @@ public class PhasedMapper extends AbstractMapper {
 			List<PackingResult> packingResults = new LinkedList<>();
 			if (!unit.getMessagesToPack().isEmpty()) {
 				ProtocolMessageType msgType = unit.getMessagesToPack().get(0).getProtocolMessageType();
-				List<ProtocolMessage> messagesInRecord = new LinkedList<>();
+				List<TlsMessage> messagesInRecord = new LinkedList<>();
 				
-				for (ProtocolMessage message : unit.getMessagesToPack()) {
+				for (TlsMessage message : unit.getMessagesToPack()) {
 					if (msgType != message.getProtocolMessageType()) {
 						AbstractRecord record = state.getTlsContext().getRecordLayer()
 								.getFreshRecord();
@@ -106,10 +106,10 @@ public class PhasedMapper extends AbstractMapper {
 			break;
 		case RECORD_PREPARATION:
 			for (PackingResult messageRecord : unit.getMessageRecords()) {
-				ProtocolMessageType messageType = messageRecord.getMessages().get(0).getProtocolMessageType();
+			    ProtocolMessageType messageType = messageRecord.getMessages().get(0).getProtocolMessageType();
 				AbstractRecord record = messageRecord.getRecords().get(0);
 				try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-					for (ProtocolMessage message : messageRecord.getMessages()) {
+					for (TlsMessage message : messageRecord.getMessages()) {
 						outputStream.write(message.getCompleteResultingMessage().getValue());
 					}
 					byte data [] = outputStream.toByteArray();
@@ -117,10 +117,9 @@ public class PhasedMapper extends AbstractMapper {
 						.getRecordLayer()
 						.prepareRecords(data, messageType,
 								Collections.singletonList(record));
-					for (ProtocolMessage message : messageRecord.getMessages()) {
-						message.getHandler(state.getTlsContext())
-						.adjustTlsContextAfterSerialize(message);
-					}
+//					for (TlsMessage message : messageRecord.getMessages()) {
+//						message.getHandler(state.getTlsContext()).adjustTlsContextAfterSerialize(message);
+//					}
 					
 				} catch (IOException e) {
 					e.printStackTrace();

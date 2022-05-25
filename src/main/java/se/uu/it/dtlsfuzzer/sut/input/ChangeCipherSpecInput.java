@@ -1,7 +1,7 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
@@ -16,7 +16,7 @@ public class ChangeCipherSpecInput extends DtlsInput {
 		context.setWriteRecordNumberEpoch0(state.getTlsContext().getWriteSequenceNumber() + 1);
 	}
 
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage(
 				state.getConfig());
 		return ccs;

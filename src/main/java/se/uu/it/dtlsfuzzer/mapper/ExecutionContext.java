@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
@@ -83,25 +83,25 @@ public class ExecutionContext {
 	}
 
 	
-	public List<ProtocolMessage> getReceivedMessages() {
+	public List<TlsMessage> getReceivedMessages() {
 		return stepContexes.stream()
 				.filter(s -> s.getReceivedMessages() != null)
 				.flatMap(s -> s.getReceivedMessages().stream())
 				.collect(Collectors.toList());
 	}
 	
-	private List<Pair<ProtocolMessage, AbstractRecord>> getReceivedMessagesAndRecords(Integer startingIndex) {
+	private List<Pair<TlsMessage, AbstractRecord>> getReceivedMessagesAndRecords(Integer startingIndex) {
 		return stepContexes.subList(startingIndex, stepContexes.size()).stream()
 				.filter(s -> s.getReceivedMessageRecordPair() != null)
 				.flatMap(s -> s.getReceivedMessageRecordPair().stream())
 				.collect(Collectors.toList());
 	}
 	
-	public List<Pair<ProtocolMessage, AbstractRecord>> getReceivedMessagesAndRecords() {
+	public List<Pair<TlsMessage, AbstractRecord>> getReceivedMessagesAndRecords() {
 		return getReceivedMessagesAndRecords(0);
 	}
 	
-	public List<Pair<ProtocolMessage, AbstractRecord>> getHandshakeReceivedMessagesAndRecords() {
+	public List<Pair<TlsMessage, AbstractRecord>> getHandshakeReceivedMessagesAndRecords() {
 		return getReceivedMessagesAndRecords(renegotiationIndex);
 	}
 	

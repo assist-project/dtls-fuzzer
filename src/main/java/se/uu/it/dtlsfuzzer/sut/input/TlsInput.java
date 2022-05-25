@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
@@ -34,7 +34,7 @@ public abstract class TlsInput extends Symbol {
 		return null;
 	}
 
-	public abstract ProtocolMessage generateMessage(State state, ExecutionContext context);
+	public abstract TlsMessage generateMessage(State state, ExecutionContext context);
 	
 	/**
 	 * Enables the input for execution.

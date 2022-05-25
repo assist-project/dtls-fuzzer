@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import de.rub.nds.tlsattacker.core.protocol.message.DHClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ECDHClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.GOSTClientKeyExchangeMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskRsaClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
@@ -34,9 +34,9 @@ public class ClientKeyExchangeInput extends DtlsInput {
 	}
 
 	@Override
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		state.getTlsContext().setPreMasterSecret(null);
-		ProtocolMessage message;
+		TlsMessage message;
 		if (algorithm == null) {
 			throw new RuntimeException("Algorithm not set");
 		}

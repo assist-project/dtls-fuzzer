@@ -140,8 +140,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 						.getDefaultServerConnection();
 				
 				state.getTlsContext().setTransportHandler(
-						new ServerUdpTransportHandler(connection.getTimeout(), 
-								connection.getPort()));	
+						new ServerUdpTransportHandler(connection));	
 			}
 		} else {
 			throw new NotImplementedException("TLS is not currently supported");

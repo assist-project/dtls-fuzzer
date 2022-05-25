@@ -11,7 +11,7 @@ import de.rub.nds.tlsattacker.core.dtls.MessageFragmenter;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
@@ -39,7 +39,7 @@ public class ClientHelloInput extends DtlsInput {
 	@XmlAttribute(name = "withSessionId", required = false)
 	private boolean withSessionId = false;
 
-	private ProtocolMessage message;
+	private TlsMessage message;
 
 	public ClientHelloInput() {
 		super("CLIENT_HELLO");
@@ -51,7 +51,7 @@ public class ClientHelloInput extends DtlsInput {
 	}
 
 	@Override
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		state.getConfig().setDefaultClientSupportedCiphersuites(
 				Arrays.asList(suite));
 		if (suite.name().contains("EC")) {

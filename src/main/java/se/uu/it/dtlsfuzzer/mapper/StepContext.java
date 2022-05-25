@@ -8,16 +8,16 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 
 public class StepContext {
 	private int index;
 	private ProcessingUnit unit;
-	private List<ProtocolMessage> receivedMessages;
+	private List<TlsMessage> receivedMessages;
 	private List<AbstractRecord> receivedRecords;
-	private List<Pair<ProtocolMessage, AbstractRecord>> receivedMessageRecordPair;
+	private List<Pair<TlsMessage, AbstractRecord>> receivedMessageRecordPair;
 	private TlsInput input;
 
 	/**
@@ -36,13 +36,13 @@ public class StepContext {
 		this.index = index;
 	}
 
-	public List<ProtocolMessage> getReceivedMessages() {
+	public List<TlsMessage> getReceivedMessages() {
 		return receivedMessages;
 	}
 	public List<AbstractRecord> getReceivedRecords() {
 		return receivedRecords;
 	}
-	public List<Pair<ProtocolMessage, AbstractRecord>> getReceivedMessageRecordPair() {
+	public List<Pair<TlsMessage, AbstractRecord>> getReceivedMessageRecordPair() {
 		return receivedMessageRecordPair;
 	}
 
@@ -50,40 +50,40 @@ public class StepContext {
 		this.receivedRecords = receivedRecords;
 	}
 	
-	public void setReceivedMessages(List<ProtocolMessage> receivedOutputs) {
+	public void setReceivedMessages(List<TlsMessage> receivedOutputs) {
 		this.receivedMessages = receivedOutputs;
 	}
 	
 	public void pairReceivedMessagesWithRecords() {
-		receivedMessageRecordPair = new ArrayList<Pair<ProtocolMessage, AbstractRecord>>();
+		receivedMessageRecordPair = new ArrayList<Pair<TlsMessage, AbstractRecord>>();
 		
 		if (receivedMessages.size() > receivedRecords.size()) {
 			if (receivedRecords.size() == 1) {
-				receivedMessageRecordPair.add(new ImmutablePair<ProtocolMessage, AbstractRecord>(receivedMessages.get(0), receivedRecords.get(0)));
+				receivedMessageRecordPair.add(new ImmutablePair<TlsMessage, AbstractRecord>(receivedMessages.get(0), receivedRecords.get(0)));
 			}
 			else if (receivedRecords.size() > 1) {
 				int msgIndex = 0;
 				int recIndex = 0;
 				int msgSize = receivedMessages.size();
 				int recSize = receivedRecords.size();
-				ProtocolMessage message = receivedMessages.get(msgIndex);
+				TlsMessage message = receivedMessages.get(msgIndex);
 				while (msgSize - msgIndex > recSize - recIndex  && recIndex < recSize) {
 					while (!(message instanceof AlertMessage) && msgSize - msgIndex >= recSize - recIndex && msgIndex < msgSize - 1) {
-						receivedMessageRecordPair.add(new ImmutablePair<ProtocolMessage, AbstractRecord>(message, receivedRecords.get(recIndex)));
+						receivedMessageRecordPair.add(new ImmutablePair<TlsMessage, AbstractRecord>(message, receivedRecords.get(recIndex)));
 						msgIndex++;
 						recIndex++;
 						message = receivedMessages.get(msgIndex);
 					}
-					ProtocolMessage alertMessage = receivedMessages.get(msgIndex);
+					TlsMessage alertMessage = receivedMessages.get(msgIndex);
 					while (message instanceof AlertMessage && msgSize - msgIndex >= recSize - recIndex && msgIndex < msgSize - 1) {
 						msgIndex++;
 						message = receivedMessages.get(msgIndex);
 					}
-					receivedMessageRecordPair.add(new ImmutablePair<ProtocolMessage, AbstractRecord>(alertMessage, receivedRecords.get(recIndex)));
+					receivedMessageRecordPair.add(new ImmutablePair<TlsMessage, AbstractRecord>(alertMessage, receivedRecords.get(recIndex)));
 					recIndex++;
 				}
 				while (recIndex < recSize) {
-					receivedMessageRecordPair.add(new ImmutablePair<ProtocolMessage, AbstractRecord>(receivedMessages.get(msgIndex), receivedRecords.get(recIndex)));
+					receivedMessageRecordPair.add(new ImmutablePair<TlsMessage, AbstractRecord>(receivedMessages.get(msgIndex), receivedRecords.get(recIndex)));
 					msgIndex++;
 					recIndex++;
 				}
@@ -91,8 +91,8 @@ public class StepContext {
 		}
 		else {
 			Iterator<AbstractRecord> itRecords = receivedRecords.iterator();
-			for (ProtocolMessage message : receivedMessages) {
-				receivedMessageRecordPair.add(new ImmutablePair<ProtocolMessage, AbstractRecord>(message, itRecords.next()));
+			for (TlsMessage message : receivedMessages) {
+				receivedMessageRecordPair.add(new ImmutablePair<TlsMessage, AbstractRecord>(message, itRecords.next()));
 			}
 		}
 	}

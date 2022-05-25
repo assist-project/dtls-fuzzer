@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import se.uu.it.dtlsfuzzer.sut.Symbol;
 
 /**
@@ -61,13 +61,13 @@ public class TlsOutput extends Symbol {
 	private boolean alive = true;
 
 	// concrete list of messages
-	private List<ProtocolMessage> messages;
+	private List<TlsMessage> messages;
 
 	public TlsOutput(String name) {
 		super(name, false);
 	}
 
-	public TlsOutput(String name, List<ProtocolMessage> messages) {
+	public TlsOutput(String name, List<TlsMessage> messages) {
 		super(name, false);
 		this.messages = messages;
 	}
@@ -210,7 +210,7 @@ public class TlsOutput extends Symbol {
 	 * Returns the protocol messages associated with the output. 
 	 * Returns null if this output was generated from a specification and does not contain protocol messages.
 	 */
-	public List<ProtocolMessage> getMessages() {
+	public List<TlsMessage> getMessages() {
 		return messages;
 	}
 

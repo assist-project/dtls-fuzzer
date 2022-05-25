@@ -8,7 +8,7 @@ import java.util.List;
 import de.rub.nds.tlsattacker.core.dtls.MessageFragmenter;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
@@ -22,8 +22,8 @@ import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
  */
 public class ExecuteInputHelper {
 
-	public final void prepareMessage(ProtocolMessage message, State state) {
-		message.getHandler(state.getTlsContext()).prepareMessage(message);
+	public final void prepareMessage(TlsMessage message, State state) {
+		message.getHandler(state.getTlsContext()).getPreparator(message).prepare(); 
 	}
 
 	/**
@@ -39,10 +39,10 @@ public class ExecuteInputHelper {
 	/**
 	 * Packs messages/fragments into records.
 	 */
-	public final PackingResult packMessages(List<ProtocolMessage> messages,
+	public final PackingResult packMessages(List<TlsMessage> messages,
 			State state) {
 		List<AbstractRecord> records = new LinkedList<>();
-		for (ProtocolMessage message : messages) {
+		for (TlsMessage message : messages) {
 			AbstractRecord record = state.getTlsContext().getRecordLayer()
 					.getFreshRecord();
 			records.add(record);

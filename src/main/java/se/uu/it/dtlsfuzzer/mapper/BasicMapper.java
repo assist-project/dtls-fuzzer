@@ -2,7 +2,7 @@ package se.uu.it.dtlsfuzzer.mapper;
 
 import java.io.IOException;
 
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.SendAction;
 import se.uu.it.dtlsfuzzer.config.MapperConfig;
@@ -30,7 +30,7 @@ public class BasicMapper extends AbstractMapper {
 
 	class BasicMessageSender implements MessageSender {
 		@Override
-		public void sendMessage(ProtocolMessage message, State state, ExecutionContext context) {
+		public void sendMessage(TlsMessage message, State state, ExecutionContext context) {
 			SendAction sendAction = new SendAction(message);
 			sendAction.execute(state);
 			if (!sendAction.isExecuted()) {

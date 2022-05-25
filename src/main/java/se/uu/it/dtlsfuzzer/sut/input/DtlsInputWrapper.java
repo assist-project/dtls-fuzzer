@@ -1,6 +1,6 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
@@ -39,7 +39,7 @@ public class DtlsInputWrapper extends DtlsInput{
 	}
 
 	@Override
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		return input.generateMessage(state, context);
 	}
 	

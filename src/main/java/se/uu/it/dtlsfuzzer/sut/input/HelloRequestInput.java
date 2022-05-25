@@ -5,7 +5,7 @@ import java.util.Arrays;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import de.rub.nds.tlsattacker.core.protocol.message.HelloRequestMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.sut.output.ModelOutputs;
@@ -30,7 +30,7 @@ public class HelloRequestInput extends DtlsInput {
     }
 
     @Override
-    public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+    public TlsMessage generateMessage(State state, ExecutionContext context) {
         if (resetSequenceNumber) {
             origMsgSeqNum = state.getTlsContext().getWriteSequenceNumber();
             state.getTlsContext().setWriteSequenceNumber(0);

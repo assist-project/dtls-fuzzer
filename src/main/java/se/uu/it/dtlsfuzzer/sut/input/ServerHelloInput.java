@@ -9,7 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.state.State;
@@ -37,7 +37,7 @@ public class ServerHelloInput extends DtlsInput {
 	}
 
 	@Override
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		state.getConfig().setDefaultServerSupportedCiphersuites(
 				Arrays.asList(suite));
 		state.getConfig().setDefaultClientSupportedCiphersuites(suite);
@@ -70,9 +70,9 @@ public class ServerHelloInput extends DtlsInput {
 	@Override
 	public TlsOutput postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
 		if (shortHs && context.isExecutionEnabled()) {
-			Pair<ProtocolMessage, AbstractRecord> lastChPair = null;
+			Pair<TlsMessage, AbstractRecord> lastChPair = null;
 			int lastChStepIndex = -1;
-			List<Pair<ProtocolMessage, AbstractRecord>> msgRecPairs = context.getReceivedMessagesAndRecords();
+			List<Pair<TlsMessage, AbstractRecord>> msgRecPairs = context.getReceivedMessagesAndRecords();
 			for (int i=0; i<msgRecPairs.size(); i++) {
 				if (msgRecPairs.get(i).getKey() instanceof ClientHelloMessage) {
 					lastChStepIndex = i;

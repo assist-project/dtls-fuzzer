@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.ResetConnectionAction;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
@@ -47,7 +47,7 @@ public class ClientHelloWithSessionIdInput extends DtlsInput {
 	}
 
 	@Override
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		// reset and resume the connection
 		resetTransportHandler(state);
 		if (suite != null) {
