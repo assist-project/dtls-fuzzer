@@ -10,9 +10,9 @@ ${sut.port}
 -protocol
 DTLS12
 -cmd
-"${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/client/client  -i -x -p ${sut.port} -s -u -l PSK-AES128-CBC-SHA256"
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/client/client  -i -x -p ${sut.port} -s -u -l PSK-AES128-CBC-SHA256
 -processDir
-"${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/"
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
 
 # learning config
 -alphabet
