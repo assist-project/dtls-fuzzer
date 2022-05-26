@@ -126,7 +126,8 @@ public class Main {
 			LOGGER.info("Processing command {}", commander.getParsedCommand());
 			StateFuzzerConfig stateFuzzerConfig = result.getParsedConfig();
 			if (stateFuzzerConfig.isHelp()) {
-                commander.usage(commander.getParsedCommand());
+			// JCommander cmdCommander = commander.getCommands().get(commander.getParsedCommand());
+                commander.usage();
             }
             stateFuzzerConfig.applyDelegate(null);
             testRunnerOptionCheck(stateFuzzerConfig);
@@ -151,9 +152,8 @@ public class Main {
 		pw.println("Usage: <main class> [command] [command options] [-- [command] [command options] ]*");
 		pw.println("Where command is one of the following:");
 		for (String cmd : commander.getCommands().keySet()) {
-		    pw.println(cmd + "    " + commander.getCommandDescription(cmd));
+			pw.println(cmd + "    " + commander.getUsageFormatter().getCommandDescription(cmd));
 		}
-		
 		LOGGER.info(sw.toString());
 	}
 	
