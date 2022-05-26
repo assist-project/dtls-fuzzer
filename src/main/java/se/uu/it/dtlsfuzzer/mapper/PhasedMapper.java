@@ -13,6 +13,7 @@ import com.beust.jcommander.internal.Lists;
 
 import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
+import de.rub.nds.tlsattacker.core.protocol.handler.TlsMessageHandler;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.record.Record;
@@ -117,9 +118,10 @@ public class PhasedMapper extends AbstractMapper {
 						.getRecordLayer()
 						.prepareRecords(data, messageType,
 								Collections.singletonList(record));
-//					for (TlsMessage message : messageRecord.getMessages()) {
-//						message.getHandler(state.getTlsContext()).adjustTlsContextAfterSerialize(message);
-//					}
+					for (TlsMessage message : messageRecord.getMessages()) {
+					    TlsMessageHandler<TlsMessage> tlsMessageHandler = message.getHandler(state.getTlsContext());
+					    tlsMessageHandler.adjustTlsContextAfterSerialize(message);
+					}
 					
 				} catch (IOException e) {
 					e.printStackTrace();

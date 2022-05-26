@@ -6,11 +6,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.rub.nds.tlsattacker.core.dtls.MessageFragmenter;
+import de.rub.nds.tlsattacker.core.exceptions.AdjustmentException;
+import de.rub.nds.tlsattacker.core.protocol.Preparator;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.Serializer;
+import de.rub.nds.tlsattacker.core.protocol.handler.TlsMessageHandler;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.state.State;
+import de.rub.nds.tlsattacker.core.state.TlsContext;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
 
 /**
@@ -22,48 +28,70 @@ import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
  */
 public class ExecuteInputHelper {
 
-	public final void prepareMessage(TlsMessage message, State state) {
-		message.getHandler(state.getTlsContext()).getPreparator(message).prepare(); 
-	}
+    /**
+     * Prepares a TlsMessage, parts were taken from {@link SendMessageHelper}
+     */
+    public final void prepareMessage(TlsMessage message, State state) {
+        TlsContext context = state.getTlsContext();
+        Preparator<ProtocolMessage> preparator = message.getHandler(context).getPreparator(message);
+        preparator.prepare();
+        preparator.afterPrepare();
+        Serializer<ProtocolMessage> serializer = message.getHandler(context).getSerializer(message);
+        byte[] completeMessage = serializer.serialize();
+        message.setCompleteResultingMessage(completeMessage);
 
-	/**
-	 * Fragments prepared messages
-	 */
-	public final FragmentationResult fragmentMessage(HandshakeMessage message,
-			State state) {
-		MessageFragmenter fragmenter =  new MessageFragmenter(state.getTlsContext().getConfig().getDtlsMaximumFragmentLength());
-		List<DtlsHandshakeMessageFragment> fragments  = fragmenter.fragmentMessage(message, state.getTlsContext());
-		return new FragmentationResult(message, fragments);
-	}
+        if (message.getAdjustContext()) {
+            if (context.getConfig().getDefaultSelectedProtocolVersion().isDTLS()
+                    && (message instanceof HandshakeMessage)
+                    && !((HandshakeMessage) message).isDtlsHandshakeMessageFragment()) {
+                context.increaseDtlsWriteHandshakeMessageSequence();
+            }
+        }
 
-	/**
-	 * Packs messages/fragments into records.
-	 */
-	public final PackingResult packMessages(List<TlsMessage> messages,
-			State state) {
-		List<AbstractRecord> records = new LinkedList<>();
-		for (TlsMessage message : messages) {
-			AbstractRecord record = state.getTlsContext().getRecordLayer()
-					.getFreshRecord();
-			records.add(record);
-			byte[] data = message.getCompleteResultingMessage().getValue();
-			state.getTlsContext()
-					.getRecordLayer()
-					.prepareRecords(data, message.getProtocolMessageType(),
-							Collections.singletonList(record));
-		}
-		return new PackingResult(messages, records);
-	}
-	
-	/**
-	 * Send records over the network.
-	 */
-	public final void sendRecords(List<AbstractRecord> records, State state) {
-		SendMessageHelper helper = new SendMessageHelper();
-		try {
-			helper.sendRecords(records, state.getTlsContext());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+        if (message instanceof TlsMessage) {
+            TlsMessageHandler<TlsMessage> handler = message.getHandler(context);
+            handler.updateDigest(message);
+        }
+        if (message.getAdjustContext()) {
+
+            message.getHandler(context).adjustContext(message);
+        }
+    }
+
+    /**
+     * Fragments prepared messages
+     */
+    public final FragmentationResult fragmentMessage(HandshakeMessage message, State state) {
+        MessageFragmenter fragmenter = new MessageFragmenter(
+                state.getTlsContext().getConfig().getDtlsMaximumFragmentLength());
+        List<DtlsHandshakeMessageFragment> fragments = fragmenter.fragmentMessage(message, state.getTlsContext());
+        return new FragmentationResult(message, fragments);
+    }
+
+    /**
+     * Packs messages/fragments into records ready to be sent.
+     */
+    public final PackingResult packMessages(List<TlsMessage> messages, State state) {
+        List<AbstractRecord> records = new LinkedList<>();
+        for (TlsMessage message : messages) {
+            AbstractRecord record = state.getTlsContext().getRecordLayer().getFreshRecord();
+            records.add(record);
+            byte[] data = message.getCompleteResultingMessage().getValue();
+            state.getTlsContext().getRecordLayer().prepareRecords(data, message.getProtocolMessageType(),
+                    Collections.singletonList(record));
+        }
+        return new PackingResult(messages, records);
+    }
+
+    /**
+     * Send records over the network.
+     */
+    public final void sendRecords(List<AbstractRecord> records, State state) {
+        SendMessageHelper helper = new SendMessageHelper();
+        try {
+            helper.sendRecords(records, state.getTlsContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
