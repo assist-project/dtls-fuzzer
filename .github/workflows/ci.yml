@@ -10,7 +10,7 @@ jobs:
         os: [ubuntu-latest]
     name: On ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    container: DTLS-Fuzzer:${{ matrix.os }}
+    container: dtls-fuzzer:${{ matrix.os }}
     steps:
       - name: Install packages
         run: |
