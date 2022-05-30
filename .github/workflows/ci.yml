@@ -2,7 +2,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  Build-and-Test:
+  Build-Container:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     strategy:
       fail-fast: false
@@ -10,22 +10,29 @@ jobs:
         os: [ubuntu-latest]
     name: On ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    container: DTLS-Fuzzer:${{ matrix.os }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
       - name: Install packages
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-8-jdk maven
-      - name: Install
-        run: |
           sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
           java -version
-          ./install.sh
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
       - name: Setup Suts
         run: |
           ./setup_sut.sh mbedtls-2.26.0
           ./setup_sut.sh wolfssl-4.7.1r
+      - name: Setup Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            suts
+            target
+          key: dtls-fuzzer-suts
       - name: Test mbedtls-2.26.0 Server (all_cert_req)
         run: |
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_server_all_cert_req -Dmbedtls.version=2.26.0 -testLimit 1000
