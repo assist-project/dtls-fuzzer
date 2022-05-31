@@ -52,12 +52,12 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg -Dmbedtls.version=2.26.0 -testLimit 1000
           diff output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/learnedModel.dot experiments/models/regression/clients/1000_queries/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/model.dot
 
-      - name: Test wolfssl-4.7.1r Server (psk)
-        run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -testLimit 1000
-          diff output/wolfssl-4.7.1r_server_psk/learnedModel.dot experiments/models/regression/servers/1000_queries/wolfssl-4.7.1r_server_psk/model.dot
+          #      - name: Test wolfssl-4.7.1r Server (psk)
+          #        run: |
+          #          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -testLimit 1000
+          #          diff output/wolfssl-4.7.1r_server_psk/learnedModel.dot experiments/models/regression/servers/1000_queries/wolfssl-4.7.1r_server_psk/model.dot
 
-      - name: Test wolfssl-4.7.1r Client (psk)
-        run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -testLimit 1000
-          diff output/wolfssl-4.7.1r_client_psk/learnedModel.dot experiments/models/regression/clients/1000_queries/wolfssl-4.7.1r_client_psk/model.dot
+          #      - name: Test wolfssl-4.7.1r Client (psk)
+          #        run: |
+          #          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -testLimit 1000
+          #          diff output/wolfssl-4.7.1r_client_psk/learnedModel.dot experiments/models/regression/clients/1000_queries/wolfssl-4.7.1r_client_psk/model.dot
