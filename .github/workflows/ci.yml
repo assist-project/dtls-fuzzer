@@ -25,7 +25,7 @@ jobs:
         run: ./setup_sut.sh mbedtls-2.26.0
 
       - name: Test mbedtls-2.26.0 Server (all_cert_req)
-          run: |
+        run: |
             java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_server_all_cert_req -Dmbedtls.version=2.26.0 -testLimit 1000
             diff output/mbedtls-2.26.0_server_all_cert_req/learnedModel.dot experiments/models/regression/servers/1000_queries/mbedtls-2.26.0_server_all_cert_req/model.dot
 
