@@ -80,7 +80,7 @@ jobs:
 
       - name: Test wolfssl-4.7.1r Server (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -testLimit 1000
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -testLimit 750
           diff output/wolfssl-4.7.1r_server_psk/learnedModel.dot experiments/models/regression/servers/1000_queries/wolfssl-4.7.1r_server_psk/model.dot
 
   WolfSSL-4-7-1r-Client-psk:
