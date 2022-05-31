@@ -27,12 +27,18 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Install packages
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-8-jdk maven
           sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
           java -version
+
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
