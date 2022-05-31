@@ -2,30 +2,11 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  setup:
+  test-mbedtls-2.26.0-server-all_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-    name: Setup on ubuntu-latest
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup SUTs
-        run: |
-          ./setup_sut.sh mbedtls-2.26.0
-          ./setup_sut.sh wolfssl-4.7.1r
-
-      - name: Save SUTs
-        uses: actions/upload-artifact@v2
-        with:
-          name: suts
-          path: suts
-
-  test:
-    needs: setup
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -37,27 +18,45 @@ jobs:
           sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
           java -version
 
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh mbedtls-2.26.0
+
+      - name: Test mbedtls-2.26.0 Server (all_cert_req)
+          run: |
+            java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_server_all_cert_req -Dmbedtls.version=2.26.0 -testLimit 1000
+            diff output/mbedtls-2.26.0_server_all_cert_req/learnedModel.dot experiments/models/regression/servers/1000_queries/mbedtls-2.26.0_server_all_cert_req/model.dot
+
+  test-mbedtls-2.26.0-client-dhe-ecdhe-rsa-reneg:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
-      - name: Download built SUTs
-        uses: actions/download-artifact@v2
-        with:
-          name: suts
-
-          #      - name: Test mbedtls-2.26.0 Server (all_cert_req)
-          #        run: |
-          #          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_server_all_cert_req -Dmbedtls.version=2.26.0 -testLimit 1000
-          #          diff output/mbedtls-2.26.0_server_all_cert_req/learnedModel.dot experiments/models/regression/servers/1000_queries/mbedtls-2.26.0_server_all_cert_req/model.dot
+      - name: Setup SUT
+        run: ./setup_sut.sh mbedtls-2.26.0
 
       - name: Test mbedtls-2.26.0 Client (dhe_ecdhe_rsa_reneg)
         run: |
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg -Dmbedtls.version=2.26.0 -testLimit 1000
           diff output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/learnedModel.dot experiments/models/regression/clients/1000_queries/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/model.dot
 
+          #./setup_sut.sh wolfssl-4.7.1r
           #      - name: Test wolfssl-4.7.1r Server (psk)
           #        run: |
           #          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -testLimit 1000
