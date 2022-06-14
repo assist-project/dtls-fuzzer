@@ -68,8 +68,10 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-8-jdk maven
-          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          sudo apt-get install -y openjdk-11-jdk maven
+      - name: Install
+        run: |
+          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
           java -version
 
       - name: Install DTLS-Fuzzer
