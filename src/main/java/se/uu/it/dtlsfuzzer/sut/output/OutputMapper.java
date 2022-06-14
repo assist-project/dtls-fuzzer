@@ -7,20 +7,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DLSequence;
 
-import de.rub.nds.tlsattacker.core.constants.CertificateType;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.GenericReceiveAction;
-import de.rub.nds.tlsattacker.transport.ConnectionEndType;
 import se.uu.it.dtlsfuzzer.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
