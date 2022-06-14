@@ -22,7 +22,7 @@ public class HelloRequestInput extends DtlsInput {
     @XmlAttribute(name = "retransmittedCHAsRefusal")
     private boolean retransmittedCHAsRefusal = true;
 
-    private Long origMsgSeqNum;
+    private Integer origMsgSeqNum;
     private byte[] clientRandom;
 
     public HelloRequestInput() {
@@ -32,8 +32,8 @@ public class HelloRequestInput extends DtlsInput {
     @Override
     public TlsMessage generateMessage(State state, ExecutionContext context) {
         if (resetSequenceNumber) {
-            origMsgSeqNum = state.getTlsContext().getWriteSequenceNumber();
-            state.getTlsContext().setWriteSequenceNumber(0);
+            origMsgSeqNum = state.getTlsContext().getDtlsWriteHandshakeMessageSequence();
+            state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);
         }
         if (retransmittedCHAsRefusal) {
             clientRandom = state.getTlsContext().getClientRandom();
@@ -52,7 +52,7 @@ public class HelloRequestInput extends DtlsInput {
             if (disableOnRefusal) {
                 context.disableExecution();
             } else if (resetSequenceNumber) {
-                state.getTlsContext().setWriteSequenceNumber(origMsgSeqNum);
+                state.getTlsContext().setDtlsWriteHandshakeMessageSequence(origMsgSeqNum);
             }
         } else if (disableOnRefusal && retransmittedCHAsRefusal
                 && Arrays.equals(clientRandom, state.getTlsContext().getClientRandom())) {

@@ -36,10 +36,10 @@ public class ClientHelloWithSessionIdInput extends DtlsInput {
 		resetAction.execute(state);
 		// we add the resets that should be in TLS-Attacker just to ensure
 		// we don't rely on the specific TLS-Attacker version
-		state.getTlsContext().setReadSequenceNumber(0);
-		state.getTlsContext().setWriteSequenceNumber(0);
-		state.getTlsContext().setDtlsReceiveEpoch(0);
-		state.getTlsContext().setDtlsWriteEpoch(0);
+		state.getTlsContext().setDtlsReadHandshakeMessageSequence(0);
+		state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);
+		state.getTlsContext().setReadEpoch(0);
+		state.getTlsContext().setWriteEpoch(0);
 
 		if (resetCookie) {
 			state.getTlsContext().setDtlsCookie(null);

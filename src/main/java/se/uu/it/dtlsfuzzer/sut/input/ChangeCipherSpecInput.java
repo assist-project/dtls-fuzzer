@@ -13,7 +13,8 @@ public class ChangeCipherSpecInput extends DtlsInput {
 	
 	@Override
 	public void preSendDtlsUpdate(State state, ExecutionContext context) {
-		context.setWriteRecordNumberEpoch0(state.getTlsContext().getWriteSequenceNumber() + 1);
+	    Long writeSeqNumForCurrentEpoch = state.getTlsContext().getRecordLayer().getEncryptor().getRecordCipher(state.getTlsContext().getWriteEpoch()).getState().getWriteSequenceNumber();
+		context.setWriteRecordNumberEpoch0(writeSeqNumForCurrentEpoch + 1);
 	}
 
 	public TlsMessage generateMessage(State state, ExecutionContext context) {
@@ -24,8 +25,6 @@ public class ChangeCipherSpecInput extends DtlsInput {
 
 	@Override
 	public void postSendDtlsUpdate(State state, ExecutionContext context) {
-		state.getTlsContext().getRecordLayer().updateEncryptionCipher();
-		state.getTlsContext().setWriteSequenceNumber(0);
 	}
 
 	@Override

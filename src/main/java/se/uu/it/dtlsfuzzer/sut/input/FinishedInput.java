@@ -14,7 +14,7 @@ public class FinishedInput extends DtlsInput {
     @XmlAttribute(name = "resetMSeq", required = true)
     private boolean resetMSeq = false;
 
-    private long lastSequenceNumber;
+    private int lastSequenceNumber;
 
     public FinishedInput() {
         super("FINISHED");
@@ -25,7 +25,7 @@ public class FinishedInput extends DtlsInput {
         // Uncomment line to print digest, TODO remove this when polishing things up
         // System.out.println(ArrayConverter.bytesToHexString(state.getTlsContext().getDigest().getRawBytes()));
         FinishedMessage message = new FinishedMessage();
-        lastSequenceNumber = state.getTlsContext().getWriteSequenceNumber();
+        lastSequenceNumber = state.getTlsContext().getDtlsWriteHandshakeMessageSequence();
         return message;
     }
 
@@ -33,13 +33,13 @@ public class FinishedInput extends DtlsInput {
     public void postSendDtlsUpdate(State state, ExecutionContext context) {
         state.getTlsContext().getDigest().reset();
         // we have to make this change for learning to scale
-        state.getTlsContext().setWriteSequenceNumber(lastSequenceNumber + 1);
+        state.getTlsContext().setDtlsWriteHandshakeMessageSequence(lastSequenceNumber + 1);
     }
 
     public TlsOutput postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
         if (resetMSeq) {
             if (ModelOutputs.hasChangeCipherSpec(output)) {
-                state.getTlsContext().setReadSequenceNumber(0);
+                state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);
             }
         }
         return super.postReceiveUpdate(output, state, context);

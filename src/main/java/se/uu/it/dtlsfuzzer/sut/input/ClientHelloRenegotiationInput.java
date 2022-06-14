@@ -41,10 +41,10 @@ public class ClientHelloRenegotiationInput extends TlsInput {
 		switch (enabled) {
 			case OWN_EPOCH_CHANGE :
 				// send epoch is 1 or more
-				return state.getTlsContext().getDtlsWriteEpoch() > 0;
+				return state.getTlsContext().getWriteEpoch() > 0;
 			case SERVER_EPOCH_CHANGE :
 				// receive epoch is 1 or more
-				return state.getTlsContext().getDtlsReceiveEpoch() > 0;
+				return state.getTlsContext().getReadEpoch() > 0;
 			case ONCE :
 				return context.getStepContexes()
 						.subList(0, context.getStepCount() - 1).stream()
@@ -60,7 +60,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
 		if (resetMSeq) {
 			state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);
 		}
-		state.getTlsContext().setReadSequenceNumber(0);
+		state.getTlsContext().setDtlsReadHandshakeMessageSequence(0);
 		if (suite != null) {
 			state.getConfig().setDefaultClientSupportedCipherSuites(suite);
 		}
