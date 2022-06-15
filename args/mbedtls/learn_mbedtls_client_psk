@@ -2,7 +2,7 @@ state-fuzzer-client
 
 # SUT config
 -protocol 
-DTLS12 
+DTLS12
 -port
 ${sut.port}  
 -startWait
@@ -10,7 +10,7 @@ ${sut.port}
 -responseWait
 100 
 -cmd 
-"${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_client2 dtls=1 psk=1234 mtu=5000 key_file=${fuzzer.dir}/experiments/keystore/rsa2048_key.pem crt_file=${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem server_port=${sut.port} exchanges=100 hs_timeout=20000-120000 ca_file=${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem auth_mode=optional renegotiation=1 allow_legacy=1"
+${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_client2 dtls=1 psk=1234 mtu=5000 key_file=${fuzzer.dir}/experiments/keystore/rsa2048_key.pem crt_file=${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem server_port=${sut.port} exchanges=100 hs_timeout=20000-120000 ca_file=${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem auth_mode=optional renegotiation=1 allow_legacy=1
 
 
 # learning config
