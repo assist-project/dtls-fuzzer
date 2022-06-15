@@ -19,4 +19,8 @@ public class ReceiveMessageException extends RuntimeException {
         super(cause);
     }
 
+    public ReceiveMessageException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
