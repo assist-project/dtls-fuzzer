@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.rub.nds.tlsattacker.core.dtls.MessageFragmenter;
-import de.rub.nds.tlsattacker.core.exceptions.AdjustmentException;
 import de.rub.nds.tlsattacker.core.protocol.Preparator;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.Serializer;
@@ -62,7 +61,8 @@ public class ExecuteInputHelper {
      * Fragments prepared messages
      */
     public final FragmentationResult fragmentMessage(HandshakeMessage message, State state) {
-        List<DtlsHandshakeMessageFragment> fragments = Collections.singletonList(MessageFragmenter.wrapInSingleFragment(message, state.getTlsContext()));
+        List<DtlsHandshakeMessageFragment> fragments = Collections
+                .singletonList(MessageFragmenter.wrapInSingleFragment(message, state.getTlsContext()));
         return new FragmentationResult(message, fragments);
     }
 
