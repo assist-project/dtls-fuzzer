@@ -30,7 +30,7 @@ public class MapperConfig {
             + TlsOutput.REPEATING_INDICATOR + ")")
     private boolean dontMergeRepeating = false;
 
-    @Parameter(names = "-tlsAttackerReceiver", required = false, description = "Uses TlsAttacker's ReceiveMessageHelper to receive messages, instead of the custom one ")
+    @Parameter(names = "-tlsAttackerReceiver", required = false, description = "Uses TlsAttacker's ReceiveMessageHelper to receive messages, instead of DTLS-Fuzzer's custom one ")
     private boolean tlsAttackerReceiver = false;
 
     public List<String> getRepeatingOutputs() {

@@ -72,8 +72,8 @@ public class OutputMapper {
             List<AbstractRecord> tlsRecords = null;
 
             if (!config.isTlsAttackerReceiver()) {
-                DtlsMessageReceiver receiver = new DtlsMessageReceiver(state.getTlsContext());
-                MessageActionResult result = receiver.receiveMessages();
+                DtlsMessageReceiver receiver = new DtlsMessageReceiver();
+                MessageActionResult result = receiver.receiveMessages(state.getTlsContext());
                 tlsMessages = result.getMessageList().stream().map(p -> (TlsMessage) p).collect(Collectors.toList());
                 tlsRecords = result.getRecordList();
             } else {
