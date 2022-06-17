@@ -27,6 +27,7 @@ import se.uu.it.dtlsfuzzer.config.StateFuzzerServerConfig;
 import se.uu.it.dtlsfuzzer.config.TestRunnerEnabler;
 import se.uu.it.dtlsfuzzer.config.TimingProbe;
 import se.uu.it.dtlsfuzzer.config.TimingProbeEnabler;
+import se.uu.it.dtlsfuzzer.config.ToolConfig;
 import se.uu.it.dtlsfuzzer.config.ToolPropertyAwareConverterFactory;
 
 public class Main {
@@ -78,18 +79,24 @@ public class Main {
 				.addCommand(CMD_STATE_FUZZER_SERVER, stateFuzzerServerConfig)
 				.build();	
 		commander.addConverterFactory(new ToolPropertyAwareConverterFactory());
-		
+
 		if (args.length > 0 && !commander.getCommands().containsKey(args[0]) && !args[0].startsWith("@")  && new File(args[0]).exists()) {
 			LOGGER.info("The first argument is a file path. Processing it as an argument file.");
 			args[0] = "@" + args[0];
 		} 
-		
+
 		try {
 			commander.parse(args);
 			if (commander.getParsedCommand() == null) {
 				showGlobalUsage(commander);
 				return;
 			}
+
+			if (ToolConfig.isReparseRequired()) {
+			    LOGGER.info("Parsing arguments again since they alter placeholder variables");
+			    commander.parse(args);
+            }
+
 			LOGGER.info("Processing command {}", commander.getParsedCommand());
 			switch(commander.getParsedCommand()) {
 			case CMD_STATE_FUZZER_CLIENT:
