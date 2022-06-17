@@ -15,5 +15,8 @@ if [[ ! -d $learning_folder1 || ! -d $learning_folder2 ]]; then
 fi
 
 for ((i = 1 ; i <= $rounds ; i++)); do
-    diff -w $learning_folder1/hyp$i.dot $learning_folder2/hyp$i.dot
+    diff --unified=0 $learning_folder1/hyp$i.dot $learning_folder2/hyp$i.dot
+    if [ $? != 0 ]; then
+        break
+    fi
 done
