@@ -110,7 +110,7 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -roundLimit 5
           experiments/scripts/hyps_diff output/wolfssl-4.7.1r_client_psk/ experiments/models/regression/clients/rounds/wolfssl-4.7.1r_client_psk/ 5
 
-  JSSE-12.0.2-Server-ecdhe_cert_req:
+  JSSE-12-0-2-Server-ecdhe_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
@@ -137,7 +137,7 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_server_ecdhe_cert_req -Djsse.version=12.0.2 -roundLimit 5
           experiments/scripts/hyps_diff output/jsse-12.0.2_server_ecdhe_cert_req/ experiments/models/regression/servers/rounds/jsse-12.0.2_server_ecdhe_cert_req/ 5
 
-  JSSE-12.0.2-Client-ecdhe_cert:
+  JSSE-12-0-2-Client-ecdhe_cert:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
