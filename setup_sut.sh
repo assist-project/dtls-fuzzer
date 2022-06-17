@@ -464,10 +464,10 @@ function make_sut() {
         ver=`get_ver $sut`
         echo $MODULES_DIR/jdk-$ver
         (cd $sut_dir; JAVA_HOME=$MODULES_DIR/jdk-$ver mvn install assembly:single; cp target/jsse-dtls-clientserver.jar ../jsse-$ver-dtls-clientserver.jar)
-        return 1
+        return 0
     elif [[ $sut == pion* ]]; then
         ( cd $sut_dir; go build -o dtls-clientserver main/main.go )
-        return 1
+        return 0
     elif [[ $sut == gnutls* ]]; then
         ( 
             cd $sut_dir  
