@@ -21,7 +21,7 @@ START
 
 # learning config
 -alphabet
-${alphabets.servers}/jsse_server_ecdhe_cert.xml
+${alphabets.servers}/jsse_ecdhe_cert.xml
 -randLength
 10
 -queries

@@ -18,6 +18,6 @@ fi
 for ((i = 1 ; i <= $rounds ; i++)); do
     diff --unified=0 $learning_folder1/hyp$i.dot $learning_folder2/hyp$i.dot
     if [ $? != 0 ]; then
-        break
+        exit 1
     fi
 done
