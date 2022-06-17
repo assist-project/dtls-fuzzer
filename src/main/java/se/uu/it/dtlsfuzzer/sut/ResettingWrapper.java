@@ -54,7 +54,7 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 				public void run() {
 					try {
 						if (!resetSocket.isClosed()) {
-							System.out.println("Closing socket");
+							LOGGER.debug("Closing socket");
 							resetSocket.close();
 						}
 					} catch (IOException e) {
@@ -93,7 +93,7 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 				Thread.sleep(resetCommandWait);
 			}
 			
-			LOGGER.info("Server listening at port {}", portString);
+			LOGGER.debug("Server listening at port {}", portString);
 
 			/*
 			 * We have to pre before the SUT does, so we have a port available
