@@ -26,8 +26,8 @@ jobs:
 
       - name: Test mbedtls-2.26.0 Server (all_cert_req)
         run: |
-          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_server_all_cert_req -Dmbedtls.version=2.26.0 -testLimit 1000
-          diff output/mbedtls-2.26.0_server_all_cert_req/learnedModel.dot experiments/models/regression/servers/1000_queries/mbedtls-2.26.0_server_all_cert_req/model.dot
+          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_server_all_cert_req -Dmbedtls.version=2.26.0 -roundLimit 5
+          experiments/scripts/hyps_diff output/mbedtls-2.26.0_server_all_cert_req/ experiments/models/regression/servers/rounds/mbedtls-2.26.0_server_all_cert_req/ 5
 
   Mbedtls-2-26-0-Client-dhe-ecdhe-rsa-reneg:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -53,8 +53,8 @@ jobs:
 
       - name: Test mbedtls-2.26.0 Client (dhe_ecdhe_rsa_reneg)
         run: |
-          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg -Dmbedtls.version=2.26.0 -testLimit 1000
-          diff output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/learnedModel.dot experiments/models/regression/clients/1000_queries/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/model.dot
+          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg -Dmbedtls.version=2.26.0 -roundLimit 5
+          experiments/scripts/hyps_diff output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/ experiments/models/regression/clients/rounds/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/ 5
 
   WolfSSL-4-7-1r-Server-psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -80,8 +80,8 @@ jobs:
 
       - name: Test wolfssl-4.7.1r Server (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -testLimit 750
-          diff output/wolfssl-4.7.1r_server_psk/learnedModel.dot experiments/models/regression/servers/1000_queries/wolfssl-4.7.1r_server_psk/model.dot
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -roundLimit 5
+          experiments/scripts/hyps_diff output/wolfssl-4.7.1r_server_psk/ experiments/models/regression/servers/rounds/wolfssl-4.7.1r_server_psk/ 5
 
   WolfSSL-4-7-1r-Client-psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -107,5 +107,59 @@ jobs:
 
       - name: Test wolfssl-4.7.1r Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -testLimit 1000
-          diff output/wolfssl-4.7.1r_client_psk/learnedModel.dot experiments/models/regression/clients/1000_queries/wolfssl-4.7.1r_client_psk/model.dot
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -roundLimit 5
+          experiments/scripts/hyps_diff output/wolfssl-4.7.1r_client_psk/ experiments/models/regression/clients/rounds/wolfssl-4.7.1r_client_psk/ 5
+
+  JSSE-12.0.2-Server-ecdhe_cert_req:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh jsse-12.0.2
+
+      - name: Test jsse-12.0.2 Server (ecdhe_cert_req)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_server_ecdhe_cert_req -Djsse.version=12.0.2 -roundLimit 5
+          experiments/scripts/hyps_diff output/jsse-12.0.2_server_ecdhe_cert_req/ experiments/models/regression/servers/rounds/jsse-12.0.2_server_ecdhe_cert_req/ 5
+
+  JSSE-12.0.2-Client-ecdhe_cert:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh jsse-12.0.2
+
+      - name: Test jsse-12.0.2 Client (ecdhe_cert)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_client_ecdhe_cert -Djsse.version=12.0.2 -roundLimit 5
+          experiments/scripts/hyps_diff output/jsse-12.0.2_client_ecdhe_cert/ experiments/models/regression/clients/rounds/jsse-12.0.2_client_ecdhe_cert/ 5
