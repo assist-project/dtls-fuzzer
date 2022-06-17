@@ -184,18 +184,18 @@ public class Learner {
 		LOGGER.info("Starting learning");
 		try {
 			algorithm.startLearning();
+			rounds ++;
 
 			do {
 				hypothesis = algorithm.getHypothesisModel();
 				stateMachine = new StateMachine(hypothesis, alphabet);
 				learnerResult.addHypothesis(stateMachine);
-				String hypName = "hyp" + (rounds + 1) + ".dot";
+				String hypName = "hyp" + rounds + ".dot";
 				// it is useful to print intermediate hypothesis as learning is
 				// running
 				serializeHypothesis(stateMachine, outputFolder, hypName, false);
 				LOGGER.info("Generated new hypothesis: " + hypName);
 				tracker.newHypothesis(stateMachine);
-				rounds ++;
 
 				if (learningConfig.getRoundLimit() != null
 				        && learningConfig.getRoundLimit() == rounds) {
