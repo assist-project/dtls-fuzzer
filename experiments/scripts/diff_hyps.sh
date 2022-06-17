@@ -4,8 +4,9 @@ learning_folder2=$2
 rounds=$3
 
 if [ $# != 3 ]; then
-    echo "Diffs the hyps generated in the first [rounds] by two learning experiments"   
-    echo "usage: bash script learning_folder1 learning_folder2 rounds"
+    echo "Diffs the hyps generated in the first [rounds] by two learning experiments"
+    echo ""   
+    echo "Usage: script learning_folder1 learning_folder2 rounds"
     exit 1
 fi
 
