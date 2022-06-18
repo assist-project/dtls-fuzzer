@@ -230,6 +230,7 @@ public class Learner {
 		} catch (Exception exc) {
 			notFinishedReason = exc.getMessage();
 			LOGGER.warn("Exception generated during learning");
+			LOGGER.warn(exc);
 			// useful to log what actually went wrong
 			try (FileWriter fw = new FileWriter(new File(outputFolder, ERROR_FILENAME))) {
 				PrintWriter pw = new PrintWriter(fw);
