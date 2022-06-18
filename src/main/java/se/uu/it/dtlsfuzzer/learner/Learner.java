@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -229,8 +230,10 @@ public class Learner {
 			notFinishedReason = "query limit reached";
 		} catch (Exception exc) {
 			notFinishedReason = exc.getMessage();
-			LOGGER.warn("Exception generated during learning");
-			LOGGER.warn(exc);
+			LOGGER.error("Exception generated during learning");
+			LOGGER.error(exc);
+			exc.printStackTrace();
+
 			// useful to log what actually went wrong
 			try (FileWriter fw = new FileWriter(new File(outputFolder, ERROR_FILENAME))) {
 				PrintWriter pw = new PrintWriter(fw);
