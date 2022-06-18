@@ -95,19 +95,26 @@ readonly PIONDTLS_209="piondtls-2.0.9" # likely works with other v2.x.x versions
 readonly PIONDTLS_209_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/refs/tags/v2.0.9.tar.gz"
 
 
-readonly JSSE_ARCH_URL="https://github.com/assist-project/jsse-dtls-clientserver/archive/refs/tags/v1.0.0.tar.gz"
+#readonly JSSE_ARCH_URL="https://github.com/assist-project/jsse-dtls-clientserver/archive/refs/tags/v1.0.0.tar.gz"
+readonly JSSE_LOCAL=$SOURCES_DIR/jsse-dtls-clientserver
 readonly JSSE_904="jsse-9.0.4"
-readonly JSSE_904_ARCH_URL=$JSSE_ARCH_URL
+readonly JSSE_904_LOCAL=$JSSE_LOCAL
+#readonly JSSE_904_ARCH_URL=$JSSE_ARCH_URL
 readonly JSSE_11010="jsse-11.0.10"
-readonly JSSE_11010_ARCH_URL=$JSSE_ARCH_URL
+readonly JSSE_11010_LOCAL=$JSSE_LOCAL
+#readonly JSSE_11010_ARCH_URL=$JSSE_ARCH_URL
 readonly JSSE_1202="jsse-12.0.2"
-readonly JSSE_1202_ARCH_URL=$JSSE_ARCH_URL
+readonly JSSE_1202_LOCAL=$JSSE_LOCAL
+#readonly JSSE_1202_ARCH_URL=$JSSE_ARCH_URL
 readonly JSSE_1302="jsse-13.0.2"
-readonly JSSE_1302_ARCH_URL=$JSSE_ARCH_URL
+readonly JSSE_1302_LOCAL=$JSSE_LOCAL
+#readonly JSSE_1302_ARCH_URL=$JSSE_ARCH_URL
 readonly JSSE_1501="jsse-15.0.1"
-readonly JSSE_1501_ARCH_URL=$JSSE_ARCH_URL
+readonly JSSE_1501_LOCAL=$JSSE_LOCAL
+#readonly JSSE_1501_ARCH_URL=$JSSE_ARCH_URL
 readonly JSSE_1601="jsse-16.0.1"
-readonly JSSE_1601_ARCH_URL=$JSSE_ARCH_URL
+readonly JSSE_1601_LOCAL=$JSSE_LOCAL
+#readonly JSSE_1601_ARCH_URL=$JSSE_ARCH_URL
 
 
 # dependencies
@@ -397,12 +404,9 @@ function install_sut_dep() {
     # JSSE SUT, meaning all we need to ensure is that the right vm is installed
     if [[ $sut == jsse* ]]; then
         ver=`get_ver $sut`
-        echo $ver
         verstripped=${ver//\./}
-        echo $verstripped
         jdk_varname="JDK_$verstripped"
         jdk_name="${!jdk_varname}"
-        echo $jdk_name
 
         if [[ -z $jdk_name ]]; then
             echo "Variable $jdk_varname expected but not defined"
@@ -411,7 +415,6 @@ function install_sut_dep() {
 
         jdk_urlvarname=$jdk_varname"_URL"
         jdk_url="${!jdk_urlvarname}"
-        echo $jdk_url
         if [[ -z $jdk_url ]]; then
             echo "Variable $jdk_url expected but not defined"
             exit 1
@@ -462,7 +465,6 @@ function make_sut() {
 
     if [[ $sut == jsse* ]]; then
         ver=`get_ver $sut`
-        echo $MODULES_DIR/jdk-$ver
         (cd $sut_dir; JAVA_HOME=$MODULES_DIR/jdk-$ver mvn install assembly:single; cp target/jsse-dtls-clientserver.jar ../jsse-$ver-dtls-clientserver.jar)
         return 0
     elif [[ $sut == pion* ]]; then

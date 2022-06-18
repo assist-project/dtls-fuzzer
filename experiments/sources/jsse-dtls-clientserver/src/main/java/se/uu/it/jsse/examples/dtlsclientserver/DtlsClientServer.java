@@ -46,6 +46,7 @@ import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLEngineResult.Status;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLProtocolException;
 import javax.net.ssl.SSLSession;
 
 /**
@@ -70,7 +71,7 @@ public class DtlsClientServer extends Thread {
 	private String side;
 
 	public DtlsClientServer(DtlsClientServerConfig config, SSLContext sslContext) throws GeneralSecurityException, IOException {
-		System.out.println("DtlsClientServer: isClient = " + config.isClient());
+		info("DtlsClientServer: isClient = " + config.isClient());
 		InetSocketAddress address = new InetSocketAddress(config.getHostname(), config.getPort());
 		if (config.isClient()) {
 			socket = new DatagramSocket();
@@ -111,7 +112,7 @@ public class DtlsClientServer extends Thread {
 						appData = receiveAppData(engine, socket);
 		
 						if (appData != null) {
-							info("Server received application data");
+							info("Received application data");
 		
 							// write server application data
 							sendAppData(engine, socket, appData.duplicate(), peerAddr, side);
@@ -127,7 +128,7 @@ public class DtlsClientServer extends Thread {
 						appData = receiveAppData(engine, socket);
 
 						if (appData != null) {
-							info("Server received application data");
+							info("Received application data");
 
 							// write server application data
 							sendAppData(engine, socket, appData.duplicate(), peerAddr, side);
@@ -152,7 +153,7 @@ public class DtlsClientServer extends Thread {
 							appData = receiveAppData(engine, socket);
 
 							if (appData != null) {
-								info("Server received application data");
+								info("Received application data");
 
 								// write server application data
 								sendAppData(engine, socket, appData.duplicate(), peerAddr, side);
@@ -168,7 +169,7 @@ public class DtlsClientServer extends Thread {
 			E.printStackTrace(System.err);
 		} finally {
 			if (isInterrupted()) {
-				info("Server thread has been interrupted");
+				info("Thread has been interrupted");
 			}
 			socket.close();
 			socket.disconnect();
@@ -244,7 +245,7 @@ public class DtlsClientServer extends Thread {
 
 		boolean isDone = false;
 		engine.beginHandshake();
-		while (!isDone && !isEngineClosed(engine) && !isInterrupted()) {
+		while (!isDone && !isEngineClosed(engine) && !isInterrupted() && !socket.isClosed()) {
 			isDone = doHandshakeStepCatchExceptions(engine, socket);
 		}
 
@@ -282,14 +283,27 @@ public class DtlsClientServer extends Thread {
 		}
 	}
 
+	/*
+	 * TODO: this has to be re-worked
+	 * Returns true if the handshake is completed, false otherwise.
+	 */
 	private boolean doHandshakeStepCatchExceptions(SSLEngine engine, DatagramSocket socket) {
 		try {
 			return doHandshakeStep(engine, socket);
 		} catch (Exception exc) {
-			severe("Exception while executing handshake step");
-			exc.printStackTrace();
-			severe("Continuing to flush causative problem");
-			return false;
+			info("Exception while executing handshake step");
+			info(exc.getMessage());
+			if (socket.isClosed()) {
+			    info("Socket closed, can exit");
+			    return false;
+			}
+			if (exc instanceof SSLProtocolException) {
+    			info("SSLProtocolException means we can continue to process messages");
+    			return false;
+			}
+			info("Unexpected exception type, printing stack trace and exiting");
+			exc.printStackTrace(System.out);
+			return true;
 		}
 	}
 
