@@ -46,7 +46,7 @@ public class ResettingClientWrapper<I, O> implements SUL<I, O> {
 		try {
 			resetSocket = new Socket();
 			resetSocket.setReuseAddress(true);
-			resetSocket.setSoTimeout(20000);
+			resetSocket.setSoTimeout(30000);
 			tasks.submit(new Runnable() {
 				@Override
 				public void run() {
