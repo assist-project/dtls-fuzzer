@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.util.NullOutputStream;
 
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
 
@@ -36,6 +37,8 @@ public class ProcessHandler {
 		pb = new ProcessBuilder(command.split("\\s+"));
 		this.startWait = startWait;
 		LOGGER.info("Command to launch SUT: {}", command);
+		output = NullOutputStream.getInstance();
+		error = NullOutputStream.getInstance();
 	}
 
 	public ProcessHandler(SulDelegate sulConfig) {
@@ -81,14 +84,11 @@ public class ProcessHandler {
 			if (currentProcess == null) {
 				hasLaunched = true;
 				currentProcess = pb.start();
-				if (output != null)
-					inheritIO(currentProcess.getInputStream(), new PrintStream(
-							output));
-				if (error != null)
-					inheritIO(currentProcess.getErrorStream(), new PrintStream(
-							error));
-				if (startWait > 0)
+				pipe(currentProcess.getInputStream(), output);
+				pipe(currentProcess.getErrorStream(), error);
+				if (startWait > 0) {
 					Thread.sleep(startWait);
+				}
 			} else {
 				LOGGER.warn("Process has already been started");
 			}
@@ -132,12 +132,15 @@ public class ProcessHandler {
 		return hasLaunched;
 	}
 
-	private void inheritIO(final InputStream src, final PrintStream dest) {
+	private void pipe(final InputStream src, final OutputStream dest) {
 		new Thread(new Runnable() {
 			public void run() {
+			    PrintStream psDest = new PrintStream(dest);
 				Scanner sc = new Scanner(src);
 				while (sc.hasNextLine()) {
-					dest.println(sc.nextLine());
+				    psDest.println(sc.nextLine());
+				    psDest.flush();
+				    sc.nextLine();
 				}
 				sc.close();
 			}

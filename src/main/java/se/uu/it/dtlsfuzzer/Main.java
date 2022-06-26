@@ -105,7 +105,7 @@ public class Main {
 					break;
 				}
 				stateFuzzerClientConfig.applyDelegate(null);
-				debugOptionCheck(stateFuzzerClientConfig);
+				testRunnerOptionCheck(stateFuzzerClientConfig);
 				
 				LOGGER.info("State-fuzzing a DTLS client");
 				// this is an extra step done to store the running arguments
@@ -119,7 +119,7 @@ public class Main {
 					break;
 				}
 				stateFuzzerServerConfig.applyDelegate(null);
-				debugOptionCheck(stateFuzzerServerConfig);
+				testRunnerOptionCheck(stateFuzzerServerConfig);
 				
 				LOGGER.info("State-fuzzing a DTLS server");
 				// this is an extra step done to store the running arguments
@@ -156,12 +156,12 @@ public class Main {
 	}
 	
 	/*
-	 * Checks if debug options have been supplied for launching the test runner/timing probe.
+	 * Checks if options have been supplied for launching the test runner/timing probe.
 	 * Executes these tools and exits if that is the case.
 	 */
-	private static void debugOptionCheck(TestRunnerEnabler config) throws IOException {
+	private static void testRunnerOptionCheck(TestRunnerEnabler config) throws IOException {
 		if (config.getTestRunnerConfig().getTest() != null) {
-			LOGGER.info("Debug operation is engaged");
+//			LOGGER.info("Test runner is engaged");
 			if (config instanceof TimingProbeEnabler && ((TimingProbeEnabler) config).getTimingProbe().isActive()) {
 				LOGGER.info("Running timing probe");
 				TimingProbe.runTimingProbe((TimingProbeEnabler) config);

@@ -3,6 +3,8 @@ package se.uu.it.dtlsfuzzer.sut;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -30,7 +32,9 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 
 	private static final Logger LOGGER = LogManager
 			.getLogger(ResettingWrapper.class);
-	
+
+	private static final String RESET_CMD = "reset";
+
 	private SUL<I, O> sul;
 
 	private Socket resetSocket;
@@ -38,6 +42,7 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 	private long resetCommandWait;
 	private Integer dynamicPort;
 	private BufferedReader reader;
+	private PrintWriter writer;
 
 	public ResettingWrapper(SUL<I, O> sul, SulDelegate sulDelegate,
 			CleanupTasks tasks) {
@@ -78,11 +83,11 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 				resetSocket.connect(resetAddress);
 				reader = new BufferedReader(new InputStreamReader(
 						resetSocket.getInputStream()));
+				writer = new PrintWriter(new OutputStreamWriter(resetSocket.getOutputStream()));
 			}
-			byte[] resetCmd = "reset\n".getBytes();
+			writer.println(RESET_CMD);
+			writer.flush();
 
-			resetSocket.getOutputStream().write(resetCmd);
-			resetSocket.getOutputStream().flush();
 			String portString = reader.readLine();
 			if (portString == null) {
 				throw new RuntimeException("Server has closed the socket");
@@ -99,7 +104,6 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 			 * We have to pre before the SUT does, so we have a port available
 			 * for it.
 			 */
-
 			sul.pre();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
