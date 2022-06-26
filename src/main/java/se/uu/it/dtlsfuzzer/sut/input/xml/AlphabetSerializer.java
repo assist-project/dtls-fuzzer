@@ -1,4 +1,4 @@
-package se.uu.it.dtlsfuzzer.sut.input;
+package se.uu.it.dtlsfuzzer.sut.input.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +19,8 @@ import de.rub.nds.modifiablevariable.ModificationFilter;
 import de.rub.nds.modifiablevariable.VariableModification;
 import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.ExtensionMessage;
-import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.ListAlphabet;
+import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 
 public class AlphabetSerializer {
 	private static JAXBContext context;
@@ -28,7 +28,7 @@ public class AlphabetSerializer {
 	private static synchronized JAXBContext getJAXBContext()
 			throws JAXBException, IOException {
 		if (context == null) {
-			context = JAXBContext.newInstance(AlphabetPojo.class,
+			context = JAXBContext.newInstance(Alphabet.class,
 					TlsInput.class, ExtensionMessage.class,
 					ProtocolMessage.class, ModificationFilter.class,
 					VariableModification.class, ModifiableVariable.class);
@@ -36,7 +36,7 @@ public class AlphabetSerializer {
 		return context;
 	}
 
-	public static Alphabet<TlsInput> read(InputStream alphabetStream)
+	public static net.automatalib.words.Alphabet<TlsInput> read(InputStream alphabetStream)
 			throws JAXBException, IOException, XMLStreamException {
 		Unmarshaller unmarshaller = getJAXBContext().createUnmarshaller();
 		XMLInputFactory xif = XMLInputFactory.newFactory();
@@ -44,15 +44,15 @@ public class AlphabetSerializer {
 		xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 		XMLStreamReader xsr = xif.createXMLStreamReader(new InputStreamReader(
 				alphabetStream));
-		AlphabetPojo alphabetPojo = (AlphabetPojo) unmarshaller.unmarshal(xsr);
-		return new ListAlphabet<TlsInput>(alphabetPojo.getWords());
+		Alphabet xmlAlphabet = (Alphabet) unmarshaller.unmarshal(xsr);
+		return new ListAlphabet<TlsInput>(xmlAlphabet.getWords());
 	}
 
 	public static void write(OutputStream alphabetStream,
-			Alphabet<TlsInput> alphabet) throws JAXBException, IOException {
+	        net.automatalib.words.Alphabet<TlsInput> alphabet) throws JAXBException, IOException {
 		Marshaller m = getJAXBContext().createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		AlphabetPojo alphabetPojo = new AlphabetPojo(new ArrayList<>(alphabet));
-		m.marshal(alphabetPojo, alphabetStream);
+		Alphabet xmlAlphabet = new Alphabet(new ArrayList<>(alphabet));
+		m.marshal(xmlAlphabet, alphabetStream);
 	}
 }

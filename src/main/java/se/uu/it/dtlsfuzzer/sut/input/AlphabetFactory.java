@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.config.AlphabetOptionProvider;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
+import se.uu.it.dtlsfuzzer.sut.input.xml.AlphabetSerializer;
 
 public class AlphabetFactory {
 	private static final Logger LOGGER = LogManager.getLogger();
