@@ -140,7 +140,6 @@ public class ProcessHandler {
 				while (sc.hasNextLine()) {
 				    psDest.println(sc.nextLine());
 				    psDest.flush();
-				    sc.nextLine();
 				}
 				sc.close();
 			}
