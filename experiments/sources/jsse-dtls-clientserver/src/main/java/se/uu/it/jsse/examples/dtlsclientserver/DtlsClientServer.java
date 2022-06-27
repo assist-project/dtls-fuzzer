@@ -293,17 +293,7 @@ public class DtlsClientServer extends Thread {
 		} catch (Exception exc) {
 			info("Exception while executing handshake step");
 			info(exc.getMessage());
-			if (socket.isClosed()) {
-			    info("Socket closed, can exit");
-			    return false;
-			}
-			if (exc instanceof SSLProtocolException) {
-    			info("SSLProtocolException means we can continue to process messages");
-    			return false;
-			}
-			info("Unexpected exception type, printing stack trace and exiting");
-			exc.printStackTrace(System.out);
-			return true;
+			return false;
 		}
 	}
 
