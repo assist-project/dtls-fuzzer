@@ -21,7 +21,7 @@ START
 
 # learning config
 -alphabet
-${alphabets.servers}/jsse_rsa.xml
+${alphabets.servers}/jsse_rsa_cert.xml
 -randLength
 10
 -queries

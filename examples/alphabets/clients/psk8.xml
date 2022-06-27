@@ -16,34 +16,6 @@ using CCM_8 ciphersuites. -->
             </data>
         </Application>
     </GenericTlsInput>
-    <!-- Alert(WARNING,CLOSE_NOTIFY) -->
-    <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
-        <Alert>
-            <level>
-                <byteExplicitValueModification>
-                        <explicitValue>1</explicitValue>
-                </byteExplicitValueModification>
-            </level>
-            <description>
-                <byteExplicitValueModification>
-                        <explicitValue>0</explicitValue>
-                </byteExplicitValueModification>
-            </description>
-        </Alert>
-    </GenericTlsInput>
-    <!-- Alert(FATAL,UNEXPECTED_MESSAGE) -->
-    <GenericTlsInput name="Alert(FATAL,UNEXPECTED_MESSAGE)">
-        <Alert>
-            <level>
-                <byteExplicitValueModification>
-                        <explicitValue>2</explicitValue>
-                </byteExplicitValueModification>
-            </level>
-            <description>
-                <byteExplicitValueModification>
-                        <explicitValue>10</explicitValue>
-                </byteExplicitValueModification>
-            </description>
-        </Alert>
-    </GenericTlsInput>
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY"/>
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE"/>
 </alphabet>

@@ -1,4 +1,6 @@
-<!-- DTLS alphabet comprising the messages necessary to perform client-side PSK handshakes. -->
+<!-- DTLS alphabet comprising the messages necessary to perform client-side PSK handshakes. 
+It includes inputs which set the epoch to a fixed value (0). 
+-->
 <alphabet>
 	<HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
     <ServerHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA256" name="PSK_SERVER_HELLO"/>
@@ -9,34 +11,6 @@
     <FinishedInput name="FINISHED_EPOCH_0" epoch="0"/>
     <ApplicationInput name="APPLICATION_EPOCH_0" epoch="0" suppressAlert="true"/>
     <ApplicationInput name="APPLICATION" suppressAlert="true"/>
-    <!-- Alert(WARNING,CLOSE_NOTIFY) -->
-    <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
-        <Alert>
-            <level>
-                <byteExplicitValueModification>
-                        <explicitValue>1</explicitValue>
-                </byteExplicitValueModification>
-            </level>
-            <description>
-                <byteExplicitValueModification>
-                        <explicitValue>0</explicitValue>
-                </byteExplicitValueModification>
-            </description>
-        </Alert>
-    </GenericTlsInput>
-    <!-- Alert(FATAL,UNEXPECTED_MESSAGE) -->
-    <GenericTlsInput name="Alert(FATAL,UNEXPECTED_MESSAGE)">
-        <Alert>
-            <level>
-                <byteExplicitValueModification>
-                        <explicitValue>2</explicitValue>
-                </byteExplicitValueModification>
-            </level>
-            <description>
-                <byteExplicitValueModification>
-                        <explicitValue>10</explicitValue>
-                </byteExplicitValueModification>
-            </description>
-        </Alert>
-    </GenericTlsInput>
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY"/>
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE"/>
 </alphabet>
