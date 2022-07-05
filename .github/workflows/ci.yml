@@ -2,7 +2,8 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  setup:
+
+  Mbedtls-2-26-0_Server_all_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
@@ -18,27 +19,8 @@ jobs:
           sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
           java -version
 
-      - name: pwd
-        run: |
-          pwd
-
       - name: Install DTLS-Fuzzer
         run: ./install.sh
-
-  Mbedtls-2-26-0_Server_all_cert_req:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-    needs: setup
-    defaults:
-      run:
-        working-directory:
-           ${{ github.workspace }}
-    steps:
-      - name: cd workspace
-        run: |
-          pwd
 
       - name: Setup SUT
         run: ./setup_sut.sh mbedtls-2.26.0
@@ -53,8 +35,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-    needs: setup
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
       - name: Setup SUT
         run: ./setup_sut.sh mbedtls-2.26.0
 
@@ -68,8 +62,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-    needs: setup
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
       - name: Setup SUT
         run: ./setup_sut.sh wolfssl-4.7.1r
 
@@ -83,8 +89,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-    needs: setup
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
       - name: Setup SUT
         run: ./setup_sut.sh wolfssl-4.7.1r
 
@@ -98,8 +116,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-    needs: setup
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
       - name: Setup SUT
         run: ./setup_sut.sh jsse-12.0.2
 
@@ -113,8 +143,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-    needs: setup
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
       - name: Setup SUT
         run: ./setup_sut.sh jsse-12.0.2
 
@@ -128,8 +170,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-    needs: setup
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
       - name: Setup SUT
         run: ./setup_sut.sh scandium-2.0.0-M16
 
@@ -143,8 +197,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-    needs: setup
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
       - name: Setup SUT
         run: ./setup_sut.sh scandium-2.0.0-M16
 
