@@ -18,6 +18,10 @@ jobs:
           sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
           java -version
 
+      - name: pwd
+        run: |
+          pwd
+
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -35,10 +39,6 @@ jobs:
       - name: cd workspace
         run: |
           pwd
-
-      - name: find setup_sut
-        run: |
-          find . -iname setup_sut.sh
 
       - name: Setup SUT
         run: ./setup_sut.sh mbedtls-2.26.0
