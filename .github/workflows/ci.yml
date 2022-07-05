@@ -27,11 +27,17 @@ jobs:
     strategy:
       fail-fast: true
     needs: setup
+    defaults:
+      run:
+        working-directory:
+           ${{ github.workspace }}
     steps:
       - name: cd workspace
-        run:  |
-          echo $GITHUB_WORKSPACE
-          cd $GITHUB_WORKSPACE
+        run: |
+          pwd
+
+      - name: find setup_sut
+          find . -iname setup_sut.sh
 
       - name: Setup SUT
         run: ./setup_sut.sh mbedtls-2.26.0
