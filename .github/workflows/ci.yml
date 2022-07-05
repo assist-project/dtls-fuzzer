@@ -28,6 +28,12 @@ jobs:
       fail-fast: true
     needs: setup
     steps:
+      - name: Current Path
+        run: |
+          ls .
+          ls ./*/
+          ls ./*/*/
+          env
       - name: Setup SUT
         run: ./setup_sut.sh mbedtls-2.26.0
 
