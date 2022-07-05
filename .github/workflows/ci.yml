@@ -28,12 +28,11 @@ jobs:
       fail-fast: true
     needs: setup
     steps:
-      - name: Current Path
-        run: |
-          ls .
-          ls ./*/
-          ls ./*/*/
-          env
+      - name: cd workspace
+        run:  |
+          echo $GITHUB_WORKSPACE
+          cd $GITHUB_WORKSPACE
+
       - name: Setup SUT
         run: ./setup_sut.sh mbedtls-2.26.0
 
