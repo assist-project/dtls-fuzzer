@@ -37,6 +37,7 @@ jobs:
           pwd
 
       - name: find setup_sut
+        run: |
           find . -iname setup_sut.sh
 
       - name: Setup SUT
