@@ -24,7 +24,7 @@ readonly MODULES_DIR="$SCRIPT_DIR/modules"
 # variable naming allows us to determine via dynamic variable resolution whether, for example, an SUT is fetched from a repository or from some archive
 # for each implementation we maintain a set of variables that are not tied to a version for quick modification
 readonly MBEDTLS="mbedtls-2.16.1"
-readonly MBEDTLS_ARCH_URL='https://tls.mbed.org/download/mbedtls-2.16.1-gpl.tgz'
+readonly MBEDTLS_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.16.1.tar.gz'
 readonly MBEDTLS_2250="mbedtls-2.25.0"
 readonly MBEDTLS_2250_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.25.0.tar.gz'
 readonly MBEDTLS_2260="mbedtls-2.26.0"
