@@ -216,5 +216,5 @@ jobs:
 
       - name: Test scandium-2.0.0-M16 Client (ecdhe_cert)
         run: |
-          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_client_ecdhe_cert -Dscandium.version=2.0.0-M16 -roundLimit 5
-          experiments/scripts/diff_hyps.sh output/scandium-2.0.0-M16_client_ecdhe_cert/ experiments/models/regression/clients/rounds/scandium-2.0.0-M16_client_ecdhe_cert/ 5
+          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_client_ecdhe_cert -Dscandium.version=2.0.0-M16 -roundLimit 2
+          experiments/scripts/diff_hyps.sh output/scandium-2.0.0-M16_client_ecdhe_cert/ experiments/models/regression/clients/rounds/scandium-2.0.0-M16_client_ecdhe_cert/ 2
