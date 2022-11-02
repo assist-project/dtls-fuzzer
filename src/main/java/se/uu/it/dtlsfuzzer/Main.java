@@ -95,7 +95,7 @@ public class Main {
 			if (ToolConfig.isReparseRequired()) {
 			    LOGGER.info("Parsing arguments again since they alter placeholder variables");
 			    commander.parse(args);
-            }
+			}
 
 			LOGGER.info("Processing command {}", commander.getParsedCommand());
 			switch(commander.getParsedCommand()) {
