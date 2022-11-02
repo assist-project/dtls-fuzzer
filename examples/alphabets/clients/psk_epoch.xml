@@ -1,8 +1,7 @@
-<!-- DTLS alphabet comprising the messages necessary to perform client-side PSK handshakes. 
-It includes inputs which set the epoch to a fixed value (0). 
--->
+<!-- DTLS alphabet comprising the messages necessary to perform client-side PSK handshakes. -->
+<!-- It includes inputs which set the epoch to a fixed value (0). -->
 <alphabet>
-	<HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
+    <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
     <ServerHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA256" name="PSK_SERVER_HELLO"/>
     <ServerHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA256" name="PSK_SERVER_HELLO_EPOCH_1" epoch="1"/>
     <ServerHelloDoneInput name="SERVER_HELLO_DONE"/>
