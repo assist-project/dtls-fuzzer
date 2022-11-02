@@ -1,6 +1,6 @@
-<!-- DTLS alphabet comprising the messages necessary to perform RSA, DH and ECDH handshakes-->
+<!-- DTLS alphabet comprising the messages necessary to perform RSA, DH and ECDH handshakes. -->
 <alphabet>
-	<ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA" name="ECDH_CLIENT_HELLO" extendedWait="200"/>
+    <ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA" name="ECDH_CLIENT_HELLO" extendedWait="200"/>
     <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDH"/>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED" extendedWait="100"/>
