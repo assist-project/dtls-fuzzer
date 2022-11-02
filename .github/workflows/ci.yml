@@ -2,7 +2,6 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-
   Mbedtls-2-26-0_Server_all_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
