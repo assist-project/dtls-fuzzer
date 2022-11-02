@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 learning_folder1=$1
 learning_folder2=$2
 rounds=$3
