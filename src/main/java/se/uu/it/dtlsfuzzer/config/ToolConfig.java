@@ -108,11 +108,11 @@ public class ToolConfig extends GeneralDelegate {
 	}
 	
 	/**
-     * Returns true if due to placeholder variables, an additional parsing is required.
-     */
-    public static boolean isReparseRequired() {
-        return !originalProps.equals(props);
-    }
+	 * Returns true if due to placeholder variables, an additional parsing is required.
+	 */
+	public static boolean isReparseRequired() {
+	  return !originalProps.equals(props);
+	}
 	
 	// so we don't replaceAll each time
 	private static Map<String, String> resolutionCache = new HashMap<>();
