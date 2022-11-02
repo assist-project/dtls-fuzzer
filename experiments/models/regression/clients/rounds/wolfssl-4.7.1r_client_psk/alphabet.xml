@@ -1,6 +1,6 @@
 <!-- DTLS alphabet comprising the messages necessary to perform client-side PSK handshakes. -->
 <alphabet>
-	<HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
+    <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
     <ServerHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA256" name="PSK_SERVER_HELLO"/>
     <ServerHelloDoneInput name="SERVER_HELLO_DONE"/>
     <ChangeCipherSpecInput/>
