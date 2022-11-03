@@ -6,10 +6,10 @@ ${sut.port}
 -startWait
 0
 -responseWait
-200  
--protocol 
-DTLS12 
--cmd 
+200
+-protocol
+DTLS12
+-cmd
 "${fuzzer.dir}/modules/jdk-${jsse.version}/bin/java -jar ${suts.dir}/jsse-${jsse.version}-dtls-clientserver.jar -client -port ${sut.port} -hostname localhost -runWait 1000 -keyLocation experiments/keystore/rsa2048.jks -trustLocation experiments/keystore/rsa2048.jks -threadStarterIpPort localhost:${fuzzer.port} -operation FULL"
 -resetPort
 ${fuzzer.port}
@@ -26,7 +26,7 @@ ${alphabets.clients}/jsse_ecdhe_cert.xml
 10
 -queries
 20000
--output 
+-output
 output/jsse-${jsse.version}_client_ecdhe_cert
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD

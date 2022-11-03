@@ -18,7 +18,7 @@ ${fuzzer.port}
 -resetAck
 -processTrigger
 START
--resetCommandWait          
+-resetCommandWait
 50
 
 # learning config

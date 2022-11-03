@@ -18,7 +18,7 @@ ${fuzzer.port}
 -resetAck
 -processTrigger
 START
--resetCommandWait          
+-resetCommandWait
 800
 
 # learning config
@@ -35,4 +35,3 @@ output/scandium-${scandium.version}_client_ecdhe_cert
 -depth
 1
 -skipNonDetTests
-
