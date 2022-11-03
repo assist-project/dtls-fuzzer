@@ -32,4 +32,4 @@ output/jsse-${jsse.version}_server_ecdhe_cert_req
 RANDOM_WP_METHOD,WP_METHOD
 -skipNonDetTests
 -timeLimit
-"P2D"
+P2D

@@ -35,4 +35,4 @@ RANDOM_WP_METHOD,WP_METHOD
 3
 -skipNonDetTests
 -timeLimit
-"P2D"
+P2D
