@@ -17,8 +17,8 @@ import com.beust.jcommander.Parameter;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.sut.input.AlphabetFactory;
-import se.uu.it.dtlsfuzzer.sut.input.AlphabetSerializer;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
+import se.uu.it.dtlsfuzzer.sut.input.xml.AlphabetSerializer;
 
 public class TimingProbe {
 	private static final Logger LOGGER = LogManager.getLogger(TimingProbe.class);

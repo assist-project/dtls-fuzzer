@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +27,7 @@ import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
+import se.uu.it.dtlsfuzzer.config.LearningConfig;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.mapper.PhasedMapper;
 import se.uu.it.dtlsfuzzer.sut.CachingSULOracle;
@@ -55,11 +57,13 @@ public class Learner {
 
 	private static final Logger LOGGER = LogManager.getLogger();
 	private final StateFuzzerConfig fuzzerConfig;
+	private final LearningConfig learningConfig;
 	private final Alphabet<TlsInput> alphabet;
 	private final CleanupTasks cleanupTasks;
 
-	public Learner(StateFuzzerConfig finderConfig, Alphabet<TlsInput> alphabet, CleanupTasks tasks) {
-		this.fuzzerConfig = finderConfig;
+	public Learner(StateFuzzerConfig fuzzerConfig, Alphabet<TlsInput> alphabet, CleanupTasks tasks) {
+		this.fuzzerConfig = fuzzerConfig;
+		this.learningConfig = fuzzerConfig.getLearningConfig();
 		this.alphabet = alphabet;
 		this.cleanupTasks = tasks;
 	}
@@ -80,12 +84,12 @@ public class Learner {
 		TlsSULBuilder sulBuilder = new TlsSULBuilder(fuzzerConfig.getSulDelegate(), fuzzerConfig.getMapperConfig(),
 				new PhasedMapper(fuzzerConfig.getMapperConfig()), cleanupTasks);
 
-		if (fuzzerConfig.getLearningConfig().getTimeLimit() != null) {
-			sulBuilder.setTimeLimit(fuzzerConfig.getLearningConfig().getTimeLimit());
+		if (learningConfig.getTimeLimit() != null) {
+			sulBuilder.setTimeLimit(learningConfig.getTimeLimit());
 		}
 
-		if (fuzzerConfig.getLearningConfig().getTestLimit() != null) {
-			sulBuilder.setTestLimit(fuzzerConfig.getLearningConfig().getTestLimit());
+		if (learningConfig.getTestLimit() != null) {
+			sulBuilder.setTestLimit(learningConfig.getTestLimit());
 		}
 
 		SUL<TlsInput, TlsOutput> tlsSystemUnderTest = sulBuilder.getWrappedTlsSUL();
@@ -103,9 +107,9 @@ public class Learner {
 		} catch (IOException e1) {
 			throw new RuntimeException("Could not create non-determinism file writer");
 		}
-		if (fuzzerConfig.getLearningConfig().getRunsPerMembershipQuery() > 1) {
+		if (learningConfig.getRunsPerMembershipQuery() > 1) {
 			learningSulOracle = new MultipleRunsSULOracle<TlsInput, TlsOutput>(
-					fuzzerConfig.getLearningConfig().getRunsPerMembershipQuery(), learningSulOracle, true,
+					learningConfig.getRunsPerMembershipQuery(), learningSulOracle, true,
 					nonDetWriter);
 		}
 
@@ -115,7 +119,7 @@ public class Learner {
 		// a SUL oracle which uses the cache to check for non-determinism
 		// and re-runs queries if non-det is detected
 		learningSulOracle = new NonDeterminismRetryingSULOracle<TlsInput, TlsOutput>(learningSulOracle, cache,
-				fuzzerConfig.getLearningConfig().getMembershipQueryRetries(), true, nonDetWriter);
+				learningConfig.getMembershipQueryRetries(), true, nonDetWriter);
 
 		// we are adding a cache so that executions of same inputs aren't
 		// repeated
@@ -126,10 +130,10 @@ public class Learner {
 					TlsOutput.socketClosed());
 		}
 
-		if (fuzzerConfig.getLearningConfig().getQueryFile() != null) {
+		if (learningConfig.getQueryFile() != null) {
 			FileWriter queryWriter = null;
 			try {
-				queryWriter = new FileWriter(new File(outputFolder, fuzzerConfig.getLearningConfig().getQueryFile()));
+				queryWriter = new FileWriter(new File(outputFolder, learningConfig.getQueryFile()));
 			} catch (IOException e1) {
 				throw new RuntimeException("Could not create queryfile writer");
 			}
@@ -137,7 +141,7 @@ public class Learner {
 		}
 
 		// setting up membership and equivalence oracles
-		MealyLearner<TlsInput, TlsOutput> algorithm = LearnerFactory.loadLearner(fuzzerConfig.getLearningConfig(),
+		MealyLearner<TlsInput, TlsOutput> algorithm = LearnerFactory.loadLearner(learningConfig,
 				learningSulOracle, alphabet);
 
 		MealyMembershipOracle<TlsInput, TlsOutput> testOracle = new SULOracle<TlsInput, TlsOutput>(tlsSystemUnderTest);
@@ -145,29 +149,29 @@ public class Learner {
 		// in case sanitization is enabled, we apply a CE verification wrapper
 		// to
 		// check counterexamples before they are returned to the EQ oracle
-		if (fuzzerConfig.getLearningConfig().isCeSanitization()) {
+		if (learningConfig.isCeSanitization()) {
 			testOracle = new CESanitizingSULOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, TlsOutput>(
-					fuzzerConfig.getLearningConfig().getCeReruns(), testOracle, () -> algorithm.getHypothesisModel(),
-					cache, fuzzerConfig.getLearningConfig().isProbabilisticSanitization(),
-					fuzzerConfig.getLearningConfig().isSkipNonDetTests(), nonDetWriter);
+					learningConfig.getCeReruns(), testOracle, () -> algorithm.getHypothesisModel(),
+					cache, learningConfig.isProbabilisticSanitization(),
+					learningConfig.isSkipNonDetTests(), nonDetWriter);
 		}
 
 		if (fuzzerConfig.getMapperConfig().isSocketClosedAsTimeout()) {
 			testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle, cache,
-					!fuzzerConfig.getLearningConfig().isCacheTests());
+					!learningConfig.isCacheTests());
 		} else {
 			testOracle = new CachingSULOracle<TlsInput, TlsOutput>(testOracle, cache,
-					!fuzzerConfig.getLearningConfig().isCacheTests(), TlsOutput.socketClosed());
+					!learningConfig.isCacheTests(), TlsOutput.socketClosed());
 		}
 
 		EquivalenceOracle<MealyMachine<?, TlsInput, ?, TlsOutput>, TlsInput, Word<TlsOutput>> equivalenceAlgorithm = LearnerFactory
-				.loadTester(fuzzerConfig.getLearningConfig(), tlsSystemUnderTest, testOracle, alphabet);
+				.loadTester(learningConfig, tlsSystemUnderTest, testOracle, alphabet);
 
 		// running learning and collecting important statistics
 		MealyMachine<?, TlsInput, ?, TlsOutput> hypothesis = null;
 		StateMachine stateMachine = null;
 		DefaultQuery<TlsInput, Word<TlsOutput>> counterExample = null;
-		boolean finished = false;
+		boolean finished = false, aborted = false;
 		String notFinishedReason = null;
 		int rounds = 0;
 
@@ -181,19 +185,30 @@ public class Learner {
 		LOGGER.info("Starting learning");
 		try {
 			algorithm.startLearning();
+			rounds ++;
 
 			do {
 				hypothesis = algorithm.getHypothesisModel();
 				stateMachine = new StateMachine(hypothesis, alphabet);
 				learnerResult.addHypothesis(stateMachine);
-				String hypName = "hyp" + (rounds + 1) + ".dot";
+				String hypName = "hyp" + rounds + ".dot";
 				// it is useful to print intermediate hypothesis as learning is
 				// running
 				serializeHypothesis(stateMachine, outputFolder, hypName, false);
 				LOGGER.info("Generated new hypothesis: " + hypName);
 				tracker.newHypothesis(stateMachine);
+
+				if (learningConfig.getRoundLimit() != null
+				        && learningConfig.getRoundLimit() == rounds) {
+				    LOGGER.info("Learning exhausted the number of hypothesis construction rounds allowed ({})", learningConfig.getRoundLimit());
+				    notFinishedReason = "hypothesis construction round limit reached";
+				    aborted = true;
+				    break;
+				}
+
 				LOGGER.info("Validating hypothesis");
 				counterExample = equivalenceAlgorithm.findCounterExample(hypothesis, alphabet);
+
 				if (counterExample != null) {
 					LOGGER.info("Counterexample: " + counterExample.toString());
 					tracker.newCounterExample(counterExample);
@@ -202,20 +217,23 @@ public class Learner {
 					stateMachine = stateMachine.copy();
 					LOGGER.info("Refining hypothesis");
 					algorithm.refineHypothesis(counterExample);
+	                rounds++;
 				}
-				rounds++;
 			} while (counterExample != null);
-			finished = true;
+			finished = !aborted;
 		} catch (ExperimentTimeoutException exc) {
-			LOGGER.warn("Learning timed out after a duration of " + exc.getDuration() + " (i.e. "
-					+ exc.getDuration().toHours() + " hours, or" + exc.getDuration().toMinutes() + " minutes" + " )");
+			LOGGER.warn("Learning timed out after a duration of {} (i.e. "
+					+ exc.getDuration().toHours() + " hours, or {} minutes)", exc.getDuration(), exc.getDuration().toMinutes() );
 			notFinishedReason = "learning timed out";
 		} catch (TestLimitReachedException exc) {
-			LOGGER.warn("Learning exhausted the number of tests allowed (" + exc.getQueryLimit() + " tests)");
+			LOGGER.warn("Learning exhausted the number of tests allowed ({} tests)", exc.getQueryLimit());
 			notFinishedReason = "query limit reached";
 		} catch (Exception exc) {
 			notFinishedReason = exc.getMessage();
-			LOGGER.warn("Exception generated during learning");
+			LOGGER.error("Exception generated during learning");
+			LOGGER.error(exc);
+			exc.printStackTrace();
+
 			// useful to log what actually went wrong
 			try (FileWriter fw = new FileWriter(new File(outputFolder, ERROR_FILENAME))) {
 				PrintWriter pw = new PrintWriter(fw);
@@ -272,11 +290,11 @@ public class Learner {
 		} catch (IOException e) {
 			LOGGER.error("Could not copy alphabet to output folder");
 		}
-		if (fuzzerConfig.getLearningConfig().getEquivalenceAlgorithms()
+		if (learningConfig.getEquivalenceAlgorithms()
 				.contains(EquivalenceAlgorithmName.SAMPLED_TESTS)) {
 			try {
-				Files.copy(new File(fuzzerConfig.getLearningConfig().getTestFile()),
-						new File(outputFolder, fuzzerConfig.getLearningConfig().getTestFile()));
+				Files.copy(new File(learningConfig.getTestFile()),
+						new File(outputFolder, learningConfig.getTestFile()));
 			} catch (IOException e) {
 				LOGGER.error("Could not copy sampled tests file to output folder");
 			}

@@ -47,6 +47,8 @@ public class ToolConfig extends GeneralDelegate {
 			+ "Can be passed as either JVM properties (after java) or as application properties.")
 	protected static Map<String, String> props = new LinkedHashMap<>();
 	
+	private static Map<String, String> originalProps = new LinkedHashMap<>();
+	
 	// initialize system properties
 	static {
 		Properties fuzzerProps = new Properties();
@@ -102,6 +104,14 @@ public class ToolConfig extends GeneralDelegate {
 			fuzzerPort = Long.toString(fuzzSec);
 		}
 		props.put(FUZZER_PORT, fuzzerPort);
+		originalProps.putAll(props);
+	}
+	
+	/**
+	 * Returns true if due to placeholder variables, an additional parsing is required.
+	 */
+	public static boolean isReparseRequired() {
+	  return !originalProps.equals(props);
 	}
 	
 	// so we don't replaceAll each time

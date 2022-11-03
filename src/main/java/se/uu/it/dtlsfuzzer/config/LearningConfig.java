@@ -76,6 +76,10 @@ public class LearningConfig {
 			+ "learning is stopped and statistics for the incomplete learning run are published")
 	private Long testLimit = null;
 
+	@Parameter(names = "-roundLimit", description = "If set, limits the number of hypothesis construction rounds, and with that, the number of hypotheses generated. "
+	        + "Once the limit is reached, learning is stopped and statistics for the incomplete learning run are published.")
+	private Integer roundLimit = null;
+
 	public LearningAlgorithmName getLearningAlgorithm() {
 		return learningAlgorithm;
 	}
@@ -146,6 +150,10 @@ public class LearningConfig {
 
 	public Long getTestLimit() {
 		return testLimit;
+	}
+
+	public Integer getRoundLimit() {
+	    return roundLimit;
 	}
 
 	public int getRunsPerMembershipQuery() {

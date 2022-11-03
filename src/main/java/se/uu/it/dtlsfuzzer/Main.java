@@ -27,6 +27,7 @@ import se.uu.it.dtlsfuzzer.config.StateFuzzerServerConfig;
 import se.uu.it.dtlsfuzzer.config.TestRunnerEnabler;
 import se.uu.it.dtlsfuzzer.config.TimingProbe;
 import se.uu.it.dtlsfuzzer.config.TimingProbeEnabler;
+import se.uu.it.dtlsfuzzer.config.ToolConfig;
 import se.uu.it.dtlsfuzzer.config.ToolPropertyAwareConverterFactory;
 
 public class Main {
@@ -78,18 +79,24 @@ public class Main {
 				.addCommand(CMD_STATE_FUZZER_SERVER, stateFuzzerServerConfig)
 				.build();	
 		commander.addConverterFactory(new ToolPropertyAwareConverterFactory());
-		
+
 		if (args.length > 0 && !commander.getCommands().containsKey(args[0]) && !args[0].startsWith("@")  && new File(args[0]).exists()) {
 			LOGGER.info("The first argument is a file path. Processing it as an argument file.");
 			args[0] = "@" + args[0];
 		} 
-		
+
 		try {
 			commander.parse(args);
 			if (commander.getParsedCommand() == null) {
 				showGlobalUsage(commander);
 				return;
 			}
+
+			if (ToolConfig.isReparseRequired()) {
+			    LOGGER.info("Parsing arguments again since they alter placeholder variables");
+			    commander.parse(args);
+			}
+
 			LOGGER.info("Processing command {}", commander.getParsedCommand());
 			switch(commander.getParsedCommand()) {
 			case CMD_STATE_FUZZER_CLIENT:
@@ -98,7 +105,7 @@ public class Main {
 					break;
 				}
 				stateFuzzerClientConfig.applyDelegate(null);
-				debugOptionCheck(stateFuzzerClientConfig);
+				testRunnerOptionCheck(stateFuzzerClientConfig);
 				
 				LOGGER.info("State-fuzzing a DTLS client");
 				// this is an extra step done to store the running arguments
@@ -112,7 +119,7 @@ public class Main {
 					break;
 				}
 				stateFuzzerServerConfig.applyDelegate(null);
-				debugOptionCheck(stateFuzzerServerConfig);
+				testRunnerOptionCheck(stateFuzzerServerConfig);
 				
 				LOGGER.info("State-fuzzing a DTLS server");
 				// this is an extra step done to store the running arguments
@@ -149,12 +156,12 @@ public class Main {
 	}
 	
 	/*
-	 * Checks if debug options have been supplied for launching the test runner/timing probe.
+	 * Checks if options have been supplied for launching the test runner/timing probe.
 	 * Executes these tools and exits if that is the case.
 	 */
-	private static void debugOptionCheck(TestRunnerEnabler config) throws IOException {
+	private static void testRunnerOptionCheck(TestRunnerEnabler config) throws IOException {
 		if (config.getTestRunnerConfig().getTest() != null) {
-			LOGGER.info("Debug operation is engaged");
+//			LOGGER.info("Test runner is engaged");
 			if (config instanceof TimingProbeEnabler && ((TimingProbeEnabler) config).getTimingProbe().isActive()) {
 				LOGGER.info("Running timing probe");
 				TimingProbe.runTimingProbe((TimingProbeEnabler) config);

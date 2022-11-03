@@ -46,7 +46,7 @@ public class ResettingClientWrapper<I, O> implements SUL<I, O> {
 		try {
 			resetSocket = new Socket();
 			resetSocket.setReuseAddress(true);
-			resetSocket.setSoTimeout(20000);
+			resetSocket.setSoTimeout(30000);
 			tasks.submit(new Runnable() {
 				@Override
 				public void run() {
@@ -84,7 +84,7 @@ public class ResettingClientWrapper<I, O> implements SUL<I, O> {
 				throw new RuntimeException("Server has closed the socket");
 			}
 			
-			LOGGER.info("Client connecting");
+			LOGGER.debug("Client connecting");
 
 			/*
 			 * We have to pre before the SUT does, so we have a port available

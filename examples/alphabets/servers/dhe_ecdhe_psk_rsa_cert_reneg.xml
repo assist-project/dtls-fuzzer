@@ -1,8 +1,8 @@
 <!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes, short and long renegotiation, and session resumption-->
 <alphabet>
-	<ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" name="ECDH_CLIENT_HELLO"/>
-	<!-- in a renegotiation input, enabled dictates the trigger which enables the input, 
-	suite is the cipher suite (if not set, the last agreed upon suite is used) -->
+    <ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" name="ECDH_CLIENT_HELLO"/>
+    <!-- in a renegotiation input, enabled dictates the trigger which enables the input, 
+	 suite is the cipher suite (if not set, the last agreed upon suite is used) -->
     <ClientHelloRenegotiation name="ECDH_CLIENT_HELLO_RENEG_LONG" short="false" suite="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" enabled="OWN_EPOCH_CHANGE"/>
     <ClientHelloRenegotiation name="ECDH_CLIENT_HELLO_RENEG_SHORT" short="true" suite="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" enabled="OWN_EPOCH_CHANGE"/>
     <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDH"/>
@@ -42,34 +42,6 @@
     <GenericTlsInput name="CERTIFICATE_VERIFY">
         <CertificateVerify/>
     </GenericTlsInput>
-    <!-- Alert(WARNING,CLOSE_NOTIFY) -->
-    <GenericTlsInput name="Alert(WARNING,CLOSE_NOTIFY)">
-        <Alert>
-            <level>
-                <byteExplicitValueModification>
-                        <explicitValue>1</explicitValue>
-                </byteExplicitValueModification>
-            </level>
-            <description>
-                <byteExplicitValueModification>
-                        <explicitValue>0</explicitValue>
-                </byteExplicitValueModification>
-            </description>
-        </Alert>
-    </GenericTlsInput>
-    <!-- Alert(FATAL,UNEXPECTED_MESSAGE) -->
-    <GenericTlsInput name="Alert(FATAL,UNEXPECTED_MESSAGE)">
-        <Alert>
-            <level>
-                <byteExplicitValueModification>
-                        <explicitValue>2</explicitValue>
-                </byteExplicitValueModification>
-            </level>
-            <description>
-                <byteExplicitValueModification>
-                        <explicitValue>10</explicitValue>
-                </byteExplicitValueModification>
-            </description>
-        </Alert>
-    </GenericTlsInput>
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY"/>
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE"/>
 </alphabet>

@@ -27,7 +27,7 @@ ${alphabets.clients}/scandium_ecdhe_cert.xml
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -output
-output/scandium-${scandium.version}_client_ecdhe
+output/scandium-${scandium.version}_client_ecdhe_cert
 -randLength
 10
 -queries
