@@ -10,7 +10,7 @@ localhost:${sut.port}
 -protocol
 DTLS12
 -cmd
-"modules/jdk-${jsse.version}/bin/java -jar suts/jsse-${jsse.version}-dtls-clientserver.jar -port ${sut.port} -hostname localhost -runWait 1000 -keyLocation experiments/keystore/rsa2048.jks -trustLocation experiments/keystore/rsa2048.jks -threadStarterIpPort localhost:${fuzzer.port} -operation FULL -auth NEEDED"
+modules/jdk-${jsse.version}/bin/java -jar suts/jsse-${jsse.version}-dtls-clientserver.jar -port ${sut.port} -hostname localhost -runWait 1000 -keyLocation experiments/keystore/rsa2048.jks -trustLocation experiments/keystore/rsa2048.jks -threadStarterIpPort localhost:${fuzzer.port} -operation FULL -auth NEEDED
 -resetPort
 ${fuzzer.port}
 -processTrigger
