@@ -8,7 +8,7 @@ localhost:${sut.port}
 -protocol
 DTLS12
 -cmd
-"java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-server.jar -port ${sut.port} -timeout 20000000 -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -clientAuth NEEDED -starterAddress localhost:${fuzzer.port} -starterAck"
+java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-server.jar -port ${sut.port} -timeout 20000000 -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -clientAuth NEEDED -starterAddress localhost:${fuzzer.port} -starterAck
 -sulConfig
 experiments/configs/scandium_exclude_oo.config
 -resetPort
@@ -16,7 +16,7 @@ ${fuzzer.port}
 -resetAck
 -processTrigger
 START
--resetCommandWait          
+-resetCommandWait
 50
 
 # learning config
