@@ -27,7 +27,7 @@ jobs:
       - name: Test mbedtls-2.26.0 Server (all_cert_req)
         run: |
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_server_all_cert_req -Dmbedtls.version=2.26.0 -roundLimit 5
-          experiments/scripts/diff_hyps.sh output/mbedtls-2.26.0_server_all_cert_req/ experiments/models/regression/servers/rounds/mbedtls-2.26.0_server_all_cert_req/ 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/mbedtls-2.26.0_server_all_cert_req output/mbedtls-2.26.0_server_all_cert_req 5
 
   Mbedtls-2-26-0_Client_dhe_ecdhe_rsa_eneg:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -54,7 +54,7 @@ jobs:
       - name: Test mbedtls-2.26.0 Client (dhe_ecdhe_rsa_reneg)
         run: |
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg -Dmbedtls.version=2.26.0 -roundLimit 5
-          experiments/scripts/diff_hyps.sh output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/ experiments/models/regression/clients/rounds/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg/ 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg 5
 
   WolfSSL-4-7-1r_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -81,7 +81,7 @@ jobs:
       - name: Test wolfssl-4.7.1r Server (psk)
         run: |
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -roundLimit 5
-          experiments/scripts/diff_hyps.sh output/wolfssl-4.7.1r_server_psk/ experiments/models/regression/servers/rounds/wolfssl-4.7.1r_server_psk/ 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-4.7.1r_server_psk output/wolfssl-4.7.1r_server_psk 5
 
   WolfSSL-4-7-1r_Client_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -108,7 +108,7 @@ jobs:
       - name: Test wolfssl-4.7.1r Client (psk)
         run: |
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -roundLimit 5
-          experiments/scripts/diff_hyps.sh output/wolfssl-4.7.1r_client_psk/ experiments/models/regression/clients/rounds/wolfssl-4.7.1r_client_psk/ 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-4.7.1r_client_psk output/wolfssl-4.7.1r_client_psk 5
 
   JSSE-12-0-2_Server_ecdhe_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -135,7 +135,7 @@ jobs:
       - name: Test jsse-12.0.2 Server (ecdhe_cert_req)
         run: |
           java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_server_ecdhe_cert_req -Djsse.version=12.0.2 -roundLimit 5
-          experiments/scripts/diff_hyps.sh output/jsse-12.0.2_server_ecdhe_cert_req/ experiments/models/regression/servers/rounds/jsse-12.0.2_server_ecdhe_cert_req/ 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/jsse-12.0.2_server_ecdhe_cert_req output/jsse-12.0.2_server_ecdhe_cert_req 5
 
   JSSE-12-0-2_Client_ecdhe_cert:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -162,7 +162,7 @@ jobs:
       - name: Test jsse-12.0.2 Client (ecdhe_cert)
         run: |
           java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_client_ecdhe_cert -Djsse.version=12.0.2 -roundLimit 5
-          experiments/scripts/diff_hyps.sh output/jsse-12.0.2_client_ecdhe_cert/ experiments/models/regression/clients/rounds/jsse-12.0.2_client_ecdhe_cert/ 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/jsse-12.0.2_client_ecdhe_cert output/jsse-12.0.2_client_ecdhe_cert 5
   
   Scandium-2-0-0-M16_Server_ecdhe_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -189,7 +189,7 @@ jobs:
       - name: Test scandium-2.0.0-M16 Server (ecdhe_cert_req)
         run: |
           java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_server_ecdhe_cert_req -Dscandium.version=2.0.0-M16 -roundLimit 5
-          experiments/scripts/diff_hyps.sh output/scandium-2.0.0-M16_server_ecdhe_cert_req/ experiments/models/regression/servers/rounds/scandium-2.0.0-M16_server_ecdhe_cert_req/ 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/scandium-2.0.0-M16_server_ecdhe_cert_req output/scandium-2.0.0-M16_server_ecdhe_cert_req 5
 
   Scandium-2-0-0-M16_Client_ecdhe_cert:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -216,4 +216,4 @@ jobs:
       - name: Test scandium-2.0.0-M16 Client (ecdhe_cert)
         run: |
           java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_client_ecdhe_cert -Dscandium.version=2.0.0-M16 -roundLimit 2
-          experiments/scripts/diff_hyps.sh output/scandium-2.0.0-M16_client_ecdhe_cert/ experiments/models/regression/clients/rounds/scandium-2.0.0-M16_client_ecdhe_cert/ 2
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/scandium-2.0.0-M16_client_ecdhe_cert output/scandium-2.0.0-M16_client_ecdhe_cert 2
