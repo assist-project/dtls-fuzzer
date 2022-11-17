@@ -1,5 +1,8 @@
 package se.uu.it.dtlsfuzzer;
 
+import static se.uu.it.dtlsfuzzer.config.ToolName.STATE_FUZZER_CLIENT;
+import static se.uu.it.dtlsfuzzer.config.ToolName.STATE_FUZZER_SERVER;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,7 +11,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.Security;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
@@ -23,6 +25,7 @@ import com.google.common.io.Files;
 
 import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerClientConfig;
+import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerServerConfig;
 import se.uu.it.dtlsfuzzer.config.TestRunnerEnabler;
 import se.uu.it.dtlsfuzzer.config.TimingProbe;
@@ -34,14 +37,6 @@ public class Main {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	private static String ARGS_FILE = "command.args";
-	
-	private static final String CMD_STATE_FUZZER_CLIENT = "state-fuzzer-client";
-	private static final String CMD_STATE_FUZZER_SERVER = "state-fuzzer-server";
-	
-	private static List<String> commands = Arrays.asList(
-			CMD_STATE_FUZZER_CLIENT, 
-			CMD_STATE_FUZZER_SERVER
-			);
 	
 	
 	public static void main(String args[]) throws IOException, JAXBException, XMLStreamException {
@@ -66,76 +61,80 @@ public class Main {
 			endCmd ++;
 		}
 	}
-	
-	private static void processCommand(String [] args) {
-		StateFuzzerClientConfig stateFuzzerClientConfig = new StateFuzzerClientConfig();
-		StateFuzzerServerConfig stateFuzzerServerConfig = new StateFuzzerServerConfig();
-		
-		JCommander commander = JCommander.newBuilder()
-				.allowParameterOverwriting(true)
-				.addConverterFactory(new ToolPropertyAwareConverterFactory())
-				.programName("dtls-fuzzer")
-				.addCommand(CMD_STATE_FUZZER_CLIENT, stateFuzzerClientConfig)
-				.addCommand(CMD_STATE_FUZZER_SERVER, stateFuzzerServerConfig)
-				.build();	
-		commander.addConverterFactory(new ToolPropertyAwareConverterFactory());
 
-		if (args.length > 0 && !commander.getCommands().containsKey(args[0]) && !args[0].startsWith("@")  && new File(args[0]).exists()) {
-			LOGGER.info("The first argument is a file path. Processing it as an argument file.");
-			args[0] = "@" + args[0];
-		} 
+	 /*
+     * Parses arguments returning a result containing the JCommander instance used for parsing and tool configurations.
+     * Returns null if parsing found errors.
+     */
+    protected static ParsingResult parseArguments(String args[]) {
+        return parseArguments(args, false);
+    }
+
+    private static ParsingResult parseArguments(String args[], boolean reparse) {
+        StateFuzzerClientConfig stateFuzzerClientConfig = new StateFuzzerClientConfig();
+        StateFuzzerServerConfig stateFuzzerServerConfig = new StateFuzzerServerConfig();
+
+        JCommander commander = JCommander.newBuilder()
+                .allowParameterOverwriting(true)
+                .addConverterFactory(new ToolPropertyAwareConverterFactory())
+                .programName("dtls-fuzzer")
+                .addCommand(STATE_FUZZER_CLIENT.getName(), stateFuzzerClientConfig)
+                .addCommand(STATE_FUZZER_SERVER.getName(), stateFuzzerServerConfig)
+                .build();
+        commander.addConverterFactory(new ToolPropertyAwareConverterFactory());
+
+        if (args.length > 0 && !commander.getCommands().containsKey(args[0]) && !args[0].startsWith("@")  && new File(args[0]).exists()) {
+            LOGGER.info("The first argument is a file path. Processing it as an argument file.");
+            args[0] = "@" + args[0];
+        }
+
+        try {
+            commander.parse(args);
+        } catch (ParameterException E) {
+            LOGGER.error("Could not parse provided parameters. " + E.getLocalizedMessage());
+            LOGGER.debug(E);
+            if (commander.getParsedCommand() != null) {
+                System.out.println(commander.getParsedCommand());
+                commander.usage(commander.getParsedCommand());
+            } else {
+                showGlobalUsage(commander);
+            }
+            return null;
+        }
+
+        if (!reparse && ToolConfig.isReparseRequired()) {
+            LOGGER.info("Parsing arguments again since they alter placeholder variables");
+            return parseArguments(args, true);
+        }
+
+        return new ParsingResult(stateFuzzerClientConfig, stateFuzzerServerConfig, commander, reparse);
+    }
+
+	private static void processCommand(String [] args) {
+	    ParsingResult result = parseArguments(args);
+	    if (result == null) {
+	        return;
+	    }
+
+        JCommander commander = result.getCommander();
+        if (commander.getParsedCommand() == null) {
+            showGlobalUsage(commander);
+            return;
+        }
 
 		try {
-			commander.parse(args);
-			if (commander.getParsedCommand() == null) {
-				showGlobalUsage(commander);
-				return;
-			}
-
-			if (ToolConfig.isReparseRequired()) {
-			    LOGGER.info("Parsing arguments again since they alter placeholder variables");
-			    commander.parse(args);
-			}
-
 			LOGGER.info("Processing command {}", commander.getParsedCommand());
-			switch(commander.getParsedCommand()) {
-			case CMD_STATE_FUZZER_CLIENT:
-				if (stateFuzzerClientConfig.isHelp()) {
-					commander.usage(commander.getParsedCommand());
-					break;
-				}
-				stateFuzzerClientConfig.applyDelegate(null);
-				testRunnerOptionCheck(stateFuzzerClientConfig);
-				
-				LOGGER.info("State-fuzzing a DTLS client");
-				// this is an extra step done to store the running arguments
-				prepareOutputDir(args, stateFuzzerClientConfig.getOutput());
-				StateFuzzer clientFuzzer = new StateFuzzer(stateFuzzerClientConfig);
-				clientFuzzer.startFuzzing();
-				break;
-			case CMD_STATE_FUZZER_SERVER:
-				if (stateFuzzerServerConfig.isHelp()) {
-					commander.usage(commander.getParsedCommand());
-					break;
-				}
-				stateFuzzerServerConfig.applyDelegate(null);
-				testRunnerOptionCheck(stateFuzzerServerConfig);
-				
-				LOGGER.info("State-fuzzing a DTLS server");
-				// this is an extra step done to store the running arguments
-				prepareOutputDir(args, stateFuzzerServerConfig.getOutput());
-				StateFuzzer serverFuzzer = new StateFuzzer(stateFuzzerServerConfig);
-				serverFuzzer.startFuzzing();
-				break;
-			}
-		} catch (ParameterException E) {
-			LOGGER.error("Could not parse provided parameters. " + E.getLocalizedMessage());
-			LOGGER.debug(E);
-			if (commander.getParsedCommand() != null) {
-				commander.usage(commander.getParsedCommand());
-			} else {
-				showGlobalUsage(commander);
-			}
+			StateFuzzerConfig stateFuzzerConfig = result.getParsedConfig();
+			if (stateFuzzerConfig.isHelp()) {
+                commander.usage(commander.getParsedCommand());
+            }
+            stateFuzzerConfig.applyDelegate(null);
+            testRunnerOptionCheck(stateFuzzerConfig);
+            LOGGER.info("State-fuzzing a DTLS " + (stateFuzzerConfig.isClient() ? "client" : "server"));
+            // this is an extra step done to store the running arguments
+            prepareOutputDir(args, stateFuzzerConfig.getOutput());
+            StateFuzzer stateFuzzer = new StateFuzzer(stateFuzzerConfig);
+            stateFuzzer.startFuzzing();
 		} catch (Exception E) {
 			LOGGER.error("Encountered an exception. See debug for more info.");
 			E.printStackTrace();
@@ -143,13 +142,16 @@ public class Main {
 		}
 	}
 	
+	/*
+	 * Gives a description for each supported command.
+	 */
 	private static void showGlobalUsage(JCommander commander) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		pw.println("Usage: <main class> [command] [command options] [-- [command] [command options] ]*");
 		pw.println("Where command is one of the following:");
-		for (String cmd : commands) {
-			pw.println(cmd + "    " + commander.getCommandDescription(cmd));
+		for (String cmd : commander.getCommands().keySet()) {
+		    pw.println(cmd + "    " + commander.getCommandDescription(cmd));
 		}
 		
 		LOGGER.info(sw.toString());
