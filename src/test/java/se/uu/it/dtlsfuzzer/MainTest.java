@@ -11,12 +11,11 @@ import static se.uu.it.dtlsfuzzer.config.ToolName.STATE_FUZZER_CLIENT;
 import java.util.Arrays;
 
 public class MainTest {
-
     /*
-     * Tests if parsing works for arguments which do not set dynamic parameters. 
+     * Tests if parsing works for valid arguments which do not set dynamic parameters.
      */
     @Test
-    public void testParseArgumentsNoReparse() {
+    public void testParseValidArguments() {
         String sutCommand = "some command to run SUT";
         ParsingResult result = Main.parseArguments(new String [] {
                 STATE_FUZZER_CLIENT.getName(),
@@ -28,7 +27,6 @@ public class MainTest {
                 EquivalenceAlgorithmName.RANDOM_WALK.name() + "," + EquivalenceAlgorithmName.RANDOM_WORDS.name(),
         });
 
-        Assert.assertFalse(result.isReparse());
         Assert.assertTrue(result.getParsedConfig() instanceof StateFuzzerClientConfig);
         Assert.assertEquals(sutCommand, result.getParsedConfig().getSulDelegate().getCommand());
         Assert.assertEquals(Arrays.asList(EquivalenceAlgorithmName.RANDOM_WALK, EquivalenceAlgorithmName.RANDOM_WORDS), 
@@ -36,10 +34,10 @@ public class MainTest {
     }
     
     /*
-     * Tests if parsing works for arguments which set dynamic parameters used as placeholder variables, requiring a reparse. 
+     * Tests if parsing works for valid arguments which set dynamic parameters used as placeholder variables.
      */
     @Test
-    public void testParseArgumentsReparse() {
+    public void testParseValidArgumentsWithDynamicParameters() {
         String sutCommand = "some command with ${variable} to run SUT";
         ParsingResult result = Main.parseArguments(new String [] {
                 STATE_FUZZER_CLIENT.getName(),
@@ -52,11 +50,20 @@ public class MainTest {
                 EquivalenceAlgorithmName.RANDOM_WALK.name()  + "," + EquivalenceAlgorithmName.RANDOM_WORDS.name(),
         });
 
-        Assert.assertTrue(result.isReparse());
         Assert.assertTrue(result.getParsedConfig() instanceof StateFuzzerClientConfig);
         Assert.assertEquals("some command with value to run SUT", result.getParsedConfig().getSulDelegate().getCommand());
         Assert.assertEquals(Arrays.asList(EquivalenceAlgorithmName.RANDOM_WALK, EquivalenceAlgorithmName.RANDOM_WORDS), 
                 result.getParsedConfig().getLearningConfig().getEquivalenceAlgorithms());
     }
 
+    /*
+     * Tests that parsing returns a null object if the arguments supplied are invalid.
+     */
+    @Test
+    public void testParseInvalidArguments() {
+        ParsingResult result = Main.parseArguments(new String [] {
+                STATE_FUZZER_CLIENT.getName(),
+                "-invalidArgument",});
+        Assert.assertNull(result);
+    }
 }

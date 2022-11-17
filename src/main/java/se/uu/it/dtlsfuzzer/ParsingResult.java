@@ -10,14 +10,12 @@ public class ParsingResult {
     private StateFuzzerClientConfig stateFuzzerClientConfig;
     private StateFuzzerServerConfig stateFuzzerServerConfig;
     private JCommander commander;
-    private boolean reparse;
 
     public ParsingResult(StateFuzzerClientConfig stateFuzzerClientConfig, StateFuzzerServerConfig stateFuzzerServerConfig, 
-            JCommander commander, boolean reparse) {
+            JCommander commander) {
         this.stateFuzzerClientConfig = stateFuzzerClientConfig;
         this.stateFuzzerServerConfig = stateFuzzerServerConfig;
         this.commander = commander;
-        this.reparse = reparse;
     }
 
     public JCommander getCommander() {
@@ -35,7 +33,4 @@ public class ParsingResult {
         return null;
     }
     
-    public boolean isReparse() {
-        return reparse;
-    }
 }

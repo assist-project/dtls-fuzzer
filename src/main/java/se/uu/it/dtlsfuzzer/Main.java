@@ -107,7 +107,7 @@ public class Main {
             return parseArguments(args, true);
         }
 
-        return new ParsingResult(stateFuzzerClientConfig, stateFuzzerServerConfig, commander, reparse);
+        return new ParsingResult(stateFuzzerClientConfig, stateFuzzerServerConfig, commander);
     }
 
 	private static void processCommand(String [] args) {
