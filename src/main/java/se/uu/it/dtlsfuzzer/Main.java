@@ -94,8 +94,9 @@ public class Main {
             LOGGER.error("Could not parse provided parameters. " + E.getLocalizedMessage());
             LOGGER.debug(E);
             if (commander.getParsedCommand() != null) {
+		JCommander cmdCommander = commander.getCommands().get(commander.getParsedCommand());
                 System.out.println(commander.getParsedCommand());
-                commander.usage(commander.getParsedCommand());
+                cmdCommander.usage();
             } else {
                 showGlobalUsage(commander);
             }
@@ -126,7 +127,6 @@ public class Main {
 			LOGGER.info("Processing command {}", commander.getParsedCommand());
 			StateFuzzerConfig stateFuzzerConfig = result.getParsedConfig();
 			if (stateFuzzerConfig.isHelp()) {
-			// JCommander cmdCommander = commander.getCommands().get(commander.getParsedCommand());
                 commander.usage();
             }
             stateFuzzerConfig.applyDelegate(null);
