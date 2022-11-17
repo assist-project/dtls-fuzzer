@@ -26,4 +26,9 @@ public class StateFuzzerServerConfig extends StateFuzzerConfig {
 	public boolean isClient() {
 		return false;
 	}
+
+    @Override
+    public ToolName getToolName() {
+        return ToolName.STATE_FUZZER_SERVER;
+    }
 }

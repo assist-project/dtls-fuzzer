@@ -17,7 +17,7 @@ import com.beust.jcommander.DynamicParameter;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 
-public class ToolConfig extends GeneralDelegate {
+public abstract class ToolConfig extends GeneralDelegate {
 	
 	public void applyDelegate(Config config) {
 		super.applyDelegate(config);
@@ -33,20 +33,21 @@ public class ToolConfig extends GeneralDelegate {
 	    }
 	}
 	
-	public static final String FUZZER_PROPS = "fuzzer.properties";
+	public static final String VAR_FUZZER_PROPS = "fuzzer.properties";
 	public static final String DEFAULT_FUZZER_PROPS = "dtls-fuzzer.properties";
 	
-	public static final String FUZZER_DIR = "fuzzer.dir";
-	public static final String SUTS_DIR = "suts.dir";
-	public static final String SUT_PORT = "sut.port";
-	public static final String FUZZER_PORT = "fuzzer.port";
+	public static final String VAR_FUZZER_DIR = "fuzzer.dir";
+	public static final String VAR_SUTS_DIR = "suts.dir";
+	public static final String VAR_SUT_PORT = "sut.port";
+	public static final String VAR_FUZZER_PORT = "fuzzer.port";
 	
-	/* Stores system properties*/
+	/* Stores application properties which include variable definitions */
 	@DynamicParameter(names = "-D", description = "Definitions for variables, which can be refered to in arguments by ${var}. "
 			+ "Variables are replaced with their corresponding values before the arguments are parsed."
 			+ "Can be passed as either JVM properties (after java) or as application properties.")
 	protected static Map<String, String> props = new LinkedHashMap<>();
 	
+	/* Stores default application properties as provided in the FUZZER_PROPS file*/
 	private static Map<String, String> originalProps = new LinkedHashMap<>();
 	
 	// initialize system properties
@@ -54,7 +55,7 @@ public class ToolConfig extends GeneralDelegate {
 		Properties fuzzerProps = new Properties();
 		String fuzzerPropsLocation = DEFAULT_FUZZER_PROPS;
 		try {
-			if (System.getProperty(FUZZER_PROPS) == null) {
+			if (System.getProperty(VAR_FUZZER_PROPS) == null) {
 				InputStream resource = ToolConfig.class.getClassLoader().getResourceAsStream(DEFAULT_FUZZER_PROPS);
 				fuzzerProps.load(resource);
 			} else {
@@ -73,46 +74,46 @@ public class ToolConfig extends GeneralDelegate {
 			}
 		}
 		
-		String fuzzerDir = System.getProperty(FUZZER_DIR);
+		String fuzzerDir = System.getProperty(VAR_FUZZER_DIR);
 		if (fuzzerDir == null) {
 			fuzzerDir = System.getProperty("user.dir");
 		}
-		props.put(FUZZER_DIR, fuzzerDir);
+		props.put(VAR_FUZZER_DIR, fuzzerDir);
 		
-		String sutsDir = fuzzerProps.getProperty(SUTS_DIR);
+		String sutsDir = fuzzerProps.getProperty(VAR_SUTS_DIR);
 		if (sutsDir == null) {
 			sutsDir = fuzzerDir + File.separator + "suts";
 		}
-		props.put(SUTS_DIR, sutsDir);
+		props.put(VAR_SUTS_DIR, sutsDir);
 		
 		/*
 		 * Sut port: between 10000 and 39999
 		 */
-		String sutPort = fuzzerProps.getProperty(SUT_PORT);
+		String sutPort = fuzzerProps.getProperty(VAR_SUT_PORT);
 		if (sutPort == null) {
 			long sutSec = (System.currentTimeMillis() / 1000 % 30000) + 10000;
 			sutPort = Long.toString(sutSec);
 		}
-		props.put(SUT_PORT, sutPort);
+		props.put(VAR_SUT_PORT, sutPort);
 		
 		/*
 		 * Fuzzer port: between 40000 and 65535 (= 0xFFFF or max port)
 		 */
-		String fuzzerPort = fuzzerProps.getProperty(FUZZER_PORT);
+		String fuzzerPort = fuzzerProps.getProperty(VAR_FUZZER_PORT);
 		if (fuzzerPort == null) {
 			long fuzzSec = (System.currentTimeMillis() / 1000 % 25536) + 40000;
 			fuzzerPort = Long.toString(fuzzSec);
 		}
-		props.put(FUZZER_PORT, fuzzerPort);
+		props.put(VAR_FUZZER_PORT, fuzzerPort);
 		originalProps.putAll(props);
 	}
 	
 	/**
-	 * Returns true if due to placeholder variables, an additional parsing is required.
-	 */
-	public static boolean isReparseRequired() {
-	  return !originalProps.equals(props);
-	}
+     * Returns true if due to placeholder variables (supplied via the -D option), an additional parsing round is required.
+     */
+    public static boolean isReparseRequired() {
+        return !originalProps.equals(props);
+    }
 	
 	// so we don't replaceAll each time
 	private static Map<String, String> resolutionCache = new HashMap<>();
@@ -135,4 +136,6 @@ public class ToolConfig extends GeneralDelegate {
 		}
 		return resolvedStr;
 	}
+
+	public abstract ToolName getToolName();
 }
