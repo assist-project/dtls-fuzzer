@@ -269,8 +269,8 @@ jobs:
 
       - name: Test wolfssl-4.7.1r Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -roundLimit 5
-          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-4.7.1r_client_psk output/wolfssl-4.7.1r_client_psk 5
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -roundLimit 6
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-4.7.1r_client_psk output/wolfssl-4.7.1r_client_psk 6
 
   JSSE-12-0-2_Server_ecdhe_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
