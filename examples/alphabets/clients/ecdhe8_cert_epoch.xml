@@ -21,8 +21,8 @@
     </GenericTlsInput>
     <GenericTlsInput name="EMPTY_CERTIFICATE">
         <Certificate>
-            <certificatesList>
-            </certificatesList>
+            <certificateListConfig>
+            </certificateListConfig>
         </Certificate>
     </GenericTlsInput>
     <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY"/>
