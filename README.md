@@ -100,42 +100,42 @@ In a nutshell, the advised pre-requisites are:
 DTLS-Fuzzer requires Java 8 JDK (Java Development Kit).
 If Java is not installed, we install the OpenJDK implementation, and can skip the rest of this subsection.
 
-    > sudo apt-get install openjdk-8-jdk
+    sudo apt-get install openjdk-8-jdk
 
 If a version of java is installed, we can check which version it is by running:
 
-    > java -version
+    java -version
 
 The version code should start with 1.8 (e.g., 1.8.0_242), and the Virtual Machine should be "Server VM" (indicating that the full JDK is installed, rather than only the runtime environment).
 If it does, we are done with Java.
 If it is not we can check if Java 8 JDK is installed on our platform but not currently selected, by listing installed Java VMs via:
 
-    > update-java-alternatives --list
+    update-java-alternatives --list
 
 If Java 8 JDK does appear, we can use the same command to configure the Java 8 JDK to be default Java implementation. 
 
-    > sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+    sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
     
 Otherwise, we need to perform the full installation as shown at the start.
 Unfortunately, `update-java-alternatives` sometimes is not successful, indicated by "error" messages.
 If such a case arises, we can use `update-alternatives` to interactively configure which Java VM is selected by `java` (interpreter) and `javac` (compiler).
 
-    > sudo update-alternatives --config java
-    > sudo update-alternatives --config javac
+    sudo update-alternatives --config java
+    sudo update-alternatives --config javac
 
 ### Others
 With Java 8 set, we proceed to install the other dependencies, maven, graphviz plus some common SUT dependencies.
 We then clone DTLS-Fuzzer's repository to a folder of choice, checking out the artifact branch.
 To finish, we make that folder our current directory.
 
-    > sudo apt-get install maven graphviz autotools-dev automake libtool
-    > git clone -b usenix20-artifact https://github.com/assist-project/dtls-fuzzer.git
-    > cd dtls-fuzzer
+    sudo apt-get install maven graphviz autotools-dev automake libtool
+    git clone -b usenix20-artifact https://github.com/assist-project/dtls-fuzzer.git
+    cd dtls-fuzzer
 
 ## Installation
 Run the `install.sh` script which installs libraries DTLS-Fuzzer depends on, and the tool itself.
 
-    > ./install.sh
+    ./install.sh
 
 Following these steps, a directory named `target` should have been built containing `dtls-fuzzer.jar`.
 This is our executable library.
@@ -147,7 +147,7 @@ A quickrun of DTLS-Fuzzer goes as follows.
 
 First we set up the SUT, which is automatically by a `setup_sut.sh` script.
 
-    > ./setup_sut.sh openssl-1.1.1b
+    ./setup_sut.sh openssl-1.1.1b
     
 Then we select an argument file form the `args/openssl-1.1.1b` folder.
 We notice there are several argument files to choose from, namely:
@@ -166,32 +166,32 @@ A good test is just completing a handshake.
 We supply the argument file, along with a corresponding test from `examples/tests` as parameter.
 We get:
 
-    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_psk -test examples/tests/psk
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_psk -test examples/tests/psk
 
 If all goes well, the server should have printed out "This is a hello message", a message we send after completing the handshake.
 Knowing our setup functions, we can now start learning by running:
 
-    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_psk -queries 200
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_psk -queries 200
 
 We notice that an output directory, `output/openssl-1.1.1b_psk/` for the experiment has been created.
 We can `ls` this directory to check the current status of the experiment (the number of hypotheses generated...).
 
-    > ls output/openssl-1.1.1b_server_psk/
+    ls output/openssl-1.1.1b_server_psk/
 
 
 ### When things go right
 If all goes well, after 20-30 minutes, the output directory should contain a `learnedModel.dot` file.
 We can visualize the file using the graphviz `dot` utility, by exporting to .pdf and opening the .pdf with our favorite .pdf viewer.
 
-    > dot -Tpdf output/openssl-1.1.1b_server_psk/learnedModel.dot > output/openssl-1.1.1b_server_psk/learnedModel.pdf
-    > evince output/openssl-1.1.1b_server_psk/learnedModel.pdf
+    dot -Tpdf output/openssl-1.1.1b_server_psk/learnedModel.dot > output/openssl-1.1.1b_server_psk/learnedModel.pdf
+    evince output/openssl-1.1.1b_server_psk/learnedModel.pdf
 
 Finally, we can use `trim_model.sh` to generated a better/trimmer version of the model.
 This can be done as follows:
 
-    > ./trim_model.sh --output output/openssl-1.1.1b_server_psk/nicerLearnedModel.dot output/openssl-1.1.1b_server_psk/learnedModel.dot
-    > dot -Tpdf output/openssl-1.1.1b_server_psk/nicerLearnedModel.dot > output/openssl-1.1.1b_server_psk/nicerLearnedModel.pdf
-    > evince output/openssl-1.1.1b_server_psk/nicerLearnedModel.pdf
+    ./trim_model.sh --output output/openssl-1.1.1b_server_psk/nicerLearnedModel.dot output/openssl-1.1.1b_server_psk/learnedModel.dot
+    dot -Tpdf output/openssl-1.1.1b_server_psk/nicerLearnedModel.dot > output/openssl-1.1.1b_server_psk/nicerLearnedModel.pdf
+    evince output/openssl-1.1.1b_server_psk/nicerLearnedModel.pdf
 
 We can now determine conformance of the system by checking the model against the specification...
 
@@ -200,20 +200,20 @@ When `ls`-ing the output directory we might find `error.msg`.
 That's a sign that the experiment failed and learning terminated abruptly
 In such cases, displaying the contents reveals the reason behind the failure
 
-    > cat output/openssl-1.1.1b_server_psk/error.msg
+    cat output/openssl-1.1.1b_server_psk/error.msg
     
 Note that checking conformance can still be performed on the last generated hypothesis, as long as potential findings are validated against the system (as they should be anyway).
 
 ## Setting up the SUT
 We provide a script for setting up the SUT.
-This script downloads the source files, installs some dependencies (jvm) and builds the SUT.
+This script downloads the source files, installs some dependencies (JVM) and builds the SUT.
 To view SUTs for which automatic setup is provided run:
 
-    > bash setup_sut.sh
+    ./setup_sut.sh
 
 To set up, for example, Contiki-NG's tinydtls implementation run:
 
-    > bash setup_sut.sh ctinydtls
+    ./setup_sut.sh ctinydtls
 
 The script will generate two folders in DTLS-Fuzzer's root directory.
 
@@ -261,7 +261,7 @@ Argument files for various SUT configurations are provided in the `args` directo
 Each argument filename describes the experiment setup (SUT, alphabet, authentication) as described by the output folder names in `experiments/results/`.
 To start learning for an SUT using a argument file, run:
 
-    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file
+    java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file
 
 The output folder will be stored in a generated `output` directory.
 
@@ -271,7 +271,7 @@ Compared to experiments in the paper, we increased the response timeout for seve
 To shorten learning time, we suggest decreasing the test bound of the random walk algorithm from 20000 to 5000.
 This can be done by:
 
-    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -queries 5000
+    java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -queries 5000
 
 This will overwrite the bound setting in the argument file. 
 Aside from GnuTLS, PionDTLS and JSSE, we expect learning to produce the same models for this lower bound.
@@ -285,7 +285,7 @@ In such cases, there are two knobs which can be tweaked:
 
 These parameters can be adjusted by overwriting (likely with a higher value) the corresponding settings in the argument file:
 
-    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -responseWait new_response_timeout -startWait new_start_timeout
+   java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -responseWait new_response_timeout -startWait new_start_timeout
 
 To avoid issues to do with timing, we suggest running experiments on a sufficiently powerful machine.
 The main cause of non-determinism is the SUT taking too long to start or to generate a response.
@@ -297,14 +297,14 @@ Setting this period is possible via the **time limit** parameter which is assign
 This duration is provided in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
 To cap execution time of an experiment to 60 minutes, we would run:
 
-    > java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeLimit "PT60M"
+    java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -timeLimit "PT60M"
 
 ### Concurrent experiments and port collisions
 It is possible to run multiple experiments at a time provided that servers are configured to listen to different ports. 
 We can choose to launch each experiment in a separate terminal.
 Alternatively, we can launch experiments in a single terminal using the `disown` utility:
 
-    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_server_psk 1>/dev/null 2>&1 & disown
+    java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_ctinydtls_server_psk 1>/dev/null 2>&1 & disown
 
 However, running more than a few (>2) places additional burden on the machine.
 It also increases the chance of learning failure due to accidental port collision.
@@ -328,7 +328,7 @@ Any openssl-1.1.1b configuration (for example `args/openssl-1.1.1b/learn_openssl
 Experiments terminate quickly (less than a day), exercising all key exchange algorithms.
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
 
-    > LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_all_cert_req -queries 5000
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_all_cert_req -queries 5000
 
 Note, when learning OpenSSL it is necessary to point the LD_LIBRARY_PATH variable to the installation directory.
 
@@ -337,26 +337,26 @@ Any mbedtls-2.16.1 configuration can be used for the same reasons as OpenSSL.
 Experiments take more time to complete since the SUT is slower.
 Command for client certificate authentication disabled configuration using all key exchange algorithms:
 
-    > java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_server_all_cert_none -queries 5000
+    java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_server_all_cert_none -queries 5000
 
 
 ### Contiki-NG TinyDTLS using PSK
 A redacted version of the model obtained for this configuration appears in the appendix.
 We can use a low test bound of 2000 since the input alphabet is small, making testing easier.
 
-    > java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_server_ctinydtls_psk -queries 2000
+    java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_server_ctinydtls_psk -queries 2000
 
 ### WolfSSL 4.0.0 using PSK
 For WolfSSL we provide a PSK configuration for which learning should terminate relatively quickly.
 
-    > java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_server_psk -queries 2000
+    java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_server_psk -queries 2000
 
 ### GnuTLS 3.6.7 with client authentication disabled
 The more recent GnuTLS version we analyzed produced nice, compact models.
 Unfortunately, enabling client authentication lead to a sharp increase in the number of required tests.
 We suggest a configuration which disables it to shorten learning time:
 
-    > java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_server_all_cert_none -queries 2000
+    java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_server_all_cert_none -queries 2000
 
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
@@ -364,7 +364,7 @@ The model exposes important bugs, unfortunately, the experiment is lengthy.
 The experiment should not be run in parallel with experiments not involving Scandium or JSSE.
 Command:
 
-    > java -jar target/dtls-fuzzer.jar @args/scandium-2.0.0/learn_scandium-2.0.0_server_psk -queries 2000
+    java -jar target/dtls-fuzzer.jar @args/scandium-2.0.0/learn_scandium-2.0.0_server_psk -queries 2000
 
 ### JSSE 12.0.2 with authentication required 
 A redacted version of the model obtained for this configuration appears in the paper.
@@ -374,12 +374,12 @@ Note that learning for JSSE does not finish/converge, building hypotheses with m
 We hence configured JSSE experiments to automatically terminate after one day (two days in the paper).
 Command for RSA key exchange:
 
-    > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_server_rsa_cert_req 
+    java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_server_rsa_cert_req
 
 Instead of arduous learning, we may want to simply test if a handshake can be completed in this setting without sending any certificate messages. 
 This can be done by running:
 
-    > java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_server_rsa_cert_req -test examples/tests/rsa
+    java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_server_rsa_cert_req -test examples/tests/rsa
 
 
 ## Analyzing results
@@ -393,17 +393,17 @@ Once learning is done, things to analyze in the output directory are:
 ### Visualizing the model
 The .dot learned model can be visualized using the graphviz library, by conversion to .pdf:
 
-    > dot -Tpdf learnedModel.dot > learnedModel.pdf
+    dot -Tpdf learnedModel.dot > learnedModel.pdf
 
 Unfortunately, as models grow is size, the .pdfs generated using this method become increasingly difficult to read. 
 Hence we developed/used/imported pruning scripts which are accessed by `trim_model.sh`.
-The scripts provides usage information by running:
+The scripts provides usage information by running it without any argument:
 
-    > ./trim_model.sh
+    ./trim_model.sh
 
 We advise using the script in its most basic form, which is:
 
-    > ./trim_model.sh learnedModel.dot
+    ./trim_model.sh learnedModel.dot
 
 The script:
 
@@ -423,7 +423,7 @@ A .jar for this library is included in `experiments/scripts`.
 ## Displaying help page
 Run:
 
-    > java -jar target/dtls-fuzzer.jar -help
+    java -jar target/dtls-fuzzer.jar -help
 
 ## Learning DTLS implementations
 
@@ -434,7 +434,7 @@ All other options are set to default values, including the alphabet.
 ### Single learning run
 To launch a learning run for an existing say local server implementation listening at port 20000, run:
 
-    > java -jar target/dtls-fuzzer.jar -connect localhost:20000
+    java -jar target/dtls-fuzzer.jar -connect localhost:20000
 
 There will likely be issues with this type of learning. 
 Learning requires that one is able to reset the server after each test.
@@ -443,7 +443,7 @@ This may lead to non-determinism during learning, hence a better approach is lau
 The server thread is killed once the test is run, ensuring proper reset.
 Example for OpenSSL:
 
-    > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -cmd "openssl s_server -accept 20000 -dtls1_2"
+    java -jar target/dtls-fuzzer.jar -connect localhost:20000 -cmd "openssl s_server -accept 20000 -dtls1_2"
     
 With so many paraments, commands can become very long. 
 DTLS-Fuzzer uses JCommander to parse arguments, which can also read parameters from a file.
@@ -451,13 +451,13 @@ Go to `experiments/args` for examples of arguments.
 To supply an argument file to DTLS-Fuzzer provide it as parameter prepended by "@".
 You can also add other explicit arguments to commands (which will overwrite those in the arguments file)
 
-    > java -jar target/dtls-fuzzer.jar @arg_file ...overwriting params...
+    java -jar target/dtls-fuzzer.jar @arg_file ...overwriting params...
 
 ### Batch learning     
 To launch a batch of learning runs, one can use the `launcher.py` script in `experiments/scripts`.
 Provided a directory with argument files, the tool will launch a learning process for each argument file.
 
-    > python3 experiments/scripts/launcher.py --jar target/dtls-fuzzer.jar --args args_folder
+    python3 experiments/scripts/launcher.py --jar target/dtls-fuzzer.jar --args args_folder
 
 ## Running a test suite
 Before running learning experiments, it helps to check that arguments are correctly set, particularly timing parameters.
@@ -466,7 +466,7 @@ This functionality can also be used when diagnosing failed learning experiments,
 
 To run the test suite on a server using the default alphabet, you can run:
 
-    > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file
+    java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file
     
 For example of test files, go to `examples/tests`.
 A test file comprises a newline-separated list of inputs. 
@@ -476,16 +476,16 @@ The end of each test is either the end of the file, or an empty new line.
 
 If you have a model/specification, you can also run the test suite and compare the output with that in a specification.
 
-    > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file -specification model
+    java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file -specification model
     
 The number of times tests are run is configurable by the `-times` parameter, which defaults to 1.
 Setting it to a high number helps detect non-determinism in learning configurations, by comparing the output of each test.
 
-    > java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file -times 10
+    java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file -times 10
 
 Finally, if you have the arguments file for a learning experiment, you can use them to run tests on the SUT involved by just adding the necessary test arguments: 
 
-    > java -jar target/dtls-fuzzer.jar @learning_arg_file -test test_file
+    java -jar target/dtls-fuzzer.jar @learning_arg_file -test test_file
 
 
 
