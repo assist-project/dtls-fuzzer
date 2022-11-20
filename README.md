@@ -457,7 +457,7 @@ You can also add other explicit arguments to commands (which will overwrite thos
 To launch a batch of learning runs, one can use the `launcher.py` script in `experiments/scripts`.
 Provided a directory with argument files, the tool will launch a learning process for each argument file.
 
-    python3 experiments/scripts/launcher.py --jar target/dtls-fuzzer.jar --args args_folder
+    experiments/scripts/launcher.py --jar target/dtls-fuzzer.jar --args args_folder
 
 ## Running a test suite
 Before running learning experiments, it helps to check that arguments are correctly set, particularly timing parameters.
