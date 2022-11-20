@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: Latin-1 -*-
 """Graphviz's dot language Python interface.
 

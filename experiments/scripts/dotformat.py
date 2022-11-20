@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pydot
 import sys
 import os

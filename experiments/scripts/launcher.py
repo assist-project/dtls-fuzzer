@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import os
 import os.path
@@ -107,3 +109,4 @@ if __name__ == "__main__":
     app_params = list(args.appparams)
     jvm_params = list(args.jvmparams)
     launch_experiments(args.processcount, args.tool, args.args, args.jar, args.redirect, (jvm_params, app_params), args.log)
+

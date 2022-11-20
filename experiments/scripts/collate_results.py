@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 from enum import Enum
 import sys
@@ -292,5 +294,4 @@ if __name__ == "__main__":
             final_results = result_datum
 
         collate_results(final_results, args.format, output)
-
 
