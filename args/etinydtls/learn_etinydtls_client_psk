@@ -2,17 +2,17 @@ state-fuzzer-client
 
 # SUT config
 -port
-${sut.port} 
+${sut.port}
 -startWait
 0
 -alphabet
 ${alphabets.clients}/tinydtls_psk8.xml
 -responseWait
-100  
--protocol 
-DTLS12 
--cmd 
-"${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sut.port} localhost"
+100
+-protocol
+DTLS12
+-cmd
+${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sut.port} localhost
 
 # learner config
 -randLength
@@ -21,7 +21,7 @@ DTLS12
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
--output 
+-output
 output/etinydtls_client_psk
 -depth
 1
