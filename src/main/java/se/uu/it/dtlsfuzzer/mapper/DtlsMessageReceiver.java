@@ -57,11 +57,15 @@ public class DtlsMessageReceiver {
     public MessageActionResult receiveMessages(TlsContext context) {
         context.setTalkingConnectionEndType(context.getChooser().getMyConnectionPeer());
         MessageActionResult result = new MessageActionResult();
+        // we use the fragment manager simply as a convenient way of assembling
+        // fragments
+        // we do not currently use it for retransmission/reordering
+        FragmentManager fragmentManager = new FragmentManager(context.getConfig());
         byte[] bytes = receiveBytes(context);
         while (bytes.length > 0) {
             List<Record> records = new ArrayList<Record>();
             parseRecords(bytes, records, context);
-            MessageActionResult intermediaryResult = processParsedRecords(records, context);
+            MessageActionResult intermediaryResult = processParsedRecords(records, fragmentManager, context);
             result.merge(intermediaryResult);
             bytes = receiveBytes(context);
         }
@@ -72,7 +76,7 @@ public class DtlsMessageReceiver {
      * Processes a collection of parsed records to extract encapsulated fragments
      * and messages.
      */
-    private MessageActionResult processParsedRecords(Collection<Record> parsedRecords, TlsContext context) {
+    private MessageActionResult processParsedRecords(Collection<Record> parsedRecords, FragmentManager fragmentManager, TlsContext context) {
         // form groups of records that can be processed together, e.g. records from the
         // same epoch with the same ContentType
         List<RecordGroup> recordGroups = formRecordGroups(parsedRecords);
@@ -89,7 +93,7 @@ public class DtlsMessageReceiver {
             // in rare instances, we may not be able to decrypt or authenticate the record
             // we then separate it from other records so as to not affect their processing
             for (RecordGroup processableGroup : group.splitIntoProcessableGroups()) {
-                MessageActionResult groupResult = processRecordGroup(processableGroup, context);
+                MessageActionResult groupResult = processRecordGroup(processableGroup, fragmentManager, context);
                 result.merge(groupResult);
             }
         }
@@ -101,18 +105,13 @@ public class DtlsMessageReceiver {
      * Processes the decrypted payload of a group of records, extracting and
      * processing messages and fragments.
      */
-    private MessageActionResult processRecordGroup(RecordGroup group, TlsContext context) {
+    private MessageActionResult processRecordGroup(RecordGroup group, FragmentManager fragmentManager, TlsContext context) {
         List<ProtocolMessage> processedMessages = new ArrayList<>();
         List<DtlsHandshakeMessageFragment> processedFragments = new ArrayList<>();
 
         // handle decrypted payload extracting/processing messages
         List<ProtocolMessage> handledMessages = handleRecordBytes(group.getCleanProtocolMessageBytes(),
                 group.getProtocolMessageType(), group.getEpoch(), context);
-
-        // we use TLS-Attacker's global fragment manager simply as a convenient way of assembling
-        // fragments
-        // we do not currently use it for retransmission/reordering
-        FragmentManager fragmentManager = context.getDtlsFragmentManager();
 
         // for Handshake fragments, we do another processing round, this time
         // extracting/processing handshake messages
