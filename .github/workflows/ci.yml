@@ -51,10 +51,65 @@ jobs:
       - name: Setup SUT
         run: ./setup_sut.sh mbedtls-2.26.0
 
-      - name: Test mbedtls-2.26.0 Client (dhe_ecdhe_rsa_reneg)
+      - name: Test mbedtls-2.26.0 Client (dhe_ecdhe_rsa_cert_reneg)
         run: |
           java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg -Dmbedtls.version=2.26.0 -roundLimit 5
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg 5
+
+  OpenSSL-1-1-1k_Server_all_cert_req:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh openssl-1.1.1k
+
+      - name: Test openssl-1.1.1k Server (all_cert_req)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_server_all_cert_req -Dopenssl.version=1.1.1k -roundLimit 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/openssl-1.1.1k_server_all_cert_req output/openssl-1.1.1k_server_all_cert_req 5
+
+  OpenSSL-1-1-1k_Client_dhe_ecdhe_rsa_eneg:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh openssl-1.1.1k
+
+      - name: Test openssl-1.1.1k Client (dhe_ecdhe_rsa_reneg)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_client_dhe_ecdhe_rsa_cert_reneg -Dopenssl.version=1.1.1k -roundLimit 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/openssl-1.1.1k_client_dhe_ecdhe_rsa_cert_reneg output/openssl-1.1.1k_client_dhe_ecdhe_rsa_cert_reneg 5
+
 
   WolfSSL-4-7-1r_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
