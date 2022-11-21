@@ -337,7 +337,7 @@ Any openssl-1.1.1b configuration (for example `args/openssl/learn_openssl_server
 Experiments terminate quickly (less than a day), exercising all key exchange algorithms.
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
 
-    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl-1.1.1b_server_all_cert_req -queries 5000
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_all_cert_req -queries 5000
 
 Note, when learning OpenSSL it is necessary to point the LD_LIBRARY_PATH variable to the installation directory.
 
