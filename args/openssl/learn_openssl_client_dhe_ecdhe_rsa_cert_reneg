@@ -28,4 +28,4 @@ ${alphabets.clients}/dhe_ecdhe_rsa_cert_reneg.xml
 -output
 output/openssl-${openssl.version}_client_dhe_ecdhe_rsa_cert_reneg
 -timeLimit
-"P2D"
+P2D

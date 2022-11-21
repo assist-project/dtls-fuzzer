@@ -24,7 +24,7 @@ ${alphabets.clients}/psk_reneg.xml
 -output
 output/openssl-${openssl.version}_client_psk_reneg
 -timeLimit
-"P2D"
+P2D
 
 # mapper config
 -socketClosedAsTimeout
