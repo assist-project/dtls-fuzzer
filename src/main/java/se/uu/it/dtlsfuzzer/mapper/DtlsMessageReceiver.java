@@ -109,10 +109,10 @@ public class DtlsMessageReceiver {
         List<ProtocolMessage> handledMessages = handleRecordBytes(group.getCleanProtocolMessageBytes(),
                 group.getProtocolMessageType(), group.getEpoch(), context);
 
-        // we use the fragment manager simply as a convenient way of assembling
+        // we use TLS-Attacker's global fragment manager simply as a convenient way of assembling
         // fragments
         // we do not currently use it for retransmission/reordering
-        FragmentManager fragmentManager = new FragmentManager(context.getConfig());
+        FragmentManager fragmentManager = context.getDtlsFragmentManager();
 
         // for Handshake fragments, we do another processing round, this time
         // extracting/processing handshake messages
