@@ -401,7 +401,7 @@ function install_sut_dep() {
         mkdir $MODULES_DIR
     fi
 
-    # JSSE SUT, meaning all we need to ensure is that the right vm is installed
+    # JSSE SUT, meaning all we need to ensure is that the right VM is installed
     if [[ $sut == jsse* ]]; then
         ver=`get_ver $sut`
         verstripped=${ver//\./}
@@ -422,9 +422,9 @@ function install_sut_dep() {
 
         install_dep $jdk_name $jdk_url
     elif [[ $sut == pion* ]]; then
-        if [[ $sut == *usenix* ]]; then 
+        if [[ $sut == *usenix* ]]; then
             go get github.com/pion/dtls@$PIONDTLS_USENIX_REP_COMMIT
-        else 
+        else
             ver=`get_ver $sut`
             if [[ $sut == *piondtls-1* ]]; then
                 go get github.com/pion/dtls@v$ver
