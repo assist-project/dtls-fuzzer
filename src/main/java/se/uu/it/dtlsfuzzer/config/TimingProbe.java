@@ -24,13 +24,13 @@ public class TimingProbe {
 	private static final Logger LOGGER = LogManager.getLogger(TimingProbe.class);
 	
 	public static void runTimingProbe(TimingProbeEnabler config) throws FileNotFoundException {
-		CleanupTasks cleanupTaks = new CleanupTasks();
+		CleanupTasks cleanupTasks = new CleanupTasks();
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 		TimingProbe probe = ((TimingProbeProvider) config).getTimingProbe();
 		if (probe.isActive()) {
 			ProbeTestRunner probeTestRunner = null;
 			try {
-				probeTestRunner = new ProbeTestRunner(config.getTestRunnerConfig(), alphabet, config.getSulDelegate(), config.getMapperConfig(), cleanupTaks);
+				probeTestRunner = new ProbeTestRunner(config.getTestRunnerConfig(), alphabet, config.getSulDelegate(), config.getMapperConfig(), cleanupTasks);
 				probe.setProbeTestRunner(probeTestRunner);
 				if (probe.isValid()) {
 					

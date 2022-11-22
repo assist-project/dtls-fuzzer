@@ -42,7 +42,7 @@ public abstract class ToolConfig extends GeneralDelegate {
 	public static final String VAR_FUZZER_PORT = "fuzzer.port";
 	
 	/* Stores application properties which include variable definitions */
-	@DynamicParameter(names = "-D", description = "Definitions for variables, which can be refered to in arguments by ${var}. "
+	@DynamicParameter(names = "-D", description = "Definitions for variables, which can be referred to in arguments by ${var}. "
 			+ "Variables are replaced with their corresponding values before the arguments are parsed."
 			+ "Can be passed as either JVM properties (after java) or as application properties.")
 	protected static Map<String, String> props = new LinkedHashMap<>();

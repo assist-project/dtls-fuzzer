@@ -113,17 +113,17 @@ public class MultipleRunsSULOracle<I, O> implements MealyMembershipOracle<I, O> 
 										arg1.getValue());
 							}
 						}).get();
-				double likelyhood = (double) mostCommonEntry.getValue()
+				double likelihood = (double) mostCommonEntry.getValue()
 						/ (i + 1);
 
-				log.println("Most likely answer has likelyhood " + likelyhood
+				log.println("Most likely answer has likelihood " + likelihood
 						+ " after " + (i + 1) + " runs");
-				if (likelyhood >= ACCEPTABLE_PROBABILISTIC_THRESHOLD) {
+				if (likelihood >= ACCEPTABLE_PROBABILISTIC_THRESHOLD) {
 					log.println("Answer deemed to be in acceptable range, returning answer");
 					log.flush();
 					return mostCommonEntry.getKey();
 				} else {
-					if (likelyhood >= PASSABLE_PROBABILISTIC_THRESHOLD) {
+					if (likelihood >= PASSABLE_PROBABILISTIC_THRESHOLD) {
 						log.println("Answer deemed to be in passable range, continuing execution");
 					} else {
 						log.flush();

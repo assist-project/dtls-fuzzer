@@ -10,10 +10,10 @@ import se.uu.it.dtlsfuzzer.learner.EquivalenceAlgorithmName;
 import se.uu.it.dtlsfuzzer.learner.LearningAlgorithmName;
 
 public class LearningConfig {
-	@Parameter(names = "-learningAlgorithm", description = "Which algorithm shold be used for learning")
+	@Parameter(names = "-learningAlgorithm", description = "Which algorithm should be used for learning")
 	private LearningAlgorithmName learningAlgorithm = LearningAlgorithmName.TTT;
 
-	@Parameter(names = "-equivalenceAlgorithms", description = "Which test algorithms should be used for equivalance testing")
+	@Parameter(names = "-equivalenceAlgorithms", description = "Which test algorithms should be used for equivalence testing")
 	private List<EquivalenceAlgorithmName> equivalenceAlgorithms = Arrays
 			.asList(EquivalenceAlgorithmName.RANDOM_WP_METHOD);
 

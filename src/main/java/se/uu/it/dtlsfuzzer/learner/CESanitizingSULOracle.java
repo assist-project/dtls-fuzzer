@@ -110,7 +110,7 @@ public class CESanitizingSULOracle<A extends UniversalDeterministicAutomaton<?, 
 			return checkedOutput;
 		} catch (NonDeterminismException exc) {
 			if (skipNonDetTests) {
-				log.println("NonDetermism in running input");
+				log.println("Non-determinism in running input");
 				log.println(exc);
 				log.println("Skipping: " + input);
 				log.flush();

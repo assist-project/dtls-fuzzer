@@ -24,7 +24,7 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 /**
  * A mapper which implements the regular/non-altered way of sending messages.
  * 
- * It performs phased execution of inputs, allowing intervention at every phase by just subclassing and overriding the executePhase method.
+ * It performs phased execution of inputs, allowing intervention at every phase by just sub-classing and overriding the executePhase method.
  */
 public class PhasedMapper extends AbstractMapper {
 

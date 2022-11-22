@@ -16,7 +16,7 @@ import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 /**
- * An input which resets the premaster of the context prior to generating a key
+ * An input which resets the pre-master of the context prior to generating a key
  * exchange message
  */
 public class ClientKeyExchangeInput extends DtlsInput {
