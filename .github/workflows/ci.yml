@@ -161,8 +161,8 @@ jobs:
 
       - name: Test piondtls-2.0.9 Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/piondtls/learn_piondtls_client_psk -Dpiondtls.version=2.0.9 -roundLimit 5
-          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/piondtls-2.0.9_client_psk output/piondtls-2.0.9_client_psk 5
+          java -jar target/dtls-fuzzer.jar args/piondtls/learn_piondtls_client_psk -Dpiondtls.version=2.0.9 -roundLimit 7
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/piondtls-2.0.9_client_psk output/piondtls-2.0.9_client_psk 7
 
   WolfSSL-4-7-1r_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
