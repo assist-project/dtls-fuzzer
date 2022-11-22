@@ -249,7 +249,7 @@ public class Learner {
 		tracker.finishedLearning(stateMachine, finished, notFinishedReason);
 
 		LOGGER.info("Finished experiment");
-		LOGGER.info("Number of refinement rounds:" + rounds);
+		LOGGER.info("Number of refinement rounds: " + rounds);
 		LOGGER.info("Results stored in {}", outputFolder.getPath());
 		if (stateMachine == null) {
 			LOGGER.info("Could not generate a first hypothesis, so not much to report on");
