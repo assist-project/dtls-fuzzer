@@ -110,6 +110,59 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_client_dhe_ecdhe_rsa_cert_reneg -Dopenssl.version=1.1.1k -roundLimit 5
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/openssl-1.1.1k_client_dhe_ecdhe_rsa_cert_reneg output/openssl-1.1.1k_client_dhe_ecdhe_rsa_cert_reneg 5
 
+  PionDTLS-2-0-9_Server_psk:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven golang
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh piondtls-2.0.9
+
+      - name: Test piondtls-2.0.9 Server (psk)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/piondtls/learn_piondtls_server_psk -Dpiondtls.version=2.0.9 -roundLimit 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/piondtls-2.0.9_server_psk output/piondtls-2.0.9_server_psk 5
+
+  PionDTLS-2-0-9_Client_psk:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven golang
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh piondtls-2.0.9
+
+      - name: Test piondtls-2.0.9 Client (psk)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/piondtls/learn_piondtls_client_psk -Dpiondtls.version=2.0.9 -roundLimit 7
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/piondtls-2.0.9_client_psk output/piondtls-2.0.9_client_psk 7
 
   WolfSSL-4-7-1r_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
