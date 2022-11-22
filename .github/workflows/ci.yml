@@ -14,8 +14,8 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-8-jdk maven
-          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          sudo apt-get install -y openjdk-11-jdk maven
+          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
           java -version
 
       - name: Install DTLS-Fuzzer
@@ -41,8 +41,8 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-8-jdk maven
-          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          sudo apt-get install -y openjdk-11-jdk maven
+          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
           java -version
 
       - name: Install DTLS-Fuzzer
@@ -55,6 +55,60 @@ jobs:
         run: |
           java -jar target/dtls-fuzzer.jar args/ctinydtls/learn_ctinydtls_client_psk -roundLimit 5
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/ctinydtls_client_psk output/ctinydtls_client_psk 5
+
+  JSSE-12-0-2_Server_ecdhe_cert_req:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk maven
+          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh jsse-12.0.2
+
+      - name: Test jsse-12.0.2 Server (ecdhe_cert_req)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_server_ecdhe_cert_req -Djsse.version=12.0.2 -roundLimit 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/jsse-12.0.2_server_ecdhe_cert_req output/jsse-12.0.2_server_ecdhe_cert_req 5
+
+  JSSE-12-0-2_Client_ecdhe_cert:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk maven
+          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh jsse-12.0.2
+
+      - name: Test jsse-12.0.2 Client (ecdhe_cert)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_client_ecdhe_cert -Djsse.version=12.0.2 -roundLimit 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/jsse-12.0.2_client_ecdhe_cert output/jsse-12.0.2_client_ecdhe_cert 5
 
   Mbedtls-2-26-0_Server_all_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -218,6 +272,60 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/piondtls/learn_piondtls_client_psk -Dpiondtls.version=2.0.9 -roundLimit 7
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/piondtls-2.0.9_client_psk output/piondtls-2.0.9_client_psk 7
 
+  Scandium-2-0-0-M16_Server_ecdhe_cert_req:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk maven
+          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh scandium-2.0.0-M16
+
+      - name: Test scandium-2.0.0-M16 Server (ecdhe_cert_req)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_server_ecdhe_cert_req -Dscandium.version=2.0.0-M16 -roundLimit 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/scandium-2.0.0-M16_server_ecdhe_cert_req output/scandium-2.0.0-M16_server_ecdhe_cert_req 5
+
+  Scandium-2-0-0-M16_Client_ecdhe_cert:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk maven
+          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh scandium-2.0.0-M16
+
+      - name: Test scandium-2.0.0-M16 Client (ecdhe_cert)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_client_ecdhe_cert -Dscandium.version=2.0.0-M16 -roundLimit 4
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/scandium-2.0.0-M16_client_ecdhe_cert output/scandium-2.0.0-M16_client_ecdhe_cert 4
+
   WolfSSL-4-7-1r_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
@@ -271,111 +379,3 @@ jobs:
         run: |
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -roundLimit 6
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-4.7.1r_client_psk output/wolfssl-4.7.1r_client_psk 6
-
-  JSSE-12-0-2_Server_ecdhe_cert_req:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
-      - name: Install DTLS-Fuzzer
-        run: ./install.sh
-
-      - name: Setup SUT
-        run: ./setup_sut.sh jsse-12.0.2
-
-      - name: Test jsse-12.0.2 Server (ecdhe_cert_req)
-        run: |
-          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_server_ecdhe_cert_req -Djsse.version=12.0.2 -roundLimit 5
-          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/jsse-12.0.2_server_ecdhe_cert_req output/jsse-12.0.2_server_ecdhe_cert_req 5
-
-  JSSE-12-0-2_Client_ecdhe_cert:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
-      - name: Install DTLS-Fuzzer
-        run: ./install.sh
-
-      - name: Setup SUT
-        run: ./setup_sut.sh jsse-12.0.2
-
-      - name: Test jsse-12.0.2 Client (ecdhe_cert)
-        run: |
-          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_client_ecdhe_cert -Djsse.version=12.0.2 -roundLimit 5
-          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/jsse-12.0.2_client_ecdhe_cert output/jsse-12.0.2_client_ecdhe_cert 5
-  
-  Scandium-2-0-0-M16_Server_ecdhe_cert_req:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
-      - name: Install DTLS-Fuzzer
-        run: ./install.sh
-
-      - name: Setup SUT
-        run: ./setup_sut.sh scandium-2.0.0-M16
-
-      - name: Test scandium-2.0.0-M16 Server (ecdhe_cert_req)
-        run: |
-          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_server_ecdhe_cert_req -Dscandium.version=2.0.0-M16 -roundLimit 5
-          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/scandium-2.0.0-M16_server_ecdhe_cert_req output/scandium-2.0.0-M16_server_ecdhe_cert_req 5
-
-  Scandium-2-0-0-M16_Client_ecdhe_cert:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
-      - name: Install DTLS-Fuzzer
-        run: ./install.sh
-
-      - name: Setup SUT
-        run: ./setup_sut.sh scandium-2.0.0-M16
-
-      - name: Test scandium-2.0.0-M16 Client (ecdhe_cert)
-        run: |
-          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_client_ecdhe_cert -Dscandium.version=2.0.0-M16 -roundLimit 2
-          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/scandium-2.0.0-M16_client_ecdhe_cert output/scandium-2.0.0-M16_client_ecdhe_cert 2
