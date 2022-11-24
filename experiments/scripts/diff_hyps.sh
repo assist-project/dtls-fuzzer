@@ -1,23 +1,26 @@
 #!/usr/bin/env bash
 
-learning_folder1=$1
-learning_folder2=$2
-rounds=$3
+dir1=$1
+dir2=$2
+num_rounds=$3
 
 if [ $# != 3 ]; then
-    echo "Diffs the hyps generated in the first [rounds] by two learning experiments"
-    echo ""   
-    echo "Usage: script learning_folder1 learning_folder2 rounds"
+    echo "Usage: ${0##*/} dir1 dir2 num_rounds"
+    echo "Diffs the first num_rounds hypotheses stored in two dirs"
     exit 1
 fi
 
-if [[ ! -d $learning_folder1 || ! -d $learning_folder2 ]]; then
-    echo "learning folders cannot be empty (they should contain at least the hyp files)"
+if [[ ! -d $dir1 ]]; then
+    echo $dir1": No such directory"
+    exit 1
+fi
+if [[ ! -d $dir2 ]]; then
+    echo $dir2": No such directory"
     exit 1
 fi
 
-for ((i = 1 ; i <= $rounds ; i++)); do
-    diff --unified=0 $learning_folder1/hyp$i.dot $learning_folder2/hyp$i.dot
+for ((i = 1 ; i <= $num_rounds ; i++)); do
+    diff --unified=0 $dir1/hyp$i.dot $dir2/hyp$i.dot
     if [ $? != 0 ]; then
         exit 1
     fi
