@@ -148,30 +148,39 @@ A quickrun of DTLS-Fuzzer goes as follows.
 First we set up the SUT, which is automatically by a `setup_sut.sh` script.
 
     ./setup_sut.sh openssl-1.1.1b
-    
-Then we select an argument file form the `args/openssl-1.1.1b` folder.
+
+This will create an empty `modules` directory, and a `suts/openssl-1.1.1b` directory.
+
+
+Then we select an argument file form the `args/openssl` folder.
+
 We notice there are several argument files to choose from, namely:
 
-    learn_openssl-1.1.1b_server_all_cert_none  
-    learn_openssl-1.1.1b_server_all_cert_nreq  
-    learn_openssl-1.1.1b_server_all_cert_req
-    learn_openssl-1.1.1b_server_psk
+    learn_openssl_client_dhe_ecdhe_rsa_cert
+    learn_openssl_client_dhe_ecdhe_rsa_cert_reneg
+    learn_openssl_client_ecdhe_cert_reneg
+    learn_openssl_client_psk
+    learn_openssl_client_psk_reneg
+    learn_openssl_server_all_cert_none
+    learn_openssl_server_all_cert_nreq
+    learn_openssl_server_all_cert_req
+    learn_openssl_server_psk
 
-The argument file of interest is `learn_openssl-1.1.1b_server_psk`, since its filename indicates PSK.
+The argument file of interest is `learn_openssl_server_psk`, since its filename indicates PSK.
 We thus select it, and run the fuzzer on it.
 We additionally cap the number of tests to 200, to shorten learning time.
 Finally, for OpenSSL, LD_LIBRARY_PATH has to be set to the implementation's directory (`suts/openssl-1.1.1b/`).
 Before we run learning, we might want to execute a simple test to check that our setup is functioning.
 A good test is just completing a handshake. 
-We supply the argument file, along with a corresponding test from `examples/tests` as parameter.
+We supply the argument file, along with a corresponding test from `examples/tests/servers` as parameter.
 We get:
 
-    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_psk -test examples/tests/psk
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_psk -test examples/tests/servers/psk
 
 If all goes well, the server should have printed out "This is a hello message", a message we send after completing the handshake.
 Knowing our setup functions, we can now start learning by running:
 
-    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_psk -queries 200
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_psk -queries 200
 
 We notice that an output directory, `output/openssl-1.1.1b_psk/` for the experiment has been created.
 We can `ls` this directory to check the current status of the experiment (the number of hypotheses generated...).
@@ -324,11 +333,11 @@ That is because PSK with small passwords requires significantly less processing 
 
 
 ### OpenSSL 1.1.1b
-Any openssl-1.1.1b configuration (for example `args/openssl-1.1.1b/learn_openssl-1.1.1b_server_all_cert_req`) can be tried out.
+Any openssl-1.1.1b configuration (for example `args/openssl/learn_openssl_server_all_cert_req`) can be tried out.
 Experiments terminate quickly (less than a day), exercising all key exchange algorithms.
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
 
-    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl-1.1.1b/learn_openssl-1.1.1b_server_all_cert_req -queries 5000
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_all_cert_req -queries 5000
 
 Note, when learning OpenSSL it is necessary to point the LD_LIBRARY_PATH variable to the installation directory.
 
@@ -379,7 +388,7 @@ Command for RSA key exchange:
 Instead of arduous learning, we may want to simply test if a handshake can be completed in this setting without sending any certificate messages. 
 This can be done by running:
 
-    java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_server_rsa_cert_req -test examples/tests/rsa
+    java -jar target/dtls-fuzzer.jar @args/jsse-12/learn_jsse-12_server_rsa_cert_req -test examples/tests/servers/rsa
 
 
 ## Analyzing results
@@ -468,7 +477,7 @@ To run the test suite on a server using the default alphabet, you can run:
 
     java -jar target/dtls-fuzzer.jar -connect localhost:20000 -test test_file
     
-For example of test files, go to `examples/tests`.
+For example of test files, go to `examples/tests/servers`.
 A test file comprises a newline-separated list of inputs. 
 Tests are separated by empty new lines.
 The end of each test is either the end of the file, or an empty new line.
