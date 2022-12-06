@@ -20,15 +20,26 @@ readonly SOURCES_DIR="$SCRIPT_DIR/experiments/sources"
 # dir where the modules SUTs rely on are stored
 readonly MODULES_DIR="$SCRIPT_DIR/modules"
 
-# the names of the suts for which directories are created should be consistent with the names appearing in argument files
-# variable naming allows us to determine via dynamic variable resolution whether, for example, an SUT is fetched from a repository or from some archive
-# for each implementation we maintain a set of variables that are not tied to a version for quick modification
-readonly MBEDTLS="mbedtls-2.16.1"
-readonly MBEDTLS_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.16.1.tar.gz'
-readonly MBEDTLS_2250="mbedtls-2.25.0"
-readonly MBEDTLS_2250_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.25.0.tar.gz'
-readonly MBEDTLS_2260="mbedtls-2.26.0"
-readonly MBEDTLS_2260_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.26.0.tar.gz'
+#-----------------------------------------------------------------------------
+# The names of the SUTs for which directories are created should be
+# consistent with the names appearing in argument files.
+# Variable naming allows us to determine via dynamic variable resolution
+# whether, e.g., a SUT is fetched from a repository or from some archive.
+# For each implementation, we maintain a set of variables that are not tied
+# to a version for quick modification.
+#-----------------------------------------------------------------------------
+
+readonly CTINYDTLS='ctinydtls'
+readonly CTINYDTLS_REP_URL='https://github.com/contiki-ng/tinydtls.git'
+readonly CTINYDTLS_COMMIT='53a0d97'
+#readonly CTINYDTLS_ARCH_URL='https://github.com/contiki-ng/tinydtls/archive/53a0d97da748a67093c49cb38744650c71d58c4d.tar.gz'
+
+readonly ETINYDTLS='etinydtls'
+readonly ETINYDTLS_REP_URL='https://github.com/eclipse/tinydtls.git'
+readonly ETINYDTLS_COMMIT='8414f8a'
+readonly ETINYDTLS_DEVELOP="etinydtls-develop"
+readonly ETINYDTLS_DEVELOP_REP_URL='https://github.com/eclipse/tinydtls.git'
+readonly ETINYDTLS_DEVELOP_COMMIT='19d9fcf'
 
 readonly GNUTLS_LATEST='gnutls-latest'
 readonly GNUTLS_LATEST_REP_URL='https://gitlab.com/gnutls/gnutls.git'
@@ -38,62 +49,6 @@ readonly GNUTLS_367='gnutls-3.6.7'
 readonly GNUTLS_367_ARCH_URL='ftp://ftp.gnutls.org/gcrypt/gnutls/v3.6/gnutls-3.6.7.tar.xz'
 readonly GNUTLS_3519='gnutls-3.5.19'
 readonly GNUTLS_3519_ARCH_URL='ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/gnutls-3.5.19.tar.xz'
-
-readonly OPENSSL='openssl-1.1.1b'
-readonly OPENSSL_ARCH_URL='https://www.openssl.org/source/old/1.1.1/openssl-1.1.1b.tar.gz'
-readonly OPENSSL_111g='openssl-1.1.1g'
-readonly OPENSSL_111g_ARCH_URL='https://www.openssl.org/source/old/1.1.1/openssl-1.1.1g.tar.gz'
-readonly OPENSSL_111k='openssl-1.1.1k'
-readonly OPENSSL_111k_ARCH_URL='https://www.openssl.org/source/openssl-1.1.1k.tar.gz' #this will not be valid for much longer
-
-readonly ETINYDTLS='etinydtls'
-readonly ETINYDTLS_REP_URL='https://github.com/eclipse/tinydtls.git'
-readonly ETINYDTLS_COMMIT='8414f8a'
-readonly ETINYDTLS_DEVELOP="etinydtls-develop"
-readonly ETINYDTLS_DEVELOP_REP_URL='https://github.com/eclipse/tinydtls.git'
-readonly ETINYDTLS_DEVELOP_COMMIT='19d9fcf'
-
-
-#readonly ETINYDTLS_ARCH_URL='https://github.com/eclipse/tinydtls/archive/706888256c3e03d9fcf1ec37bb1dd6499213be3c.tar.gz'
-readonly CTINYDTLS='ctinydtls'
-readonly CTINYDTLS_REP_URL='https://github.com/contiki-ng/tinydtls.git'
-readonly CTINYDTLS_COMMIT='53a0d97'
-#readonly CTINYDTLS_ARCH_URL='https://github.com/contiki-ng/tinydtls/archive/53a0d97da748a67093c49cb38744650c71d58c4d.tar.gz'
-
-readonly SCANDIUM_OLD='scandium-2.0.0-M16'
-readonly SCANDIUM_OLD_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0.0-M16.tar.gz'
-readonly CALIFORNIUM_OLD="californium-2.0.0-M16"
-readonly CALIFORNIUM_OLD_ARCH_URL='https://github.com/eclipse/californium/archive/2.0.0-M16.tar.gz'
-readonly SCANDIUM_230="scandium-2.3.0"
-readonly SCANDIUM_230_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.3.0.tar.gz'
-readonly CALIFORNIUM_230="californium-2.3.0"
-readonly CALIFORNIUM_230_ARCH_URL='https://github.com/eclipse/californium/archive/2.3.0.tar.gz'
-readonly SCANDIUM_262="scandium-2.6.2"
-readonly SCANDIUM_262_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.6.2.tar.gz'
-readonly CALIFORNIUM_262="californium-2.6.2"
-readonly CALIFORNIUM_262_ARCH_URL='https://github.com/eclipse/californium/archive/2.6.2.tar.gz'
-readonly SCANDIUM_300_M2="scandium-3.0.0-M2"
-readonly SCANDIUM_300_M2_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v3.0.0-M2.tar.gz'
-readonly CALIFORNIUM_300_M2="californium-3.0.0-M2"
-readonly CALIFORNIUM_300_M2_ARCH_URL='https://github.com/eclipse/californium/archive/refs/tags/3.0.0-M2.tar.gz'
-
-readonly WOLFSSL="wolfssl-4.0.0"
-readonly WOLFSSL_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/v4.0.0-stable.tar.gz'
-readonly WOLFSSL_440="wolfssl-4.4.0"
-readonly WOLFSSL_440_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/v4.4.0-stable.tar.gz'
-readonly WOLFSSL_471r="wolfssl-4.7.1r"
-readonly WOLFSSL_471r_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/refs/tags/v4.7.1r.tar.gz'
-
-readonly PIONDTLS_USENIX="piondtls-usenix" # the usenix version sits one commit before 1.5.2 (the commit after it fixes the application processing bug)
-readonly PIONDTLS_USENIX_REP_COMMIT="e4481fc"
-readonly PIONDTLS_USENIX_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/v1.5.2.tar.gz"
-readonly PIONDTLS_152="piondtls-1.5.2" # likely works with other v1.x.x versions
-readonly PIONDTLS_152_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/v1.5.2.tar.gz"
-readonly PIONDTLS_202="piondtls-2.0.2" # likely works with other v2.x.x versions
-readonly PIONDTLS_202_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/v2.0.2.tar.gz"
-readonly PIONDTLS_209="piondtls-2.0.9" # likely works with other v2.x.x versions
-readonly PIONDTLS_209_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/refs/tags/v2.0.9.tar.gz"
-
 
 #readonly JSSE_ARCH_URL="https://github.com/assist-project/jsse-dtls-clientserver/archive/refs/tags/v1.0.0.tar.gz"
 readonly JSSE_LOCAL=$SOURCES_DIR/jsse-dtls-clientserver
@@ -116,6 +71,55 @@ readonly JSSE_1601="jsse-16.0.1"
 readonly JSSE_1601_LOCAL=$JSSE_LOCAL
 #readonly JSSE_1601_ARCH_URL=$JSSE_ARCH_URL
 
+readonly MBEDTLS_2161="mbedtls-2.16.1"
+readonly MBEDTLS_2161_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.16.1.tar.gz'
+readonly MBEDTLS_2250="mbedtls-2.25.0"
+readonly MBEDTLS_2250_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.25.0.tar.gz'
+readonly MBEDTLS_2260="mbedtls-2.26.0"
+readonly MBEDTLS_2260_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.26.0.tar.gz'
+
+readonly OPENSSL_111b='openssl-1.1.1b'
+readonly OPENSSL_111b_ARCH_URL='https://www.openssl.org/source/old/1.1.1/openssl-1.1.1b.tar.gz'
+readonly OPENSSL_111g='openssl-1.1.1g'
+readonly OPENSSL_111g_ARCH_URL='https://www.openssl.org/source/old/1.1.1/openssl-1.1.1g.tar.gz'
+readonly OPENSSL_111k='openssl-1.1.1k'
+readonly OPENSSL_111k_ARCH_URL='https://www.openssl.org/source/old/1.1.1/openssl-1.1.1k.tar.gz'
+readonly OPENSSL_300='openssl-3.0.0'
+readonly OPENSSL_300_ARCH_URL='https://www.openssl.org/source/old/3.0/openssl-3.0.0.tar.gz'
+
+readonly PIONDTLS_USENIX="piondtls-usenix" # the usenix version sits one commit before 1.5.2 (the commit after it fixes the application processing bug)
+readonly PIONDTLS_USENIX_REP_COMMIT="e4481fc"
+readonly PIONDTLS_USENIX_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/v1.5.2.tar.gz"
+readonly PIONDTLS_152="piondtls-1.5.2" # likely works with other v1.x.x versions
+readonly PIONDTLS_152_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/v1.5.2.tar.gz"
+readonly PIONDTLS_202="piondtls-2.0.2" # likely works with other v2.x.x versions
+readonly PIONDTLS_202_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/v2.0.2.tar.gz"
+readonly PIONDTLS_209="piondtls-2.0.9" # likely works with other v2.x.x versions
+readonly PIONDTLS_209_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/refs/tags/v2.0.9.tar.gz"
+
+readonly SCANDIUM_OLD='scandium-2.0.0-M16'
+readonly SCANDIUM_OLD_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0.0-M16.tar.gz'
+readonly CALIFORNIUM_OLD="californium-2.0.0-M16"
+readonly CALIFORNIUM_OLD_ARCH_URL='https://github.com/eclipse/californium/archive/2.0.0-M16.tar.gz'
+readonly SCANDIUM_230="scandium-2.3.0"
+readonly SCANDIUM_230_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.3.0.tar.gz'
+readonly CALIFORNIUM_230="californium-2.3.0"
+readonly CALIFORNIUM_230_ARCH_URL='https://github.com/eclipse/californium/archive/2.3.0.tar.gz'
+readonly SCANDIUM_262="scandium-2.6.2"
+readonly SCANDIUM_262_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.6.2.tar.gz'
+readonly CALIFORNIUM_262="californium-2.6.2"
+readonly CALIFORNIUM_262_ARCH_URL='https://github.com/eclipse/californium/archive/2.6.2.tar.gz'
+readonly SCANDIUM_300_M2="scandium-3.0.0-M2"
+readonly SCANDIUM_300_M2_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v3.0.0-M2.tar.gz'
+readonly CALIFORNIUM_300_M2="californium-3.0.0-M2"
+readonly CALIFORNIUM_300_M2_ARCH_URL='https://github.com/eclipse/californium/archive/refs/tags/3.0.0-M2.tar.gz'
+
+readonly WOLFSSL_400="wolfssl-4.0.0"
+readonly WOLFSSL_400_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/v4.0.0-stable.tar.gz'
+readonly WOLFSSL_440="wolfssl-4.4.0"
+readonly WOLFSSL_440_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/v4.4.0-stable.tar.gz'
+readonly WOLFSSL_471r="wolfssl-4.7.1r"
+readonly WOLFSSL_471r_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/refs/tags/v4.7.1r.tar.gz'
 
 # dependencies
 readonly JDK_904="jdk-9.0.4"
@@ -141,26 +145,27 @@ readonly M4="m4-1.4.18"
 readonly LIBTOOL_ARCH_URL="http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz"
 readonly LIBTOOL="libtool-2.4.6"
 
-sutvarnames=("OPENSSL" "OPENSSL_111g" "OPENSSL_111k"\ 
-"MBEDTLS" "MBEDTLS_2250" "MBEDTLS_2260"\ 
-"ETINYDTLS" "ETINYDTLS_DEVELOP" "CTINYDTLS"\ 
-"GNUTLS_3519" "GNUTLS_367" "GNUTLS_371" "GNUTLS_LATEST"\ 
-"SCANDIUM_OLD" "SCANDIUM_230" "SCANDIUM_262" "SCANDIUM_300_M2"\ 
-"JSSE_904" "JSSE_11010" "JSSE_1202" "JSSE_1302" "JSSE_1501" "JSSE_1601"\ 
-"WOLFSSL" "WOLFSSL_440 WOLFSSL_471r"\ 
-"PIONDTLS_USENIX" "PIONDTLS_152" "PIONDTLS_202" "PIONDTLS_209")
+# Alphabetically
+sutvarnames=("CTINYDTLS" "ETINYDTLS" "ETINYDTLS_DEVELOP" \
+"GNUTLS_3519" "GNUTLS_367" "GNUTLS_371" "GNUTLS_LATEST" \
+"JSSE_904" "JSSE_11010" "JSSE_1202" "JSSE_1302" "JSSE_1501" "JSSE_1601" \
+"MBEDTLS_2161" "MBEDTLS_2250" "MBEDTLS_2260" \
+"SCANDIUM_OLD" "SCANDIUM_230" "SCANDIUM_262" "SCANDIUM_300_M2" \
+"OPENSSL_111b" "OPENSSL_111g" "OPENSSL_111k" "OPENSSL_300" \
+"PIONDTLS_USENIX" "PIONDTLS_152" "PIONDTLS_202" "PIONDTLS_209" \
+"WOLFSSL_400" "WOLFSSL_440 WOLFSSL_471r")
 
-sut_strings=($OPENSSL $OPENSSL_111g $OPENSSL_111k\ 
-$MBEDTLS $MBEDTLS_2250 $MBEDTLS_2260\ 
-$ETINYDTLS $ETINYDTLS_DEVELOP $CTINYDTLS\ 
-$GNUTLS_3519 $GNUTLS_367 $GNUTLS_371 $GNUTLS_LATEST\ 
-$SCANDIUM_OLD $SCANDIUM_230 $SCANDIUM_262 $SCANDIUM_300_M2\ 
-$JSSE_904 $JSSE_11010 $JSSE_1202 $JSSE_1302 $JSSE_1501 $JSSE_1601\ 
-$WOLFSSL $WOLFSSL_440 $WOLFSSL_471r\ 
-$PIONDTLS_USENIX $PIONDTLS_152 $PIONDTLS_202 $PIONDTLS_209)
+# Alphabetically
+sut_strings=($CTINYDTLS $ETINYDTLS $ETINYDTLS_DEVELOP \
+$GNUTLS_3519 $GNUTLS_367 $GNUTLS_371 $GNUTLS_LATEST \
+$JSSE_904 $JSSE_11010 $JSSE_1202 $JSSE_1302 $JSSE_1501 $JSSE_1601 \
+$MBEDTLS_2161 $MBEDTLS_2250 $MBEDTLS_2260 \
+$OPENSSL_111b $OPENSSL_111g $OPENSSL_111k $OPENSSL_300 \
+$PIONDTLS_USENIX $PIONDTLS_152 $PIONDTLS_202 $PIONDTLS_209 \
+$SCANDIUM_OLD $SCANDIUM_230 $SCANDIUM_262 $SCANDIUM_300_M2 \
+$WOLFSSL_400 $WOLFSSL_440 $WOLFSSL_471r)
 
-
-# options for when setting up SUT
+# Options for when setting up SUT
 opt_no_patch=0
 opt_create_patch=0
 opt_no_dep=0
@@ -306,8 +311,6 @@ function download_sut() {
         cp -r $local_dir $sut_dir
         return 
     fi
-    
-    
 }
 
 # Applies patches for SUTs that require them
