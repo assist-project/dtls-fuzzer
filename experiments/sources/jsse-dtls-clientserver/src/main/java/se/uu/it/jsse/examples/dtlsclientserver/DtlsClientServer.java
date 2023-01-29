@@ -46,7 +46,6 @@ import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLEngineResult.Status;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLProtocolException;
 import javax.net.ssl.SSLSession;
 
 /**
@@ -69,8 +68,9 @@ public class DtlsClientServer extends Thread {
 	private SSLContext sslContext;
 	private AtomicBoolean running;
 	private String side;
+	private EventListener listener;
 
-	public DtlsClientServer(DtlsClientServerConfig config, SSLContext sslContext) throws GeneralSecurityException, IOException {
+	public DtlsClientServer(DtlsClientServerConfig config, SSLContext sslContext, EventListener listener) throws GeneralSecurityException, IOException {
 		info("DtlsClientServer: isClient = " + config.isClient());
 		InetSocketAddress address = new InetSocketAddress(config.getHostname(), config.getPort());
 		if (config.isClient()) {
@@ -90,6 +90,7 @@ public class DtlsClientServer extends Thread {
 		this.config = config;		
 		this.sslContext = sslContext;
 		this.running = new AtomicBoolean(false);
+		this.listener = listener;
 	}
 	
 	/*
@@ -100,6 +101,7 @@ public class DtlsClientServer extends Thread {
 			// create SSLEngine
 			SSLEngine engine = createSSLEngine(sslContext, config.isClient(), config);
 			running.set(true);
+			listener.notifyStart();
 			ByteBuffer appData = null;
 			doFullHandshake(engine, socket);
 			switch (config.getOperation()) {
@@ -168,12 +170,14 @@ public class DtlsClientServer extends Thread {
 			severe(E.getMessage());
 			E.printStackTrace(System.err);
 		} finally {
+			info("DTLS program terminated");
 			if (isInterrupted()) {
 				info("Thread has been interrupted");
 			}
 			socket.close();
 			socket.disconnect();
 			running.set(false);
+			listener.notifyStop();
 		}
 	}
 	
@@ -410,9 +414,6 @@ public class DtlsClientServer extends Thread {
 			if (recBuffer.remaining() != 0) {
 				return recBuffer;
 			}
-			if (rs.getStatus() == Status.CLOSED) {
-//				engine.closeInbound();
-			}
 			if (engine.getHandshakeStatus() != HandshakeStatus.NOT_HANDSHAKING) {
 				return null;
 			}
@@ -449,8 +450,6 @@ public class DtlsClientServer extends Thread {
 			case BUFFER_UNDERFLOW:
 			case BUFFER_OVERFLOW:
 				throw new Exception("Unexpected buffer error: " + rs);
-			case CLOSED:
-//				engine.closeOutbound();
 			case OK:
 				if (oNet.hasRemaining()) {
 					byte[] ba = new byte[oNet.remaining()];

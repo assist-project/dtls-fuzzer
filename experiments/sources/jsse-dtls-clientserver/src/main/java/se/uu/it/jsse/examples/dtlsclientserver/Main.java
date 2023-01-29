@@ -30,14 +30,14 @@ public class Main {
         	sslContext = getDTLSContext(config);
             
         	if (config.getThreadStarterIpPort() == null) {
-	        	DtlsClientServer dtlsHarness = new DtlsClientServer(config, sslContext);
+                DtlsClientServer dtlsHarness = new DtlsClientServer(config, sslContext, new EventListener() {});
 	        	dtlsHarness.run();
         	} else {
-        		// the server port is dynamically allocated in this case
+                // the server port is dynamically allocated in this case
         		if (!config.isClient()) {
         			config.setPort(0);
         		}
-        		ts = new ThreadStarter(() -> newClientServer(config, sslContext), config);
+                ts = new ThreadStarter(config, sslContext);
         		ts.run();
         	}
         	
@@ -56,16 +56,6 @@ public class Main {
 			}
 		}
     }
-    
-	private static DtlsClientServer newClientServer(DtlsClientServerConfig config, SSLContext sslContext) {
-		try {
-			System.out.println("Creating a new server/client");
-			return new DtlsClientServer(config, sslContext);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-	}
 	
 	private static SSLContext sslContext;
 	
