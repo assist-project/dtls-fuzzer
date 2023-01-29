@@ -34,12 +34,12 @@ public class TlsSULBuilder {
 		
 		if (delegate.getResetPort() != null) {
 			if (delegate.getRole().equals("server")) {
-				ResettingClientWrapper<TlsInput, TlsOutput> resetWrapper = new ResettingClientWrapper<TlsInput, TlsOutput>(
+				ResettingClientWrapper resetWrapper = new ResettingClientWrapper(
 						tlsSystemUnderTest, delegate, cleanupTasks);
 				tlsSystemUnderTest = resetWrapper;
 			}
 			else {
-				ResettingWrapper<TlsInput, TlsOutput> resetWrapper = new ResettingWrapper<TlsInput, TlsOutput>(
+				ResettingServerWrapper resetWrapper = new ResettingServerWrapper(
 						tlsSystemUnderTest, delegate,
 						cleanupTasks);
 				tlsSul.setDynamicPortProvider(resetWrapper);

@@ -16,6 +16,8 @@ import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
+import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
+import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 /**
  * The role of the resetting wrapper is to communicate with a SUL wrapper over a
@@ -28,14 +30,14 @@ import se.uu.it.dtlsfuzzer.config.SulDelegate;
  * Setting the port dynamically (rather than binding it statically) proved
  * necessary in order to avoid port collisions.
  */
-public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
+public class ResettingServerWrapper implements SUL<TlsInput, TlsOutput>, DynamicPortProvider {
 
-	private static final Logger LOGGER = LogManager
-			.getLogger(ResettingWrapper.class);
+	private static final Logger LOGGER = LogManager.getLogger();
 
-	private static final String RESET_CMD = "reset";
+	private static final String CMD_RESET = "reset";
+	private static final String RESP_STOPPED = "stopped";
 
-	private SUL<I, O> sul;
+	private SUL<TlsInput, TlsOutput> sul;
 
 	private Socket resetSocket;
 	private InetSocketAddress resetAddress;
@@ -44,7 +46,7 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 	private BufferedReader reader;
 	private PrintWriter writer;
 
-	public ResettingWrapper(SUL<I, O> sul, SulDelegate sulDelegate,
+	public ResettingServerWrapper(SUL<TlsInput, TlsOutput> sul, SulDelegate sulDelegate,
 			CleanupTasks tasks) {
 		this.sul = sul;
 		resetAddress = new InetSocketAddress(sulDelegate.getResetAddress(),
@@ -85,7 +87,7 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 						resetSocket.getInputStream()));
 				writer = new PrintWriter(new OutputStreamWriter(resetSocket.getOutputStream()));
 			}
-			writer.println(RESET_CMD);
+			writer.println(CMD_RESET);
 			writer.flush();
 
 			String portString = reader.readLine();
@@ -118,7 +120,21 @@ public class ResettingWrapper<I, O> implements SUL<I, O>, DynamicPortProvider {
 	}
 
 	@Override
-	public O step(I in) throws SULException {
-		return sul.step(in);
+	public TlsOutput step(TlsInput in) throws SULException {
+		TlsOutput output = sul.step(in);
+		try {
+			if (reader.ready()) {
+				String response = reader.readLine();
+				if (response.equals(RESP_STOPPED)) {
+					LOGGER.debug("Server stopped");
+					output.setAlive(false);
+				} else {
+					throw new RuntimeException("Received invalid response");
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return output;
 	}
 }

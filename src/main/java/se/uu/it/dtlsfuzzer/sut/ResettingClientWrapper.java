@@ -3,6 +3,8 @@ package se.uu.it.dtlsfuzzer.sut;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -14,6 +16,8 @@ import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
+import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
+import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 /**
  * The role of the resetting wrapper is to communicate with a SUL wrapper over a
@@ -26,18 +30,23 @@ import se.uu.it.dtlsfuzzer.config.SulDelegate;
  * Setting the port dynamically (rather than binding it statically) proved
  * necessary in order to avoid port collisions.
  */
-public class ResettingClientWrapper<I, O> implements SUL<I, O> {
+public class ResettingClientWrapper implements SUL<TlsInput, TlsOutput> {
 
 	private static final Logger LOGGER = LogManager.getLogger();
 
-	private SUL<I, O> sul;
+	private static final String CMD_RESET = "reset";
+	private static final String RESP_STOPPED = "stopped";
+
+	private SUL<TlsInput, TlsOutput> sul;
 
 	private Socket resetSocket;
 	private InetSocketAddress resetAddress;
 	private long resetCommandWait;
 	private BufferedReader reader;
+	private PrintWriter writer;
 
-	public ResettingClientWrapper(SUL<I, O> sul, SulDelegate sulDelegate,
+
+	public ResettingClientWrapper(SUL<TlsInput, TlsOutput> sul, SulDelegate sulDelegate,
 			CleanupTasks tasks) {
 		this.sul = sul;
 		resetAddress = new InetSocketAddress(sulDelegate.getResetAddress(),
@@ -74,11 +83,10 @@ public class ResettingClientWrapper<I, O> implements SUL<I, O> {
 				resetSocket.connect(resetAddress);
 				reader = new BufferedReader(new InputStreamReader(
 						resetSocket.getInputStream()));
+				writer = new PrintWriter(new OutputStreamWriter(resetSocket.getOutputStream()));
 			}
-			byte[] resetCmd = "reset\n".getBytes();
-
-			resetSocket.getOutputStream().write(resetCmd);
-			resetSocket.getOutputStream().flush();
+			writer.println(CMD_RESET);
+			writer.flush();
 			String ack = reader.readLine();
 			if (ack == null) {
 				throw new RuntimeException("Server has closed the socket");
@@ -105,7 +113,21 @@ public class ResettingClientWrapper<I, O> implements SUL<I, O> {
 	}
 
 	@Override
-	public O step(I in) throws SULException {
-		return sul.step(in);
+	public TlsOutput step(TlsInput in) throws SULException {
+		TlsOutput output = sul.step(in);
+		try {
+			if (reader.ready()) {
+				String response = reader.readLine();
+				if (response.equals(RESP_STOPPED)) {
+					LOGGER.debug("Server stopped");
+					output.setAlive(false);
+				} else {
+					throw new RuntimeException("Received invalid response");
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return output;
 	}
 }
