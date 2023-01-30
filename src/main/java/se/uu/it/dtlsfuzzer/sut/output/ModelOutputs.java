@@ -126,7 +126,7 @@ public class ModelOutputs {
 			}
 			return KeyExchangeAlgorithm.valueOf(keyExchange);
 		}
-		throw new RuntimeException("Could not extract key exchange algorith from output " + output);
+		throw new RuntimeException("Could not extract key exchange algorithm from output " + output);
 	}
 	
 	private static String getParameter(TlsOutput output, int idx) {

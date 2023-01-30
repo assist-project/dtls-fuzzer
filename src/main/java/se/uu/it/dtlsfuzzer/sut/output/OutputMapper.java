@@ -244,11 +244,11 @@ public class OutputMapper {
 	 * Best-effort method to get the certificate type string from a non-empty certificate
 	 */
 	private String getCertificateTypeString(CertificateMessage message, State state) {
-		String certType = "UNKOWN";
+		String certType = "UNKNOWN";
 		if (message.getCertificateKeyPair() == null) {
 			throw new NotImplementedException("Raw public keys not supported");
 		} else {
-			certType =  message.getCertificateKeyPair().getCertPublicKeyType().name();	
+			certType = message.getCertificateKeyPair().getCertPublicKeyType().name();
 		}
 		return certType;
 	}	
