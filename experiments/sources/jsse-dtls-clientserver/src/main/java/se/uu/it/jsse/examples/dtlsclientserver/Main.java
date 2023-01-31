@@ -14,7 +14,7 @@ import com.beust.jcommander.ParameterException;
 
 public class Main {
 
-	/**
+    /**
      * Creates a DTLS server or client.
      * 
      */
@@ -33,7 +33,7 @@ public class Main {
 	        	DtlsClientServer dtlsHarness = new DtlsClientServer(config, sslContext);
 	        	dtlsHarness.run();
         	} else {
-        		// the server port is dynamically alocated in this case
+        		// the server port is dynamically allocated in this case
         		if (!config.isClient()) {
         			config.setPort(0);
         		}

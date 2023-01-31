@@ -227,7 +227,7 @@ public class DtlsClientServer extends Thread {
 	 * The code is messy, what is important is that we do everything the SSLEngine
 	 * tells us. There are essentially 4 commands an SSLEngine can issue (associated
 	 * with the HandshakeStatus): 1. unwrap - meaning the engine is expecting to
-	 * receive network data. This data should be received and inputed to the engine.
+	 * receive network data. This data should be received and inputted to the engine.
 	 * 2. wrap - meaning the engine has network data ready. This data should be
 	 * gathered from the engine and sent. 3. execute task - meaning the engine
 	 * requests execution of some tasks. We should just execute them. 4. finished

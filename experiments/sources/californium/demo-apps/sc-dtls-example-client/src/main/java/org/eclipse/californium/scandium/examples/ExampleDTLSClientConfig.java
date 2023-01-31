@@ -33,7 +33,7 @@ public class ExampleDTLSClientConfig {
 	@Parameter(names = "-runWait", required = false, description = "The client waits this long before sending request")
 	private Integer runWait = 0;
 	
-	@Parameter(names = "-trustLocation", required = false, description = "The localtion of the trust store to use")
+	@Parameter(names = "-trustLocation", required = false, description = "The location of the trust store to use")
 	private String trustLocation = DEFAULT_TRUST_STORE_LOCATION;
 	
 	@Parameter(names = "-trustAlias", required = false, description = "The alias looked up to gather certs from the trust store")
@@ -42,7 +42,7 @@ public class ExampleDTLSClientConfig {
 	@Parameter(names = "-trustPassword", required = false, description = "The password with which the trust store is protected")
 	private String trustPassword = DEFAULT_TRUST_STORE_PASSWORD;
 	
-	@Parameter(names = "-keyLocation", required = false, description = "The localtion of the key store to use")
+	@Parameter(names = "-keyLocation", required = false, description = "The location of the key store to use")
 	private String keyLocation = DEFAULT_TRUST_STORE_LOCATION;
 	
 	@Parameter(names = "-keyAlias", required = false, description = "The alias looked up to gather certs from the key store")
