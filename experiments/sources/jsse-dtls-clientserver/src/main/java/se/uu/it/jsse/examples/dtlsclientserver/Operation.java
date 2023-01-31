@@ -19,7 +19,7 @@ public enum Operation {
 	FULL,
 	
 	/**
-	 * Full mode of operation in a continuous loop of handshking and echo-ing of data.
+	 * Full mode of operation in a continuous loop of handshaking and echo-ing of data.
 	 * In this mode, the server rebuilds the engine when closed, allowing for session resumption to take place.  
 	 */
 	FULL_SR;
