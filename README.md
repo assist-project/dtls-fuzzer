@@ -56,7 +56,7 @@ An output folder contains:
     - the main culprit is time-related non-determinism (same inputs lead to different results).
 
 The evaluator can check (for example) that experimental results in `included` correspond to those displayed in Table 4, or that configurations tested in Table 2 also appear in `all_ciphers`.
-Note that models appearing in the paper were the result of significant pruning/triming, whereas the models appearing in output folders are unaltered.
+Note that models appearing in the paper were the result of significant pruning/trimming, whereas the models appearing in output folders are unaltered.
 
 # DTLS-Fuzzer evaluation steps
 For the purpose of evaluating DTLS-Fuzzer it is necessary to perform the following steps:
