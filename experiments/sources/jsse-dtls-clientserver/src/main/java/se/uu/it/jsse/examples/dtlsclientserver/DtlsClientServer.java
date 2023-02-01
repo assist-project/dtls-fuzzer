@@ -84,6 +84,7 @@ public class DtlsClientServer extends Thread {
 		} else {
 			socket = new DatagramSocket(address);
 			side = "Server";
+			info("Receiving at port " + socket.getLocalPort());
 		}
 		socket.setSoTimeout(SOCKET_TIMEOUT);
 		socket.setReuseAddress(true);
@@ -92,7 +93,11 @@ public class DtlsClientServer extends Thread {
 		this.running = new AtomicBoolean(false);
 		this.listener = listener;
 	}
-	
+
+	public DtlsClientServer(DtlsClientServerConfig config, SSLContext sslContext) throws GeneralSecurityException, IOException {
+		this(config, sslContext, EventListener.getNopEventListener());
+	}
+
 	/*
 	 * A mock DTLS echo server which uses SSLEngine.
 	 */
@@ -180,11 +185,11 @@ public class DtlsClientServer extends Thread {
 			listener.notifyStop();
 		}
 	}
-	
+
 	public boolean isRunning() {
 		return running.get();
 	}
-	
+
 	private static boolean isEngineClosed(SSLEngine engine) {
 		return (engine.isOutboundDone() && engine.isInboundDone());
 	}
@@ -208,14 +213,14 @@ public class DtlsClientServer extends Thread {
 				break;
 			}
 		}
-		
+
 		SSLParameters params = engine.getSSLParameters();
 		params.setEnableRetransmissions(config.isEnableRetransmission());
 		engine.setSSLParameters(params);
 
 		return engine;
 	}
-	
+
 	public Integer getPort() {
 		return this.socket.getLocalPort();
 	}
@@ -224,7 +229,7 @@ public class DtlsClientServer extends Thread {
 		this.socket.close();
 		super.interrupt();
 	}
-	
+
 	/*
 	 * Executes a full handshake, may or may not succeed.
 	 * 

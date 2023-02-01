@@ -30,7 +30,7 @@ public class Main {
         	sslContext = getDTLSContext(config);
             
         	if (config.getThreadStarterIpPort() == null) {
-                DtlsClientServer dtlsHarness = new DtlsClientServer(config, sslContext, new EventListener() {});
+                DtlsClientServer dtlsHarness = new DtlsClientServer(config, sslContext);
 	        	dtlsHarness.run();
         	} else {
                 // the server port is dynamically allocated in this case

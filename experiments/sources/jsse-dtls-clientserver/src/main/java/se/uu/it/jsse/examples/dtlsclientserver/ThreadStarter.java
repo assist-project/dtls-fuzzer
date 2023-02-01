@@ -15,11 +15,13 @@ import javax.net.ssl.SSLContext;
 /**
  * We use this class to avoid having to restart the vm (which is can be a slow process). 
  */
-// This could be made more general but...
 public class ThreadStarter {
 	public static final String CMD_RESET = "reset";
 	public static final String CMD_EXIT = "exit";
+	public static final String CMD_START = "start";
+	public static final String CMD_STOP = "stop";
 	public static final String RESP_STOPPED = "stopped";
+	public static final String RESP_STARTED = "started";
 	
 	private ServerSocket srvSocket;
 	private DtlsClientServer dtlsThread;
@@ -56,6 +58,8 @@ public class ThreadStarter {
 		cmdSocket = srvSocket.accept();
 		BufferedReader in = new BufferedReader(new InputStreamReader(cmdSocket.getInputStream()));
 		PrintWriter out = new PrintWriter(new OutputStreamWriter(cmdSocket.getOutputStream()));
+		// Async notification of when the DTLS program starts/stops.
+		EventListener listener = new ThreadStarterEventListener(out);
 		dtlsThread = null;
 		while (true) {
 			try {
@@ -63,36 +67,22 @@ public class ThreadStarter {
 				System.out.println("Received: " + cmd);
 				if (cmd != null) {
 					switch(cmd.trim()) {
-					case CMD_RESET:
-					case "":
-						if (dtlsThread != null) {
-							dtlsThread.interrupt();
-							// waiting for the thread to die,
-							// otherwise we might get address already in use problems
-							while (dtlsThread.isAlive()) {
-								Thread.sleep(1);
-							}
-						}
-						if (config.isClient()) {
-							//System.out.println("Writing " + String.valueOf(dtlsServerThread.getPort()));
-							out.println("ack");
-							out.flush();
-							
-							Thread.sleep(config.getRunWait());
-							
-							dtlsThread = newClientServer(config, sslContext, out);
-							dtlsThread.start();
+					case CMD_START:
+						if (dtlsThread != null && dtlsThread.isRunning()) {
+							// even if the program is up and running, we still send STARTED.
+							listener.notifyStart();
 						} else {
-							dtlsThread = newClientServer(config, sslContext, out);
+							dtlsThread = newClientServer(config, sslContext, listener);
 							dtlsThread.start();
-						
-							// waiting for the server to start running
-							while(!dtlsThread.isRunning()) {
-								Thread.sleep(1);
-							}
-						
-							out.println(String.valueOf(dtlsThread.getPort()));
-							out.flush();
+							dtlsThread.isRunning();
+						}
+						break;
+					case CMD_STOP:
+						if (dtlsThread != null && dtlsThread.isRunning()) {
+							dtlsThread.interrupt();
+						} else {
+							// even if the program is down, we still send STOPPED.
+							listener.notifyStop();
 						}
 						break;
 					case CMD_EXIT:
@@ -129,10 +119,10 @@ public class ThreadStarter {
 		srvSocket.close();
 	}
 
-	private DtlsClientServer newClientServer(DtlsClientServerConfig config, SSLContext sslContext, PrintWriter out) {
+	private DtlsClientServer newClientServer(DtlsClientServerConfig config, SSLContext sslContext, EventListener listener) {
 		try {
 			System.out.println("Creating a new server/client");
-			DtlsClientServer clientServer = new DtlsClientServer(config, sslContext, new ThreadStarterEventListener(out));
+			DtlsClientServer clientServer = new DtlsClientServer(config, sslContext, listener);
 			return clientServer;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,6 +135,11 @@ public class ThreadStarter {
 
 		ThreadStarterEventListener(PrintWriter writer) {
 			this.writer = writer;
+		}
+		
+		public void notifyStart() {
+			writer.println(RESP_STARTED + " " + dtlsThread.getPort());
+			writer.flush();
 		}
 
 		public void notifyStop() {
