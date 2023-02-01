@@ -452,6 +452,7 @@ public class DtlsClientServer extends Thread {
 			case BUFFER_OVERFLOW:
 				throw new Exception("Unexpected buffer error: " + rs);
 			case OK:
+			case CLOSED:
 				if (oNet.hasRemaining()) {
 					byte[] ba = new byte[oNet.remaining()];
 					oNet.get(ba);
