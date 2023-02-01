@@ -10,16 +10,13 @@ DTLS12
 -responseWait
 100
 -cmd
-java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-client.jar -startTimeout 1000 -port ${sut.port} -timeout 20000000 -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -cipherSuites TLS_PSK_WITH_AES_128_CCM_8,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256  -clientAuth NEEDED -starterAddress localhost:${fuzzer.port} -starterAck
+java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-clientserver.jar -port ${sut.port} -timeout 20000000 -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -cipherSuites TLS_PSK_WITH_AES_128_CCM_8,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256  -clientAuth NEEDED -starterAddress localhost:${fuzzer.port}
 -sulConfig
 experiments/configs/scandium.config
--resetPort
+-adapterPort
 ${fuzzer.port}
--resetAck
 -processTrigger
 START
--resetCommandWait
-800
 
 # learning config
 -alphabet

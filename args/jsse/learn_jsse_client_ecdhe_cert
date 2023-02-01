@@ -4,20 +4,17 @@ state-fuzzer-client
 -port
 ${sut.port}
 -startWait
-0
+1000
 -responseWait
 200
 -protocol
 DTLS12
 -cmd
-${fuzzer.dir}/modules/jdk-${jsse.version}/bin/java -jar ${suts.dir}/jsse-${jsse.version}-dtls-clientserver.jar -client -port ${sut.port} -hostname localhost -runWait 1000 -keyLocation experiments/keystore/rsa2048.jks -trustLocation experiments/keystore/rsa2048.jks -threadStarterIpPort localhost:${fuzzer.port} -operation FULL
--resetPort
+${fuzzer.dir}/modules/jdk-${jsse.version}/bin/java -jar ${suts.dir}/jsse-${jsse.version}-dtls-clientserver.jar -client -port ${sut.port} -hostname localhost -keyLocation experiments/keystore/rsa2048.jks -trustLocation experiments/keystore/rsa2048.jks -threadStarterIpPort localhost:${fuzzer.port} -operation FULL
+-adapterPort
 ${fuzzer.port}
--resetAck
 -processTrigger
 START
--resetCommandWait
-1000
 
 # learning config
 -alphabet
