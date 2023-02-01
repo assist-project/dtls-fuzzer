@@ -65,6 +65,7 @@ public class TlsOutput extends Symbol {
 
 	public TlsOutput(String name) {
 		super(name, false);
+		this.messages = Collections.emptyList();
 	}
 
 	public TlsOutput(String name, List<TlsMessage> messages) {

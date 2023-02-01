@@ -212,10 +212,6 @@ public class OutputMapper {
     }
 
     public TlsOutput coalesceOutputs(TlsOutput output1, TlsOutput output2) {
-        if (output1.isDisabled() || output2.isDisabled() || output1.isSocketClosed() || output2.isSocketClosed()) {
-            throw new RuntimeException(
-                    "Cannot coalesce " + TlsOutput.DISABLED + " or " + TlsOutput.SOCKET_CLOSED + " outputs");
-        }
         if (output1.isTimeout()) {
             return output2;
         }
