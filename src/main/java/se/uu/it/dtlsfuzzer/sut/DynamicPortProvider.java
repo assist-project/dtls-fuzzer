@@ -1,5 +1,8 @@
 package se.uu.it.dtlsfuzzer.sut;
 
 public interface DynamicPortProvider {
-	public Integer getSulPort();
+	/**
+	 * Gets the local port of the (D)TLS SUL
+	 */
+	public Integer getSULPort();
 }

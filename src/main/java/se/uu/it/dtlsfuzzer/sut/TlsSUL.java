@@ -48,7 +48,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     private Config config;
 
     /**
-     * the sut is closed if it has crashed resulting in IMCP packets, or it simply
+     * the SUT is closed if it has crashed resulting in IMCP packets, or it simply
      * terminated the connection
      */
     private boolean closed = false;
@@ -62,7 +62,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     /**
      * Are we imitating a server or a client instance.
      */
-    private boolean isServer;
+    private boolean server;
 
     private long resetWait = 0;
 
@@ -91,9 +91,9 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
         this.defaultExecutor = defaultExecutor;
         this.mapperConfig = mapperConfig;
         this.role = delegate.getRole();
-        isServer = delegate instanceof SulServerDelegate;
+        server = !delegate.isClient();
         outputMapper = new OutputMapper(mapperConfig);
-        if (isServer) {
+        if (server) {
             cleanupTasks.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -127,10 +127,10 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
         state.getTlsContext().setTransportHandler(null);
 
         if (delegate.getProtocolVersion().isDTLS()) {
-            if (!isServer) {
+            if (!server) {
                 OutboundConnection connection = state.getConfig().getDefaultClientConnection();
                 if (portProvider != null) {
-                    connection.setPort(portProvider.getSulPort());
+                    connection.setPort(portProvider.getSULPort());
                 }
                 state.getTlsContext().setTransportHandler(new ClientUdpTransportHandler(connection));
             } else {
@@ -142,7 +142,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
             throw new NotImplementedException("TLS is not currently supported");
         }
 
-        if (isServer) {
+        if (server) {
             chWaiter = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -185,7 +185,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     @Override
     public void post() {
         try {
-            if (isServer && !receivedClientHello) {
+            if (server && !receivedClientHello) {
                 receiveClientHello();
             }
             state.getTlsContext().getTransportHandler().closeConnection();
@@ -228,7 +228,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
             executor = defaultExecutor;
         }
 
-        if (isServer && !receivedClientHello) {
+        if (server && !receivedClientHello) {
             receiveClientHello();
         }
 

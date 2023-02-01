@@ -274,6 +274,8 @@ public class DtlsMessageReceiver {
         try {
             return context.getTransportHandler().fetchData();
         } catch (IOException exception) {
+            LOGGER.warn("Received " + exception.getLocalizedMessage() + " while receiving for Messages.", exception);
+            context.setReceivedTransportHandlerException(true);
             throw new ReceiveMessageException(exception);
         }
     }

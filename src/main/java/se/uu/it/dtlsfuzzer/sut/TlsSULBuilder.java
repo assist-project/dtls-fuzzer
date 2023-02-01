@@ -32,26 +32,15 @@ public class TlsSULBuilder {
 					delegate);
 		}
 		
-		if (delegate.getResetPort() != null) {
-			if (delegate.getRole().equals("server")) {
-				ResettingClientWrapper resetWrapper = new ResettingClientWrapper(
-						tlsSystemUnderTest, delegate, cleanupTasks);
-				tlsSystemUnderTest = resetWrapper;
-			}
-			else {
-				ResettingServerWrapper resetWrapper = new ResettingServerWrapper(
-						tlsSystemUnderTest, delegate,
-						cleanupTasks);
-				tlsSul.setDynamicPortProvider(resetWrapper);
-				tlsSystemUnderTest = resetWrapper;
-			}
+		if (delegate.getSulAdapterConfig().getAdapterPort() != null) {
+			TlsSULAdapterWrapper adapterWrapper = new TlsSULAdapterWrapper(
+					tlsSystemUnderTest, delegate.getSulAdapterConfig(), !delegate.isClient(), cleanupTasks);
+			tlsSystemUnderTest = adapterWrapper;
+			tlsSul.setDynamicPortProvider(adapterWrapper);
 		}
 		
 		tlsSystemUnderTest = new IsAliveWrapper(tlsSystemUnderTest, new OutputMapper(mapperConfig));
 		
-//		if (!delegate.isClient()) {
-//			tlsSystemUnderTest = new ClientConnectWrapper(tlsSystemUnderTest);
-//		}
 
 		SymbolCounterSUL<TlsInput, TlsOutput> symbolCounterSul = new SymbolCounterSUL<>(
 				"symbol counter", tlsSystemUnderTest);
