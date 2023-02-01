@@ -6,7 +6,7 @@ ${sut.port}
 -protocol
 DTLS12
 -startWait
-0
+4000
 -responseWait
 100
 -cmd
