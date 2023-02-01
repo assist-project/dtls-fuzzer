@@ -12,10 +12,16 @@ import java.net.Socket;
 
 import javax.net.ssl.SSLContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * We use this class to avoid having to restart the vm (which is can be a slow process). 
  */
 public class ThreadStarter {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ThreadStarter.class.getName());
+
 	public static final String CMD_RESET = "reset";
 	public static final String CMD_EXIT = "exit";
 	public static final String CMD_START = "start";
@@ -64,7 +70,7 @@ public class ThreadStarter {
 		while (true) {
 			try {
 				String cmd = in.readLine();
-				System.out.println("Received: " + cmd);
+				LOG.info("Received: " + cmd);
 				if (cmd != null) {
 					switch(cmd.trim()) {
 					case CMD_START:
@@ -107,7 +113,7 @@ public class ThreadStarter {
 		e.printStackTrace(errorPw);
 		errorPw.close();
 	}
-	
+
 	void close() throws IOException {
 		System.out.println("Sutting down thread starter");
 		if (dtlsThread != null) {
@@ -121,7 +127,7 @@ public class ThreadStarter {
 
 	private DtlsClientServer newClientServer(DtlsClientServerConfig config, SSLContext sslContext, EventListener listener) {
 		try {
-			System.out.println("Creating a new server/client");
+			LOG.info("Creating a new server/client");
 			DtlsClientServer clientServer = new DtlsClientServer(config, sslContext, listener);
 			return clientServer;
 		} catch (Exception e) {
