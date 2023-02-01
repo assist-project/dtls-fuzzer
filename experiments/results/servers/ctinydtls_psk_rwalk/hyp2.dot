@@ -13,7 +13,7 @@ digraph g {
 	s0 -> s0 [label="APPLICATION / TIMEOUT"];
 	s0 -> s0 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
 	s0 -> s0 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
-	s1 -> s2 [label="PSK_CLIENT_HELLO / SERVER_HELLO,SERVER_HELLO_DONE"];
+	s1 -> s2 [label="PSK_CLIENT_HELLO / SERVER_HELLO|SERVER_HELLO_DONE"];
 	s1 -> s1 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s1 -> s5 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
 	s1 -> s1 [label="FINISHED / TIMEOUT"];
@@ -41,7 +41,7 @@ digraph g {
 	s4 -> s5 [label="APPLICATION / Alert(FATAL,DECRYPT_ERROR)"];
 	s4 -> s5 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(FATAL,DECRYPT_ERROR)"];
 	s4 -> s5 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / Alert(FATAL,DECRYPT_ERROR)"];
-	s5 -> s4 [label="PSK_CLIENT_HELLO / SERVER_HELLO,SERVER_HELLO_DONE"];
+	s5 -> s4 [label="PSK_CLIENT_HELLO / SERVER_HELLO|SERVER_HELLO_DONE"];
 	s5 -> s5 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
 	s5 -> s5 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
 	s5 -> s5 [label="FINISHED / TIMEOUT"];
