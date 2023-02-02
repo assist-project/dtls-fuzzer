@@ -1,18 +1,18 @@
 state-fuzzer-server
 
 # SUT config
--connect 
-localhost:${sut.port} 
+-connect
+localhost:${sut.port}
 -startWait
 100
 -responseWait
-100  
--cmd 
-"${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sut.port}"
--sulConfig 
+100
+-cmd
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sut.port}
+-sulConfig
 experiments/configs/tinydtls.config
--protocol 
-DTLS12 
+-protocol
+DTLS12
 
 # learning config
 -alphabet
@@ -23,7 +23,7 @@ ${alphabets.servers}/ecdhe8_cert.xml
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
--output 
+-output
 output/ctinydtls_server_ecdhe_cert_req
 -depth
 1
