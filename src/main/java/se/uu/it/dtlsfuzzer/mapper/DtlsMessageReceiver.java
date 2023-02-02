@@ -171,7 +171,8 @@ public class DtlsMessageReceiver {
                 try {
                     result = tryHandleAsDtlsHandshakeMessageFragments(recordBytes, dataPointer, context);
                 } catch (Exception exception) {
-                    LOGGER.warn("Could not parse Message as DtlsHandshakeMessageFragment");
+                    // this is normally a sign that we have decrypted a record using the wrong keys, hence the message makes no sense.
+                    LOGGER.debug("Could not parse Message as DtlsHandshakeMessageFragment");
                     LOGGER.debug(exception);
                     result = tryHandleAsUnknownMessage(recordBytes, dataPointer, context,
                             ProtocolMessageType.HANDSHAKE);
