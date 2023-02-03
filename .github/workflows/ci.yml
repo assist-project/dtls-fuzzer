@@ -80,7 +80,7 @@ jobs:
 
       - name: Test Eclipse TinyDTLS Server (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_server_psk -roundLimit 5
+          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_server_psk -roundLimit 5 -responseWait 500
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/etinydtls_server_psk output/etinydtls_server_psk 5
 
   ETinyDTLS_Client_psk:
@@ -107,7 +107,7 @@ jobs:
 
       - name: Test Eclipse TinyDTLS Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_client_psk -roundLimit 5
+          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_client_psk -roundLimit 5 -responseWait 500
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/etinydtls_client_psk output/etinydtls_client_psk 5
 
   Mbedtls-2-26-0_Server_all_cert_req:
