@@ -1,8 +1,5 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAttribute;
 
 import de.rub.nds.tlsattacker.core.protocol.message.DHEServerKeyExchangeMessage;
