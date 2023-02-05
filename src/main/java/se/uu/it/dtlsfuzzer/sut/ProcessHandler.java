@@ -23,6 +23,9 @@ public class ProcessHandler {
 
 	private static final Logger LOGGER = LogManager.getLogger();
 
+	// the maximum amount of time we wait for a launched process to terminate
+	private static final long TERM_WAIT_MS = 1000;
+
 	private final ProcessBuilder pb;
 	private Process currentProcess;
 	private String terminateCommand;
@@ -114,9 +117,22 @@ public class ProcessHandler {
 			} else {
 				currentProcess.destroyForcibly();
 			}
+            try {
+                long time = System.currentTimeMillis();
+                while ( System.currentTimeMillis() - time < TERM_WAIT_MS && currentProcess.isAlive()) {
+                    Thread.sleep(1);
+                }
+
+                if (currentProcess.isAlive()) {
+                    throw new RuntimeException(String.format("SUT process still alive after %s ms", TERM_WAIT_MS));
+                }
+            } catch ( InterruptedException E) {
+                LOGGER.error("Interrupted while waiting for process to terminate", E);
+                throw new RuntimeException(E);
+            }
 			currentProcess = null;
 		} else {
-			LOGGER.warn("Process has already been ended");
+			LOGGER.debug("Process has already terminated");
 		}
 	}
 
