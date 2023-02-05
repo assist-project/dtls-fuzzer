@@ -484,7 +484,7 @@ function make_sut() {
     elif [[ $sut == etinydtls* ]]; then
         # for ETinyDTLS, we need the CC and CPP to be set to absolute paths (to avert Permission Denied when running make)
         # we also enable address sanitization to prevent segmentation faults, which can take a long time to register and can be triggered in the current implementation
-        ( cd $sut_dir ; autoconf ; autoheader ; CPP='/bin/cpp' CC='/bin/cc' CFLAGS=' -fsanitize=address' LDFLAGS=' -fsanitize=address' CPPFLAGS=' -fsanitize=address'./configure )
+        ( cd $sut_dir ; autoconf ; autoheader ; CPP='/bin/cpp' CC='/bin/cc' CFLAGS=' -fsanitize=address' LDFLAGS=' -fsanitize=address' CPPFLAGS=' -fsanitize=address' ./configure )
     elif [[ $sut == openssl* ]]; then
         if [[ $opt_debug_build -eq 1 ]]; then
             ( cd $sut_dir ; ./config -d -static )
