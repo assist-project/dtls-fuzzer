@@ -311,8 +311,9 @@ public class Learner {
 		InputStream inputStream = fuzzerConfig.getSulDelegate().getSulConfigInputStream();
 		try (FileOutputStream fw = new FileOutputStream(outputFile)) {
 			byte[] bytes = new byte[1000];
-			while (inputStream.read(bytes) > 0) {
-				fw.write(bytes);
+			int read;
+			while ((read = inputStream.read(bytes)) > 0) {
+				fw.write(bytes, 0, read);
 			}
 		} finally {
 			inputStream.close();
