@@ -56,6 +56,60 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/ctinydtls/learn_ctinydtls_client_psk -roundLimit 5
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/ctinydtls_client_psk output/ctinydtls_client_psk 5
 
+  ETinyDTLS_Server_psk:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh etinydtls
+
+      - name: Test Eclipse TinyDTLS Server (psk)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_server_psk -inputResponseTimeout CHANGE_CIPHER_SPEC:250 -roundLimit 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/etinydtls_server_psk output/etinydtls_server_psk 5
+
+  ETinyDTLS_Client_psk:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jdk maven
+          sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
+          java -version
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh etinydtls
+
+      - name: Test Eclipse TinyDTLS Client (psk)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_client_psk -inputResponseTimeout CHANGE_CIPHER_SPEC:250 -roundLimit 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/etinydtls_client_psk output/etinydtls_client_psk 5
+
   Mbedtls-2-26-0_Server_all_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
