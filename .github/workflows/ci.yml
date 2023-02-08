@@ -274,7 +274,7 @@ jobs:
 
   PionDTLS-2-0-9_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-20.04 # due to needing an old version of golang
     strategy:
       fail-fast: true
     steps:
@@ -301,7 +301,7 @@ jobs:
 
   PionDTLS-2-0-9_Client_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-20.04 # due to needing an old version of golang
     strategy:
       fail-fast: true
     steps:
@@ -377,6 +377,7 @@ jobs:
 
       - name: Test scandium-2.0.0-M16 Client (ecdhe_cert)
         run: |
+          # we are running just two rounds here because producing the third hypothesis takes too long
           java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_client_ecdhe_cert -Dscandium.version=2.0.0-M16 -roundLimit 2
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/scandium-2.0.0-M16_client_ecdhe_cert output/scandium-2.0.0-M16_client_ecdhe_cert 2
 
