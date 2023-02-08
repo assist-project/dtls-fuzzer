@@ -10,13 +10,13 @@ ${alphabets.servers}/ecdhe8_cert.xml
 -responseWait
 100
 -sulConfig
-experiments/configs/tinydtls.config
+experiments/configs/tinydtls_server.config
 -cmd
 ${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sut.port}
 -protocol
 DTLS12
 
-# learner config
+# learning config
 -randLength
 10
 -queries

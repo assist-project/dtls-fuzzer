@@ -1,12 +1,18 @@
 state-fuzzer-client
+
+# SUT config
 -port
 ${sut.port}
 -startWait
 0
--alphabet
-${alphabets.clients}/tinydtls_psk8.xml
 -responseWait
 100
+-cmd
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sut.port} localhost
+-alphabet
+${alphabets.clients}/tinydtls_psk8.xml
+
+# learning config
 -randLength
 10
 -queries
@@ -17,7 +23,5 @@ DTLS12
 RANDOM_WP_METHOD,WP_METHOD
 -output
 output/ctinydtls_client_psk_shorths
--cmd
-${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sut.port} localhost
 -depth
 1

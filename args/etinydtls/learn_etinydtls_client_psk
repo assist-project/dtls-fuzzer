@@ -13,8 +13,10 @@ ${alphabets.clients}/tinydtls_psk8.xml
 DTLS12
 -cmd
 ${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sut.port} localhost
+-sulConfig
+experiments/configs/tinydtls_client.config
 
-# learner config
+# learning config
 -randLength
 10
 -queries

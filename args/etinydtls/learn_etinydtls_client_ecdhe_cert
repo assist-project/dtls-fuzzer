@@ -14,7 +14,7 @@ ${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sut.port} localhost
 -protocol
 DTLS12
 
-# learner config
+# learning config
 -alphabet
 ${alphabets.clients}/tinydtls_ecdhe8_cert.xml
 -randLength
