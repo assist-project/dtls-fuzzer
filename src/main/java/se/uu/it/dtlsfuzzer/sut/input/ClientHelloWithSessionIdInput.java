@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.ResetConnectionAction;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
@@ -36,10 +36,10 @@ public class ClientHelloWithSessionIdInput extends DtlsInput {
 		resetAction.execute(state);
 		// we add the resets that should be in TLS-Attacker just to ensure
 		// we don't rely on the specific TLS-Attacker version
-		state.getTlsContext().setDtlsNextReceiveSequenceNumber(0);
-		state.getTlsContext().setDtlsNextSendSequenceNumber(0);
-		state.getTlsContext().setDtlsSendEpoch(0);
-		state.getTlsContext().setDtlsNextReceiveEpoch(0);
+		state.getTlsContext().setDtlsReadHandshakeMessageSequence(0);
+		state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);
+		state.getTlsContext().setReadEpoch(0);
+		state.getTlsContext().setWriteEpoch(0);
 
 		if (resetCookie) {
 			state.getTlsContext().setDtlsCookie(null);
@@ -47,11 +47,11 @@ public class ClientHelloWithSessionIdInput extends DtlsInput {
 	}
 
 	@Override
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		// reset and resume the connection
 		resetTransportHandler(state);
 		if (suite != null) {
-			state.getConfig().setDefaultClientSupportedCiphersuites(suite);
+			state.getConfig().setDefaultClientSupportedCipherSuites(suite);
 		}
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 		message.setSessionId(state.getTlsContext().getChooser()

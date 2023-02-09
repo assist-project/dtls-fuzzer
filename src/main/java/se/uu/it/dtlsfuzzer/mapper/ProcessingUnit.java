@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
@@ -23,13 +23,13 @@ public class ProcessingUnit {
 	private TlsInput input;
 	
 	// the messages is generated
-	private List<ProtocolMessage> messages;
+	private List<TlsMessage> messages;
 	
 	// how handshake messages are distributed into fragments
 	private List<FragmentationResult> messageFragments;
 	
 	// the messages ready to be packed in records
-	private List<ProtocolMessage> messagesToPack;
+	private List<TlsMessage> messagesToPack;
 	
 	// how messages are distributed into records
 	private List<PackingResult> messageRecords;
@@ -54,11 +54,11 @@ public class ProcessingUnit {
 		this.input = input;
 	}
 	
-	public List<ProtocolMessage> getMessages() {
+	public List<TlsMessage> getMessages() {
 		return messages;
 	}
 	
-	public void setMessages(List<ProtocolMessage> messages) {
+	public void setMessages(List<TlsMessage> messages) {
 		this.messages = messages;
 	}
 	
@@ -101,11 +101,11 @@ public class ProcessingUnit {
 		this.initialRecordsToSend = records;
 	}
 	
-	public List<ProtocolMessage> getMessagesToPack() {
+	public List<TlsMessage> getMessagesToPack() {
 		return messagesToPack;
 	}
 
-	public void setMessagesToPack(List<ProtocolMessage> messagesToPack) {
+	public void setMessagesToPack(List<TlsMessage> messagesToPack) {
 		this.messagesToPack = messagesToPack;
 	}
 	

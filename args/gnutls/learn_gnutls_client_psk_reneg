@@ -1,28 +1,27 @@
 state-fuzzer-client
 
 # SUT config
--protocol 
-DTLS12 
+-protocol
+DTLS12
 -port
 ${sut.port}
 -startWait
-0 
+0
 -responseWait
-100 
--cmd 
-"${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-cli  --udp --heartbeat --pskusername Client_identity --pskkey 12345678  --priority NORMAL:-KX-ALL:+ECDHE-PSK:+DHE-PSK:+PSK localhost:${sut.port}"
+100
+-cmd
+${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-cli  --udp --heartbeat --pskusername Client_identity --pskkey 12345678  --priority NORMAL:-KX-ALL:+ECDHE-PSK:+DHE-PSK:+PSK localhost:${sut.port}
 -sulConfig
 experiments/configs/gnutls_client_include_oo.config
 
-
 # learning config
--alphabet 
-${alphabets.clients}/gnutls_psk_reneg.xml 
+-alphabet
+${alphabets.clients}/gnutls_psk_reneg.xml
 -randLength
 10
 -queries
 20000
--equivalenceAlgorithms 
+-equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -output
 output/gnutls-${gnutls.version}_client_psk_reneg

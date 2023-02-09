@@ -16,14 +16,13 @@ public class ToolPropertyAwareConverterFactory implements IStringConverterFactor
 		converters.put(Integer.class, FromIntegerConverter.class);
 		converters.put(Long.class, FromLongConverter.class);
 	}
-	
-	
-	@Override
-	public <T> Class<? extends IStringConverter<T>> getConverter(Class<T> forType) {
-		Class<? extends IStringConverter<T>>factory = (Class<? extends IStringConverter<T>>) converters.get(forType);
-		return factory;
-	}
 
+	@Override
+	public Class<? extends IStringConverter<?>> getConverter(Class<?> forType) {
+		Class<? extends IStringConverter<?>>factory = (Class<? extends IStringConverter<?>>) converters.get(forType);
+ 		return factory;
+	}
+	
 	private static class FromStringConverter implements IStringConverter<String> {
 		@Override
 		public String convert(String value) {
@@ -44,5 +43,5 @@ public class ToolPropertyAwareConverterFactory implements IStringConverterFactor
 			return Long.valueOf(ToolConfig.resolve(value.trim()));
 		}
 	}
-	
+
 }

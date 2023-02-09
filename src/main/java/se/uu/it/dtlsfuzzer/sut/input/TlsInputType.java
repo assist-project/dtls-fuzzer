@@ -5,7 +5,7 @@ import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 public enum TlsInputType {
 	CCS, HANDSHAKE, ALERT, APPLICATION, UNKNOWN, HEARTBEAT, EMPTY;
 
-	public static TlsInputType fromProtocolMessageType(ProtocolMessageType type) {
+	public static TlsInputType fromTlsMessageType(ProtocolMessageType type) {
 		switch (type) {
 			case ALERT :
 				return TlsInputType.ALERT;

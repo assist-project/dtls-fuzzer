@@ -28,10 +28,9 @@ import de.rub.nds.tlsattacker.core.protocol.message.FinishedMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.GOSTClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.HeartbeatMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.HelloRequestMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.HelloRetryRequestMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.HelloVerifyRequestMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.NewSessionTicketMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskDhClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskDheServerKeyExchangeMessage;
@@ -60,7 +59,7 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
  */
 public class GenericTlsInput extends DtlsInput {
 	@XmlElements(value = {
-			@XmlElement(type = ProtocolMessage.class, name = "ProtocolMessage"),
+			@XmlElement(type = TlsMessage.class, name = "TlsMessage"),
 			@XmlElement(type = CertificateMessage.class, name = "Certificate"),
 			@XmlElement(type = CertificateVerifyMessage.class, name = "CertificateVerify"),
 			@XmlElement(type = CertificateRequestMessage.class, name = "CertificateRequest"),
@@ -102,25 +101,24 @@ public class GenericTlsInput extends DtlsInput {
 			@XmlElement(type = SrpServerKeyExchangeMessage.class, name = "SrpServerKeyExchange"),
 			@XmlElement(type = SrpClientKeyExchangeMessage.class, name = "SrpClientKeyExchange"),
 			@XmlElement(type = EndOfEarlyDataMessage.class, name = "EndOfEarlyData"),
-			@XmlElement(type = EncryptedExtensionsMessage.class, name = "EncryptedExtensions"),
-			@XmlElement(type = HelloRetryRequestMessage.class, name = "HelloRetryRequest")})
-	private ProtocolMessage message;
+			@XmlElement(type = EncryptedExtensionsMessage.class, name = "EncryptedExtensions")})
+	private TlsMessage message;
 
 	public GenericTlsInput() {
 		super(null);
 	}
 
-	public GenericTlsInput(ProtocolMessage message) {
+	public GenericTlsInput(TlsMessage message) {
 		super(message.toCompactString());
 		this.message = message;
 	}
 	
-	public GenericTlsInput(ProtocolMessage message, String name) {
+	public GenericTlsInput(TlsMessage message, String name) {
 		super(name);
 		this.message = message;
 	}
 	
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		stripFields(message);
 		return message;
 	}
@@ -130,7 +128,7 @@ public class GenericTlsInput extends DtlsInput {
 		stripFields(message);
 	}
 	
-	public Class<? extends ProtocolMessage> getMessageClass() {
+	public Class<? extends TlsMessage> getMessageClass() {
 		return message.getClass();
 	}
 
@@ -147,7 +145,7 @@ public class GenericTlsInput extends DtlsInput {
 	/*
 	 * Sets the original value of all mvar fields to null.
 	 */
-	private void stripFields(ProtocolMessage message) {
+	private void stripFields(TlsMessage message) {
 		List<ModifiableVariableHolder> holders = new LinkedList<>();
 		holders.addAll(message.getAllModifiableVariableHolders());
 		for (ModifiableVariableHolder holder : holders) {
@@ -180,11 +178,10 @@ public class GenericTlsInput extends DtlsInput {
 
 	@Override
 	public TlsInputType getInputType() {
-		return TlsInputType.fromProtocolMessageType(message
-				.getProtocolMessageType());
+		return TlsInputType.fromTlsMessageType(message.getProtocolMessageType());
 	}
 	
-	public ProtocolMessage getMessage() {
+	public TlsMessage getMessage() {
 		return message;
 	}
 	

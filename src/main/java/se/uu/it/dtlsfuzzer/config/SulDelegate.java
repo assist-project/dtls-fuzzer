@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParametersDelegate;
 
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
@@ -43,22 +44,16 @@ public abstract class SulDelegate {
 	@Parameter(names = "-startWait", required = false, description = "Time waited after executing the command to start the SUT process.")
 	private Long startWait = 0L;
 
-	// In case a launch server is used to execute the SUT (as is the case of JSSE
-	// and Scandium)
-	@Parameter(names = "-resetPort", required = false, description = "Port to which to send a reset command")
-	private Integer resetPort = null;
-
-	@Parameter(names = "-resetAddress", required = false, description = "Address to which to send a reset command")
-	private String resetAddress = "localhost";
-
-	@Parameter(names = "-resetCommandWait", required = false, description = "Time waited after sending a reset command")
-	private Long resetCommandWait = 0L;
-
-	@Parameter(names = "-resetAck", required = false, description = "Wait from acknowledgement from the other side")
-	private boolean resetAck = false;
+	// In case a launch server is used to execute the SUT (as is the case of JSSE and Scandium)
+	@ParametersDelegate
+	public SulAdapterConfig sulAdapterConfig;
 
 	@Parameter(names = "-sulConfig", required = false, description = "Configuration for the SUL")
 	private String sulConfig = null;
+
+	public SulDelegate() {
+		sulAdapterConfig = new SulAdapterConfig();
+	}
 
 	public abstract String getRole();
 
@@ -114,20 +109,8 @@ public abstract class SulDelegate {
 		this.startWait = runWait;
 	}
 
-	public Integer getResetPort() {
-		return resetPort;
-	}
-
-	public String getResetAddress() {
-		return resetAddress;
-	}
-
-	public Long getResetCommandWait() {
-		return resetCommandWait;
-	}
-
-	public boolean isResetAck() {
-		return resetAck;
+	public SulAdapterConfig getSulAdapterConfig() {
+		return sulAdapterConfig;
 	}
 
 	public boolean isRedirectOutputStreams() {

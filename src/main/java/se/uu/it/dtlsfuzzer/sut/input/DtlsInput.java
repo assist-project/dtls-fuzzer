@@ -2,88 +2,103 @@ package se.uu.it.dtlsfuzzer.sut.input;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import de.rub.nds.tlsattacker.core.state.State;
-import de.rub.nds.tlsattacker.core.workflow.action.ActivateEncryptionAction;
-import de.rub.nds.tlsattacker.core.workflow.action.DeactivateEncryptionAction;
+import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 public abstract class DtlsInput extends TlsInput {
-	
-	@XmlAttribute(name = "epoch", required = false)
-	private Integer epoch = null;
 
-	@XmlAttribute(name = "encryptedEnabled", required = false)
-	private boolean encryptionEnabled = true;
+    /*
+     * For the given message, modifies epoch and corresponding cipher to use for
+     * encryption.
+     */
+    @XmlAttribute(name = "epoch", required = false)
+    private Integer epoch = null;
 
-	private String alias = null;
-	private Integer contextEpoch = null;
-	private Long contextWriteNumber = null;
-	
-	protected DtlsInput() {
-		super();
-	}
+    /*
+     * Enable encryption for message (only applies if current epoch > 0).
+     */
+    @XmlAttribute(name = "encryptedEnabled", required = false)
+    private boolean encryptionEnabled = true;
 
-	protected DtlsInput(String name) {
-		super(name);
-	}
-	
-	public final void preSendUpdate(State state, ExecutionContext context) {
-		alias = context.getSulDelegate().getRole();
-		// if different epoch than current, set the epoch in TLS context
-		if (epoch != null && epoch != state.getTlsContext().getDtlsSendEpoch()) {
-			contextEpoch = state.getTlsContext().getDtlsSendEpoch();
-			state.getTlsContext().setDtlsSendEpoch(epoch);
-			// if epoch > 0, must deactivate encryption
-			if (contextEpoch > 0  && !encryptionEnabled) {
-				DeactivateEncryptionAction action = new DeactivateEncryptionAction();
-				action.setConnectionAlias(alias);
-				action.execute(state);
-				contextWriteNumber = state.getTlsContext().getWriteSequenceNumber();
-				state.getTlsContext().setWriteSequenceNumber(context.incrementWriteRecordNumberEpoch0());
-			}
-		}
-		
-		preSendDtlsUpdate(state, context);
-	}
-	
-	public void preSendDtlsUpdate(State state, ExecutionContext context) {
-	}
+    private String alias = null;
+    private Integer contextEpoch = null;
+    private Long contextWriteNumber = null;
 
-	public final void postSendUpdate(State state, ExecutionContext context) {
-		// reset epoch number and, if original epoch > 0, reactivate encryption
-		if (contextEpoch != null) {
-			state.getTlsContext().setDtlsSendEpoch(contextEpoch);
-			if (contextEpoch > 0  && !encryptionEnabled) {
-				ActivateEncryptionAction action = new ActivateEncryptionAction();
-				action.setConnectionAlias(alias);
-				action.execute(state);
-				if (contextWriteNumber != null) {
-					state.getTlsContext().setWriteSequenceNumber(contextWriteNumber);
-				}
-			}
-			contextEpoch = null;
-		}
-		
-		postSendDtlsUpdate(state, context);
-	}
-	
-	public void postSendDtlsUpdate(State state, ExecutionContext context) {
-	}
+    protected DtlsInput() {
+        super();
+    }
 
-	
-	public Integer getEpoch() {
-		return epoch;
-	}
-	
-	public void setEpoch(Integer epoch) {
-		this.epoch = epoch;
-	}
+    protected DtlsInput(String name) {
+        super(name);
+    }
 
-	public boolean isEncryptionEnabled() {
-		return encryptionEnabled;
-	}
+    public final void preSendUpdate(State state, ExecutionContext context) {
+        alias = context.getSulDelegate().getRole();
 
-	public void setEncryptionEnabled(boolean encrypted) {
-		this.encryptionEnabled = encrypted;
-	}
+        // if different epoch than current, set the epoch in TLS context
+        if (epoch != null && epoch != state.getTlsContext().getWriteEpoch()) {
+            state.getTlsContext().setWriteEpoch(epoch);
+            contextEpoch = state.getTlsContext().getWriteEpoch();
+        }
+
+        // if epoch > 0, deactivate encryption
+        if (!encryptionEnabled) {
+            throw new NotImplementedException("Disabling encryption is not currently supported.");
+//            DeactivateEncryptionAction action = new DeactivateEncryptionAction();
+//            action.setConnectionAlias(alias);
+//            action.execute(state);
+//            state.getTlsContext().setWriteSequenceNumber(context.incrementWriteRecordNumberEpoch0());
+        }
+
+        preSendDtlsUpdate(state, context);
+    }
+
+    public void preSendDtlsUpdate(State state, ExecutionContext context) {
+    }
+
+    public final void postSendUpdate(State state, ExecutionContext context) {
+        // reset epoch number and, if original epoch > 0, reactivate encryption
+        if (contextEpoch != null) {
+            state.getTlsContext().setWriteEpoch(contextEpoch);
+            contextEpoch = null;
+        }
+
+        if (!encryptionEnabled) {
+            throw new NotImplementedException("Re-enabling encryption is not currently supported.");
+//            ActivateEncryptionAction action = new ActivateEncryptionAction();
+//            action.setConnectionAlias(alias);
+//            action.execute(state);
+//            if (contextWriteNumber != null) {
+//                state.getTlsContext().setWriteSequenceNumber(contextWriteNumber);
+//            }
+        }
+
+        postSendDtlsUpdate(state, context);
+    }
+
+    public void postSendDtlsUpdate(State state, ExecutionContext context) {
+    }
+
+    public Integer getEpoch() {
+        return epoch;
+    }
+
+    public void setEpoch(Integer epoch) {
+        this.epoch = epoch;
+    }
+
+    public boolean isEncryptionEnabled() {
+        return encryptionEnabled;
+    }
+
+    public void setEncryptionEnabled(boolean encrypted) {
+        this.encryptionEnabled = encrypted;
+    }
+
+    private long getWriteSequenceNumber(TlsContext context) {
+        return context.getRecordLayer().getEncryptor().getRecordCipher(epoch).getState().getWriteSequenceNumber();
+    }
 }

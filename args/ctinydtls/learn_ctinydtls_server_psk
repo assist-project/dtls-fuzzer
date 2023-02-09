@@ -1,4 +1,6 @@
 state-fuzzer-server
+
+# SUT config
 -connect
 localhost:${sut.port}
 -startWait
@@ -7,14 +9,16 @@ localhost:${sut.port}
 ${alphabets.servers}/psk8.xml
 -responseWait
 100
+-protocol
+DTLS12
+
+# learning config
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
 -randLength
 10
 -queries
 20000
--protocol
-DTLS12
--equivalenceAlgorithms
-RANDOM_WP_METHOD,WP_METHOD
 -output
 output/ctinydtls_server_psk
 -cmd

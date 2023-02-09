@@ -22,8 +22,8 @@ using CCM_8 ciphersuites. -->
     </GenericTlsInput>
     <GenericTlsInput name="EMPTY_CERTIFICATE">
         <Certificate>
-            <certificatesList>
-            </certificatesList>
+            <certificateListConfig>
+            </certificateListConfig>
         </Certificate>
     </GenericTlsInput>
     <GenericTlsInput name="CERTIFICATE_VERIFY">

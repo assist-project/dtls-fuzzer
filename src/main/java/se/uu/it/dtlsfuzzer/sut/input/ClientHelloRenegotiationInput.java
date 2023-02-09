@@ -6,7 +6,7 @@ import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModificatio
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.sut.output.ModelOutputs;
@@ -41,10 +41,10 @@ public class ClientHelloRenegotiationInput extends TlsInput {
 		switch (enabled) {
 			case OWN_EPOCH_CHANGE :
 				// send epoch is 1 or more
-				return state.getTlsContext().getDtlsSendEpoch() > 0;
+				return state.getTlsContext().getWriteEpoch() > 0;
 			case SERVER_EPOCH_CHANGE :
 				// receive epoch is 1 or more
-				return state.getTlsContext().getDtlsNextReceiveEpoch() > 0;
+				return state.getTlsContext().getReadEpoch() > 0;
 			case ONCE :
 				return context.getStepContexes()
 						.subList(0, context.getStepCount() - 1).stream()
@@ -55,13 +55,14 @@ public class ClientHelloRenegotiationInput extends TlsInput {
 	}
 
 	@Override
-	public ProtocolMessage generateMessage(State state, ExecutionContext context) {
+	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		state.getTlsContext().getDigest().reset();
-		if (resetMSeq)
-			state.getTlsContext().setDtlsNextSendSequenceNumber(0);
-		state.getTlsContext().setDtlsNextReceiveSequenceNumber(0);
+		if (resetMSeq) {
+			state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);
+		}
+		state.getTlsContext().setDtlsReadHandshakeMessageSequence(0);
 		if (suite != null) {
-			state.getConfig().setDefaultClientSupportedCiphersuites(suite);
+			state.getConfig().setDefaultClientSupportedCipherSuites(suite);
 		}
 		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
 		if (!isShort) {

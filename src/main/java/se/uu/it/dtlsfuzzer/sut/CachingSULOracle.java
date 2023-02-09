@@ -3,7 +3,7 @@ package se.uu.it.dtlsfuzzer.sut;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.google.common.collect.Sets;
 

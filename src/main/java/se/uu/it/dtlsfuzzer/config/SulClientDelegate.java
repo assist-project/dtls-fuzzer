@@ -7,28 +7,28 @@ import de.rub.nds.tlsattacker.core.config.delegate.ClientDelegate;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
 
 public class SulClientDelegate extends SulDelegate {
-	
-	@ParametersDelegate
-	private ClientDelegate clientDelegate;
 
-	public SulClientDelegate() {
-		super();
-		clientDelegate = new ClientDelegate();
-	}
-	
-	public void applyDelegate(Config config) throws ConfigurationException {
-		clientDelegate.applyDelegate(config);
-		config.getDefaultClientConnection().setTimeout(getResponseWait());
-	}
+    @ParametersDelegate
+    private ClientDelegate clientDelegate;
 
-	
-	@Override
-	public final String getRole() {
-		return "client";
-	}
-	
-	public final boolean isClient() {
-		return true;
-	}
-	
+    public SulClientDelegate() {
+        super();
+        clientDelegate = new ClientDelegate();
+    }
+
+    public void applyDelegate(Config config) throws ConfigurationException {
+        clientDelegate.applyDelegate(config);
+        config.getDefaultClientConnection().setTimeout(getResponseWait());
+        config.getDefaultClientConnection().setFirstTimeout(getResponseWait());
+    }
+
+    @Override
+    public final String getRole() {
+        return "client";
+    }
+
+    public final boolean isClient() {
+        return true;
+    }
+
 }

@@ -26,7 +26,6 @@
 package se.uu.it.jsse.examples.dtlsclientserver;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
@@ -44,9 +43,12 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLEngineResult.Status;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLProtocolException;
 import javax.net.ssl.SSLSession;
 
 /**
@@ -54,12 +56,8 @@ import javax.net.ssl.SSLSession;
  */
 public class DtlsClientServer extends Thread {
 
-	private static int LOG_LEVEL = 1; // 0 no logging, 1 basic logging, 2 logging incl. method name
-	{
-		String level = System.getProperty("log.level");
-		if (level != null)
-			LOG_LEVEL = Integer.valueOf(level);
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(DtlsClientServer.class.getName());
+
 	private static final int BUFFER_SIZE = 20240;
 	static final int SOCKET_TIMEOUT = 20000;
 
@@ -69,29 +67,36 @@ public class DtlsClientServer extends Thread {
 	private SSLContext sslContext;
 	private AtomicBoolean running;
 	private String side;
+	private EventListener listener;
 
-	public DtlsClientServer(DtlsClientServerConfig config, SSLContext sslContext) throws GeneralSecurityException, IOException {
-		info("DtlsClientServer: isClient = " + config.isClient());
+	public DtlsClientServer(DtlsClientServerConfig config, SSLContext sslContext, EventListener listener) throws GeneralSecurityException, IOException {
+		LOG.info("DtlsClientServer: isClient = " + config.isClient());
 		InetSocketAddress address = new InetSocketAddress(config.getHostname(), config.getPort());
 		if (config.isClient()) {
 			socket = new DatagramSocket();
 			socket.connect(address);
 			side = "Client";
 			peerAddr = new InetSocketAddress(config.getHostname(), config.getPort());
-			info("Hostname is " + config.getHostname());
-			info("Port is " + config.getPort());
-			info("Peer address is " + peerAddr.toString());
+			LOG.info("Hostname is " + config.getHostname());
+			LOG.info("Port is " + config.getPort());
+			LOG.info("Peer address is " + peerAddr.toString());
 		} else {
 			socket = new DatagramSocket(address);
 			side = "Server";
+			LOG.info("Receiving at port " + socket.getLocalPort());
 		}
 		socket.setSoTimeout(SOCKET_TIMEOUT);
 		socket.setReuseAddress(true);
 		this.config = config;		
 		this.sslContext = sslContext;
 		this.running = new AtomicBoolean(false);
+		this.listener = listener;
 	}
-	
+
+	public DtlsClientServer(DtlsClientServerConfig config, SSLContext sslContext) throws GeneralSecurityException, IOException {
+		this(config, sslContext, EventListener.getNopEventListener());
+	}
+
 	/*
 	 * A mock DTLS echo server which uses SSLEngine.
 	 */
@@ -100,6 +105,7 @@ public class DtlsClientServer extends Thread {
 			// create SSLEngine
 			SSLEngine engine = createSSLEngine(sslContext, config.isClient(), config);
 			running.set(true);
+			listener.notifyStart();
 			ByteBuffer appData = null;
 			doFullHandshake(engine, socket);
 			switch (config.getOperation()) {
@@ -112,7 +118,7 @@ public class DtlsClientServer extends Thread {
 						appData = receiveAppData(engine, socket);
 		
 						if (appData != null) {
-							info("Received application data");
+							LOG.info("Received application data");
 		
 							// write server application data
 							sendAppData(engine, socket, appData.duplicate(), peerAddr, side);
@@ -128,7 +134,7 @@ public class DtlsClientServer extends Thread {
 						appData = receiveAppData(engine, socket);
 
 						if (appData != null) {
-							info("Received application data");
+							LOG.info("Received application data");
 
 							// write server application data
 							sendAppData(engine, socket, appData.duplicate(), peerAddr, side);
@@ -153,7 +159,7 @@ public class DtlsClientServer extends Thread {
 							appData = receiveAppData(engine, socket);
 
 							if (appData != null) {
-								info("Received application data");
+								LOG.info("Received application data");
 
 								// write server application data
 								sendAppData(engine, socket, appData.duplicate(), peerAddr, side);
@@ -165,22 +171,24 @@ public class DtlsClientServer extends Thread {
 				break;
 			}
 		} catch (Exception E) {
-			severe(E.getMessage());
+			LOG.error(E.getMessage());
 			E.printStackTrace(System.err);
 		} finally {
+			LOG.info("DTLS program terminated");
 			if (isInterrupted()) {
-				info("Thread has been interrupted");
+				LOG.info("Thread has been interrupted");
 			}
 			socket.close();
 			socket.disconnect();
 			running.set(false);
+			listener.notifyStop();
 		}
 	}
-	
+
 	public boolean isRunning() {
 		return running.get();
 	}
-	
+
 	private static boolean isEngineClosed(SSLEngine engine) {
 		return (engine.isOutboundDone() && engine.isInboundDone());
 	}
@@ -204,14 +212,14 @@ public class DtlsClientServer extends Thread {
 				break;
 			}
 		}
-		
+
 		SSLParameters params = engine.getSSLParameters();
 		params.setEnableRetransmissions(config.isEnableRetransmission());
 		engine.setSSLParameters(params);
 
 		return engine;
 	}
-	
+
 	public Integer getPort() {
 		return this.socket.getLocalPort();
 	}
@@ -220,7 +228,7 @@ public class DtlsClientServer extends Thread {
 		this.socket.close();
 		super.interrupt();
 	}
-	
+
 	/*
 	 * Executes a full handshake, may or may not succeed.
 	 * 
@@ -251,7 +259,7 @@ public class DtlsClientServer extends Thread {
 
 		if (isDone) {
 			SSLEngineResult.HandshakeStatus hs = engine.getHandshakeStatus();
-			info("Handshake finished, status is " + hs);
+			LOG.info("Handshake finished, status is " + hs);
 
 			if (engine.getHandshakeSession() != null) {
 				throw new Exception("Handshake finished, but handshake session is not null");
@@ -261,17 +269,14 @@ public class DtlsClientServer extends Thread {
 			if (session == null) {
 				throw new Exception("Handshake finished, but session is null");
 			}
-			info("Negotiated protocol is " + session.getProtocol());
-			info("Negotiated cipher suite is " + session.getCipherSuite());
-			
-			if (LOG_LEVEL>0) {
-				try {
-					info("Verified peer certificates are " + Arrays.asList(engine.getSession().getPeerCertificates()));
-				} catch(SSLPeerUnverifiedException exception) {
-					info("SSL peer unverified");
-				}
-			}
+			LOG.info("Negotiated protocol is " + session.getProtocol());
+			LOG.info("Negotiated cipher suite is " + session.getCipherSuite());
 
+			try {
+				LOG.info("Verified peer certificates are " + Arrays.asList(engine.getSession().getPeerCertificates()));
+			} catch(SSLPeerUnverifiedException exception) {
+				LOG.info("SSL peer unverified");
+			}
 
 			// handshake status should be NOT_HANDSHAKING
 			//
@@ -291,8 +296,8 @@ public class DtlsClientServer extends Thread {
 		try {
 			return doHandshakeStep(engine, socket);
 		} catch (Exception exc) {
-			info("Exception while executing handshake step");
-			info(exc.getMessage());
+			LOG.info("Exception while executing handshake step");
+			LOG.info(exc.getMessage());
 			return false;
 		}
 	}
@@ -301,24 +306,24 @@ public class DtlsClientServer extends Thread {
 	// false otherwise
 	private boolean doHandshakeStep(SSLEngine engine, DatagramSocket socket) throws Exception {
 		SSLEngineResult.HandshakeStatus hs = engine.getHandshakeStatus();
-		info("handshake status: " + hs);
+		LOG.info("handshake status: " + hs);
 		List<DatagramPacket> packets;
 		switch (hs) {
 		// SSLEngine is expecting network data from the outside
 		case NEED_UNWRAP:
 		case NEED_UNWRAP_AGAIN:
-			info("expecting DTLS records");
+			LOG.info("expecting DTLS records");
 			ByteBuffer iNet;
 			ByteBuffer iApp;
 			if (hs == SSLEngineResult.HandshakeStatus.NEED_UNWRAP) {
 				byte[] buf = new byte[BUFFER_SIZE];
 				DatagramPacket packet = new DatagramPacket(buf, buf.length);
 				try {
-					info("waiting for a packet");
+					LOG.info("waiting for a packet");
 					receivePacket(packet, socket);
-					info("received a packet of length = " + packet.getLength());
+					LOG.info("received a packet of length = " + packet.getLength());
 				} catch (SocketTimeoutException ste) {
-					info("socket timed out");
+					LOG.info("socket timed out");
 					return false;
 				}
 
@@ -350,9 +355,9 @@ public class DtlsClientServer extends Thread {
 
 		// SSLEngine wants to send network data to the outside world
 		case NEED_WRAP:
-			info("preparing to send DTLS records");
+			LOG.info("preparing to send DTLS records");
 			packets = new ArrayList<>();
-			info("pper address is " + peerAddr.toString());
+			LOG.info("pper address is " + peerAddr.toString());
 			produceHandshakePackets(engine, peerAddr, packets);
 
 			for (DatagramPacket p : packets) {
@@ -367,7 +372,7 @@ public class DtlsClientServer extends Thread {
 
 		// SSLEngine has finished handshaking
 		case NOT_HANDSHAKING:
-			info("finished handshaking");
+			LOG.info("finished handshaking");
 			return true;
 
 		case FINISHED:
@@ -383,7 +388,7 @@ public class DtlsClientServer extends Thread {
 
 		List<DatagramPacket> packets = produceApplicationPackets(engine, appData, peerAddr);
 		appData.flip();
-		info("sending " + packets.size() + " packets");
+		LOG.info("sending " + packets.size() + " packets");
 		for (DatagramPacket p : packets) {
 			socket.send(p);
 		}
@@ -393,15 +398,15 @@ public class DtlsClientServer extends Thread {
 		while (!isInterrupted() && !engine.isInboundDone()) {
 			byte[] buf = new byte[BUFFER_SIZE];
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
-			info("waiting for a packet");
+			LOG.info("waiting for a packet");
 			try {
 				receivePacket(packet, socket);
 			} catch (Exception e) {
-				severe(e.getMessage());
+				LOG.error(e.getMessage());
 				return null;
 			}
 
-			info("received a packet of length " + packet.getLength());
+			LOG.info("received a packet of length " + packet.getLength());
 			ByteBuffer netBuffer = ByteBuffer.wrap(buf, 0, packet.getLength());
 			ByteBuffer recBuffer = ByteBuffer.allocate(BUFFER_SIZE);
 			SSLEngineResult rs = engine.unwrap(netBuffer, recBuffer);
@@ -409,9 +414,6 @@ public class DtlsClientServer extends Thread {
 			recBuffer.flip();
 			if (recBuffer.remaining() != 0) {
 				return recBuffer;
-			}
-			if (rs.getStatus() == Status.CLOSED) {
-//				engine.closeInbound();
 			}
 			if (engine.getHandshakeStatus() != HandshakeStatus.NOT_HANDSHAKING) {
 				return null;
@@ -427,7 +429,7 @@ public class DtlsClientServer extends Thread {
 		InetSocketAddress peerAddress = (InetSocketAddress) packet.getSocketAddress();
 		if (peerAddr == null || !peerAddress.equals(peerAddr)) {
 			peerAddr = (InetSocketAddress) packet.getSocketAddress();
-			info("setting peer address to " + peerAddr);
+			LOG.info("setting peer address to " + peerAddr);
 		}
 	}
 
@@ -449,9 +451,8 @@ public class DtlsClientServer extends Thread {
 			case BUFFER_UNDERFLOW:
 			case BUFFER_OVERFLOW:
 				throw new Exception("Unexpected buffer error: " + rs);
-			case CLOSED:
-//				engine.closeOutbound();
 			case OK:
+			case CLOSED:
 				if (oNet.hasRemaining()) {
 					byte[] ba = new byte[oNet.remaining()];
 					oNet.get(ba);
@@ -465,7 +466,7 @@ public class DtlsClientServer extends Thread {
 
 		}
 
-		info("produced " + packets.size() + " packets");
+		LOG.info("produced " + packets.size() + " packets");
 	}
 
 	// produce application packets
@@ -500,7 +501,7 @@ public class DtlsClientServer extends Thread {
 	}
 
 	private void logResult(String operation, SSLEngineResult result) {
-		info(operation + " result: " + result);
+		LOG.info(operation + " result: " + result);
 	}
 
 	private DatagramPacket createHandshakePacket(byte[] ba, SocketAddress socketAddr) {
@@ -517,26 +518,6 @@ public class DtlsClientServer extends Thread {
 		SSLEngineResult.HandshakeStatus hs = engine.getHandshakeStatus();
 		if (hs == SSLEngineResult.HandshakeStatus.NEED_TASK) {
 			throw new Exception("handshake shouldn't need additional tasks");
-		}
-	}
-
-	static void severe(String message) {
-		log(System.err, message);
-	}
-
-	static void info(String message) {
-		log(System.out, message);
-	}
-
-	static void log(PrintStream ps, String message) {
-		if (LOG_LEVEL > 0) {
-			if (LOG_LEVEL > 1) {
-				String methodName = Arrays.stream(Thread.currentThread().getStackTrace()).skip(3)
-						.filter(e -> !e.getMethodName().startsWith("log")).findFirst().get().getMethodName();
-				ps.println(methodName + ": " + message);
-			} else {
-				ps.println(message);
-			}
 		}
 	}
 }

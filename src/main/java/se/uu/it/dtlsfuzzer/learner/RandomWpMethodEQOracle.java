@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import de.learnlib.api.oracle.EquivalenceOracle;
@@ -108,7 +106,6 @@ public class RandomWpMethodEQOracle<I,O>
 	 * java.util.Collection)
 	 */
 	@Override
-	@ParametersAreNonnullByDefault
 	public @Nullable DefaultQuery<I, Word<O>> findCounterExample(MealyMachine<?, I, ?, O> hypothesis,
 			Collection<? extends I> inputs) {
 		return doFindCounterExample(hypothesis, inputs);

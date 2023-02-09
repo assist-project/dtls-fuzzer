@@ -3,7 +3,7 @@ package se.uu.it.dtlsfuzzer.mapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
@@ -39,7 +39,7 @@ public abstract class AbstractMapper implements Mapper{
 	 * Mappers need not use this function, but they should always call the update calls on the input in the order suggested.  
 	 */
 	protected TlsOutput doExecute(TlsInput input, State state, ExecutionContext context, MessageSender sender) {
-		ProtocolMessage message = input.generateMessage(state, context);
+		TlsMessage message = input.generateMessage(state, context);
 		input.preSendUpdate(state, context);
 		sender.sendMessage(message, state, context);
 		input.postSendUpdate(state, context);
@@ -53,6 +53,6 @@ public abstract class AbstractMapper implements Mapper{
 	}
 	
 	static interface MessageSender {
-		void sendMessage(ProtocolMessage message, State state, ExecutionContext context);
+		void sendMessage(TlsMessage message, State state, ExecutionContext context);
 	}
 }

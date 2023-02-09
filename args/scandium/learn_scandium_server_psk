@@ -4,19 +4,19 @@ state-fuzzer-server
 -connect
 localhost:${sut.port}
 -startWait
-2000
+4000
 -responseWait
 100
 -protocol
 DTLS12
 -cmd
-"java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-server.jar -port ${sut.port} -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -timeout 20000000 -cipherSuites TLS_PSK_WITH_AES_128_CCM_8,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 -starterAddress localhost:${fuzzer.port} -starterAck"
+java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-clientserver.jar -port ${sut.port} -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -timeout 20000000 -cipherSuites TLS_PSK_WITH_AES_128_CCM_8,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 -starterAddress localhost:${fuzzer.port}
 -sulConfig
 experiments/configs/scandium.config
--resetPort                                                                                                                                                                  
-${fuzzer.port}                                                                                                                                            
--processTrigger                                                                                                                                                      
-START                      
+-adapterPort
+${fuzzer.port}
+-processTrigger
+START
 
 # learning config
 -alphabet
@@ -34,4 +34,3 @@ RANDOM_WP_METHOD,WP_METHOD
 -ceReruns
 3
 -skipNonDetTests
-

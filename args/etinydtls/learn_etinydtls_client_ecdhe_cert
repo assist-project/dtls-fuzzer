@@ -2,19 +2,19 @@ state-fuzzer-client
 
 # SUT config
 -port
-${sut.port} 
+${sut.port}
 -startWait
 100
 -responseWait
-100  
--sulConfig 
+100
+-sulConfig
 experiments/configs/tinydtls_client.config
--cmd 
-"${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sut.port} localhost"
--protocol 
-DTLS12 
+-cmd
+${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sut.port} localhost
+-protocol
+DTLS12
 
-# learner config
+# learning config
 -alphabet
 ${alphabets.clients}/tinydtls_ecdhe8_cert.xml
 -randLength
@@ -23,7 +23,7 @@ ${alphabets.clients}/tinydtls_ecdhe8_cert.xml
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
--output 
+-output
 output/etinydtls_client_ecdhe_cert
 -depth
 1

@@ -10,7 +10,7 @@ localhost:${sut.port}
 -cmd
 ${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sut.port}
 -sulConfig
-experiments/configs/tinydtls.config
+experiments/configs/tinydtls_server.config
 -protocol
 DTLS12
 

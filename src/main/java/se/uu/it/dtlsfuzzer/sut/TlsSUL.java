@@ -19,6 +19,7 @@ import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
 import de.rub.nds.tlsattacker.core.record.layer.TlsRecordLayer;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
+import de.rub.nds.tlsattacker.transport.TransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ClientUdpTransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ServerUdpTransportHandler;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
@@ -39,269 +40,260 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
  */
 public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
-	private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
-	private State state = null;
-	private ExecutionContext context = null;
+    private State state = null;
+    private ExecutionContext context = null;
 
-	private Config config;
+    private Config config;
 
-	/**
-	 * the sut is closed if it has crashed resulting in IMCP packets, or it
-	 * simply terminated the connection
-	 */
-	private boolean closed = false;
+    /**
+     * the SUT is closed if it has crashed resulting in IMCP packets, or it simply
+     * terminated the connection
+     */
+    private boolean closed = false;
 
-	/**
-	 * the sut is disabled if an input has disabled it as a result of a learning
-	 * purpose
-	 */
-	private boolean disabled = false;
-	
-	/**
-	 * Are we imitating a server or a client instance.
-	 */
-	private boolean isServer;
-	
+    /**
+     * the sut is disabled if an input has disabled it as a result of a learning
+     * purpose
+     */
+    private boolean disabled = false;
 
-	private long resetWait = 0;
+    /**
+     * Are we imitating a server or a client instance.
+     */
+    private boolean server;
 
-	private int count = 0;
+    private long resetWait = 0;
 
-	private SulDelegate delegate;
-	private AbstractMapper defaultExecutor;
-	private String role;
-	private DynamicPortProvider portProvider;
+    private int count = 0;
 
-	/**
-	 * Reference to thread waiting for a ClientHello to be received from the client.
-	 */
-	private Thread chWaiter;
-	
-	/**
-	 * Have we received a ClientHello in the current run?
-	 */
-	private boolean receivedClientHello;
-	private OutputMapper outputMapper;
-	private MapperConfig mapperConfig;
-	
+    private SulDelegate delegate;
+    private AbstractMapper defaultExecutor;
+    private String role;
+    private DynamicPortProvider portProvider;
 
-	public TlsSUL(SulDelegate delegate, MapperConfig mapperConfig, AbstractMapper defaultExecutor, CleanupTasks cleanupTasks) {
-		this.delegate = delegate;
-		this.defaultExecutor = defaultExecutor;
-		this.mapperConfig = mapperConfig;
-		this.role = delegate.getRole();
-		isServer = delegate instanceof SulServerDelegate;
-		outputMapper = new OutputMapper(mapperConfig);
-		if (isServer) {
-			cleanupTasks.submit(new Runnable() {
-				@Override
-				public void run() {
-					if (state != null && chWaiter != null && chWaiter.isAlive()) {
-						try {
-							LOGGER.debug("Causing existing ClientHello waiter thread to terminate by closing the connection.");
-							state.getTlsContext().getTransportHandler().closeConnection();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			});
-		}
-	}
-	
-	public void setDynamicPortProvider(DynamicPortProvider portProvider) {
-		this.portProvider = portProvider;
-	}
+    /**
+     * Reference to thread waiting for a ClientHello to be received from the client.
+     */
+    private Thread chWaiter;
 
-	@Override
-	public void pre() {
-		Config config = getNewSulConfig(delegate);
-		delegate.applyDelegate(config);
+    /**
+     * Have we received a ClientHello in the current run?
+     */
+    private boolean receivedClientHello;
+    private OutputMapper outputMapper;
+    private MapperConfig mapperConfig;
 
-		state = new State(config, new WorkflowTrace());
-		state.getTlsContext().setRecordLayer(
-				new TlsRecordLayer(state.getTlsContext()));
-		state.getTlsContext().setTransportHandler(null);
-		config.setHighestProtocolVersion(delegate.getProtocolVersion());
-		config.setDefaultSelectedProtocolVersion(delegate.getProtocolVersion());
-		
-		if (delegate.getProtocolVersion().isDTLS()) {
-			if (!isServer) {
-				OutboundConnection connection = state.getConfig()
-						.getDefaultClientConnection();
-				if (portProvider != null) {
-					connection.setPort(portProvider.getSulPort());
-				}
-				state.getTlsContext().setTransportHandler(
-						new ClientUdpTransportHandler(connection));
-			} else {
-				InboundConnection connection = state.getConfig()
-						.getDefaultServerConnection();
-				
-				state.getTlsContext().setTransportHandler(
-						new ServerUdpTransportHandler(connection.getTimeout(), 
-								connection.getPort()));	
-			}
-		} else {
-			throw new NotImplementedException("TLS is not currently supported");
-		}
-		
-		if (isServer) {
-			chWaiter = new Thread(
-				new Runnable () {
-					@Override
-					public void run() {
-						LOGGER.debug("Initializing transport handler (waiting ClientHello)");
-						/*
-						 * ServerUdpTransportHandler#initTransportHandler only returns once a ClientHello message is received
-						 */
-						state.getTlsContext().initTransportHandler();
-						LOGGER.debug("Initialized transport handler");
-					}
-					
-				}
-			);
-			chWaiter.start();
-			receivedClientHello = false;
-			if (((SulServerDelegate) delegate).getClientWait() > 0) {
-				try {
-					Thread.sleep(((SulServerDelegate) delegate).getClientWait());
-				} catch (InterruptedException e) {
-					LOGGER.error("Could not sleep thread");
-				}
-			}
-		} else {
-			state.getTlsContext().initTransportHandler();
-		}
-		
-		state.getTlsContext().initRecordLayer();
-		closed = false;
-		resetWait = delegate.getStartWait();
-		context = new ExecutionContext(delegate, state);
-		disabled = false;
-		LOGGER.debug("Start {}", count++);
-	}
+    public TlsSUL(SulDelegate delegate, MapperConfig mapperConfig, AbstractMapper defaultExecutor,
+            CleanupTasks cleanupTasks) {
+        this.delegate = delegate;
+        this.defaultExecutor = defaultExecutor;
+        this.mapperConfig = mapperConfig;
+        this.role = delegate.getRole();
+        server = !delegate.isClient();
+        outputMapper = new OutputMapper(mapperConfig);
+        if (server) {
+            cleanupTasks.submit(new Runnable() {
+                @Override
+                public void run() {
+                    if (state != null && chWaiter != null && chWaiter.isAlive()) {
+                        try {
+                            LOGGER.debug(
+                                    "Causing existing ClientHello waiter thread to terminate by closing the connection.");
+                            state.getTlsContext().getTransportHandler().closeConnection();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }
+    }
 
-	@Override
-	public void post() {
-		try {
-			if (isServer && !receivedClientHello) {
-				receiveClientHello();
-			}
-			state.getTlsContext().getTransportHandler().closeConnection();
-			if (resetWait > 0) {
-				Thread.sleep(resetWait);
-			}
-		} catch (IOException ex) {
-			LOGGER.error("Could not close connections");
-			LOGGER.error(ex, null);
-		} catch (InterruptedException ex) {
-			LOGGER.error("Could not sleep thread");
-			LOGGER.error(ex, null);
-		} catch (NullPointerException ex) {
-			LOGGER.error("Transport handler is null");
-			LOGGER.error(ex, null);
-		}
-	}
-	
-	/*
-	 * If we play the role of the server, we should only begin interaction once a ClientHello message is received.
-	 */
-	private void receiveClientHello() {
-		if (chWaiter != null && chWaiter.isAlive()) {
-			try {
-				chWaiter.join();
-				receivedClientHello = true;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				throw new RuntimeException("ClientHello waiter thread was inexplicably interrupted");
-			}
-		}
-	}
+    public void setDynamicPortProvider(DynamicPortProvider portProvider) {
+        this.portProvider = portProvider;
+    }
 
-	@Override
-	public TlsOutput step(TlsInput in) throws SULException {
-		context.addStepContext();
-		Mapper executor = in.getPreferredMapper(delegate, mapperConfig);
-		if (executor == null) {
-			executor = defaultExecutor;
-		}
-		
-		if (isServer && !receivedClientHello) {
-			receiveClientHello();
-		}
-		
-		if (!context.isExecutionEnabled()) {
-			return outputMapper.disabled();
-		}
+    @Override
+    public void pre() {
+        Config config = getNewSulConfig(delegate);
+        delegate.applyDelegate(config);
 
-		TlsOutput output = null;
-		try {
-			if (state == null) {
-				throw new RuntimeException(
-						"TLS-Attacker state is not initialized");
-			} else if (state.getTlsContext().getTransportHandler().isClosed()
-					|| closed) {
-				closed = true;
-				return outputMapper.socketClosed(); 
-			}
+        state = new State(config, new WorkflowTrace());
+        config.setHighestProtocolVersion(delegate.getProtocolVersion());
+        config.setDefaultSelectedProtocolVersion(delegate.getProtocolVersion());
+        state.getTlsContext().setRecordLayer(new TlsRecordLayer(state.getTlsContext()));
+        state.getTlsContext().setTransportHandler(null);
 
-			output = executeInput(in, executor, role);
+        if (delegate.getProtocolVersion().isDTLS()) {
+            if (!server) {
+                OutboundConnection connection = state.getConfig().getDefaultClientConnection();
+                if (portProvider != null) {
+                    connection.setPort(portProvider.getSULPort());
+                }
+                state.getTlsContext().setTransportHandler(new ClientUdpTransportHandler(connection));
+            } else {
+                InboundConnection connection = state.getConfig().getDefaultServerConnection();
 
-			if (output == TlsOutput.disabled()
-					|| context.getStepContext().isDisabled()) {
-				// this should lead to a disabled sink state
-				context.disableExecution();
-			}
+                state.getTlsContext().setTransportHandler(new ServerUdpTransportHandler(connection));
+            }
+        } else {
+            throw new NotImplementedException("TLS is not currently supported");
+        }
 
-			if (state.getTlsContext().isReceivedTransportHandlerException()) {
-				closed = true;
-			}
-			return output;
-		} catch (IOException | NullPointerException ex) {
-			ex.printStackTrace();
-			closed = true;
-			return outputMapper.socketClosed(); 
-		}
-	}
+        if (server) {
+            chWaiter = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    initializeTransportHandler();
+                }
 
-	private TlsOutput executeInput(TlsInput in, Mapper executor, String role) {
-		LOGGER.debug("sent: {}", in.toString());
-		state.getTlsContext().setTalkingConnectionEndType(
-				state.getTlsContext().getChooser().getConnectionEndType());
-		long originalTimeout = state.getTlsContext().getTransportHandler()
-				.getTimeout();
-		if (in.getExtendedWait() != null) {
-			state.getTlsContext().getTransportHandler()
-					.setTimeout(originalTimeout + in.getExtendedWait());
-		}
-		if (delegate.getInputResponseTimeout() != null && delegate.getInputResponseTimeout().containsKey(in.name())) {
-			state.getTlsContext().getTransportHandler()
-			.setTimeout(delegate.getInputResponseTimeout().get(in.name()));
-		}
-		
-		TlsOutput output = executor.execute(in, state, context);
+            });
+            chWaiter.start();
+            receivedClientHello = false;
+            if (((SulServerDelegate) delegate).getClientWait() > 0) {
+                try {
+                    Thread.sleep(((SulServerDelegate) delegate).getClientWait());
+                } catch (InterruptedException e) {
+                    LOGGER.error("Could not sleep thread");
+                }
+            }
+        } else {
+            initializeTransportHandler();
+        }
 
-		LOGGER.debug("received: {}", output);
-		state.getTlsContext().getTransportHandler().setTimeout(originalTimeout);
-		return output;
-	}
+        closed = false;
+        resetWait = delegate.getStartWait();
+        context = new ExecutionContext(delegate, state);
+        disabled = false;
+        LOGGER.debug("Start {}", count++);
+    }
 
-	private Config getNewSulConfig(SulDelegate delegate) {
-		if (config == null) {
-			try {
-				config = Config
-						.createConfig(delegate.getSulConfigInputStream());
-			} catch (IOException e) {
-				throw new RuntimeException("Could not load configuration file");
-			}
-		}
+    private void initializeTransportHandler() {
+        try {
+            LOGGER.debug("Initializing transport handler");
+            TransportHandler transportHandler = state.getTlsContext().getTransportHandler();
+            transportHandler.preInitialize();
+            transportHandler.initialize();
+        } catch (IOException e) {
+            LOGGER.error("Could not initialize transport handler");
+            LOGGER.error(e, null);
+        }
+    }
 
-		return config.createCopy();
-	}
+    @Override
+    public void post() {
+        try {
+            if (server && !receivedClientHello) {
+                receiveClientHello();
+            }
+            state.getTlsContext().getTransportHandler().closeConnection();
+            if (resetWait > 0) {
+                Thread.sleep(resetWait);
+            }
+        } catch (IOException e) {
+            LOGGER.error("Could not close connections");
+            LOGGER.error(e, null);
+        } catch (InterruptedException e) {
+            LOGGER.error("Could not sleep thread");
+            LOGGER.error(e, null);
+        } catch (NullPointerException e) {
+            LOGGER.error("Transport handler is null");
+            LOGGER.error(e, null);
+        }
+    }
 
-	public State getState() {
-		return state;
-	}
+    /*
+     * If we play the role of the server, we should only begin interaction once a
+     * ClientHello message is received.
+     */
+    private void receiveClientHello() {
+        if (chWaiter != null && chWaiter.isAlive()) {
+            try {
+                chWaiter.join();
+                receivedClientHello = true;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new RuntimeException("ClientHello waiter thread was inexplicably interrupted");
+            }
+        }
+    }
+
+    @Override
+    public TlsOutput step(TlsInput in) throws SULException {
+        context.addStepContext();
+        Mapper executor = in.getPreferredMapper(delegate, mapperConfig);
+        if (executor == null) {
+            executor = defaultExecutor;
+        }
+
+        if (server && !receivedClientHello) {
+            receiveClientHello();
+        }
+
+        if (!context.isExecutionEnabled()) {
+            return outputMapper.disabled();
+        }
+
+        TlsOutput output = null;
+        try {
+            if (state == null) {
+                throw new RuntimeException("TLS-Attacker state is not initialized");
+            } else if (state.getTlsContext().getTransportHandler().isClosed() || closed) {
+                closed = true;
+                return outputMapper.socketClosed();
+            }
+
+            output = executeInput(in, executor, role);
+
+            if (output == TlsOutput.disabled() || context.getStepContext().isDisabled()) {
+                // this should lead to a disabled sink state
+                context.disableExecution();
+            }
+
+            if (state.getTlsContext().isReceivedTransportHandlerException()) {
+                closed = true;
+            }
+            return output;
+        } catch (IOException | NullPointerException ex) {
+            ex.printStackTrace();
+            closed = true;
+            return outputMapper.socketClosed();
+        }
+    }
+
+    private TlsOutput executeInput(TlsInput in, Mapper executor, String role) {
+        LOGGER.debug("sent: {}", in.toString());
+        state.getTlsContext().setTalkingConnectionEndType(state.getTlsContext().getChooser().getConnectionEndType());
+        long originalTimeout = state.getTlsContext().getTransportHandler().getTimeout();
+        if (in.getExtendedWait() != null) {
+            state.getTlsContext().getTransportHandler().setTimeout(originalTimeout + in.getExtendedWait());
+        }
+        if (delegate.getInputResponseTimeout() != null && delegate.getInputResponseTimeout().containsKey(in.name())) {
+            state.getTlsContext().getTransportHandler().setTimeout(delegate.getInputResponseTimeout().get(in.name()));
+        }
+
+        TlsOutput output = executor.execute(in, state, context);
+
+        LOGGER.debug("received: {}", output);
+        state.getTlsContext().getTransportHandler().setTimeout(originalTimeout);
+        return output;
+    }
+
+    private Config getNewSulConfig(SulDelegate delegate) {
+        if (config == null) {
+            try {
+                config = Config.createConfig(delegate.getSulConfigInputStream());
+            } catch (IOException e) {
+                throw new RuntimeException("Could not load configuration file");
+            }
+        }
+
+        return config.createCopy();
+    }
+
+    public State getState() {
+        return state;
+    }
 }

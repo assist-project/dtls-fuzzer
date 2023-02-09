@@ -9,10 +9,15 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
 public class Main {
+
+	private static final Logger LOG = LoggerFactory.getLogger(Main.class.getName());
 
     /**
      * Creates a DTLS server or client.
@@ -30,24 +35,24 @@ public class Main {
         	sslContext = getDTLSContext(config);
             
         	if (config.getThreadStarterIpPort() == null) {
-	        	DtlsClientServer dtlsHarness = new DtlsClientServer(config, sslContext);
+                DtlsClientServer dtlsHarness = new DtlsClientServer(config, sslContext);
 	        	dtlsHarness.run();
         	} else {
-        		// the server port is dynamically allocated in this case
+                // the server port is dynamically allocated in this case
         		if (!config.isClient()) {
         			config.setPort(0);
         		}
-        		ts = new ThreadStarter(() -> newClientServer(config, sslContext), config);
+                ts = new ThreadStarter(config, sslContext);
         		ts.run();
         	}
         	
     	} catch(ParameterException e) {
-			System.out.println("Could not parse provided parameters. " + e.getLocalizedMessage());
+			LOG.error("Could not parse provided parameters. " + e.getLocalizedMessage());
 			commander.usage();
 			return;
 		} catch(Exception e) {
-			System.out.println("Exception encountered");
-			System.out.println(e.getLocalizedMessage());
+			LOG.error("Exception encountered");
+			LOG.error(e.getLocalizedMessage());
 			if (ts != null) {
 				try {
 					ts.close();
@@ -56,16 +61,6 @@ public class Main {
 			}
 		}
     }
-    
-	private static DtlsClientServer newClientServer(DtlsClientServerConfig config, SSLContext sslContext) {
-		try {
-			System.out.println("Creating a new server/client");
-			return new DtlsClientServer(config, sslContext);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-	}
 	
 	private static SSLContext sslContext;
 	

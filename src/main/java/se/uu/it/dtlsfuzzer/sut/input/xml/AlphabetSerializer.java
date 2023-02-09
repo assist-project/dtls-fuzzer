@@ -17,7 +17,7 @@ import javax.xml.stream.XMLStreamReader;
 import de.rub.nds.modifiablevariable.ModifiableVariable;
 import de.rub.nds.modifiablevariable.ModificationFilter;
 import de.rub.nds.modifiablevariable.VariableModification;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.ExtensionMessage;
 import net.automatalib.words.impl.ListAlphabet;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
@@ -30,7 +30,7 @@ public class AlphabetSerializer {
 		if (context == null) {
 			context = JAXBContext.newInstance(Alphabet.class,
 					TlsInput.class, ExtensionMessage.class,
-					ProtocolMessage.class, ModificationFilter.class,
+					TlsMessage.class, ModificationFilter.class,
 					VariableModification.class, ModifiableVariable.class);
 		}
 		return context;

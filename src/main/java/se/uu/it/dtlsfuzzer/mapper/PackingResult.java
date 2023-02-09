@@ -2,7 +2,7 @@ package se.uu.it.dtlsfuzzer.mapper;
 
 import java.util.List;
 
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 /**
  * Comprises the result of packing a list of messages into records.
@@ -11,9 +11,9 @@ import de.rub.nds.tlsattacker.core.record.AbstractRecord;
  */
 // FIXME fragments cannot be split over multiple records
 public class PackingResult {
-	private List<ProtocolMessage> messages;
+	private List<TlsMessage> messages;
 	private List<AbstractRecord> records;
-	public PackingResult(List<ProtocolMessage> messages,
+	public PackingResult(List<TlsMessage> messages,
 			List<AbstractRecord> records) {
 		super();
 		this.messages = messages;
@@ -22,7 +22,7 @@ public class PackingResult {
 			throw new RuntimeException("Records and messages cannot be empty");
 		}
 	}
-	public List<ProtocolMessage> getMessages() {
+	public List<TlsMessage> getMessages() {
 		return messages;
 	}
 	public List<AbstractRecord> getRecords() {

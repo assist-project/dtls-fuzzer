@@ -98,19 +98,19 @@ readonly PIONDTLS_209="piondtls-2.0.9" # likely works with other v2.x.x versions
 readonly PIONDTLS_209_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/refs/tags/v2.0.9.tar.gz"
 
 readonly SCANDIUM_OLD='scandium-2.0.0-M16'
-readonly SCANDIUM_OLD_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0.0-M16.tar.gz'
+readonly SCANDIUM_OLD_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v2.0.0-M16.tar.gz'
 readonly CALIFORNIUM_OLD="californium-2.0.0-M16"
 readonly CALIFORNIUM_OLD_ARCH_URL='https://github.com/eclipse/californium/archive/2.0.0-M16.tar.gz'
 readonly SCANDIUM_230="scandium-2.3.0"
-readonly SCANDIUM_230_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.3.0.tar.gz'
+readonly SCANDIUM_230_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v2.3.0.tar.gz'
 readonly CALIFORNIUM_230="californium-2.3.0"
 readonly CALIFORNIUM_230_ARCH_URL='https://github.com/eclipse/californium/archive/2.3.0.tar.gz'
 readonly SCANDIUM_262="scandium-2.6.2"
-readonly SCANDIUM_262_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.6.2.tar.gz'
+readonly SCANDIUM_262_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v2.6.2.tar.gz'
 readonly CALIFORNIUM_262="californium-2.6.2"
 readonly CALIFORNIUM_262_ARCH_URL='https://github.com/eclipse/californium/archive/2.6.2.tar.gz'
 readonly SCANDIUM_300_M2="scandium-3.0.0-M2"
-readonly SCANDIUM_300_M2_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v3.0.0-M2.tar.gz'
+readonly SCANDIUM_300_M2_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v3.0.0-M2.tar.gz'
 readonly CALIFORNIUM_300_M2="californium-3.0.0-M2"
 readonly CALIFORNIUM_300_M2_ARCH_URL='https://github.com/eclipse/californium/archive/refs/tags/3.0.0-M2.tar.gz'
 

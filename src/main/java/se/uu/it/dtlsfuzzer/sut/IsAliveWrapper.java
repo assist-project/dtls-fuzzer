@@ -33,6 +33,10 @@ public class IsAliveWrapper implements SUL<TlsInput, TlsOutput> {
 		if (isAlive) {
 			TlsOutput out = sut.step(in);
 			isAlive = out.isAlive();
+//			TODO Uncomment this and update the learned/regression models
+//			if (!isAlive) {
+//				out = outputMapper.coalesceOutputs(out, outputMapper.socketClosed());
+//			}
 			return out;
 		} else {
 			return outputMapper.socketClosed(); 
