@@ -33,31 +33,32 @@ import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
  * </ul>
  * </ol>
  * 
- * Everything to do with how a response is converted into a TlsOutput should be
- * implemented here. Also implemented are operations over the mapper such as
- * coalescing to outputs into one or splitting an output into its atoms.
+ * Everything having to do with how a response is converted into a TlsOutput
+ * should be implemented here. Also implemented are operations over the mapper
+ * such as coalescing to outputs into one or splitting an output into its atoms.
  */
 public class OutputMapper {
     private static final Logger LOGGER = LogManager.getLogger();
-
+    
     /*
      * The minimum number of alert/unknown messages before decryption failure is
      * established.
      */
     private static final int MIN_ALERTS_IN_DECRYPTION_FAILURE = 2;
-
+    
     /*
-     * The minimum number of times an output has to be generated for the repeating
-     * output to be used. Note that 2 is the only value currently supported.
+     * The minimum number of times an output has to be generated for the
+     * repeating output to be used. Note that 2 is the only value currently
+     * supported.
      */
     private static final int MIN_REPEATS_FOR_REPEATING_OUTPUT = 2;
-
+    
     private MapperConfig config;
 
     public OutputMapper(MapperConfig config) {
         this.config = config;
     }
-
+    
     public TlsOutput receiveOutput(State state, ExecutionContext context) {
         try {
             if (state.getTlsContext().getTransportHandler().isClosed()) {
