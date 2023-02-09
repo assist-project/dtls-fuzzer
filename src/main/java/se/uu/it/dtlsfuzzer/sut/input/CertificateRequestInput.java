@@ -15,7 +15,7 @@ public class CertificateRequestInput extends DtlsInput {
 
 	@XmlAttribute(name="certificate", required=true)
 	ClientCertificateType certificateType;
-	
+
 	public CertificateRequestInput() {
 		super("CERTIFICATE_REQUEST");
 	}
@@ -37,7 +37,7 @@ public class CertificateRequestInput extends DtlsInput {
 		}
 		return message;
 	}
-	
+
 	public ClientCertificateType getClientCertificateType() {
 		return certificateType;
 	}

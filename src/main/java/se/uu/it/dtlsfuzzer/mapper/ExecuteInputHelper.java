@@ -23,7 +23,7 @@ import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
  * The difference is that it is greatly simplified, and functionality is made
  * available relevant to fuzzing fragments, specifically a method which splits
  * messages into fragments.
- * 
+ *
  */
 public class ExecuteInputHelper {
 

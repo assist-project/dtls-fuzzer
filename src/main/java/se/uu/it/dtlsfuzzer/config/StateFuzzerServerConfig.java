@@ -8,16 +8,16 @@ public class StateFuzzerServerConfig extends StateFuzzerConfig {
 
 	@ParametersDelegate
 	private SulClientDelegate sulClientDelegate;
-	
+
 	public StateFuzzerServerConfig() {
 		super();
 		sulClientDelegate = new SulClientDelegate();
 	}
-	
+
 	public StateFuzzerServerConfig(SulClientDelegate sulClientDelegate) {
 		this.sulClientDelegate = sulClientDelegate;
 	}
-	
+
 	@Override
 	public SulDelegate getSulDelegate() {
 		return sulClientDelegate;

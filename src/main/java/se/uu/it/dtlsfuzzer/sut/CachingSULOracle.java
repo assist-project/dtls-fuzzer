@@ -18,7 +18,7 @@ import net.automatalib.words.Word;
  * This class is adapted from {@link SULOracle}. Unfortunately, the
  * implementation of LearnLib's cache oracle {@link SULCache} is unstable (the
  * version 0.12.0 at least).
- * 
+ *
  * The implementation adds terminating outputs functionality.
  */
 public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {

@@ -5,7 +5,7 @@ import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 /**
- * The mapper component is responsible with executing an input. 
+ * The mapper component is responsible with executing an input.
  * Given an input symbol, the mapper should:
  * <ol>
  * 	<li> generate a corresponding packet </li>
@@ -13,7 +13,7 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
  * 	<li> receive the response </li>
  * 	<li> convert it into an appropriate response </li>
  * </ol>
- * 
+ *
  */
 public interface Mapper {
 	public TlsOutput execute(TlsInput input, State state, ExecutionContext context);

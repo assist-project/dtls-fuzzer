@@ -9,7 +9,7 @@ public class InputResponseTimeoutConverter implements IStringConverter<InputResp
 	public InputResponseTimeoutMap convert(String value) {
 		InputResponseTimeoutMap inputResponseTimeout = new InputResponseTimeoutMap();
 		String[] inputValuePairs = value.split("\\,");
-		
+
 		for (String inputValuePair : inputValuePairs) {
 			String[] split = inputValuePair.split("\\:");
 			if (split.length != 2) {
@@ -22,10 +22,10 @@ public class InputResponseTimeoutConverter implements IStringConverter<InputResp
 				}
 			}
 		}
-		
+
 		return inputResponseTimeout;
 	}
-	
+
 	private String errMessage(String value) {
 		return String.format("Error processing InputResponseTimeoutMap from \"%s\". "
 				+ "Expected format: \"input1:value1,input2:value2...\"; e.g. \"SERVER_HELLO_DONE:100\" ", value);

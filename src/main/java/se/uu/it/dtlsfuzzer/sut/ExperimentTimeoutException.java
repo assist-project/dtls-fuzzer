@@ -5,7 +5,7 @@ import java.time.Duration;
 public class ExperimentTimeoutException extends RuntimeException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

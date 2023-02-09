@@ -50,7 +50,7 @@ public class Statistics {
 		out.println("=== STATISTICS ===");
 		out.println("Learning finished: " + finished);
 		if (!finished) {
-			out.println("Reason: " + reason);	
+			out.println("Reason: " + reason);
 		}
 		out.println("Size of the input alphabet: " + alphabetSize);
 		out.println("Number of states: " + states);
@@ -71,7 +71,7 @@ public class Statistics {
 			out.println("Number of inputs when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getInputs()).collect(Collectors.toList()));
 			out.println("Number of tests when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getTests()).collect(Collectors.toList()));
 			out.println("Time when hypothesis was generated: " + hypStats.stream().map(s -> s.getSnapshot().getTime()).collect(Collectors.toList()));
-			
+
 			List<HypothesisStatistics> invalidatedHypStates = new ArrayList<>(hypStats);
 			if (invalidatedHypStates.get(invalidatedHypStates.size()-1).getCounterexample() == null) {
 				invalidatedHypStates.remove(invalidatedHypStates.size()-1);
@@ -116,7 +116,7 @@ public class Statistics {
 	public String getRunDescription() {
 		return runDescription;
 	}
-	
+
 	public int getAlphabetSize() {
 		return alphabetSize;
 	}

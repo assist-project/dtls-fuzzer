@@ -16,7 +16,7 @@ import se.uu.it.dtlsfuzzer.sut.Symbol;
 /**
  * The outputs used in learning can be messages/records, application data, and
  * information about the state of the SUT (is it still alive).
- * 
+ *
  * We restrict ourselves only to the received message types.
  */
 public class TlsOutput extends Symbol {
@@ -26,7 +26,7 @@ public class TlsOutput extends Symbol {
 			specialOutputsMap.put(outString, new TlsOutput(outString));
 		return specialOutputsMap.get(outString);
 	}
-	
+
 	public static final String MESSAGE_SEPARATOR = "|";
 	public static final String REPEATING_INDICATOR = "+";
 
@@ -37,7 +37,7 @@ public class TlsOutput extends Symbol {
 	public static final String UNKNOWN_MESSAGE = "UNKNOWN_MESSAGE";
 	public static final String SOCKET_CLOSED = "SOCKET_CLOSED";
 	public static final String DISABLED = "DISABLED";
-	
+
 
 	public static TlsOutput timeout() {
 		return getSpecialOutput(TIMEOUT);
@@ -54,9 +54,9 @@ public class TlsOutput extends Symbol {
 	public static TlsOutput disabled() {
 		return getSpecialOutput(DISABLED);
 	}
-	
+
 	// fields not used in equals, but as carriers of information as tests are executed
-	
+
 	// alive indicates whether the process/connection is alive or was lost
 	private boolean alive = true;
 
@@ -72,7 +72,7 @@ public class TlsOutput extends Symbol {
 		super(name, false);
 		this.messages = messages;
 	}
-	
+
 	/**
 	 * Only includes the abstract output
 	 */
@@ -94,14 +94,14 @@ public class TlsOutput extends Symbol {
 		return builder.toString();
 	}
 
-	
+
 	/**
 	 * Identifies whether the output was derived from multiple distinct messages.
 	 */
 	public boolean isComposite() {
 		return name().contains(MESSAGE_SEPARATOR);
 	}
-	
+
 	/**
 	 * Identifies whether the output was not derived from multiple distinct messages.
 	 * This means the output encodes a single message, repeating occurrences of the same message or no message.
@@ -109,30 +109,30 @@ public class TlsOutput extends Symbol {
 	public boolean isAtomic() {
 		return !isComposite();
 	}
-	
+
 	public boolean isRepeating() {
 		return !isComposite() && name().endsWith(REPEATING_INDICATOR);
 	}
-	
+
 	public TlsOutput getRepeatedOutput() {
 		if (isRepeating()) {
 			return new TlsOutput(name().substring(0, name().length()-1));
 		}
 		return this;
 	}
-	
+
 	public boolean isTimeout() {
 		return TIMEOUT.equals(name());
 	}
-	
+
 	public boolean isDisabled() {
 		return DISABLED.equals(name());
 	}
-	
+
 	public boolean isSocketClosed() {
 		return SOCKET_CLOSED.equals(name());
 	}
-	
+
 	/**
 	 * Indicates whether the output represents a record response from the system.
 	 * False means the output is describes timeout/crash/disabled-ness.
@@ -140,18 +140,18 @@ public class TlsOutput extends Symbol {
 	public boolean isRecordResponse() {
 		return (messages != null && !messages.isEmpty()) || (!this.isTimeout() && !this.isDisabled());
 	}
-	
+
 	/**
 	 * Indicates whether the output also contains the concrete messages from which the abstraction was derived
 	 */
 	public boolean hasMessages() {
 		return messages != null;
 	}
-	
+
 	public List<TlsOutput> getAtomicOutputs() {
 		return getAtomicOutputs(1);
 	}
-	
+
 	public List<TlsOutput> getAtomicOutputs(int unrollRepeating) {
 		if (isAtomic() && !isRepeating()) {
 			return Collections.singletonList(this);
@@ -164,11 +164,11 @@ public class TlsOutput extends Symbol {
 			return outputs;
 		}
 	}
-	
+
 	public List<String> getAtomicAbstractionStrings() {
 		return getAtomicAbstractionStrings(1);
 	}
-	
+
 	/*
 	 * Returns a list of abstraction strings, one for each individual message in the output, unrolling repeating messages the given number of times.
 	 */
@@ -186,7 +186,7 @@ public class TlsOutput extends Symbol {
 		}
 		return newAtoms;
 	}
-	
+
 	private String buildContentInfo() {
 		StringBuilder builder = new StringBuilder();
 
@@ -208,7 +208,7 @@ public class TlsOutput extends Symbol {
 	}
 
 	/**
-	 * Returns the protocol messages associated with the output. 
+	 * Returns the protocol messages associated with the output.
 	 * Returns null if this output was generated from a specification and does not contain protocol messages.
 	 */
 	public List<TlsMessage> getMessages() {

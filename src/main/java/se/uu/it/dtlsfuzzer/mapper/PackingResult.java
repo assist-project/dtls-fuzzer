@@ -6,7 +6,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 /**
  * Comprises the result of packing a list of messages into records.
- * 
+ *
  * Limitations of our setup restricts us to sending one record per message.
  */
 // FIXME fragments cannot be split over multiple records

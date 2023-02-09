@@ -11,7 +11,7 @@ public class ParsingResult {
     private StateFuzzerServerConfig stateFuzzerServerConfig;
     private JCommander commander;
 
-    public ParsingResult(StateFuzzerClientConfig stateFuzzerClientConfig, StateFuzzerServerConfig stateFuzzerServerConfig, 
+    public ParsingResult(StateFuzzerClientConfig stateFuzzerClientConfig, StateFuzzerServerConfig stateFuzzerServerConfig,
             JCommander commander) {
         this.stateFuzzerClientConfig = stateFuzzerClientConfig;
         this.stateFuzzerServerConfig = stateFuzzerServerConfig;
@@ -21,7 +21,7 @@ public class ParsingResult {
     public JCommander getCommander() {
         return commander;
     }
-    
+
     public StateFuzzerConfig getParsedConfig() {
         if (commander.getParsedCommand() != null) {
             if (commander.getParsedCommand().equals(stateFuzzerClientConfig.getToolName().getName())) {
@@ -32,5 +32,5 @@ public class ParsingResult {
         }
         return null;
     }
-    
+
 }

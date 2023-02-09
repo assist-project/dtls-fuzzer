@@ -15,7 +15,7 @@ public class ChangeCipherSpecInput extends DtlsInput {
 	public ChangeCipherSpecInput() {
 		super("CHANGE_CIPHER_SPEC");
 	}
-	
+
 	@Override
 	public void preSendDtlsUpdate(State state, ExecutionContext context) {
 	    Long writeSeqNumForCurrentEpoch = state.getTlsContext().getRecordLayer().getEncryptor().getRecordCipher(state.getTlsContext().getWriteEpoch()).getState().getWriteSequenceNumber();

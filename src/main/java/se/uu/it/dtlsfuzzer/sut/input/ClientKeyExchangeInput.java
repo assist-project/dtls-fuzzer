@@ -65,10 +65,10 @@ public class ClientKeyExchangeInput extends DtlsInput {
 						+ " not supported");
 
 		}
-		
+
 		return message;
 	}
-	
+
 	public KeyExchangeAlgorithm getAlgorithm() {
 		return algorithm;
 	}

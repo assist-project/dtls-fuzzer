@@ -12,15 +12,15 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 /**
  * A lightweight mapper which sends messages by calling the
  * sendMessages functionality on the SendMessageHelper.
- * 
- * It does not update the execution context. 
+ *
+ * It does not update the execution context.
  */
 public class BasicMapper extends AbstractMapper {
-	
+
 	public BasicMapper(MapperConfig config) {
 		super(config);
 	}
-	
+
 	@Override
 	protected TlsOutput doExecute(TlsInput input, State state, ExecutionContext context) {
 		BasicMessageSender messageSender = new BasicMessageSender();
@@ -39,7 +39,7 @@ public class BasicMapper extends AbstractMapper {
 				} catch (IOException E) {
 					E.printStackTrace();
 				}
-			}	
+			}
 		}
-	} 
+	}
 }

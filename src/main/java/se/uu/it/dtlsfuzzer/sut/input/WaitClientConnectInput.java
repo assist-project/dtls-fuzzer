@@ -7,7 +7,7 @@ import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 public class WaitClientConnectInput extends TlsInput {
-	
+
 	@Override
 	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		throw new NotImplementedException("Cannot generate message");

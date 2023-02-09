@@ -18,7 +18,7 @@ import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 
 public abstract class ToolConfig extends GeneralDelegate {
-	
+
 	public void applyDelegate(Config config) {
 		super.applyDelegate(config);
 		if (isDebug()) {
@@ -32,24 +32,24 @@ public abstract class ToolConfig extends GeneralDelegate {
 	         Configurator.setAllLevels("de.rub.nds.tlsattacker", Level.ERROR);
 	    }
 	}
-	
+
 	public static final String VAR_FUZZER_PROPS = "fuzzer.properties";
 	public static final String DEFAULT_FUZZER_PROPS = "dtls-fuzzer.properties";
-	
+
 	public static final String VAR_FUZZER_DIR = "fuzzer.dir";
 	public static final String VAR_SUTS_DIR = "suts.dir";
 	public static final String VAR_SUT_PORT = "sut.port";
 	public static final String VAR_FUZZER_PORT = "fuzzer.port";
-	
+
 	/* Stores application properties which include variable definitions */
 	@DynamicParameter(names = "-D", description = "Definitions for variables, which can be referred to in arguments by ${var}. "
 			+ "Variables are replaced with their corresponding values before the arguments are parsed."
 			+ "Can be passed as either JVM properties (after java) or as application properties.")
 	protected static Map<String, String> props = new LinkedHashMap<>();
-	
+
 	/* Stores default application properties as provided in the FUZZER_PROPS file*/
 	private static Map<String, String> originalProps = new LinkedHashMap<>();
-	
+
 	// initialize system properties
 	static {
 		Properties fuzzerProps = new Properties();
@@ -64,7 +64,7 @@ public abstract class ToolConfig extends GeneralDelegate {
 		} catch (IOException e) {
 			throw new RuntimeException("Could not load properties");
 		}
-		
+
 		for (String propName : fuzzerProps.stringPropertyNames()) {
 			String systemPropValue = System.getProperty(propName);
 			if (systemPropValue != null) {
@@ -73,19 +73,19 @@ public abstract class ToolConfig extends GeneralDelegate {
 				props.put(propName, fuzzerProps.getProperty(propName));
 			}
 		}
-		
+
 		String fuzzerDir = System.getProperty(VAR_FUZZER_DIR);
 		if (fuzzerDir == null) {
 			fuzzerDir = System.getProperty("user.dir");
 		}
 		props.put(VAR_FUZZER_DIR, fuzzerDir);
-		
+
 		String sutsDir = fuzzerProps.getProperty(VAR_SUTS_DIR);
 		if (sutsDir == null) {
 			sutsDir = fuzzerDir + File.separator + "suts";
 		}
 		props.put(VAR_SUTS_DIR, sutsDir);
-		
+
 		/*
 		 * Sut port: between 10000 and 39999
 		 */
@@ -95,7 +95,7 @@ public abstract class ToolConfig extends GeneralDelegate {
 			sutPort = Long.toString(sutSec);
 		}
 		props.put(VAR_SUT_PORT, sutPort);
-		
+
 		/*
 		 * Fuzzer port: between 40000 and 65535 (= 0xFFFF or max port)
 		 */
@@ -107,17 +107,17 @@ public abstract class ToolConfig extends GeneralDelegate {
 		props.put(VAR_FUZZER_PORT, fuzzerPort);
 		originalProps.putAll(props);
 	}
-	
+
 	/**
      * Returns true if due to placeholder variables (supplied via the -D option), an additional parsing round is required.
      */
     public static boolean isReparseRequired() {
         return !originalProps.equals(props);
     }
-	
+
 	// so we don't replaceAll each time
 	private static Map<String, String> resolutionCache = new HashMap<>();
-	
+
 	/**
 	 * Resolves are the system properties in a given user string.
 	 */
@@ -125,11 +125,11 @@ public abstract class ToolConfig extends GeneralDelegate {
 		if (userString == null) {
 			return null;
 		}
-		
+
 		if (resolutionCache.containsKey(userString)) {
 			return resolutionCache.get(userString);
 		}
-		
+
 		String resolvedStr = userString;
 		for (Map.Entry<String,String> prop : props.entrySet()) {
 			resolvedStr = resolvedStr.replaceAll("\\$\\{"+prop.getKey()+"\\}", prop.getValue());

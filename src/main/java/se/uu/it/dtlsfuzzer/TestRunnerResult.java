@@ -18,7 +18,7 @@ public class TestRunnerResult<I, O> {
 		this.inputWord = inputWord;
 		this.generatedOutputs = generatedOutputs;
 	}
-	
+
 	public void setExpectedOutputWord(Word<O> outputWord) {
 		expectedOutputWord = outputWord;
 	}
@@ -38,10 +38,10 @@ public class TestRunnerResult<I, O> {
 			sb.append(generatedOutputs.get(answer)).append(
 					" times outputs: " + answer.toString() + System.lineSeparator());
 		}
-		
+
 		if (expectedOutputWord != null) {
 			sb.append("Expected output: " + expectedOutputWord);
-		} 
+		}
 
 		return sb.toString();
 	}

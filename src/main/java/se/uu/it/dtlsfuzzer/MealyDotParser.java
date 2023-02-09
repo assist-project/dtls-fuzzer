@@ -20,8 +20,8 @@ public class MealyDotParser {
 				});
 		return parser.readModel(inputStream);
 	}
-	
-	public static interface MealyInputOutputProcessor <I,O> { 
+
+	public static interface MealyInputOutputProcessor <I,O> {
 		Pair<I,O> processMealyInputOutput(String inputName, String outputName);
 	}
 }

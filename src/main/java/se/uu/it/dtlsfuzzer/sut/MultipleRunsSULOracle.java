@@ -20,10 +20,10 @@ import se.uu.it.dtlsfuzzer.TestRunnerResult;
  * handle non-determinism. In case the runs result in different outputs, it can
  * perform probabilistic sanitization. This entails running the query many
  * times, and computing the answer with the highest likelihood.
- * 
+ *
  * If the likelihood is greater than a threshold the answer is returned,
  * otherwise an exception is thrown.
- * 
+ *
  * This oracle provides a foundation for other oracles which may want to re-run
  * queries.
  */

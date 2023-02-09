@@ -10,13 +10,13 @@ import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 public class AlertInput extends DtlsInput {
-    
+
     @XmlAttribute(name = "level", required = true)
     private AlertLevel level;
-    
+
     @XmlAttribute(name = "description", required = true)
     private AlertDescription description;
-    
+
     public AlertInput() {
         super();
     }

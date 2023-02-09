@@ -3,7 +3,7 @@ package se.uu.it.dtlsfuzzer.sut;
 public class TlsSULAdapterException extends RuntimeException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 
 public class NameTlsInputMapping extends LinkedHashMap<String, TlsInput>{
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

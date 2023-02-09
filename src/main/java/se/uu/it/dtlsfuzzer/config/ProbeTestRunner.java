@@ -16,11 +16,11 @@ public class ProbeTestRunner extends TestRunner {
 	private StateFuzzerConfig config;
 	private Alphabet<TlsInput> alphabet;
 	private List<TestRunnerResult<TlsInput, TlsOutput>> control = null;
-	
+
 	public ProbeTestRunner(TestRunnerConfig config, Alphabet<TlsInput> alphabet, SulDelegate sulDelegate, MapperConfig mapperConfig, CleanupTasks cleanupTasks) throws IOException {
 		super(config, alphabet, sulDelegate, mapperConfig, cleanupTasks);
 	}
-	
+
 	public boolean isNonDeterministic(boolean controlRun) throws IOException {
 		List<TestRunnerResult<TlsInput, TlsOutput>> results = super.runTests();
 		Iterator<TestRunnerResult<TlsInput, TlsOutput>> itControl = null;
@@ -40,11 +40,11 @@ public class ProbeTestRunner extends TestRunner {
 		}
 		return false;
 	}
-	
+
 	public StateFuzzerConfig getConfig() {
 		return config;
 	}
-	
+
 	public Alphabet<TlsInput> getAlphabet() {
 		return alphabet;
 	}

@@ -22,7 +22,7 @@ public class AutomatonUtils {
 	public static <S,I> void reachableStates(UniversalDeterministicAutomaton<S, I, ?, ?, ?> automaton, Collection<I> inputs, Collection<S> reachableStates) {
 		reachableStates(automaton, inputs, automaton.getInitialState(), reachableStates);
 	}
-	
+
 	public static <S,I> void reachableStates(UniversalDeterministicAutomaton<S, I, ?, ?, ?>  automaton, Collection<I> inputs, S fromState, Collection<S> reachableStates) {
 		Queue<S> toVisit = new ArrayDeque<S>();
 		Set<S> visited = new HashSet<S>();
@@ -42,15 +42,15 @@ public class AutomatonUtils {
 		}
 		reachableStates.addAll(reachable);
 	}
-	
-	public static <S,I> void wordsToTargetState(UniversalDeterministicAutomaton<S, I, ?, ?, ?>  automaton, 
+
+	public static <S,I> void wordsToTargetState(UniversalDeterministicAutomaton<S, I, ?, ?, ?>  automaton,
 			Collection<I> inputs, S targetState, Collection<Word<I>> words) {
 		PredMap<S,I> predMap = generatePredecessorMap(automaton, inputs);
 		wordsToTargetState(automaton, inputs, targetState, predMap, words);
 	}
-	
-	public static <S,I> void wordsToTargetState(UniversalDeterministicAutomaton<S, I, ?, ?, ?>  automaton, 
-			Collection<I> inputs, S targetState, 
+
+	public static <S,I> void wordsToTargetState(UniversalDeterministicAutomaton<S, I, ?, ?, ?>  automaton,
+			Collection<I> inputs, S targetState,
 			PredMap<S,I> map, Collection<Word<I>> words) {
 		Queue<VisitStruct<S,I>> toVisit = new ArrayDeque<VisitStruct<S,I>>();
 		Set<S> hs = new HashSet<S>();
@@ -67,7 +67,7 @@ public class AutomatonUtils {
 						if (!visitStruct.hasVisited(predStruct.getState())) {
 							HashSet<S> stateSet = new HashSet<S>(visitStruct.getVisited());
 							stateSet.add(predStruct.getState());
-							toVisit.add(new VisitStruct<S,I>(predStruct.getState(), 
+							toVisit.add(new VisitStruct<S,I>(predStruct.getState(),
 									Word.fromLetter(predStruct.getInput()).concat(visitStruct.getWord()), stateSet));
 						}
 					}
@@ -75,7 +75,7 @@ public class AutomatonUtils {
 			}
 		}
 	}
-	
+
 	public static <S,I> PredMap<S,I> generatePredecessorMap(UniversalDeterministicAutomaton<S, I, ?, ?, ?> automaton, Collection<I> inputs) {
 		PredMap<S,I> predMap = new PredMap<>();
 		for (S s : automaton.getStates()) {
@@ -89,7 +89,7 @@ public class AutomatonUtils {
 		}
 		return predMap;
 	}
-	
+
 	private static class VisitStruct<S,I> {
 		private Word<I> word;
 		private Set<S> visited;
@@ -100,15 +100,15 @@ public class AutomatonUtils {
 		public S getState() {
 			return state;
 		}
-		
+
 		public boolean hasVisited(S state) {
 			return visited.contains(state);
 		}
-		
+
 		public Set<S> getVisited() {
 			return visited;
 		}
-		
+
 		public VisitStruct(S state, Word<I> word, Set<S> visited) {
 			super();
 			this.word = word;
@@ -116,16 +116,16 @@ public class AutomatonUtils {
 			this.visited = visited;
 		}
 	}
-	
-	
+
+
 	public static class PredMap <S,I> extends LinkedHashMap<S, Collection<PredStruct<S, I>>>{
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
-		
+
 	}
-	
+
 	public static class PredStruct <S,I> {
 		private S state;
 		private I input;
@@ -137,10 +137,10 @@ public class AutomatonUtils {
 			this.state = state;
 			this.input = input;
 		}
-		
+
 		public I getInput() {
 			return input;
 		}
-		
+
 	}
 }

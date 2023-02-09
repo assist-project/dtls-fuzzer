@@ -8,21 +8,21 @@ public class StateFuzzerClientConfig extends StateFuzzerConfig {
 
 	@ParametersDelegate
 	private SulServerDelegate sulServerDelegate;
-	
+
 	public StateFuzzerClientConfig() {
 		super();
 		sulServerDelegate = new SulServerDelegate();
 	}
-	
+
 	public StateFuzzerClientConfig(SulServerDelegate sulServerDelegate) {
 		this.sulServerDelegate = sulServerDelegate;
 	}
-	
+
 	@Override
 	public SulDelegate getSulDelegate() {
 		return sulServerDelegate;
 	}
-	
+
 	public boolean isClient() {
 		return true;
 	}

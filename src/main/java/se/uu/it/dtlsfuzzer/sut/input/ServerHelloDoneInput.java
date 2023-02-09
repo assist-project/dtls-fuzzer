@@ -15,7 +15,7 @@ public class ServerHelloDoneInput extends DtlsInput {
 	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		return new ServerHelloDoneMessage(state.getConfig());
 	}
-	
+
 	@Override
 	public TlsInputType getInputType() {
 		return TlsInputType.HANDSHAKE;

@@ -7,7 +7,7 @@ import net.automatalib.words.Word;
  */
 public class NonDeterminismException extends RuntimeException {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private Word<?> oldOutput, newOutput, input, precedingInput;
@@ -30,7 +30,7 @@ public class NonDeterminismException extends RuntimeException {
 	/**
 	 * The shortest cached output word which does not correspond with the new
 	 * output
-	 * 
+	 *
 	 * @return
 	 */
 	public Word<?> getOldOutput() {
@@ -39,7 +39,7 @@ public class NonDeterminismException extends RuntimeException {
 
 	/**
 	 * The full new output word
-	 * 
+	 *
 	 * @return
 	 */
 	public Word<?> getNewOutput() {
@@ -55,7 +55,7 @@ public class NonDeterminismException extends RuntimeException {
 
 	/**
 	 * The shortest sublist of the input word which still shows non-determinism
-	 * 
+	 *
 	 * @return
 	 */
 	public Word<?> getShortestInconsistentInput() {

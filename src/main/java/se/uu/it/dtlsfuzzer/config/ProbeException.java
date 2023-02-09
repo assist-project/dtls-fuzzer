@@ -7,7 +7,7 @@ public class ProbeException extends Exception {
 		this.msg = msg;
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public String getMessage() {
 		return msg;
 	}

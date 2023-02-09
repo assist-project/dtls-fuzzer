@@ -16,7 +16,7 @@ import se.uu.it.dtlsfuzzer.config.SulDelegate;
 /**
  * Allows one to start/stop processes launched by executing a given command. At
  * most one process can be executing at a time.
- * 
+ *
  * @author Paul
  */
 public class ProcessHandler {
@@ -74,11 +74,11 @@ public class ProcessHandler {
 	/**
 	 * Launches a process which executes the handler's command. Does nothing if
 	 * the process has been launched already.
-	 * 
+	 *
 	 * Sets {@link ProcessHandler#hasLaunched} to true on successful launch of
 	 * the process, making {@link ProcessHandler#hasLaunched()} return true
 	 * thereafter.
-	 * 
+	 *
 	 * After launching, it sleeps for {@link ProcessHandler#startWait}
 	 * milliseconds.
 	 */

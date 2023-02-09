@@ -13,11 +13,11 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 public abstract class AbstractMapper implements Mapper{
 	private static final Logger LOGGER = LogManager.getLogger();
 	private OutputMapper outputMapper;
-	
+
 	public AbstractMapper(MapperConfig config) {
-		this.outputMapper = new OutputMapper(config); 
+		this.outputMapper = new OutputMapper(config);
 	}
-	
+
 	public final TlsOutput execute(TlsInput input, State state, ExecutionContext context) {
 		LOGGER.debug("Executing input symbol {}", input.name());
 		TlsOutput output;
@@ -25,18 +25,18 @@ public abstract class AbstractMapper implements Mapper{
 		if (context.isExecutionEnabled() && input.isEnabled(state, context)) {
 			output = doExecute(input, state, context);
 		} else {
-			output = outputMapper.disabled(); 
+			output = outputMapper.disabled();
 		}
 		LOGGER.debug("Produced output symbol {}", output.name());
 		return output;
 	}
 
 	protected abstract TlsOutput doExecute(TlsInput input, State state, ExecutionContext context);
-	
+
 	/**
-	 * Template method for executing an input. 
-	 * Takes a message sender as parameter. 
-	 * Mappers need not use this function, but they should always call the update calls on the input in the order suggested.  
+	 * Template method for executing an input.
+	 * Takes a message sender as parameter.
+	 * Mappers need not use this function, but they should always call the update calls on the input in the order suggested.
 	 */
 	protected TlsOutput doExecute(TlsInput input, State state, ExecutionContext context, MessageSender sender) {
 		TlsMessage message = input.generateMessage(state, context);
@@ -47,11 +47,11 @@ public abstract class AbstractMapper implements Mapper{
 		input.postReceiveUpdate(output, state, context);
 		return output;
 	}
-	
+
 	protected OutputMapper getOutputMapper() {
 		return outputMapper;
 	}
-	
+
 	static interface MessageSender {
 		void sendMessage(TlsMessage message, State state, ExecutionContext context);
 	}

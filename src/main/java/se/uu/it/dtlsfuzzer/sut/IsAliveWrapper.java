@@ -39,7 +39,7 @@ public class IsAliveWrapper implements SUL<TlsInput, TlsOutput> {
 //			}
 			return out;
 		} else {
-			return outputMapper.socketClosed(); 
+			return outputMapper.socketClosed();
 		}
 	}
 }

@@ -43,7 +43,7 @@ public class ServerKeyExchangeInput extends DtlsInput {
 						+ " not supported");
 		}
 	}
-	
+
 	public KeyExchangeAlgorithm getAlgorithm() {
 		return algorithm;
 	}

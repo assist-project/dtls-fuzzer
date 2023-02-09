@@ -35,22 +35,22 @@ import se.uu.it.dtlsfuzzer.config.ToolPropertyAwareConverterFactory;
 
 public class Main {
 	private static final Logger LOGGER = LogManager.getLogger();
-	
+
 	private static String ARGS_FILE = "command.args";
-	
-	
+
+
 	public static void main(String args[]) throws IOException, JAXBException, XMLStreamException {
 		UnlimitedStrengthEnabler.enable();
 		Security.addProvider(new BouncyCastleProvider());
 		int startCmd = 0;
 		int endCmd = 0;
 		String [] cmdArgs;
-		
+
 		if (args.length == 0) {
 			// to show global usage
 			processCommand(args);
 		}
-		
+
 		while (args.length > endCmd) {
 			startCmd = endCmd;
 			while (args.length > endCmd && !args[endCmd].equals("--")) {
@@ -142,7 +142,7 @@ public class Main {
 			LOGGER.error(E);
 		}
 	}
-	
+
 	/*
 	 * Gives a description for each supported command.
 	 */
@@ -156,7 +156,7 @@ public class Main {
 		}
 		LOGGER.info(sw.toString());
 	}
-	
+
 	/*
 	 * Checks if options have been supplied for launching the test runner/timing probe.
 	 * Executes these tools and exits if that is the case.
@@ -174,9 +174,9 @@ public class Main {
 			System.exit(0);
 		}
 	}
-	
+
 	/*
-	 * Creates the output directory in advance in order to store in it the arguments file before the tool is executed. 
+	 * Creates the output directory in advance in order to store in it the arguments file before the tool is executed.
 	 */
 	private static void prepareOutputDir(String args [], String dirPath) {
 		File outputFolder = new File(dirPath);
@@ -188,7 +188,7 @@ public class Main {
 			LOGGER.error("Failed to copy arguments file");
 			E.printStackTrace();
 			LOGGER.error(E);
-		}			
+		}
 	}
 
 	/*

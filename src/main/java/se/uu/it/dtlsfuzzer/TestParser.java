@@ -24,10 +24,10 @@ import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 
 /**
  * Reads tests from a file and writes them to a file using an alphabet.
- * 
+ *
  * Mutations of an input are encoded in the following way: {@literal @} + input
  * name + JSON encoding of the mutations.
- * 
+ *
  */
 
 public class TestParser {

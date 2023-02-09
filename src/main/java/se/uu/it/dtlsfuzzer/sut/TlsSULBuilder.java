@@ -21,8 +21,8 @@ public class TlsSULBuilder {
 	private Counter testCounter;
 	private Duration timeLimit;
 	private Long queryLimit;
-	
-	public TlsSULBuilder(SulDelegate delegate, MapperConfig mapperConfig, AbstractMapper defaultExecutor, 
+
+	public TlsSULBuilder(SulDelegate delegate, MapperConfig mapperConfig, AbstractMapper defaultExecutor,
 			CleanupTasks cleanupTasks) {
 		tlsSul = new TlsSUL(delegate, mapperConfig, defaultExecutor, cleanupTasks);
 		SUL<TlsInput, TlsOutput> tlsSystemUnderTest = tlsSul;
@@ -31,16 +31,16 @@ public class TlsSULBuilder {
 			tlsSystemUnderTest = new TlsProcessWrapper(tlsSystemUnderTest,
 					delegate);
 		}
-		
+
 		if (delegate.getSulAdapterConfig().getAdapterPort() != null) {
 			TlsSULAdapterWrapper adapterWrapper = new TlsSULAdapterWrapper(
 					tlsSystemUnderTest, delegate.getSulAdapterConfig(), !delegate.isClient(), cleanupTasks);
 			tlsSystemUnderTest = adapterWrapper;
 			tlsSul.setDynamicPortProvider(adapterWrapper);
 		}
-		
+
 		tlsSystemUnderTest = new IsAliveWrapper(tlsSystemUnderTest, new OutputMapper(mapperConfig));
-		
+
 
 		SymbolCounterSUL<TlsInput, TlsOutput> symbolCounterSul = new SymbolCounterSUL<>(
 				"symbol counter", tlsSystemUnderTest);
@@ -48,10 +48,10 @@ public class TlsSULBuilder {
 				"test counter", symbolCounterSul);
 		inputCounter = symbolCounterSul.getStatisticalData();
 		testCounter = testCounterSul.getStatisticalData();
-		
+
 		wrappedTLSSul = testCounterSul;
 	}
-	
+
 	public TlsSULBuilder setTimeLimit(Duration timeLimit) {
 		if (this.timeLimit == null) {
 			this.timeLimit = timeLimit;
@@ -62,7 +62,7 @@ public class TlsSULBuilder {
 			throw new RuntimeException("Time limit already set to " + timeLimit.toString());
 		}
 	}
-	
+
 	public TlsSULBuilder setTestLimit(long queryLimit) {
 		if (this.queryLimit == null) {
 			this.queryLimit = queryLimit;
@@ -72,21 +72,21 @@ public class TlsSULBuilder {
 		} else {
 			throw new RuntimeException("Test limit already set to " + queryLimit);
 		}
-		
+
 	}
-	
+
 	public TlsSUL getTLSSul() {
 		return tlsSul;
 	}
-	
+
 	public SUL<TlsInput,TlsOutput> getWrappedTlsSUL() {
 		return wrappedTLSSul;
 	}
-	
+
 	public Counter getInputCounter() {
 		return inputCounter;
 	}
-	
+
 	public Counter getTestCounter() {
 		return testCounter;
 	}

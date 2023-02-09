@@ -29,10 +29,10 @@ public class MainTest {
 
         Assert.assertTrue(result.getParsedConfig() instanceof StateFuzzerClientConfig);
         Assert.assertEquals(sutCommand, result.getParsedConfig().getSulDelegate().getCommand());
-        Assert.assertEquals(Arrays.asList(EquivalenceAlgorithmName.RANDOM_WALK, EquivalenceAlgorithmName.RANDOM_WORDS), 
+        Assert.assertEquals(Arrays.asList(EquivalenceAlgorithmName.RANDOM_WALK, EquivalenceAlgorithmName.RANDOM_WORDS),
                 result.getParsedConfig().getLearningConfig().getEquivalenceAlgorithms());
     }
-    
+
     /*
      * Tests if parsing works for valid arguments which set dynamic parameters used as placeholder variables.
      */
@@ -52,7 +52,7 @@ public class MainTest {
 
         Assert.assertTrue(result.getParsedConfig() instanceof StateFuzzerClientConfig);
         Assert.assertEquals("some command with value to run SUT", result.getParsedConfig().getSulDelegate().getCommand());
-        Assert.assertEquals(Arrays.asList(EquivalenceAlgorithmName.RANDOM_WALK, EquivalenceAlgorithmName.RANDOM_WORDS), 
+        Assert.assertEquals(Arrays.asList(EquivalenceAlgorithmName.RANDOM_WALK, EquivalenceAlgorithmName.RANDOM_WORDS),
                 result.getParsedConfig().getLearningConfig().getEquivalenceAlgorithms());
     }
 

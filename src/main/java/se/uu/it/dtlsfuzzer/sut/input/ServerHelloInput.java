@@ -20,13 +20,13 @@ public class ServerHelloInput extends DtlsInput {
 
 	@XmlAttribute(name = "suite", required = true)
 	private CipherSuite suite;
-	
+
 	@XmlAttribute(name = "shortHs", required = false)
 	private boolean shortHs = true;
-	
+
 	@XmlAttribute(name = "digestHR", required = false)
 	private boolean digestHR = false;
-	
+
 	public ServerHelloInput() {
 		super("SERVER_HELLO");
 	}
@@ -66,7 +66,7 @@ public class ServerHelloInput extends DtlsInput {
 	public CipherSuite getCipherSuite() {
 		return suite;
 	}
-	
+
 	@Override
 	public TlsOutput postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
 		if (shortHs && context.isExecutionEnabled()) {
@@ -79,12 +79,12 @@ public class ServerHelloInput extends DtlsInput {
 					lastChPair = msgRecPairs.get(i);
 				}
 			}
-			
+
 			assert lastChPair != null;
-			
+
 			byte [] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
 			byte [] shBytes = context.getStepContext().getProcessingUnit().getInitialRecordsToSend().get(0).getCleanProtocolMessageBytes().getValue();
-			
+
 			state.getTlsContext().getDigest().reset();
 			if (digestHR && context.getStepContext(lastChStepIndex).getInput() instanceof HelloRequestInput) {
 				byte [] hrBytes = context.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();

@@ -24,7 +24,7 @@ import se.uu.it.dtlsfuzzer.config.SulAdapterConfig;
  * Therein, ${port} is the local port of the SUT (useful for testing servers when this port is dynamically allocated).
  * <br/>
  * "stop" - prompts the launch server to stop the current SUT thread, and respond with "stopped" once the SUT process has terminated.
- * The server also generates "stopped" in order to signal that the SUL process has terminated.  
+ * The server also generates "stopped" in order to signal that the SUL process has terminated.
  */
 public class TlsSULAdapter {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -67,7 +67,7 @@ public class TlsSULAdapter {
 	}
 
 	/**
-	 * Connects to the SUL launch server if not already connected. 
+	 * Connects to the SUL launch server if not already connected.
 	 */
 	public void connect() {
 		try {
@@ -147,7 +147,7 @@ public class TlsSULAdapter {
 		}
 		return stopped;
 	}
-	
+
 	/**
 	 * Retrieves the local port of the started SUL.
 	 */

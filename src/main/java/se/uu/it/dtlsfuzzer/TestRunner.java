@@ -35,7 +35,7 @@ public class TestRunner {
 	private Alphabet<TlsInput> alphabet;
 	private MealyMachine<?, TlsInput, ?, TlsOutput> testSpecification;
 	private CleanupTasks cleanupTasks;
-	
+
 	/**
 	 * Instantiates, executes the tests in the config file and cleans up left-over processes once it is done.
 	 */
@@ -55,7 +55,7 @@ public class TestRunner {
 					LOGGER.info(getTransitionSequenceString(result, !config.getSulDelegate().isClient()));
 				}
 			}
-			
+
 		} finally {
 			if (runner != null) {
 				runner.terminate();
@@ -68,7 +68,7 @@ public class TestRunner {
 		for (Word<TlsOutput> answer : result.getGeneratedOutputs().keySet()) {
 			sb.append(System.lineSeparator());
 			for (int i=0; i<result.getInputWord().size(); i++) {
-				
+
 				List<TlsOutput> atomicOutputs = new LinkedList<>(answer.getSymbol(i).getAtomicOutputs(2));
 				if (client && i == 0 && ModelOutputs.hasClientHello(atomicOutputs.get(0))) {
 					sb.append("- / ").append(atomicOutputs.get(0)).append(System.lineSeparator());
@@ -86,7 +86,7 @@ public class TestRunner {
 		}
 		return sb.toString();
 	}
-	
+
 	public  TestRunner(TestRunnerConfig config, Alphabet<TlsInput> alphabet, SulDelegate sulDelegate, MapperConfig mapperConfig, CleanupTasks cleanupTasks) throws IOException {
 		this.config = config;
 		this.alphabet = alphabet;
@@ -94,13 +94,13 @@ public class TestRunner {
 		if (config.getTestSpecification() != null) {
 			testSpecification = ModelFactory.buildTlsModel(alphabet, config.getTestSpecification());
 		}
-		this.cleanupTasks = cleanupTasks; 
+		this.cleanupTasks = cleanupTasks;
 	}
 
 	protected Alphabet<TlsInput> getAlphabet() {
 		return alphabet;
 	}
-	
+
 	public List<TestRunnerResult<TlsInput, TlsOutput>> runTests()
 			throws IOException{
 		TestParser testParser = new TestParser();
@@ -144,18 +144,18 @@ public class TestRunner {
 		}
 		return new TestRunnerResult<I, O>(test, answerMap);
 	}
-	
+
 	private MealyMembershipOracle<TlsInput, TlsOutput> createTestOracle(
 			SulDelegate sulDelegate, MapperConfig mapperConfig, CleanupTasks cleanupTasks) {
 		TlsSULBuilder builder = new TlsSULBuilder(sulDelegate, mapperConfig, new PhasedMapper(mapperConfig), cleanupTasks);
-		
+
 		SUL<TlsInput, TlsOutput> sut = builder.getWrappedTlsSUL();
 
 		MealyMembershipOracle<TlsInput, TlsOutput> tlsOracle = new SULOracle<TlsInput, TlsOutput>(sut);
 
 		return tlsOracle;
 	}
-	
+
 	/**
 	 * Cleans up any left-over SUL process. Should be called only after all the desired tests have been executed.
 	 */

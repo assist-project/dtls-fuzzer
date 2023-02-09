@@ -24,9 +24,9 @@ public class StepContext {
 	 * A boolean for disabling current execution.
 	 */
 	private boolean disabled;
-	
+
 	/**
-	 * Controls whether a flight of records ready to be sent, are done so in separate datagrams  
+	 * Controls whether a flight of records ready to be sent, are done so in separate datagrams
 	 */
 	private boolean sendRecordsIndividually;
 
@@ -49,14 +49,14 @@ public class StepContext {
 	public void setReceivedRecords(List<AbstractRecord> receivedRecords) {
 		this.receivedRecords = receivedRecords;
 	}
-	
+
 	public void setReceivedMessages(List<TlsMessage> receivedOutputs) {
 		this.receivedMessages = receivedOutputs;
 	}
-	
+
 	public void pairReceivedMessagesWithRecords() {
 		receivedMessageRecordPair = new ArrayList<Pair<TlsMessage, AbstractRecord>>();
-		
+
 		if (receivedMessages.size() > receivedRecords.size()) {
 			if (receivedRecords.size() == 1) {
 				receivedMessageRecordPair.add(new ImmutablePair<TlsMessage, AbstractRecord>(receivedMessages.get(0), receivedRecords.get(0)));
@@ -104,15 +104,15 @@ public class StepContext {
 	public void setInput(TlsInput input) {
 		this.input = input;
 	}
-	
+
 	public ProcessingUnit getProcessingUnit() {
 		return unit;
 	}
-	
+
 	public void setProcessingUnit(ProcessingUnit unit) {
 		this.unit = unit;
 	}
-	
+
 	public boolean isDisabled() {
 		return disabled;
 	}
@@ -120,15 +120,15 @@ public class StepContext {
 	public void disable() {
 		disabled = true;
 	}
-	
+
 	public boolean isSendRecordsIndividually() {
 		return sendRecordsIndividually;
 	}
-	
+
 	public void setSendRecordsIndividually(boolean sendRecordsIndividually) {
 		this.sendRecordsIndividually = sendRecordsIndividually;
 	}
-	
+
 	public int getIndex() {
 		return index;
 	}

@@ -33,9 +33,9 @@ public class TlsProcessor implements MealyDotParser.MealyInputOutputProcessor <T
 		outputName = outputName.replaceAll("\\,", "|");
 		outputName = outputName.replaceAll("WARNING\\|", "WARNING,");
 		outputName = outputName.replaceAll("FATAL\\|", "FATAL,");
-		
+
 		TlsOutput output = new TlsOutput(outputName.trim());
-		
+
 		return Pair.of(input, output);
 	}
 }

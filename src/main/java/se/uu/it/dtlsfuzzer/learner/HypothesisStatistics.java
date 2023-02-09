@@ -8,8 +8,8 @@ public class HypothesisStatistics {
 	private int states;
 	private int index;
 	private StatisticsSnapshot counterexampleSnapshot;
-	
-	
+
+
 	public int getStates() {
 		return states;
 	}
@@ -40,5 +40,5 @@ public class HypothesisStatistics {
 	public void setIndex(int index) {
 		this.index = index;
 	}
-	
+
 }

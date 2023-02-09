@@ -4,7 +4,7 @@ public enum ClientCertAuth {
 	REQUIRED,
 	OPTIONAL,
 	DISABLED;
-	
+
 	public boolean isRequired() {
 		return this.equals(REQUIRED);
 	}

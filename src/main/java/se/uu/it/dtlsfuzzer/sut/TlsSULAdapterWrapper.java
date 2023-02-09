@@ -21,7 +21,7 @@ public class TlsSULAdapterWrapper implements SUL<TlsInput, TlsOutput>, DynamicPo
 	private boolean server;
 
 	/**
-	 * 
+	 *
 	 * @param sul
 	 * @param adapterConfig
 	 * @param server - are we acting as a server or client. It is assumed the launch server will launch the threads for the other role
@@ -32,7 +32,7 @@ public class TlsSULAdapterWrapper implements SUL<TlsInput, TlsOutput>, DynamicPo
 		this.sul = sul;
 		this.server = server;
 		this.sulAdapter = new TlsSULAdapter(adapterConfig, tasks);
-		this.server = server; 
+		this.server = server;
 	}
 
 	public Integer getSULPort() {

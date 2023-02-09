@@ -16,16 +16,16 @@ public class DtlsInputWrapper extends DtlsInput{
 	public TlsInputType getInputType() {
 		return input.getInputType();
 	}
-	
+
 	public DtlsInput getInput() {
 		return input;
 	}
-	
+
 
 	public void setEpoch(Integer epoch) {
 		input.setEpoch(epoch);
 	}
-	
+
 	public Integer getEpoch() {
 		return input.getEpoch();
 	}
@@ -33,7 +33,7 @@ public class DtlsInputWrapper extends DtlsInput{
 	public void setEncryptionEnabled(boolean encrypted) {
 		input.setEncryptionEnabled(encrypted);
 	}
-	
+
 	public boolean isEncryptionEnabled() {
 		return input.isEncryptionEnabled();
 	}
@@ -42,15 +42,15 @@ public class DtlsInputWrapper extends DtlsInput{
 	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		return input.generateMessage(state, context);
 	}
-	
+
 	public void preSendDtlsUpdate(State state, ExecutionContext context) {
 		input.preSendDtlsUpdate(state, context);
 	}
-	
+
 	public void postSendDtlsUpdate(State state, ExecutionContext context) {
 		input.postSendDtlsUpdate(state, context);
 	}
-	
+
 	public TlsOutput postReceiveUpdate(TlsOutput output, State state,
 			ExecutionContext context) {
 		return input.postReceiveUpdate(output, state, context);

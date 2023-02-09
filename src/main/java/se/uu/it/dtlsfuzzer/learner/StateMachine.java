@@ -74,7 +74,7 @@ public class StateMachine {
 			LOG.info("Could not export model!");
 		}
 	}
-	
+
 	/**
 	 * Creates a low level copy of the state machine.
 	 */

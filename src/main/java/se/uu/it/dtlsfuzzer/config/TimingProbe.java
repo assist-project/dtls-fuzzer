@@ -22,7 +22,7 @@ import se.uu.it.dtlsfuzzer.sut.input.xml.AlphabetSerializer;
 
 public class TimingProbe {
 	private static final Logger LOGGER = LogManager.getLogger(TimingProbe.class);
-	
+
 	public static void runTimingProbe(TimingProbeEnabler config) throws FileNotFoundException {
 		CleanupTasks cleanupTasks = new CleanupTasks();
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
@@ -33,9 +33,9 @@ public class TimingProbe {
 				probeTestRunner = new ProbeTestRunner(config.getTestRunnerConfig(), alphabet, config.getSulDelegate(), config.getMapperConfig(), cleanupTasks);
 				probe.setProbeTestRunner(probeTestRunner);
 				if (probe.isValid()) {
-					
+
 						Map<String, Integer> bestTimes = probe.findDeterministicTimesValues();
-	
+
 						LOGGER.info(TimingProbe.present(bestTimes));
 						try {
 							probe.exportAlphabet();
@@ -59,37 +59,37 @@ public class TimingProbe {
 
 	@Parameter(names = "-timingProbe", required = false, description = "Probe for timing values by testing for non-determinism")
 	private String probeCmd = null;
-	
+
 	@Parameter(names = "-probeMin", required = false, description = "Minimum timing value for probe")
 	private Integer probeMin = 10;
-	
+
 	@Parameter(names = "-probeLow", required = false, description = "Lowest timing value for probe")
 	private Integer probeLo = 0;
-	
+
 	@Parameter(names = "-probeHigh", required = false, description = "Highest timing value for probe")
-	private Integer probeHi = 1000; 
-	
+	private Integer probeHi = 1000;
+
 	@Parameter(names = "-probeExport", required = false, description = "Output file for the modified alphabet")
 	private String probeExport = null;
-	
+
 	private ProbeTestRunner probeTestRunner = null;
 //	private String cmd;
-	
+
 	private Integer lo, hi;
-	
+
 	public TimingProbe() {
 	}
-	
+
 	public TimingProbe(ProbeTestRunner probeTestRunner) {
 		this.probeTestRunner = probeTestRunner;
 	}
-	
+
 	/*
 	 * findDeterministicTimeValues() finds the lowest values for the parameters
 	 * supplied in the -timingProbe parameter. This can be timeout, startWait or
 	 * an alphabet name (such as PSK_CLIENT_HELLO or HELLO_VERIFY_REQUEST). If
 	 * the parameter is an alphabet name, the extendedWait parameter is found.
-	 * 
+	 *
 	 * The search is done by first setting all parameters to the -probeHigh value
 	 * and then finding the first value leading to deterministic results using
 	 * a form of binary search.
@@ -101,7 +101,7 @@ public class TimingProbe {
 		// do a control run, throw exception if non-deterministic
 		if (probeTestRunner.isNonDeterministic(true))
 			throw new ProbeException("Non-determinism at max timing values");
-		
+
 		for (String cmd : cmds) {
 			Integer bestTime;
 			if (findLimits(cmd))
@@ -113,13 +113,13 @@ public class TimingProbe {
 		}
 		return map;
 	}
-	
+
 	private void setAllTimingParameters(String[] cmds) throws IllegalArgumentException {
 		for (String cmd : cmds) {
 			setTimingParameter(cmd, probeHi);
 		}
 	}
-	
+
 	private void setTimingParameter(String cmd, Integer time) throws IllegalArgumentException {
 		if (cmd.contains("responseWait")) {
 			probeTestRunner.getConfig().getSulDelegate().setResponseWait(time);
@@ -133,7 +133,7 @@ public class TimingProbe {
 			}
 		}
 	}
-	
+
 	/*
 	 * findLimits sets hi to the first deterministic value encountered
 	 * (found by doubling hi each iteration) and lo to the last non-deterministic
@@ -149,7 +149,7 @@ public class TimingProbe {
 			setTimingParameter(cmd, hi);
 			keepSearching = probeTestRunner.isNonDeterministic(false);
 		}
-		
+
 		if (!keepSearching)
 			return true;
 		if (probeLo > 0)
@@ -167,7 +167,7 @@ public class TimingProbe {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * binarySearch refines the search for deterministic value by using a binary search
 	 * [lo, hi] is the range of the search interval
@@ -183,27 +183,27 @@ public class TimingProbe {
 		}
 		return hi;
 	}
-	
+
 	public ProbeTestRunner getProbeTestRunner() {
 		return probeTestRunner;
 	}
-	
+
 	public void setProbeTestRunner(ProbeTestRunner probeTestRunner) {
 		this.probeTestRunner = probeTestRunner;
 	}
-	
+
 	public String getProbeCmd() {
 		return probeCmd;
 	}
-	
+
 	public void setProbeCmd(String probeCmd) {
 		this.probeCmd = probeCmd;
 	}
-	
+
 	public final boolean isActive() {
 		return probeCmd != null;
 	}
-	
+
 	public boolean isValid() {
 		String[] cmds = probeCmd.split(",");
 		for (String cmd : cmds) {
@@ -212,7 +212,7 @@ public class TimingProbe {
 		}
 		return true;
 	}
-	
+
 	public boolean isValid(String cmd) {
 		if (cmd.contains("responseWait") || cmd.contains("startWait"))
 			return true;

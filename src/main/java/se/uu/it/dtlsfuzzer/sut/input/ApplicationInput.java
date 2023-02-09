@@ -13,19 +13,19 @@ public class ApplicationInput extends DtlsInput {
 
 	@XmlAttribute(name = "suppressAlert", required = false)
 	private boolean suppressAlert = false;
-	
+
 	public ApplicationInput() {
 		super("APPLICATION_DATA");
 	}
 
 	@Override
 	public TlsMessage generateMessage(State state, ExecutionContext context) {
-		ApplicationMessage appMessage = new ApplicationMessage(state.getConfig(), 
+		ApplicationMessage appMessage = new ApplicationMessage(state.getConfig(),
 				DatatypeConverter.parseHexBinary("5468697320697320612068656c6c6f206d65737361676521"));
-		
+
 		return appMessage;
 	}
-	
+
 	@Override
 	public TlsOutput postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
 		if (suppressAlert && output.toString().contains("Alert(FATAL,UNEXPECTED_MESSAGE)")) {

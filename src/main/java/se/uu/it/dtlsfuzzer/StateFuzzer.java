@@ -31,7 +31,7 @@ public class StateFuzzer {
 		}
 		cleanupTasks.execute();
 	}
-	
+
 	private LearnerResult extractModel(StateFuzzerConfig config) {
 		Alphabet<TlsInput> alphabet = AlphabetFactory.buildAlphabet(config);
 		Learner learner = new Learner(config, alphabet, cleanupTasks);

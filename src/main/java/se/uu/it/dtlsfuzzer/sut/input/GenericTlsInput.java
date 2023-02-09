@@ -55,7 +55,7 @@ import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 /**
- * 
+ *
  */
 public class GenericTlsInput extends DtlsInput {
 	@XmlElements(value = {
@@ -112,12 +112,12 @@ public class GenericTlsInput extends DtlsInput {
 		super(message.toCompactString());
 		this.message = message;
 	}
-	
+
 	public GenericTlsInput(TlsMessage message, String name) {
 		super(name);
 		this.message = message;
 	}
-	
+
 	public TlsMessage generateMessage(State state, ExecutionContext context) {
 		stripFields(message);
 		return message;
@@ -127,7 +127,7 @@ public class GenericTlsInput extends DtlsInput {
 	public void postReceiveUpdate(TlsOutput output, State state) {
 		stripFields(message);
 	}
-	
+
 	public Class<? extends TlsMessage> getMessageClass() {
 		return message.getClass();
 	}
@@ -180,9 +180,9 @@ public class GenericTlsInput extends DtlsInput {
 	public TlsInputType getInputType() {
 		return TlsInputType.fromTlsMessageType(message.getProtocolMessageType());
 	}
-	
+
 	public TlsMessage getMessage() {
 		return message;
 	}
-	
+
 }

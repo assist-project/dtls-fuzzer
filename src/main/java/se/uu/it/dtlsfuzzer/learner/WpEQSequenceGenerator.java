@@ -19,15 +19,15 @@ import net.automatalib.words.WordBuilder;
 
 /**
  * Sequence generation method factored out from the RandomWpMethodEQOracle.
- * 
+ *
  * The implementation was mostly taken/adapted from Joshua's implementation of
  * the RandomWpMethod
- * 
+ *
  * <pre>
  * See: <a href="https://github.com/mtf90/learnlib/blob/develop/eqtests/
  * 	basic-eqtests/src/main/java/de/learnlib/eqtests/basic/RandomWpMethodEQOracle.java">RandomWpMethodEQOracle</a>
  * </pre>
- * 
+ *
  * Key difference is that we randomize access sequences.
  */
 public class WpEQSequenceGenerator<I, D, S> {
@@ -122,7 +122,7 @@ public class WpEQSequenceGenerator<I, D, S> {
 	private Word<I> getRandomAccessSequence(
 			UniversalDeterministicAutomaton<S, I, ?, ?, ?> automaton,
 			Collection<? extends I> inputs, S toState, Random rand) {
-		
+
 		Set<S> hs = new HashSet<S>();
 		hs.add(toState);
 		Word<I> accessSequence = getRandomAccessSequence(automaton, inputs, toState, rand, toState, hs, new LinkedList<I> ());
@@ -133,7 +133,7 @@ public class WpEQSequenceGenerator<I, D, S> {
 			return accessSequence;
 		}
 	}
-	
+
 	private Word<I> getRandomAccessSequence(
 			UniversalDeterministicAutomaton<S, I, ?, ?, ?> automaton,
 			Collection<? extends I> inputs, S toState, Random rand, S visiting, Set<S> visited, LinkedList<I> sequence) {
@@ -145,7 +145,7 @@ public class WpEQSequenceGenerator<I, D, S> {
 			if (predStructs != null) {
 				predStructs = new ArrayList<>(predStructs);
 				Collections.shuffle(predStructs, rand);
-				
+
 				for (PredStruct<S,I> predStruct : predStructs) {
 					if ( !visited.contains(predStruct.getState())) {
 						visited.add(predStruct.getState());
@@ -163,7 +163,7 @@ public class WpEQSequenceGenerator<I, D, S> {
 			return null;
 		}
 	}
-	
+
 	public static <S,I,O> Map<S, List<PredStruct<S,I>>> computePredecessorMap(UniversalDeterministicAutomaton<S, I, ?, ?, ?> automaton, Collection<? extends I> inputs) {
 		Map<S, List<PredStruct<S,I>>> predMap = new HashMap<>();
 		for (S s : automaton.getStates()) {
@@ -177,7 +177,7 @@ public class WpEQSequenceGenerator<I, D, S> {
 		}
 		return predMap;
 	}
-	
+
 	private static class PredStruct <S,I> {
 		private S state;
 		private I input;
@@ -189,7 +189,7 @@ public class WpEQSequenceGenerator<I, D, S> {
 			this.state = state;
 			this.input = input;
 		}
-		
+
 		public I getInput() {
 			return input;
 		}

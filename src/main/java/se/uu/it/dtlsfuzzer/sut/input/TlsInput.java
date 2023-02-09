@@ -18,11 +18,11 @@ public abstract class TlsInput extends Symbol {
 
 	@XmlAttribute(name = "extendedWait", required = false)
 	private Integer extendedWait;
-	
+
 	protected TlsInput() {
 		super(true);
 	}
-	
+
 	protected TlsInput (String name) {
 		super(name, true);
 	}
@@ -35,20 +35,20 @@ public abstract class TlsInput extends Symbol {
 	}
 
 	public abstract TlsMessage generateMessage(State state, ExecutionContext context);
-	
+
 	/**
 	 * Enables the input for execution.
 	 */
 	public boolean isEnabled(State state, ExecutionContext context) {
 		return true;
 	}
-	
+
 	/**
 	 * Updates context before sending the input
 	 */
 	public void preSendUpdate(State state, ExecutionContext context) {
 	}
-	
+
 	/**
 	 * Updates the context after sending the input.
 	 */
@@ -58,7 +58,7 @@ public abstract class TlsInput extends Symbol {
 	public Integer getExtendedWait() {
 		return extendedWait;
 	}
-	
+
 	public void setExtendedWait(Integer extendedWait) {
 		this.extendedWait = extendedWait;
 	}

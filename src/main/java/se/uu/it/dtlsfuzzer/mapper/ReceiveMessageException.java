@@ -3,7 +3,7 @@ package se.uu.it.dtlsfuzzer.mapper;
 public class ReceiveMessageException extends RuntimeException {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 173897462143448940L;
 

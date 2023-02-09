@@ -15,7 +15,7 @@ import net.automatalib.words.Word;
  * <pre>
  * Copied from <a href="https://gitlab.science.ru.nl/ramonjanssen/basic-learning/">basic-learning</a>.
  * </pre>
- * 
+ *
  * @author Ramon Janssen
  *
  * @param <I>
@@ -68,7 +68,7 @@ public class ObservationTree<I, O> {
 
 	/**
 	 * Add one input and output symbol and traverse the tree to the next node
-	 * 
+	 *
 	 * @param input
 	 * @param output
 	 * @return the next node
@@ -102,7 +102,7 @@ public class ObservationTree<I, O> {
 
 	/**
 	 * Add Observation to the tree
-	 * 
+	 *
 	 * @param inputs
 	 * @param outputs
 	 * @throws CacheInconsistencyException

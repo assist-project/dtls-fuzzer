@@ -12,7 +12,7 @@ public class TestLimitWrapper <I, O> implements SUL<I, O> {
 		this.sul = sul;
 		this.limit = limit;
 	}
-	
+
 	@Override
 	public void pre() {
 		sul.pre();

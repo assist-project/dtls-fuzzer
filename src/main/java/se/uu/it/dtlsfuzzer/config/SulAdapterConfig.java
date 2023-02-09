@@ -9,7 +9,7 @@ public class SulAdapterConfig {
 
 	@Parameter(names = "-adapterAddress", required = false, description = "Address to which to send commands")
 	private String adapterAddress = "localhost";
-	
+
 	public Integer getAdapterPort() {
 		return adapterPort;
 	}

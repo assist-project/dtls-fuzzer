@@ -10,17 +10,17 @@ public abstract class Flow<I,O,F extends Flow<I,O,F>> {
 	private Word<I> inputWord;
 	private Word<O> outputWord;
 	/**
-	 * Does it start from the initial state or is it just partial 
+	 * Does it start from the initial state or is it just partial
 	 */
 	private boolean fromStart;
-	
+
 	public Flow() {
 		super();
 		this.inputWord = Word.epsilon();
 		this.outputWord = Word.epsilon();
 		this.fromStart = false;
 	}
-	
+
 	public Flow(Word<I> input, Word<O> output, boolean fromStart) {
 		super();
 		this.inputWord = input;
@@ -35,15 +35,15 @@ public abstract class Flow<I,O,F extends Flow<I,O,F>> {
 	public Word<O> getOutputWord() {
 		return outputWord;
 	}
-	
+
 	public I getInput(int index) {
 		return inputWord.getSymbol(index);
 	}
-	
+
 	public O getOutput(int index) {
 		return outputWord.getSymbol(index);
 	}
-	
+
 	public Stream<Pair<I,O>> getInputOutputStream() {
 		Stream.Builder<Pair<I,O>> builder = Stream.builder();
 		for (int i=0; i<getLength(); i++) {
@@ -51,39 +51,39 @@ public abstract class Flow<I,O,F extends Flow<I,O,F>> {
 		}
 		return builder.build();
 	}
-	
+
 	public Iterable<Pair<I,O>> getInputOutputIterable() {
 		return getInputOutputStream().collect(Collectors.toList());
 	}
-	
+
 	public F append(I input, O output) {
 		return build(inputWord.append(input), outputWord.append(output), fromStart);
 	}
-	
+
 	public F concat(F other) {
 		if (other.isfromStart() || !this.isfromStart()) {
 			throw new RuntimeException("These flows cannot be concatenated since their fromStart state is inconsistent");
 		}
 		return build(inputWord.concat(other.getInputWord()), outputWord.concat(other.getOutputWord()), fromStart);
 	}
-	
+
 	public F prefix(int length) {
 		if (length > getLength()) {
 			throw new RuntimeException("Requested prefix length greater than flow length");
 		}
 		return build(inputWord.prefix(length), outputWord.prefix(length), fromStart);
 	}
-	
+
 	protected abstract F build(Word<I> input, Word<O> output, boolean fromStart);
-	
+
 	public boolean isfromStart() {
 		return fromStart;
 	}
-	
+
 	public int getLength() {
 		return inputWord.length();
 	}
-	
+
 	public String toCompactString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Flow: ");
@@ -92,7 +92,7 @@ public abstract class Flow<I,O,F extends Flow<I,O,F>> {
 		}
 		return builder.toString();
 	}
-	
+
 	public String toString() {
 		return String.format("Flow: \n  inputs: %s\n  outputs: %s\n", inputWord, outputWord);
 	}
@@ -130,5 +130,5 @@ public abstract class Flow<I,O,F extends Flow<I,O,F>> {
 			return false;
 		return true;
 	}
-	
+
 }

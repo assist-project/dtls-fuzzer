@@ -1,7 +1,7 @@
 package se.uu.it.dtlsfuzzer.learner;
 
 /**
- * Used to store a snapshot of relevant statistics at selected phases during the learning process. 
+ * Used to store a snapshot of relevant statistics at selected phases during the learning process.
  */
 public class StatisticsSnapshot {
 
