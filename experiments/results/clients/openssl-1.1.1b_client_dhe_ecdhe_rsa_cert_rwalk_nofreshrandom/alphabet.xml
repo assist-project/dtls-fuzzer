@@ -1,7 +1,7 @@
-<!-- DTLS alphabet comprising the messages necessary to perform RSA, DH and ECDH handshakes-->
+<!-- DTLS alphabet comprising the messages necessary to perform RSA, DH and ECDH handshakes -->
 <alphabet>
-	<HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
-	<ServerHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA" name="ECDH_SERVER_HELLO"/>
+    <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
+    <ServerHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA" name="ECDH_SERVER_HELLO"/>
     <ServerKeyExchangeInput name="ECDH_SERVER_KEY_EXCHANGE" algorithm="ECDH"/>
     <ServerHelloInput suite="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" name="DH_SERVER_HELLO"/>
     <ServerKeyExchangeInput name="DH_SERVER_KEY_EXCHANGE" algorithm="DH"/>
