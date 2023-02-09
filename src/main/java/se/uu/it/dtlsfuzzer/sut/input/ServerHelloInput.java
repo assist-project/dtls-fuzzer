@@ -1,18 +1,15 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAttribute;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.state.State;
+import java.util.Arrays;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAttribute;
+import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 

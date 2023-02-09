@@ -1,10 +1,9 @@
 package se.uu.it.dtlsfuzzer.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.IStringConverterFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ToolPropertyAwareConverterFactory implements IStringConverterFactory {

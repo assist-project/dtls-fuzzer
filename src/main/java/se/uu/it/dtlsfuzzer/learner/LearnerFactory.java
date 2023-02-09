@@ -1,12 +1,6 @@
 package se.uu.it.dtlsfuzzer.learner;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.Lists;
-
 import de.learnlib.acex.analyzers.AcexAnalyzers;
 import de.learnlib.algorithms.kv.mealy.KearnsVaziraniMealy;
 import de.learnlib.algorithms.lstar.ce.ObservationTableCEXHandlers;
@@ -21,6 +15,10 @@ import de.learnlib.oracle.equivalence.MealyEQOracleChain;
 import de.learnlib.oracle.equivalence.MealyWMethodEQOracle;
 import de.learnlib.oracle.equivalence.MealyWpMethodEQOracle;
 import de.learnlib.oracle.equivalence.mealy.RandomWalkEQOracle;
+import java.io.IOException;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;

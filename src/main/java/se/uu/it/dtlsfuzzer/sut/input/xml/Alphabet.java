@@ -1,13 +1,11 @@
 package se.uu.it.dtlsfuzzer.sut.input.xml;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import se.uu.it.dtlsfuzzer.sut.input.AlertInput;
 import se.uu.it.dtlsfuzzer.sut.input.ApplicationInput;
 import se.uu.it.dtlsfuzzer.sut.input.CertificateRequestInput;

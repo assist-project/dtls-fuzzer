@@ -1,13 +1,12 @@
 package se.uu.it.dtlsfuzzer.learner;
 
+import de.learnlib.api.query.DefaultQuery;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.config.LearningConfig;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;

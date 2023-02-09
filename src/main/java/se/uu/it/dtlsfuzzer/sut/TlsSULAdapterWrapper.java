@@ -1,10 +1,9 @@
 package se.uu.it.dtlsfuzzer.sut;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.config.SulAdapterConfig;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;

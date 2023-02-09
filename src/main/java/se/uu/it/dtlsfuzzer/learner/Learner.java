@@ -1,5 +1,12 @@
 package se.uu.it.dtlsfuzzer.learner;
 
+import com.google.common.io.Files;
+import de.learnlib.api.SUL;
+import de.learnlib.api.algorithm.LearningAlgorithm.MealyLearner;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.query.DefaultQuery;
+import de.learnlib.oracle.membership.SULOracle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,21 +17,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.io.Files;
-
-import de.learnlib.api.SUL;
-import de.learnlib.api.algorithm.LearningAlgorithm.MealyLearner;
-import de.learnlib.api.oracle.EquivalenceOracle;
-import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.api.query.DefaultQuery;
-import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.config.LearningConfig;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;

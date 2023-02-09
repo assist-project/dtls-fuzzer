@@ -1,9 +1,8 @@
 package se.uu.it.dtlsfuzzer.sut;
 
-import java.io.Writer;
-
 import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.query.Query;
+import java.io.Writer;
 import net.automatalib.words.Word;
 
 public class NonDeterminismRetryingSULOracle<I, O>

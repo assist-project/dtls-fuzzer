@@ -2,7 +2,6 @@ package se.uu.it.dtlsfuzzer;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import net.automatalib.automata.AutomatonCreator;
 import net.automatalib.automata.transducers.MutableMealyMachine;
 import net.automatalib.commons.util.Pair;

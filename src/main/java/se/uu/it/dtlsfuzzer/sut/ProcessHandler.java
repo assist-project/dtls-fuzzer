@@ -6,11 +6,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.NullOutputStream;
-
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
 
 /**

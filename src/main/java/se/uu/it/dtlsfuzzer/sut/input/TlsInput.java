@@ -1,11 +1,10 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
+import de.rub.nds.tlsattacker.core.state.State;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;

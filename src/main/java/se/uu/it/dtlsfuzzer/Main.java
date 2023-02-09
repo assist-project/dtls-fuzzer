@@ -3,6 +3,10 @@ package se.uu.it.dtlsfuzzer;
 import static se.uu.it.dtlsfuzzer.config.ToolName.STATE_FUZZER_CLIENT;
 import static se.uu.it.dtlsfuzzer.config.ToolName.STATE_FUZZER_SERVER;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
+import com.google.common.io.Files;
+import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,19 +15,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.Security;
 import java.util.Arrays;
-
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
-import com.google.common.io.Files;
-
-import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerClientConfig;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerServerConfig;

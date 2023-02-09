@@ -1,7 +1,6 @@
 package se.uu.it.dtlsfuzzer;
 
 import java.util.Map;
-
 import net.automatalib.words.Word;
 
 /**

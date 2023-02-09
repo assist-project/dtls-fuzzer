@@ -1,11 +1,10 @@
 package se.uu.it.dtlsfuzzer.sut;
 
-import java.time.Duration;
-
 import de.learnlib.api.SUL;
 import de.learnlib.filter.statistic.Counter;
 import de.learnlib.filter.statistic.sul.ResetCounterSUL;
 import de.learnlib.filter.statistic.sul.SymbolCounterSUL;
+import java.time.Duration;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;

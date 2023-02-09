@@ -1,11 +1,9 @@
 package se.uu.it.dtlsfuzzer.config;
 
-import java.util.Arrays;
-
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.ParameterException;
-
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+import java.util.Arrays;
 
 public class ProtocolVersionConverter
 		implements

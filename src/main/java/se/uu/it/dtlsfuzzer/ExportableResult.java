@@ -1,10 +1,9 @@
 package se.uu.it.dtlsfuzzer;
 
+import com.google.common.base.Strings;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-
-import com.google.common.base.Strings;
 
 public abstract class ExportableResult {
 

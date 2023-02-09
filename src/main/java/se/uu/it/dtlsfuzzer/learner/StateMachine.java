@@ -7,7 +7,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.automata.transducers.impl.FastMealy;
 import net.automatalib.serialization.dot.GraphDOT;

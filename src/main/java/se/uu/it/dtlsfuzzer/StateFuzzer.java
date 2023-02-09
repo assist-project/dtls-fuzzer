@@ -2,7 +2,6 @@ package se.uu.it.dtlsfuzzer;
 
 import java.io.File;
 import java.io.IOException;
-
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.learner.Learner;

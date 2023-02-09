@@ -1,17 +1,15 @@
 package se.uu.it.dtlsfuzzer.learner;
 
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.query.Query;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.function.Supplier;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.api.query.Query;
 import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
 import net.automatalib.words.Word;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.sut.MultipleRunsSULOracle;
 import se.uu.it.dtlsfuzzer.sut.NonDeterminismException;
 import se.uu.it.dtlsfuzzer.sut.ObservationTree;
