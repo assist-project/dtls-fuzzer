@@ -1,10 +1,9 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
 import de.rub.nds.tlsattacker.core.protocol.message.FinishedMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import javax.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.sut.output.ModelOutputs;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;

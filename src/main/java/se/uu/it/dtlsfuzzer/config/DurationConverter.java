@@ -1,8 +1,7 @@
 package se.uu.it.dtlsfuzzer.config;
 
-import java.time.Duration;
-
 import com.beust.jcommander.IStringConverter;
+import java.time.Duration;
 
 public class DurationConverter implements IStringConverter<Duration> {
 

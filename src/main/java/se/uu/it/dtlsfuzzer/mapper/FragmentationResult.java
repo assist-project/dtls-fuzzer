@@ -1,9 +1,8 @@
 package se.uu.it.dtlsfuzzer.mapper;
 
-import java.util.List;
-
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
+import java.util.List;
 
 /**
  * Comprises the result of fragmenting a prepared message into fragments.

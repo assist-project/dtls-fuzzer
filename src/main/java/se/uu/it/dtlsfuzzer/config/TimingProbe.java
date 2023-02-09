@@ -1,20 +1,16 @@
 package se.uu.it.dtlsfuzzer.config;
 
+import com.beust.jcommander.Parameter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import javax.xml.bind.JAXBException;
-
+import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.beust.jcommander.Parameter;
-
-import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.sut.input.AlphabetFactory;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;

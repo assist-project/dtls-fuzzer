@@ -1,11 +1,10 @@
 package se.uu.it.dtlsfuzzer.mapper;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
+import java.util.List;
+import java.util.stream.Collectors;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 

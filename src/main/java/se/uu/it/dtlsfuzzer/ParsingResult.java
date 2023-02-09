@@ -1,7 +1,6 @@
 package se.uu.it.dtlsfuzzer;
 
 import com.beust.jcommander.JCommander;
-
 import se.uu.it.dtlsfuzzer.config.StateFuzzerClientConfig;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerServerConfig;

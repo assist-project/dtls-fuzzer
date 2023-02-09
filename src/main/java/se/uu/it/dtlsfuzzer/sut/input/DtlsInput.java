@@ -1,11 +1,9 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
-import org.apache.commons.lang3.NotImplementedException;
-
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
+import javax.xml.bind.annotation.XmlAttribute;
+import org.apache.commons.lang3.NotImplementedException;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 public abstract class DtlsInput extends TlsInput {

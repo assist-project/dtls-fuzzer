@@ -1,15 +1,13 @@
 package se.uu.it.dtlsfuzzer.config;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParametersDelegate;
-
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import se.uu.it.dtlsfuzzer.sut.ProcessLaunchTrigger;
 
 public abstract class SulDelegate {

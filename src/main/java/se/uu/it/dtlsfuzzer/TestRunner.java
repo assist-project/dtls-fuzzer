@@ -1,5 +1,8 @@
 package se.uu.it.dtlsfuzzer;
 
+import de.learnlib.api.SUL;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.oracle.membership.SULOracle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,16 +10,11 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import de.learnlib.api.SUL;
-import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
 import se.uu.it.dtlsfuzzer.config.TestRunnerConfig;

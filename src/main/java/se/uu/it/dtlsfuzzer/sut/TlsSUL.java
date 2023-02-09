@@ -5,12 +5,6 @@
  */
 package se.uu.it.dtlsfuzzer.sut;
 
-import java.io.IOException;
-
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
 import de.rub.nds.tlsattacker.core.config.Config;
@@ -22,6 +16,10 @@ import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.transport.TransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ClientUdpTransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ServerUdpTransportHandler;
+import java.io.IOException;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;

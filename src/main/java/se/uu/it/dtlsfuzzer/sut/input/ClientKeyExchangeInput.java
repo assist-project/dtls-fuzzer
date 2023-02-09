@@ -1,7 +1,5 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
 import de.rub.nds.tlsattacker.core.protocol.message.DHClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ECDHClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.GOSTClientKeyExchangeMessage;
@@ -11,6 +9,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.SrpClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import javax.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 /**

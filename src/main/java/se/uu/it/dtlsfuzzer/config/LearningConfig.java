@@ -1,11 +1,9 @@
 package se.uu.it.dtlsfuzzer.config;
 
+import com.beust.jcommander.Parameter;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
-
-import com.beust.jcommander.Parameter;
-
 import se.uu.it.dtlsfuzzer.learner.EquivalenceAlgorithmName;
 import se.uu.it.dtlsfuzzer.learner.LearningAlgorithmName;
 

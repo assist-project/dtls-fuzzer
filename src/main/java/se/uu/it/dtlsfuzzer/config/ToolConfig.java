@@ -1,5 +1,8 @@
 package se.uu.it.dtlsfuzzer.config;
 
+import com.beust.jcommander.DynamicParameter;
+import de.rub.nds.tlsattacker.core.config.Config;
+import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,14 +11,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
-
-import com.beust.jcommander.DynamicParameter;
-
-import de.rub.nds.tlsattacker.core.config.Config;
-import de.rub.nds.tlsattacker.core.config.delegate.GeneralDelegate;
 
 public abstract class ToolConfig extends GeneralDelegate {
 

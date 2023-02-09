@@ -1,10 +1,9 @@
 package se.uu.it.dtlsfuzzer.sut;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import se.uu.it.dtlsfuzzer.config.SulDelegate;
 
 /**

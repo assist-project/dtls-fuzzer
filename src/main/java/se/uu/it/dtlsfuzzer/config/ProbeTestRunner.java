@@ -3,7 +3,6 @@ package se.uu.it.dtlsfuzzer.config;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-
 import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.TestRunner;

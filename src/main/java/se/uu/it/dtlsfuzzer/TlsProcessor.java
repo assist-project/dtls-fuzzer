@@ -2,7 +2,6 @@ package se.uu.it.dtlsfuzzer;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import net.automatalib.commons.util.Pair;
 import se.uu.it.dtlsfuzzer.sut.input.NameTlsInputMapping;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;

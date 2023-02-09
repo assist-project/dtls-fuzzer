@@ -1,5 +1,7 @@
 package se.uu.it.dtlsfuzzer.sut;
 
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.query.Query;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Collection;
@@ -8,9 +10,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.api.query.Query;
 import net.automatalib.words.Word;
 import se.uu.it.dtlsfuzzer.TestRunner;
 import se.uu.it.dtlsfuzzer.TestRunnerResult;

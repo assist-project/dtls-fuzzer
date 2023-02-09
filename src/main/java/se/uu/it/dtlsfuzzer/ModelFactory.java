@@ -2,7 +2,6 @@ package se.uu.it.dtlsfuzzer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.serialization.InputModelData;

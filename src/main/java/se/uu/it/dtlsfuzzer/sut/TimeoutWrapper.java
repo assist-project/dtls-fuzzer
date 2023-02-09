@@ -1,9 +1,8 @@
 package se.uu.it.dtlsfuzzer.sut;
 
-import java.time.Duration;
-
 import de.learnlib.api.SUL;
 import de.learnlib.api.exception.SULException;
+import java.time.Duration;
 
 public class TimeoutWrapper<I, O> implements SUL<I, O> {
 	private SUL<I, O> sul;

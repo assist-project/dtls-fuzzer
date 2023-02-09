@@ -1,9 +1,7 @@
 package se.uu.it.dtlsfuzzer.config;
 
-import java.util.List;
-
 import com.beust.jcommander.Parameter;
-
+import java.util.List;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 /**

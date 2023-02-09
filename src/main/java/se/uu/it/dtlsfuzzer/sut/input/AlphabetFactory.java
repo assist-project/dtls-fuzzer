@@ -4,14 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-
+import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import net.automatalib.words.Alphabet;
 import se.uu.it.dtlsfuzzer.config.AlphabetOptionProvider;
 import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.sut.input.xml.AlphabetSerializer;

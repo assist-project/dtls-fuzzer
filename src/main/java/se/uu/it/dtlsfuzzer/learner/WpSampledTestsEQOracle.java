@@ -1,19 +1,17 @@
 package se.uu.it.dtlsfuzzer.learner;
 
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.query.DefaultQuery;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import de.learnlib.api.oracle.EquivalenceOracle;
-import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
-import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * This EQ Oracle operates similarly to Wp-Random with the difference that the

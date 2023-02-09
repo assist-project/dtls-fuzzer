@@ -1,9 +1,8 @@
 package se.uu.it.dtlsfuzzer.mapper;
 
-import java.util.List;
-
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
+import java.util.List;
 /**
  * Comprises the result of packing a list of messages into records.
  *

@@ -1,14 +1,12 @@
 package se.uu.it.dtlsfuzzer;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import se.uu.it.dtlsfuzzer.config.StateFuzzerClientConfig;
-import se.uu.it.dtlsfuzzer.learner.EquivalenceAlgorithmName;
-
 import static se.uu.it.dtlsfuzzer.config.ToolName.STATE_FUZZER_CLIENT;
 
 import java.util.Arrays;
+import org.junit.Assert;
+import org.junit.Test;
+import se.uu.it.dtlsfuzzer.config.StateFuzzerClientConfig;
+import se.uu.it.dtlsfuzzer.learner.EquivalenceAlgorithmName;
 
 public class MainTest {
     /*

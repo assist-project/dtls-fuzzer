@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
-
 import net.automatalib.automata.transducers.MealyMachine;
 
 public class MealyUtils extends AutomatonUtils{

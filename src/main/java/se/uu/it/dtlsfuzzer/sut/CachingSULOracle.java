@@ -1,18 +1,15 @@
 package se.uu.it.dtlsfuzzer.sut;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import com.google.common.collect.Sets;
-
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.oracle.MembershipOracle.MealyMembershipOracle;
 import de.learnlib.api.query.Query;
 import de.learnlib.filter.cache.sul.SULCache;
 import de.learnlib.oracle.membership.SULOracle;
+import java.util.Collection;
+import java.util.HashSet;
 import net.automatalib.words.Word;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * This class is adapted from {@link SULOracle}. Unfortunately, the

@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.sut.output;
 
+import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
-
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import se.uu.it.dtlsfuzzer.sut.Symbol;
 
 /**

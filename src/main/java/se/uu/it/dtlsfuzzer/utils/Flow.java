@@ -2,7 +2,6 @@ package se.uu.it.dtlsfuzzer.utils;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import net.automatalib.commons.util.Pair;
 import net.automatalib.words.Word;
 

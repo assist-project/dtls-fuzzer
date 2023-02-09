@@ -1,9 +1,5 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
-import java.util.Arrays;
-
-import javax.xml.bind.annotation.XmlAttribute;
-
 import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModification;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
@@ -13,6 +9,8 @@ import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import java.util.Arrays;
+import javax.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 public class ClientHelloInput extends DtlsInput {

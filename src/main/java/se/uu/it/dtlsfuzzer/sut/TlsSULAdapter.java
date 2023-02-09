@@ -8,10 +8,8 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import se.uu.it.dtlsfuzzer.CleanupTasks;
 import se.uu.it.dtlsfuzzer.config.SulAdapterConfig;
 

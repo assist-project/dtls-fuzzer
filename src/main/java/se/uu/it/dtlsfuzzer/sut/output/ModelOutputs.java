@@ -1,9 +1,8 @@
 package se.uu.it.dtlsfuzzer.sut.output;
 
+import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
 import java.util.Arrays;
 import java.util.Optional;
-
-import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
 import se.uu.it.dtlsfuzzer.sut.input.KeyExchangeAlgorithm;
 
 /**
