@@ -7,7 +7,7 @@
 To that end, **TLS-Attacker** has been extended with support for DTLS.
 **dtls-fuzzer** relies on [version 3.0b][tlsattackerver] of **TLS-Attacker**, a version implementing the DTLS enhancement.
 Recent changes to compilers, JVMs, etc., mean a few things no longer work/need work arounds.
-We document these in the [Troubleshooting section](https://github.com/assist-project/dtls-fuzzer/edit/usenix20-artifact/README.md#replication-with-recent-compilers).
+We document these in the [Troubleshooting section](https://github.com/assist-project/dtls-fuzzer/tree/usenix20-artifact#replication-with-recent-compilers).
 
 # Artifact contents
 The artifact contains:
