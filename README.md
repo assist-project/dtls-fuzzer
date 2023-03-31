@@ -6,6 +6,8 @@
 **dtls-fuzzer** uses [TLS-Attacker][tlsattacker] to generate/parse DTLS messages as well as to maintain state. 
 To that end, **TLS-Attacker** has been extended with support for DTLS.
 **dtls-fuzzer** relies on [version 3.0b][tlsattackerver] of **TLS-Attacker**, a version implementing the DTLS enhancement.
+Recent changes to compilers, JVMs, etc., mean a few things no longer work/need work arounds.
+We document these in the [Troubleshooting section](https://github.com/assist-project/dtls-fuzzer/edit/usenix20-artifact/README.md#replication-with-recent-compilers).
 
 # Artifact contents
 The artifact contains:
@@ -319,6 +321,15 @@ This has the advantage of notifying **dtls-fuzzer** when the server is ready to 
 The downside is that the allocated port might be the same as some hard-coded port of a different experiment, wherein a server thread has recently been stopped and a new thread has not been started yet (meaning the hard-coded port could be used in dynamic allocation).
 To avoid this form of collision, we advise running Scandium and JSSE experiments separately from all others.
 
+### Replication with recent compilers
+
+The Eclipse and Contiki-NG TinyDTLS versions are broken when compiled with the latest version of `gcc`.
+They no longer perform ECDHE handshakes correctly.
+The fix is compiling them using an older version of `gcc` or, better still, a different compiler (e.g., `clang`).
+For Eclipse TinyDTLS this can be done by running from the 'suts/etinydtls':
+
+    > CC=/bin/clang ./configure; make clean all
+
 
 ## Suggested configurations
 We suggest the following configurations for which automatic building is reliable, learning is faster or interesting bugs have been found.
@@ -487,7 +498,6 @@ Setting it to a high number helps detect non-determinism in learning configurati
 Finally, if you have the arguments file for a learning experiment, you can use them to run tests on the SUT involved by just adding the necessary test arguments: 
 
     > java -jar target/dtls-fuzzer.jar @learning_arg_file -test test_file
-
 
 
 [tlsattacker]:https://github.com/RUB-NDS/TLS-Attacker
