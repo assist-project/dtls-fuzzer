@@ -326,7 +326,7 @@ To avoid this form of collision, we advise running Scandium and JSSE experiments
 The Eclipse and Contiki-NG TinyDTLS versions are broken when compiled with the latest version of `gcc`.
 They no longer perform ECDHE handshakes correctly.
 The fix is compiling them using an older version of `gcc` or, better still, a different compiler (e.g., `clang`).
-For Eclipse TinyDTLS this can be done by running from the 'suts/etinydtls':
+For Eclipse TinyDTLS this can be done by running from the 'suts/etinydtls' directory:
 
     > CC=/bin/clang ./configure; make clean all
 
