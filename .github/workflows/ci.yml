@@ -213,6 +213,8 @@ jobs:
 
       - name: Setup Golang
         uses: actions/setup-go@v4
+        with:
+          go-version: '1.13.8'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -236,6 +238,8 @@ jobs:
 
       - name: Setup Golang
         uses: actions/setup-go@v4
+        with:
+          go-version: '1.13.8'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
