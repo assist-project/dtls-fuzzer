@@ -11,13 +11,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -37,13 +30,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -65,13 +51,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -91,13 +70,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -119,13 +91,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -145,13 +110,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -173,13 +131,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -199,13 +150,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -227,13 +171,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -253,13 +190,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -281,13 +211,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven golang
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -307,13 +230,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven golang
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -335,13 +251,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -361,13 +270,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -390,13 +292,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
-
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -416,13 +311,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk maven
-          sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
-          java -version
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
