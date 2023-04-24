@@ -1,4 +1,4 @@
-**DTLS-Fuzzer** is a Java tool which performs protocol state fuzzing of DTLS servers and clients.
+**DTLS-Fuzzer** is a tool for protocol state fuzzing of DTLS servers and clients.
 More concretely, it supports the following functionality:
 1. given an alphabet, it can automatically generate a model of a local DTLS server/clients implementation;
 2. given a test (sequence of inputs) and an alphabet, it can execute the test on a DTLS server implementation;
@@ -74,10 +74,8 @@ It should work on any recent Linux distribution.
 Support for other platforms has not been tested.
 This guide assumes a Debian-based distribution is used (which has `apt-get`).
 
-A Java 8 JDK (Java Development Kit) Virtual Machine (VM) is required.
-The version used to run experiments is 1.8.0_222, though later Java 8 versions should also work.
-Note that the tool does not build on Java 9 or later.
-We also rely on maven (the `mvn` utility) for dependency management/deployment.
+Java 11 JDK (Java Development Kit) Virtual Machine (VM) or later is required.
+We also rely on maven (the `mvn` utility) for dependency management and deployment.
 
 We recommend using a sufficiently powerful machine, otherwise sensitive timing parameters such as response waiting time, might become too low, causing different outputs to the ones obtained in the paper. 
 Worse yet, they can cause learning  experiments to fail.
@@ -91,40 +89,23 @@ In a nutshell, the advised pre-requisites are:
 - recent Linux distribution, preferably Debian-based
 - desktop/server machine for experiment reproduction/reliable learning
 - (>=) 4 GB RAM
-- Java 8 JDK
+- Java 11 JDK
 - maven 
 - graphviz
 
 ## Setting up the environment
-### Java 8 JDK
-DTLS-Fuzzer requires Java 8 JDK (Java Development Kit).
+### Java 11 JDK
+DTLS-Fuzzer requires JDK (Java Development Kit) version 11 or later.
 If Java is not installed, we install the OpenJDK implementation, and can skip the rest of this subsection.
 
-    sudo apt-get install openjdk-8-jdk
+    sudo apt-get install openjdk-11-jdk
 
 If a version of java is installed, we can check which version it is by running:
 
     java -version
 
-The version code should start with 1.8 (e.g., 1.8.0_242), and the Virtual Machine should be "Server VM" (indicating that the full JDK is installed, rather than only the runtime environment).
-If it does, we are done with Java.
-If it is not we can check if Java 8 JDK is installed on our platform but not currently selected, by listing installed Java VMs via:
-
-    update-java-alternatives --list
-
-If Java 8 JDK does appear, we can use the same command to configure the Java 8 JDK to be default Java implementation. 
-
-    sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
-    
-Otherwise, we need to perform the full installation as shown at the start.
-Unfortunately, `update-java-alternatives` sometimes is not successful, indicated by "error" messages.
-If such a case arises, we can use `update-alternatives` to interactively configure which Java VM is selected by `java` (interpreter) and `javac` (compiler).
-
-    sudo update-alternatives --config java
-    sudo update-alternatives --config javac
-
 ### Others
-With Java 8 set, we proceed to install the other dependencies, maven, graphviz plus some common SUT dependencies.
+With JDK set, we proceed to install the other dependencies, maven, graphviz plus some common SUT dependencies.
 We then clone DTLS-Fuzzer's repository to a folder of choice, checking out the artifact branch.
 To finish, we make that folder our current directory.
 
