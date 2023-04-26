@@ -121,7 +121,7 @@ public class TimingProbe {
 			probeTestRunner.getConfig().getSulDelegate().setResponseWait(time);
 		}
 		else if (cmd.contains("startWait"))
-			probeTestRunner.getConfig().getSulDelegate().setStartWait(new Long(time));
+			probeTestRunner.getConfig().getSulDelegate().setStartWait(Long.valueOf(time));
 		else {
 			for (TlsInput in : probeTestRunner.getAlphabet()) {
 				if (in.toString().contains(cmd))
