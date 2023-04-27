@@ -5,7 +5,6 @@ readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 &&
 readonly EXP_SCRIPTS_DIR="$SCRIPT_DIR/experiments/scripts/"
 readonly COLOR_FILE="$EXP_SCRIPTS_DIR/coloredPaths.json"
 readonly REPL_FILE="$EXP_SCRIPTS_DIR/replacements.json"
-readonly FLAG_SET="1"
 
 # configurable options
 opt_prune_states=0
@@ -64,7 +63,6 @@ function trim() {
     model=$1
     model_name=`basename $model`
     model_dir=`dirname $model`
-    test=$model_dir/$model_name
     smodel=$model_dir/$model_name.simplified.dot
     cp $model $smodel
     to_camel $smodel
