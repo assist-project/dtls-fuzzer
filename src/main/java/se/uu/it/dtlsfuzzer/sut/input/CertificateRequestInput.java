@@ -12,37 +12,37 @@ import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 public class CertificateRequestInput extends DtlsInput {
 
-	@XmlAttribute(name="certificate", required=true)
-	ClientCertificateType certificateType;
+    @XmlAttribute(name="certificate", required=true)
+    ClientCertificateType certificateType;
 
-	public CertificateRequestInput() {
-		super("CERTIFICATE_REQUEST");
-	}
+    public CertificateRequestInput() {
+        super("CERTIFICATE_REQUEST");
+    }
 
-	public CertificateRequestInput(ClientCertificateType certificateType) {
-		super(certificateType.name() + "_CERTIFICATE_REQUEST");
-		this.certificateType = certificateType;
-	}
+    public CertificateRequestInput(ClientCertificateType certificateType) {
+        super(certificateType.name() + "_CERTIFICATE_REQUEST");
+        this.certificateType = certificateType;
+    }
 
-	@Override
-	public TlsMessage generateMessage(State state, ExecutionContext context) {
-		CertificateRequestMessage message = new CertificateRequestMessage();
-		if (certificateType != null) {
-			ModifiableByteArray ctbyte = new ModifiableByteArray();
-			ctbyte.setModification(ByteArrayModificationFactory.explicitValue(new byte[] {certificateType.getValue()}));
-			message.setClientCertificateTypes(ctbyte);
-			ModifiableInteger ctcount = new ModifiableInteger();
-			ctcount.setOriginalValue(1);
-		}
-		return message;
-	}
+    @Override
+    public TlsMessage generateMessage(State state, ExecutionContext context) {
+        CertificateRequestMessage message = new CertificateRequestMessage();
+        if (certificateType != null) {
+            ModifiableByteArray ctbyte = new ModifiableByteArray();
+            ctbyte.setModification(ByteArrayModificationFactory.explicitValue(new byte[] {certificateType.getValue()}));
+            message.setClientCertificateTypes(ctbyte);
+            ModifiableInteger ctcount = new ModifiableInteger();
+            ctcount.setOriginalValue(1);
+        }
+        return message;
+    }
 
-	public ClientCertificateType getClientCertificateType() {
-		return certificateType;
-	}
+    public ClientCertificateType getClientCertificateType() {
+        return certificateType;
+    }
 
-	@Override
-	public TlsInputType getInputType() {
-		return TlsInputType.HANDSHAKE;
-	}
+    @Override
+    public TlsInputType getInputType() {
+        return TlsInputType.HANDSHAKE;
+    }
 }

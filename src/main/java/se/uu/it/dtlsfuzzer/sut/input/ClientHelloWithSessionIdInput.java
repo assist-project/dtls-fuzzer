@@ -10,58 +10,58 @@ import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 public class ClientHelloWithSessionIdInput extends DtlsInput {
 
-	public ClientHelloWithSessionIdInput() {
-		super("CLIENT_HELLO_SR");
-	}
+    public ClientHelloWithSessionIdInput() {
+        super("CLIENT_HELLO_SR");
+    }
 
-	protected ClientHelloWithSessionIdInput(String name) {
-		super(name);
-	}
+    protected ClientHelloWithSessionIdInput(String name) {
+        super(name);
+    }
 
-	@XmlAttribute(name = "suite", required = false)
-	private CipherSuite suite;
+    @XmlAttribute(name = "suite", required = false)
+    private CipherSuite suite;
 
-	/**
-	 * Resetting the cookie may prompt a long resumption, which is resumption
-	 * including a server HelloVerifyRequest
-	 */
-	@XmlAttribute(name = "resetCookie", required = false)
-	private boolean resetCookie = false;
+    /**
+     * Resetting the cookie may prompt a long resumption, which is resumption
+     * including a server HelloVerifyRequest
+     */
+    @XmlAttribute(name = "resetCookie", required = false)
+    private boolean resetCookie = false;
 
-	private void resetTransportHandler(State state) {
-		ResetConnectionAction resetAction = new ResetConnectionAction();
-		resetAction.setConnectionAlias(state.getTlsContext().getConnection()
-				.getAlias());
-		resetAction.execute(state);
-		// we add the resets that should be in TLS-Attacker just to ensure
-		// we don't rely on the specific TLS-Attacker version
-		state.getTlsContext().setDtlsReadHandshakeMessageSequence(0);
-		state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);
-		state.getTlsContext().setReadEpoch(0);
-		state.getTlsContext().setWriteEpoch(0);
+    private void resetTransportHandler(State state) {
+        ResetConnectionAction resetAction = new ResetConnectionAction();
+        resetAction.setConnectionAlias(state.getTlsContext().getConnection()
+                .getAlias());
+        resetAction.execute(state);
+        // we add the resets that should be in TLS-Attacker just to ensure
+        // we don't rely on the specific TLS-Attacker version
+        state.getTlsContext().setDtlsReadHandshakeMessageSequence(0);
+        state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);
+        state.getTlsContext().setReadEpoch(0);
+        state.getTlsContext().setWriteEpoch(0);
 
-		if (resetCookie) {
-			state.getTlsContext().setDtlsCookie(null);
-		}
-	}
+        if (resetCookie) {
+            state.getTlsContext().setDtlsCookie(null);
+        }
+    }
 
-	@Override
-	public TlsMessage generateMessage(State state, ExecutionContext context) {
-		// reset and resume the connection
-		resetTransportHandler(state);
-		if (suite != null) {
-			state.getConfig().setDefaultClientSupportedCipherSuites(suite);
-		}
-		ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
-		message.setSessionId(state.getTlsContext().getChooser()
-				.getServerSessionId());
+    @Override
+    public TlsMessage generateMessage(State state, ExecutionContext context) {
+        // reset and resume the connection
+        resetTransportHandler(state);
+        if (suite != null) {
+            state.getConfig().setDefaultClientSupportedCipherSuites(suite);
+        }
+        ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
+        message.setSessionId(state.getTlsContext().getChooser()
+                .getServerSessionId());
 
-		return message;
-	}
+        return message;
+    }
 
-	@Override
-	public TlsInputType getInputType() {
-		return TlsInputType.HANDSHAKE;
-	}
+    @Override
+    public TlsInputType getInputType() {
+        return TlsInputType.HANDSHAKE;
+    }
 
 }

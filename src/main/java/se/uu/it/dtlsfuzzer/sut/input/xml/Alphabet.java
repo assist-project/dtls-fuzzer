@@ -29,33 +29,33 @@ import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 @XmlRootElement(name = "alphabet")
 @XmlAccessorType(XmlAccessType.FIELD)
 class Alphabet {
-	@XmlElements(value = {
-			@XmlElement(type = GenericTlsInput.class, name = "GenericTlsInput"),
-			@XmlElement(type = ChangeCipherSpecInput.class, name = "ChangeCipherSpecInput"),
-			@XmlElement(type = AlertInput.class, name = "AlertInput"),
-			@XmlElement(type = ClientHelloInput.class, name = "ClientHelloInput"),
-			@XmlElement(type = ClientHelloWithSessionIdInput.class, name = "ClientHelloWithSessionIdInput"),
-			@XmlElement(type = ClientHelloRenegotiationInput.class, name = "ClientHelloRenegotiation"),
-			@XmlElement(type = HelloVerifyRequestInput.class, name = "HelloVerifyRequestInput"),
-			@XmlElement(type = ServerHelloInput.class, name = "ServerHelloInput"),
-			@XmlElement(type = ServerHelloDoneInput.class, name = "ServerHelloDoneInput"),
-			@XmlElement(type = ServerKeyExchangeInput.class, name = "ServerKeyExchangeInput"),
-			@XmlElement(type = CertificateRequestInput.class, name = "CertificateRequestInput"),
-			@XmlElement(type = FinishedInput.class, name = "FinishedInput"),
-			@XmlElement(type = ClientKeyExchangeInput.class, name = "ClientKeyExchangeInput"),
-			@XmlElement(type = ApplicationInput.class, name = "ApplicationInput"),
-			@XmlElement(type = HelloRequestInput.class, name = "HelloRequestInput")})
-	private List<TlsInput> inputs;
+    @XmlElements(value = {
+            @XmlElement(type = GenericTlsInput.class, name = "GenericTlsInput"),
+            @XmlElement(type = ChangeCipherSpecInput.class, name = "ChangeCipherSpecInput"),
+            @XmlElement(type = AlertInput.class, name = "AlertInput"),
+            @XmlElement(type = ClientHelloInput.class, name = "ClientHelloInput"),
+            @XmlElement(type = ClientHelloWithSessionIdInput.class, name = "ClientHelloWithSessionIdInput"),
+            @XmlElement(type = ClientHelloRenegotiationInput.class, name = "ClientHelloRenegotiation"),
+            @XmlElement(type = HelloVerifyRequestInput.class, name = "HelloVerifyRequestInput"),
+            @XmlElement(type = ServerHelloInput.class, name = "ServerHelloInput"),
+            @XmlElement(type = ServerHelloDoneInput.class, name = "ServerHelloDoneInput"),
+            @XmlElement(type = ServerKeyExchangeInput.class, name = "ServerKeyExchangeInput"),
+            @XmlElement(type = CertificateRequestInput.class, name = "CertificateRequestInput"),
+            @XmlElement(type = FinishedInput.class, name = "FinishedInput"),
+            @XmlElement(type = ClientKeyExchangeInput.class, name = "ClientKeyExchangeInput"),
+            @XmlElement(type = ApplicationInput.class, name = "ApplicationInput"),
+            @XmlElement(type = HelloRequestInput.class, name = "HelloRequestInput")})
+    private List<TlsInput> inputs;
 
-	public Alphabet() {
-	}
+    public Alphabet() {
+    }
 
-	public Alphabet(List<TlsInput> words) {
-		this.inputs = words;
-	}
+    public Alphabet(List<TlsInput> words) {
+        this.inputs = words;
+    }
 
-	public List<TlsInput> getWords() {
-		return inputs;
-	}
+    public List<TlsInput> getWords() {
+        return inputs;
+    }
 
 }

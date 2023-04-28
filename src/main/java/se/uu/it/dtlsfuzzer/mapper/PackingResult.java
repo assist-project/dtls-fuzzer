@@ -10,21 +10,21 @@ import java.util.List;
  */
 // FIXME fragments cannot be split over multiple records
 public class PackingResult {
-	private List<TlsMessage> messages;
-	private List<AbstractRecord> records;
-	public PackingResult(List<TlsMessage> messages,
-			List<AbstractRecord> records) {
-		super();
-		this.messages = messages;
-		this.records = records;
-		if (messages.isEmpty() || records.isEmpty()) {
-			throw new RuntimeException("Records and messages cannot be empty");
-		}
-	}
-	public List<TlsMessage> getMessages() {
-		return messages;
-	}
-	public List<AbstractRecord> getRecords() {
-		return records;
-	}
+    private List<TlsMessage> messages;
+    private List<AbstractRecord> records;
+    public PackingResult(List<TlsMessage> messages,
+            List<AbstractRecord> records) {
+        super();
+        this.messages = messages;
+        this.records = records;
+        if (messages.isEmpty() || records.isEmpty()) {
+            throw new RuntimeException("Records and messages cannot be empty");
+        }
+    }
+    public List<TlsMessage> getMessages() {
+        return messages;
+    }
+    public List<AbstractRecord> getRecords() {
+        return records;
+    }
 }

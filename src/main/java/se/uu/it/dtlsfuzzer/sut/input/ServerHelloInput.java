@@ -15,81 +15,81 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 public class ServerHelloInput extends DtlsInput {
 
-	@XmlAttribute(name = "suite", required = true)
-	private CipherSuite suite;
+    @XmlAttribute(name = "suite", required = true)
+    private CipherSuite suite;
 
-	@XmlAttribute(name = "shortHs", required = false)
-	private boolean shortHs = true;
+    @XmlAttribute(name = "shortHs", required = false)
+    private boolean shortHs = true;
 
-	@XmlAttribute(name = "digestHR", required = false)
-	private boolean digestHR = false;
+    @XmlAttribute(name = "digestHR", required = false)
+    private boolean digestHR = false;
 
-	public ServerHelloInput() {
-		super("SERVER_HELLO");
-	}
+    public ServerHelloInput() {
+        super("SERVER_HELLO");
+    }
 
-	public ServerHelloInput(CipherSuite cipherSuite) {
-		super(cipherSuite.name() + "_SERVER_HELLO");
-		this.suite = cipherSuite;
-	}
+    public ServerHelloInput(CipherSuite cipherSuite) {
+        super(cipherSuite.name() + "_SERVER_HELLO");
+        this.suite = cipherSuite;
+    }
 
-	@Override
-	public TlsMessage generateMessage(State state, ExecutionContext context) {
-		state.getConfig().setDefaultServerSupportedCipherSuites(
-				Arrays.asList(suite));
-		state.getConfig().setDefaultClientSupportedCipherSuites(suite);
-		if (suite.name().contains("EC")) {
-			state.getConfig().setAddECPointFormatExtension(true);
-			state.getConfig().setAddEllipticCurveExtension(true);
-		} else {
-			state.getConfig().setAddECPointFormatExtension(false);
-			state.getConfig().setAddEllipticCurveExtension(false);
-		}
-		if (suite.isPsk()) {
-			state.getConfig().setAddClientCertificateTypeExtension(false);
-			state.getConfig().setAddServerCertificateTypeExtension(false);
-		}
+    @Override
+    public TlsMessage generateMessage(State state, ExecutionContext context) {
+        state.getConfig().setDefaultServerSupportedCipherSuites(
+                Arrays.asList(suite));
+        state.getConfig().setDefaultClientSupportedCipherSuites(suite);
+        if (suite.name().contains("EC")) {
+            state.getConfig().setAddECPointFormatExtension(true);
+            state.getConfig().setAddEllipticCurveExtension(true);
+        } else {
+            state.getConfig().setAddECPointFormatExtension(false);
+            state.getConfig().setAddEllipticCurveExtension(false);
+        }
+        if (suite.isPsk()) {
+            state.getConfig().setAddClientCertificateTypeExtension(false);
+            state.getConfig().setAddServerCertificateTypeExtension(false);
+        }
 
-		ServerHelloMessage message = new ServerHelloMessage(state.getConfig());
+        ServerHelloMessage message = new ServerHelloMessage(state.getConfig());
 
-		return message;
-	}
+        return message;
+    }
 
-	@Override
-	public TlsInputType getInputType() {
-		return TlsInputType.HANDSHAKE;
-	}
+    @Override
+    public TlsInputType getInputType() {
+        return TlsInputType.HANDSHAKE;
+    }
 
-	public CipherSuite getCipherSuite() {
-		return suite;
-	}
+    public CipherSuite getCipherSuite() {
+        return suite;
+    }
 
-	@Override
-	public TlsOutput postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
-		if (shortHs && context.isExecutionEnabled()) {
-			Pair<TlsMessage, AbstractRecord> lastChPair = null;
-			int lastChStepIndex = -1;
-			List<Pair<TlsMessage, AbstractRecord>> msgRecPairs = context.getReceivedMessagesAndRecords();
-			for (int i=0; i<msgRecPairs.size(); i++) {
-				if (msgRecPairs.get(i).getKey() instanceof ClientHelloMessage) {
-					lastChStepIndex = i;
-					lastChPair = msgRecPairs.get(i);
-				}
-			}
+    @Override
+    public TlsOutput postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
+        if (shortHs && context.isExecutionEnabled()) {
+            Pair<TlsMessage, AbstractRecord> lastChPair = null;
+            int lastChStepIndex = -1;
+            List<Pair<TlsMessage, AbstractRecord>> msgRecPairs = context.getReceivedMessagesAndRecords();
+            for (int i=0; i<msgRecPairs.size(); i++) {
+                if (msgRecPairs.get(i).getKey() instanceof ClientHelloMessage) {
+                    lastChStepIndex = i;
+                    lastChPair = msgRecPairs.get(i);
+                }
+            }
 
-			assert lastChPair != null;
+            assert lastChPair != null;
 
-			byte [] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
-			byte [] shBytes = context.getStepContext().getProcessingUnit().getInitialRecordsToSend().get(0).getCleanProtocolMessageBytes().getValue();
+            byte [] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
+            byte [] shBytes = context.getStepContext().getProcessingUnit().getInitialRecordsToSend().get(0).getCleanProtocolMessageBytes().getValue();
 
-			state.getTlsContext().getDigest().reset();
-			if (digestHR && context.getStepContext(lastChStepIndex).getInput() instanceof HelloRequestInput) {
-				byte [] hrBytes = context.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
-				state.getTlsContext().getDigest().append(hrBytes);
-			}
-			state.getTlsContext().getDigest().append(chBytes);
-			state.getTlsContext().getDigest().append(shBytes);
-		}
-		return super.postReceiveUpdate(output, state, context);
-	}
+            state.getTlsContext().getDigest().reset();
+            if (digestHR && context.getStepContext(lastChStepIndex).getInput() instanceof HelloRequestInput) {
+                byte [] hrBytes = context.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
+                state.getTlsContext().getDigest().append(hrBytes);
+            }
+            state.getTlsContext().getDigest().append(chBytes);
+            state.getTlsContext().getDigest().append(shBytes);
+        }
+        return super.postReceiveUpdate(output, state, context);
+    }
 }

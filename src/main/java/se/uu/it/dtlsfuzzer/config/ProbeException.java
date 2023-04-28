@@ -1,14 +1,14 @@
 package se.uu.it.dtlsfuzzer.config;
 
 public class ProbeException extends Exception {
-	private String msg;
+    private String msg;
 
-	public ProbeException(String msg) {
-		this.msg = msg;
-		// TODO Auto-generated constructor stub
-	}
+    public ProbeException(String msg) {
+        this.msg = msg;
+        // TODO Auto-generated constructor stub
+    }
 
-	public String getMessage() {
-		return msg;
-	}
+    public String getMessage() {
+        return msg;
+    }
 }

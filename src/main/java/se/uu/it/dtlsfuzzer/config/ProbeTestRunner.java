@@ -12,39 +12,39 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 public class ProbeTestRunner extends TestRunner {
 
-	private StateFuzzerConfig config;
-	private Alphabet<TlsInput> alphabet;
-	private List<TestRunnerResult<TlsInput, TlsOutput>> control = null;
+    private StateFuzzerConfig config;
+    private Alphabet<TlsInput> alphabet;
+    private List<TestRunnerResult<TlsInput, TlsOutput>> control = null;
 
-	public ProbeTestRunner(TestRunnerConfig config, Alphabet<TlsInput> alphabet, SulDelegate sulDelegate, MapperConfig mapperConfig, CleanupTasks cleanupTasks) throws IOException {
-		super(config, alphabet, sulDelegate, mapperConfig, cleanupTasks);
-	}
+    public ProbeTestRunner(TestRunnerConfig config, Alphabet<TlsInput> alphabet, SulDelegate sulDelegate, MapperConfig mapperConfig, CleanupTasks cleanupTasks) throws IOException {
+        super(config, alphabet, sulDelegate, mapperConfig, cleanupTasks);
+    }
 
-	public boolean isNonDeterministic(boolean controlRun) throws IOException {
-		List<TestRunnerResult<TlsInput, TlsOutput>> results = super.runTests();
-		Iterator<TestRunnerResult<TlsInput, TlsOutput>> itControl = null;
-		if (!controlRun) {
-			itControl = control.iterator();
-		}
-		for (TestRunnerResult<TlsInput, TlsOutput> result : results) {
-			if (result.getGeneratedOutputs().size() > 1) {
-				return true;
-			}
-			if  (itControl != null && !(result.getGeneratedOutputs().equals(itControl.next().getGeneratedOutputs()))) {
-				return true;
-			}
-		}
-		if (controlRun) {
-			control = results;
-		}
-		return false;
-	}
+    public boolean isNonDeterministic(boolean controlRun) throws IOException {
+        List<TestRunnerResult<TlsInput, TlsOutput>> results = super.runTests();
+        Iterator<TestRunnerResult<TlsInput, TlsOutput>> itControl = null;
+        if (!controlRun) {
+            itControl = control.iterator();
+        }
+        for (TestRunnerResult<TlsInput, TlsOutput> result : results) {
+            if (result.getGeneratedOutputs().size() > 1) {
+                return true;
+            }
+            if  (itControl != null && !(result.getGeneratedOutputs().equals(itControl.next().getGeneratedOutputs()))) {
+                return true;
+            }
+        }
+        if (controlRun) {
+            control = results;
+        }
+        return false;
+    }
 
-	public StateFuzzerConfig getConfig() {
-		return config;
-	}
+    public StateFuzzerConfig getConfig() {
+        return config;
+    }
 
-	public Alphabet<TlsInput> getAlphabet() {
-		return alphabet;
-	}
+    public Alphabet<TlsInput> getAlphabet() {
+        return alphabet;
+    }
 }

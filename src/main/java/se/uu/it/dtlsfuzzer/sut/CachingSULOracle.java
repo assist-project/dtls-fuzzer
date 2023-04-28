@@ -20,73 +20,73 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
-	private ObservationTree<I, O> root;
+    private ObservationTree<I, O> root;
 
-	private MembershipOracle<I, Word<O>> sulOracle;
+    private MembershipOracle<I, Word<O>> sulOracle;
 
-	private boolean onlyLookup;
+    private boolean onlyLookup;
 
-	private HashSet<O> terminatingOutputs;
+    private HashSet<O> terminatingOutputs;
 
-	@SafeVarargs
-	public CachingSULOracle(MembershipOracle<I, Word<O>> sulOracle,
-			ObservationTree<I, O> cache, boolean onlyLookup,
-			O... terminatingOutputs) {
-		this.root = cache;
-		this.sulOracle = sulOracle;
-		this.onlyLookup = onlyLookup;
-		this.terminatingOutputs = Sets.newHashSet(terminatingOutputs);
-	}
+    @SafeVarargs
+    public CachingSULOracle(MembershipOracle<I, Word<O>> sulOracle,
+            ObservationTree<I, O> cache, boolean onlyLookup,
+            O... terminatingOutputs) {
+        this.root = cache;
+        this.sulOracle = sulOracle;
+        this.onlyLookup = onlyLookup;
+        this.terminatingOutputs = Sets.newHashSet(terminatingOutputs);
+    }
 
-	@Override
-	public void processQueries(Collection<? extends Query<I, Word<O>>> queries) {
-		for (Query<I, Word<O>> q : queries) {
-			Word<I> fullInput = q.getPrefix().concat(q.getSuffix());
-			Word<O> fullOutput = answerFromCache(fullInput);
-			if (fullOutput == null) {
-				fullOutput = sulOracle.answerQuery(fullInput);
-				if (!onlyLookup) {
-					storeToCache(fullInput, fullOutput);
-				}
-			}
+    @Override
+    public void processQueries(Collection<? extends Query<I, Word<O>>> queries) {
+        for (Query<I, Word<O>> q : queries) {
+            Word<I> fullInput = q.getPrefix().concat(q.getSuffix());
+            Word<O> fullOutput = answerFromCache(fullInput);
+            if (fullOutput == null) {
+                fullOutput = sulOracle.answerQuery(fullInput);
+                if (!onlyLookup) {
+                    storeToCache(fullInput, fullOutput);
+                }
+            }
 
-			Word<O> output = fullOutput.suffix(q.getSuffix().size());
-			q.answer(output);
-		}
-	}
+            Word<O> output = fullOutput.suffix(q.getSuffix().size());
+            q.answer(output);
+        }
+    }
 
-	private void storeToCache(Word<I> input, Word<O> output) {
-		root.addObservation(input, output);
-	}
+    private void storeToCache(Word<I> input, Word<O> output) {
+        root.addObservation(input, output);
+    }
 
-	@Nullable
-	private Word<O> answerFromCache(Word<I> input) {
-		if (terminatingOutputs.isEmpty())
-			return root.answerQuery(input);
-		else {
-			Word<O> output = root.answerQuery(input, true);
-			if (output.length() < input.length()) {
-				if (output.isEmpty()) {
-					return null;
-				} else {
-					if (terminatingOutputs.contains(output.lastSymbol())) {
-						Word<O> extendedOutput = output;
-						while (extendedOutput.length() < input.length()) {
-							extendedOutput = extendedOutput.append(output
-									.lastSymbol());
-						}
-						return extendedOutput;
-					} else {
-						return null;
-					}
-				}
-			} else {
-				return output;
-			}
-		}
-	}
+    @Nullable
+    private Word<O> answerFromCache(Word<I> input) {
+        if (terminatingOutputs.isEmpty())
+            return root.answerQuery(input);
+        else {
+            Word<O> output = root.answerQuery(input, true);
+            if (output.length() < input.length()) {
+                if (output.isEmpty()) {
+                    return null;
+                } else {
+                    if (terminatingOutputs.contains(output.lastSymbol())) {
+                        Word<O> extendedOutput = output;
+                        while (extendedOutput.length() < input.length()) {
+                            extendedOutput = extendedOutput.append(output
+                                    .lastSymbol());
+                        }
+                        return extendedOutput;
+                    } else {
+                        return null;
+                    }
+                }
+            } else {
+                return output;
+            }
+        }
+    }
 
-	public Word<O> answerQueryWithoutCache(Word<I> input) {
-		return sulOracle.answerQuery(input);
-	}
+    public Word<O> answerQueryWithoutCache(Word<I> input) {
+        return sulOracle.answerQuery(input);
+    }
 }

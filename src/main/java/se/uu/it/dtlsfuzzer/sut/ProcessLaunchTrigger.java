@@ -5,5 +5,5 @@ package se.uu.it.dtlsfuzzer.sut;
  * process is terminated.
  */
 public enum ProcessLaunchTrigger {
-	START, NEW_TEST
+    START, NEW_TEST
 }

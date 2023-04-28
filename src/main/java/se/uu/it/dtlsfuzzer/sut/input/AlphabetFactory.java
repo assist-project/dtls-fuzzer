@@ -14,58 +14,58 @@ import se.uu.it.dtlsfuzzer.config.StateFuzzerConfig;
 import se.uu.it.dtlsfuzzer.sut.input.xml.AlphabetSerializer;
 
 public class AlphabetFactory {
-	private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
-	public static final String DEFAULT_ALPHABET = "/default_alphabet.xml";
+    public static final String DEFAULT_ALPHABET = "/default_alphabet.xml";
 
-	public static Alphabet<TlsInput> buildAlphabet(AlphabetOptionProvider config) {
-		Alphabet<TlsInput> alphabet = null;
-		if (config.getAlphabet() != null) {
-			try {
-				alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
-			} catch (JAXBException | IOException | XMLStreamException e) {
-				LOGGER.fatal("Failed to instantiate alphabet");
-				LOGGER.fatal(e);
-				System.exit(0);
-			}
-		} else {
-			try {
-				alphabet = AlphabetFactory.buildDefaultAlphabet();
-			} catch (JAXBException | IOException | XMLStreamException e) {
-				LOGGER.fatal("Failed to instantiate default alphabet");
-				LOGGER.fatal(e);
-				System.exit(0);
-			}
-		}
+    public static Alphabet<TlsInput> buildAlphabet(AlphabetOptionProvider config) {
+        Alphabet<TlsInput> alphabet = null;
+        if (config.getAlphabet() != null) {
+            try {
+                alphabet = AlphabetFactory.buildConfiguredAlphabet(config);
+            } catch (JAXBException | IOException | XMLStreamException e) {
+                LOGGER.fatal("Failed to instantiate alphabet");
+                LOGGER.fatal(e);
+                System.exit(0);
+            }
+        } else {
+            try {
+                alphabet = AlphabetFactory.buildDefaultAlphabet();
+            } catch (JAXBException | IOException | XMLStreamException e) {
+                LOGGER.fatal("Failed to instantiate default alphabet");
+                LOGGER.fatal(e);
+                System.exit(0);
+            }
+        }
 
-		return alphabet;
-	}
+        return alphabet;
+    }
 
-	// TODO this probably doesn't work when executing via .jar
-	public static File getAlphabetFile(StateFuzzerConfig config) {
-		if (config.getAlphabet() != null) {
-			return new File(config.getAlphabet());
-		} else {
-			return new File(AlphabetFactory.class.getResource(DEFAULT_ALPHABET)
-					.getFile());
-		}
-	}
+    // TODO this probably doesn't work when executing via .jar
+    public static File getAlphabetFile(StateFuzzerConfig config) {
+        if (config.getAlphabet() != null) {
+            return new File(config.getAlphabet());
+        } else {
+            return new File(AlphabetFactory.class.getResource(DEFAULT_ALPHABET)
+                    .getFile());
+        }
+    }
 
-	public static Alphabet<TlsInput> buildDefaultAlphabet()
-			throws JAXBException, IOException, XMLStreamException {
-		return AlphabetSerializer.read(AlphabetFactory.class
-				.getResourceAsStream(DEFAULT_ALPHABET));
-	}
+    public static Alphabet<TlsInput> buildDefaultAlphabet()
+            throws JAXBException, IOException, XMLStreamException {
+        return AlphabetSerializer.read(AlphabetFactory.class
+                .getResourceAsStream(DEFAULT_ALPHABET));
+    }
 
-	public static Alphabet<TlsInput> buildConfiguredAlphabet(
-			AlphabetOptionProvider  config) throws FileNotFoundException,
-			JAXBException, IOException, XMLStreamException {
-		Alphabet<TlsInput> alphabet = null;
-		if (config.getAlphabet() != null) {
-			alphabet = AlphabetSerializer.read(new FileInputStream(config
-					.getAlphabet()));
-		}
-		return alphabet;
-	}
+    public static Alphabet<TlsInput> buildConfiguredAlphabet(
+            AlphabetOptionProvider  config) throws FileNotFoundException,
+            JAXBException, IOException, XMLStreamException {
+        Alphabet<TlsInput> alphabet = null;
+        if (config.getAlphabet() != null) {
+            alphabet = AlphabetSerializer.read(new FileInputStream(config
+                    .getAlphabet()));
+        }
+        return alphabet;
+    }
 
 }

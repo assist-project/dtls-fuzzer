@@ -15,19 +15,19 @@ import net.automatalib.words.Word;
  */
 public class CacheInconsistencyException extends NonDeterminismException {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 6532386093138639923L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 6532386093138639923L;
 
-	public CacheInconsistencyException(Word<?> input, Word<?> oldOutput,
-			Word<?> newOutput) {
-		super(input, oldOutput, newOutput);
-	}
+    public CacheInconsistencyException(Word<?> input, Word<?> oldOutput,
+            Word<?> newOutput) {
+        super(input, oldOutput, newOutput);
+    }
 
-	public CacheInconsistencyException(String message, Word<?> input,
-			Word<?> oldOutput, Word<?> newOutput) {
-		super(message, input, oldOutput, newOutput);
-	}
+    public CacheInconsistencyException(String message, Word<?> input,
+            Word<?> oldOutput, Word<?> newOutput) {
+        super(message, input, oldOutput, newOutput);
+    }
 
 }

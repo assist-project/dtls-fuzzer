@@ -5,24 +5,24 @@ import java.util.LinkedHashMap;
 
 public class NameTlsInputMapping extends LinkedHashMap<String, TlsInput>{
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-	public NameTlsInputMapping(Collection<TlsInput> inputs) {
-		super();
-		inputs.forEach(i -> put(i.name(), i));
-	}
+    public NameTlsInputMapping(Collection<TlsInput> inputs) {
+        super();
+        inputs.forEach(i -> put(i.name(), i));
+    }
 
-	public TlsInput getInput(String name) {
-		return get(name);
-	}
+    public TlsInput getInput(String name) {
+        return get(name);
+    }
 
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("InputMapping: \n");
-		builder.append(super.toString());
-		return builder.toString();
-	}
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("InputMapping: \n");
+        builder.append(super.toString());
+        return builder.toString();
+    }
 }
