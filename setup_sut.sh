@@ -188,8 +188,8 @@ function get_sutvarname() {
             return 1
         fi
     done
-    echo "Could not find var name for $1"
-    exit -1
+    echo "Could not find var name for $1" >&2
+    exit 1
 }
 
 function get_jar_path() {

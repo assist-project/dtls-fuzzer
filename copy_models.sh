@@ -10,7 +10,7 @@ opt_merge=0
 opt_build_trimmed=0 # if not 0, builds a trimmed version of the model
 opt_build_reduced=0 # if not 0, builds a reduced version of the model
 opt_incl_error=0 # if not 0, includes experiments which ended in error (their dir contains the error.msg file)
-opt_max_states=100000 # for learning experiments that have not converged select the latest hyp with at most this number of states
+#opt_max_states=100000 # for learning experiments that have not converged select the latest hyp with at most this number of states
 
 function num_states() {
     model=$1
