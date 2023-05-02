@@ -30,35 +30,35 @@ import se.uu.it.dtlsfuzzer.config.ToolConfig;
 import se.uu.it.dtlsfuzzer.config.ToolPropertyAwareConverterFactory;
 
 public class Main {
-	private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
-	private static String ARGS_FILE = "command.args";
+    private static String ARGS_FILE = "command.args";
 
 
-	public static void main(String args[]) throws IOException, JAXBException, XMLStreamException {
-		UnlimitedStrengthEnabler.enable();
-		Security.addProvider(new BouncyCastleProvider());
-		int startCmd = 0;
-		int endCmd = 0;
-		String [] cmdArgs;
+    public static void main(String args[]) throws IOException, JAXBException, XMLStreamException {
+        UnlimitedStrengthEnabler.enable();
+        Security.addProvider(new BouncyCastleProvider());
+        int startCmd = 0;
+        int endCmd = 0;
+        String [] cmdArgs;
 
-		if (args.length == 0) {
-			// to show global usage
-			processCommand(args);
-		}
+        if (args.length == 0) {
+            // to show global usage
+            processCommand(args);
+        }
 
-		while (args.length > endCmd) {
-			startCmd = endCmd;
-			while (args.length > endCmd && !args[endCmd].equals("--")) {
-				endCmd ++;
-			}
-			cmdArgs = Arrays.copyOfRange(args, startCmd, endCmd);
-			processCommand(cmdArgs);
-			endCmd ++;
-		}
-	}
+        while (args.length > endCmd) {
+            startCmd = endCmd;
+            while (args.length > endCmd && !args[endCmd].equals("--")) {
+                endCmd ++;
+            }
+            cmdArgs = Arrays.copyOfRange(args, startCmd, endCmd);
+            processCommand(cmdArgs);
+            endCmd ++;
+        }
+    }
 
-	 /*
+     /*
      * Parses arguments returning a result containing the JCommander instance used for parsing and tool configurations.
      * Returns null if parsing found errors.
      */
@@ -90,7 +90,7 @@ public class Main {
             LOGGER.error("Could not parse provided parameters. " + E.getLocalizedMessage());
             LOGGER.debug(E);
             if (commander.getParsedCommand() != null) {
-		JCommander cmdCommander = commander.getCommands().get(commander.getParsedCommand());
+        JCommander cmdCommander = commander.getCommands().get(commander.getParsedCommand());
                 System.out.println(commander.getParsedCommand());
                 cmdCommander.usage();
             } else {
@@ -107,11 +107,11 @@ public class Main {
         return new ParsingResult(stateFuzzerClientConfig, stateFuzzerServerConfig, commander);
     }
 
-	private static void processCommand(String [] args) {
-	    ParsingResult result = parseArguments(args);
-	    if (result == null) {
-	        return;
-	    }
+    private static void processCommand(String [] args) {
+        ParsingResult result = parseArguments(args);
+        if (result == null) {
+            return;
+        }
 
         JCommander commander = result.getCommander();
         if (commander.getParsedCommand() == null) {
@@ -119,10 +119,10 @@ public class Main {
             return;
         }
 
-		try {
-			LOGGER.info("Processing command {}", commander.getParsedCommand());
-			StateFuzzerConfig stateFuzzerConfig = result.getParsedConfig();
-			if (stateFuzzerConfig.isHelp()) {
+        try {
+            LOGGER.info("Processing command {}", commander.getParsedCommand());
+            StateFuzzerConfig stateFuzzerConfig = result.getParsedConfig();
+            if (stateFuzzerConfig.isHelp()) {
                 commander.usage();
             }
             stateFuzzerConfig.applyDelegate(null);
@@ -132,81 +132,81 @@ public class Main {
             prepareOutputDir(args, stateFuzzerConfig.getOutput());
             StateFuzzer stateFuzzer = new StateFuzzer(stateFuzzerConfig);
             stateFuzzer.startFuzzing();
-		} catch (Exception E) {
-			LOGGER.error("Encountered an exception. See debug for more info.");
-			E.printStackTrace();
-			LOGGER.error(E);
-		}
-	}
+        } catch (Exception E) {
+            LOGGER.error("Encountered an exception. See debug for more info.");
+            E.printStackTrace();
+            LOGGER.error(E);
+        }
+    }
 
-	/*
-	 * Gives a description for each supported command.
-	 */
-	private static void showGlobalUsage(JCommander commander) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		pw.println("Usage: <main class> [command] [command options] [-- [command] [command options] ]*");
-		pw.println("Where command is one of the following:");
-		for (String cmd : commander.getCommands().keySet()) {
-			pw.println(cmd + "    " + commander.getUsageFormatter().getCommandDescription(cmd));
-		}
-		LOGGER.info(sw.toString());
-	}
+    /*
+     * Gives a description for each supported command.
+     */
+    private static void showGlobalUsage(JCommander commander) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println("Usage: <main class> [command] [command options] [-- [command] [command options] ]*");
+        pw.println("Where command is one of the following:");
+        for (String cmd : commander.getCommands().keySet()) {
+            pw.println(cmd + "    " + commander.getUsageFormatter().getCommandDescription(cmd));
+        }
+        LOGGER.info(sw.toString());
+    }
 
-	/*
-	 * Checks if options have been supplied for launching the test runner/timing probe.
-	 * Executes these tools and exits if that is the case.
-	 */
-	private static void testRunnerOptionCheck(TestRunnerEnabler config) throws IOException {
-		if (config.getTestRunnerConfig().getTest() != null) {
+    /*
+     * Checks if options have been supplied for launching the test runner/timing probe.
+     * Executes these tools and exits if that is the case.
+     */
+    private static void testRunnerOptionCheck(TestRunnerEnabler config) throws IOException {
+        if (config.getTestRunnerConfig().getTest() != null) {
 //			LOGGER.info("Test runner is engaged");
-			if (config instanceof TimingProbeEnabler && ((TimingProbeEnabler) config).getTimingProbe().isActive()) {
-				LOGGER.info("Running timing probe");
-				TimingProbe.runTimingProbe((TimingProbeEnabler) config);
-			} else {
-				LOGGER.info("Running test runner");
-				TestRunner.runTestRunner(config);
-			}
-			System.exit(0);
-		}
-	}
+            if (config instanceof TimingProbeEnabler && ((TimingProbeEnabler) config).getTimingProbe().isActive()) {
+                LOGGER.info("Running timing probe");
+                TimingProbe.runTimingProbe((TimingProbeEnabler) config);
+            } else {
+                LOGGER.info("Running test runner");
+                TestRunner.runTestRunner(config);
+            }
+            System.exit(0);
+        }
+    }
 
-	/*
-	 * Creates the output directory in advance in order to store in it the arguments file before the tool is executed.
-	 */
-	private static void prepareOutputDir(String args [], String dirPath) {
-		File outputFolder = new File(dirPath);
-		outputFolder.mkdirs();
+    /*
+     * Creates the output directory in advance in order to store in it the arguments file before the tool is executed.
+     */
+    private static void prepareOutputDir(String args [], String dirPath) {
+        File outputFolder = new File(dirPath);
+        outputFolder.mkdirs();
 
-		try {
-			copyArgsToOutDir(args, dirPath);
-		} catch (IOException E) {
-			LOGGER.error("Failed to copy arguments file");
-			E.printStackTrace();
-			LOGGER.error(E);
-		}
-	}
+        try {
+            copyArgsToOutDir(args, dirPath);
+        } catch (IOException E) {
+            LOGGER.error("Failed to copy arguments file");
+            E.printStackTrace();
+            LOGGER.error(E);
+        }
+    }
 
-	/*
-	 * Generates a file comprising the entire command given to to fuzzer.
-	 */
-	private static void copyArgsToOutDir(String[] args, String outDir) throws IOException {
-		FileOutputStream fw = new FileOutputStream(new File(outDir, ARGS_FILE));
-		PrintStream ps = new PrintStream(fw);
-		for (String arg : args) {
-			if (arg.startsWith("@")) {
-				String argsFileName = arg.substring(1);
-				File argsFile = new File(argsFileName);
-				if (!argsFile.exists()) {
-					LOGGER.warn("Arguments file " + argsFile + "has been moved ");
-				} else {
-					Files.copy(argsFile, fw);
-				}
-			} else {
-				ps.println(arg);
-			}
-		}
-		ps.close();
-		fw.close();
-	}
+    /*
+     * Generates a file comprising the entire command given to to fuzzer.
+     */
+    private static void copyArgsToOutDir(String[] args, String outDir) throws IOException {
+        FileOutputStream fw = new FileOutputStream(new File(outDir, ARGS_FILE));
+        PrintStream ps = new PrintStream(fw);
+        for (String arg : args) {
+            if (arg.startsWith("@")) {
+                String argsFileName = arg.substring(1);
+                File argsFile = new File(argsFileName);
+                if (!argsFile.exists()) {
+                    LOGGER.warn("Arguments file " + argsFile + "has been moved ");
+                } else {
+                    Files.copy(argsFile, fw);
+                }
+            } else {
+                ps.println(arg);
+            }
+        }
+        ps.close();
+        fw.close();
+    }
 }

@@ -8,19 +8,19 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 public class TlsProcessWrapper extends SulProcessWrapper<TlsInput, TlsOutput> {
 
-	public TlsProcessWrapper(SUL<TlsInput, TlsOutput> sul,
-			SulDelegate sulDelegate) {
-		super(sul, sulDelegate);
-	}
+    public TlsProcessWrapper(SUL<TlsInput, TlsOutput> sul,
+            SulDelegate sulDelegate) {
+        super(sul, sulDelegate);
+    }
 
-	public void pre() {
-		super.pre();
-	}
+    public void pre() {
+        super.pre();
+    }
 
-	@Override
-	public TlsOutput step(TlsInput in) throws SULException {
-		TlsOutput output = super.step(in);
-		output.setAlive(super.isAlive());
-		return output;
-	}
+    @Override
+    public TlsOutput step(TlsInput in) throws SULException {
+        TlsOutput output = super.step(in);
+        output.setAlive(super.isAlive());
+        return output;
+    }
 }

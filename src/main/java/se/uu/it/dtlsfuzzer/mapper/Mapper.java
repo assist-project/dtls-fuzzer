@@ -16,5 +16,5 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
  *
  */
 public interface Mapper {
-	public TlsOutput execute(TlsInput input, State state, ExecutionContext context);
+    public TlsOutput execute(TlsInput input, State state, ExecutionContext context);
 }

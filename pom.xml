@@ -101,6 +101,10 @@
 						<trimTrailingWhitespace />
 						<importOrder />
 						<removeUnusedImports />
+						<indent>
+							<spaces>true</spaces>
+							<spacesPerTab>4</spacesPerTab>
+						</indent>
 						<!-- <palantirJavaFormat /> -->
 					</java>
 				</configuration>

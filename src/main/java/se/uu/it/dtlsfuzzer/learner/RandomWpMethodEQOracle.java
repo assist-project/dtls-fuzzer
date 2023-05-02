@@ -48,99 +48,99 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Joshua Moerman
  */
 public class RandomWpMethodEQOracle<I,O>
-		implements
-		EquivalenceOracle.MealyEquivalenceOracle<I, O> {
-	private final MealyMembershipOracle<I, O>  sulOracle;
-	private final int minimalSize;
-	private final int rndLength;
-	private final int bound;
-	private long seed;
+        implements
+        EquivalenceOracle.MealyEquivalenceOracle<I, O> {
+    private final MealyMembershipOracle<I, O>  sulOracle;
+    private final int minimalSize;
+    private final int rndLength;
+    private final int bound;
+    private long seed;
 
-	/**
-	 * Constructor for an unbounded testing oracle
-	 *
-	 * @param sulOracle
-	 *            oracle which answers tests.
-	 * @param minimalSize
-	 *            minimal size of the random word
-	 * @param rndLength
-	 *            expected length (in addition to minimalSize) of random word
-	 */
-	public RandomWpMethodEQOracle(MealyMembershipOracle<I, O> sulOracle,
-			int minimalSize, int rndLength, long seed) {
-		this.sulOracle = sulOracle;
-		this.minimalSize = minimalSize;
-		this.rndLength = rndLength;
-		this.seed = seed;
-		this.bound = 0;
-	}
+    /**
+     * Constructor for an unbounded testing oracle
+     *
+     * @param sulOracle
+     *            oracle which answers tests.
+     * @param minimalSize
+     *            minimal size of the random word
+     * @param rndLength
+     *            expected length (in addition to minimalSize) of random word
+     */
+    public RandomWpMethodEQOracle(MealyMembershipOracle<I, O> sulOracle,
+            int minimalSize, int rndLength, long seed) {
+        this.sulOracle = sulOracle;
+        this.minimalSize = minimalSize;
+        this.rndLength = rndLength;
+        this.seed = seed;
+        this.bound = 0;
+    }
 
-	/**
-	 * Constructor for a bounded testing oracle
-	 *
-	 * @param sulOracle
-	 *            oracle which answers tests.
-	 * @param minimalSize
-	 *            minimal size of the random word
-	 * @param rndLength
-	 *            expected length (in addition to minimalSize) of random word
-	 * @param bound
-	 *            specifies the bound (set to 0 for unbounded).
-	 */
-	public RandomWpMethodEQOracle(MealyMembershipOracle<I, O> sulOracle,
-			int minimalSize, int rndLength, int bound, long seed) {
-		this.sulOracle = sulOracle;
-		this.minimalSize = minimalSize;
-		this.rndLength = rndLength;
-		this.bound = bound;
-		this.seed = seed;
-	}
+    /**
+     * Constructor for a bounded testing oracle
+     *
+     * @param sulOracle
+     *            oracle which answers tests.
+     * @param minimalSize
+     *            minimal size of the random word
+     * @param rndLength
+     *            expected length (in addition to minimalSize) of random word
+     * @param bound
+     *            specifies the bound (set to 0 for unbounded).
+     */
+    public RandomWpMethodEQOracle(MealyMembershipOracle<I, O> sulOracle,
+            int minimalSize, int rndLength, int bound, long seed) {
+        this.sulOracle = sulOracle;
+        this.minimalSize = minimalSize;
+        this.rndLength = rndLength;
+        this.bound = bound;
+        this.seed = seed;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.learnlib.api.EquivalenceOracle#findCounterExample(java.lang.Object,
-	 * java.util.Collection)
-	 */
-	@Override
-	public @Nullable DefaultQuery<I, Word<O>> findCounterExample(MealyMachine<?, I, ?, O> hypothesis,
-			Collection<? extends I> inputs) {
-		return doFindCounterExample(hypothesis, inputs);
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * de.learnlib.api.EquivalenceOracle#findCounterExample(java.lang.Object,
+     * java.util.Collection)
+     */
+    @Override
+    public @Nullable DefaultQuery<I, Word<O>> findCounterExample(MealyMachine<?, I, ?, O> hypothesis,
+            Collection<? extends I> inputs) {
+        return doFindCounterExample(hypothesis, inputs);
+    }
 
-	public <S> @Nullable DefaultQuery<I, Word<O>> doFindCounterExample(MealyMachine<S, I, ?, O> hypothesis,
-			Collection<? extends I> inputs) {
-		WpEQSequenceGenerator<I, Word<O>, S> generator = new WpEQSequenceGenerator<>(
-				hypothesis, inputs);
+    public <S> @Nullable DefaultQuery<I, Word<O>> doFindCounterExample(MealyMachine<S, I, ?, O> hypothesis,
+            Collection<? extends I> inputs) {
+        WpEQSequenceGenerator<I, Word<O>, S> generator = new WpEQSequenceGenerator<>(
+                hypothesis, inputs);
 
-		Random rand = new Random(seed);
-		List<S> states = new ArrayList<>(hypothesis.getStates());
+        Random rand = new Random(seed);
+        List<S> states = new ArrayList<>(hypothesis.getStates());
 
-		int currentBound = bound;
-		while (bound == 0 || currentBound-- > 0) {
-			WordBuilder<I> wb = new WordBuilder<>(minimalSize + rndLength + 1);
+        int currentBound = bound;
+        while (bound == 0 || currentBound-- > 0) {
+            WordBuilder<I> wb = new WordBuilder<>(minimalSize + rndLength + 1);
 
-			// pick a random state
-			wb.append(generator.getRandomAccessSequence(
-					states.get(rand.nextInt(states.size())), rand));
+            // pick a random state
+            wb.append(generator.getRandomAccessSequence(
+                    states.get(rand.nextInt(states.size())), rand));
 
-			// construct random middle part (of some expected length)
-			wb.append(generator.getRandomMiddleSequence(minimalSize, rndLength,
-					rand));
+            // construct random middle part (of some expected length)
+            wb.append(generator.getRandomMiddleSequence(minimalSize, rndLength,
+                    rand));
 
-			// construct a random characterizing/identifying sequence
-			wb.append(generator.getRandomCharacterizingSequence(wb, rand));
+            // construct a random characterizing/identifying sequence
+            wb.append(generator.getRandomCharacterizingSequence(wb, rand));
 
-			Word<I> queryWord = wb.toWord();
-			Word<O> hypOutput = hypothesis.computeOutput(queryWord);
-			DefaultQuery<I, Word<O>> query = new DefaultQuery<>(queryWord);
-			sulOracle.processQueries(Collections.singleton(query));
-			if (!Objects.equals(hypOutput, query.getOutput()))
-				return query;
-		}
+            Word<I> queryWord = wb.toWord();
+            Word<O> hypOutput = hypothesis.computeOutput(queryWord);
+            DefaultQuery<I, Word<O>> query = new DefaultQuery<>(queryWord);
+            sulOracle.processQueries(Collections.singleton(query));
+            if (!Objects.equals(hypOutput, query.getOutput()))
+                return query;
+        }
 
-		// no counter example found within the bound
-		return null;
-	}
+        // no counter example found within the bound
+        return null;
+    }
 }

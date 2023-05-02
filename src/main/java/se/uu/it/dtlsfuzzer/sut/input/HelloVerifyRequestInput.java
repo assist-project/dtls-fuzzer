@@ -8,32 +8,32 @@ import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 public class HelloVerifyRequestInput extends DtlsInput {
 
-	/**
-	 * option for resetting the digests
-	 */
-	@XmlAttribute(name = "resetDigest", required = false)
-	private boolean resetDigest = true;
+    /**
+     * option for resetting the digests
+     */
+    @XmlAttribute(name = "resetDigest", required = false)
+    private boolean resetDigest = true;
 
-	@XmlAttribute(name = "digestHR", required = false)
-	private boolean digestHR = false;
+    @XmlAttribute(name = "digestHR", required = false)
+    private boolean digestHR = false;
 
-	public HelloVerifyRequestInput() {
-		super("HELLO_VERIFY_REQUEST");
-	}
+    public HelloVerifyRequestInput() {
+        super("HELLO_VERIFY_REQUEST");
+    }
 
-	@Override
-	public TlsMessage generateMessage(State state, ExecutionContext context) {
-		return new HelloVerifyRequestMessage(state.getConfig());
-	}
+    @Override
+    public TlsMessage generateMessage(State state, ExecutionContext context) {
+        return new HelloVerifyRequestMessage(state.getConfig());
+    }
 
-	@Override
-	public TlsInputType getInputType() {
-		return TlsInputType.HANDSHAKE;
-	}
+    @Override
+    public TlsInputType getInputType() {
+        return TlsInputType.HANDSHAKE;
+    }
 
-	public void postSendDtlsUpdate(State state, ExecutionContext context) {
-		if (resetDigest) {
-			state.getTlsContext().getDigest().reset();
-		}
-	}
+    public void postSendDtlsUpdate(State state, ExecutionContext context) {
+        if (resetDigest) {
+            state.getTlsContext().getDigest().reset();
+        }
+    }
 }

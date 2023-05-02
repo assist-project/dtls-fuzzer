@@ -7,14 +7,14 @@ import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
 public class WaitClientConnectInput extends TlsInput {
 
-	@Override
-	public TlsMessage generateMessage(State state, ExecutionContext context) {
-		throw new NotImplementedException("Cannot generate message");
-	}
+    @Override
+    public TlsMessage generateMessage(State state, ExecutionContext context) {
+        throw new NotImplementedException("Cannot generate message");
+    }
 
-	@Override
-	public TlsInputType getInputType() {
-		return TlsInputType.EMPTY;
-	}
+    @Override
+    public TlsInputType getInputType() {
+        return TlsInputType.EMPTY;
+    }
 
 }

@@ -6,19 +6,19 @@ import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import java.util.Arrays;
 
 public class ProtocolVersionConverter
-		implements
-			IStringConverter<ProtocolVersion> {
+        implements
+            IStringConverter<ProtocolVersion> {
 
-	@Override
-	public ProtocolVersion convert(String value) {
-		try {
-			return ProtocolVersion.valueOf(value);
-		} catch (IllegalArgumentException e) {
-			throw new ParameterException("Value " + value
-					+ " cannot be converted to a ProtocolVersion. "
-					+ "Available values are: "
-					+ Arrays.toString(ProtocolVersion.values()));
-		}
-	}
+    @Override
+    public ProtocolVersion convert(String value) {
+        try {
+            return ProtocolVersion.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            throw new ParameterException("Value " + value
+                    + " cannot be converted to a ProtocolVersion. "
+                    + "Available values are: "
+                    + Arrays.toString(ProtocolVersion.values()));
+        }
+    }
 
 }

@@ -8,19 +8,19 @@ import java.util.List;
  * shutdown hook.
  */
 public class CleanupTasks {
-	private List<Runnable> tasks;
+    private List<Runnable> tasks;
 
-	public CleanupTasks() {
-		tasks = new LinkedList<>();
-	}
+    public CleanupTasks() {
+        tasks = new LinkedList<>();
+    }
 
-	public void submit(Runnable runnable) {
-		tasks.add(runnable);
-	}
+    public void submit(Runnable runnable) {
+        tasks.add(runnable);
+    }
 
-	public void execute() {
-		for (Runnable task : tasks) {
-			task.run();
-		}
-	}
+    public void execute() {
+        for (Runnable task : tasks) {
+            task.run();
+        }
+    }
 }

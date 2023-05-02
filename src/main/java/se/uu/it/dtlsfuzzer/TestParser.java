@@ -29,98 +29,98 @@ import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
  */
 
 public class TestParser {
-	private static final Logger LOGGER = LogManager.getLogger(TestParser.class);
+    private static final Logger LOGGER = LogManager.getLogger(TestParser.class);
 
-	public TestParser() {
-	}
+    public TestParser() {
+    }
 
-	public void writeTest(Word<TlsInput> test, String PATH) throws IOException {
-		File file = new File(PATH);
-		writeTest(test, file);
-	}
+    public void writeTest(Word<TlsInput> test, String PATH) throws IOException {
+        File file = new File(PATH);
+        writeTest(test, file);
+    }
 
-	public void writeTest(Word<TlsInput> test, File file) throws IOException {
-		file.createNewFile();
-		try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
-			for (TlsInput input : test) {
-				pw.println(input.toString());
-			}
-		}
-	}
+    public void writeTest(Word<TlsInput> test, File file) throws IOException {
+        file.createNewFile();
+        try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
+            for (TlsInput input : test) {
+                pw.println(input.toString());
+            }
+        }
+    }
 
-	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH) throws IOException {
-		List<String> inputStrings = readTestStrings(PATH);
-		Word<TlsInput> test = readTest(alphabet, inputStrings);
-		return test;
-	}
+    public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, String PATH) throws IOException {
+        List<String> inputStrings = readTestStrings(PATH);
+        Word<TlsInput> test = readTest(alphabet, inputStrings);
+        return test;
+    }
 
-	public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, List<String> testInputStrings) {
-		Map<String, TlsInput> inputs = new LinkedHashMap<>();
-		alphabet.stream().forEach(i -> inputs.put(i.toString(), i));
-		Word<TlsInput> inputWord = Word.epsilon();
-		for (String inputString : testInputStrings) {
-			inputString = inputString.trim();
-			if (!inputs.containsKey(inputString)) {
-				throw new RuntimeException("Input \"" + inputString + "\" is missing from the alphabet ");
-			}
-			inputWord = inputWord.append(inputs.get(inputString));
-		}
+    public Word<TlsInput> readTest(Alphabet<TlsInput> alphabet, List<String> testInputStrings) {
+        Map<String, TlsInput> inputs = new LinkedHashMap<>();
+        alphabet.stream().forEach(i -> inputs.put(i.toString(), i));
+        Word<TlsInput> inputWord = Word.epsilon();
+        for (String inputString : testInputStrings) {
+            inputString = inputString.trim();
+            if (!inputs.containsKey(inputString)) {
+                throw new RuntimeException("Input \"" + inputString + "\" is missing from the alphabet ");
+            }
+            inputWord = inputWord.append(inputs.get(inputString));
+        }
 
-		return inputWord;
-	}
+        return inputWord;
+    }
 
-	/**
-	 * Reads from a file reset-separated test queries. It stops reading once it
-	 * reaches the EOF or an empty line. A non-empty line may contain:
-	 * <ul>
-	 * <li>reset - marking the end of the current test, and the beginning of a new
-	 * test</li>
-	 * <li>space-separated regular inputs and resets</li>
-	 * <li>a single mutated input (starts with @)</li>
-	 * <li>commented line (starts with # or !)</li>
-	 * </ul>
-	 */
-	public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet, String PATH) throws IOException {
-		List<String> inputStrings = readTestStrings(PATH);
-		List<String> flattenedInputStrings = inputStrings.stream()
-				.map(i -> i.startsWith("@") ? new String[] { i } : i.split("\\s+")).flatMap(a -> Arrays.stream(a))
-				.collect(Collectors.toList());
+    /**
+     * Reads from a file reset-separated test queries. It stops reading once it
+     * reaches the EOF or an empty line. A non-empty line may contain:
+     * <ul>
+     * <li>reset - marking the end of the current test, and the beginning of a new
+     * test</li>
+     * <li>space-separated regular inputs and resets</li>
+     * <li>a single mutated input (starts with @)</li>
+     * <li>commented line (starts with # or !)</li>
+     * </ul>
+     */
+    public List<Word<TlsInput>> readTests(Alphabet<TlsInput> alphabet, String PATH) throws IOException {
+        List<String> inputStrings = readTestStrings(PATH);
+        List<String> flattenedInputStrings = inputStrings.stream()
+                .map(i -> i.startsWith("@") ? new String[] { i } : i.split("\\s+")).flatMap(a -> Arrays.stream(a))
+                .collect(Collectors.toList());
 
-		List<Word<TlsInput>> tests = new LinkedList<>();
-		LinkedList<String> currentTestStrings = new LinkedList<>();
-		for (String inputString : flattenedInputStrings) {
-			if (inputString.equals("reset")) {
-				tests.add(readTest(alphabet, currentTestStrings));
-				currentTestStrings.clear();
-			} else {
-				currentTestStrings.add(inputString);
-			}
-		}
-		if (!inputStrings.isEmpty()) {
-			tests.add(readTest(alphabet, currentTestStrings));
-		}
-		return tests;
-	}
+        List<Word<TlsInput>> tests = new LinkedList<>();
+        LinkedList<String> currentTestStrings = new LinkedList<>();
+        for (String inputString : flattenedInputStrings) {
+            if (inputString.equals("reset")) {
+                tests.add(readTest(alphabet, currentTestStrings));
+                currentTestStrings.clear();
+            } else {
+                currentTestStrings.add(inputString);
+            }
+        }
+        if (!inputStrings.isEmpty()) {
+            tests.add(readTest(alphabet, currentTestStrings));
+        }
+        return tests;
+    }
 
-	private List<String> readTestStrings(String PATH) throws IOException {
-		List<String> trace;
-		trace = Files.readAllLines(Paths.get(PATH), StandardCharsets.US_ASCII);
-		ListIterator<String> it = trace.listIterator();
-		while (it.hasNext()) {
-			String line = it.next();
-			if (line.startsWith("#") || line.startsWith("!")) {
-				it.remove();
-			} else {
-				if (line.isEmpty()) {
-					it.remove();
-					while (it.hasNext()) {
-						it.next();
-						it.remove();
-					}
-				} else {
-				}
-			}
-		}
-		return trace;
-	}
+    private List<String> readTestStrings(String PATH) throws IOException {
+        List<String> trace;
+        trace = Files.readAllLines(Paths.get(PATH), StandardCharsets.US_ASCII);
+        ListIterator<String> it = trace.listIterator();
+        while (it.hasNext()) {
+            String line = it.next();
+            if (line.startsWith("#") || line.startsWith("!")) {
+                it.remove();
+            } else {
+                if (line.isEmpty()) {
+                    it.remove();
+                    while (it.hasNext()) {
+                        it.next();
+                        it.remove();
+                    }
+                } else {
+                }
+            }
+        }
+        return trace;
+    }
 }
