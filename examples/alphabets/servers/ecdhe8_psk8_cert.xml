@@ -21,8 +21,8 @@
     </GenericTlsInput>
     <GenericTlsInput name="EMPTY_CERTIFICATE">
     	<Certificate>
-            <certificateListConfig>
-            </certificateListConfig>
+            <certificatesListConfig>
+            </certificatesListConfig>
             <certificatesListBytes>
             	<byteArrayExplicitValueModification>
             		<explicitValue></explicitValue>
