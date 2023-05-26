@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import se.uu.it.dtlsfuzzer.sut.input.AlertInput;
 import se.uu.it.dtlsfuzzer.sut.input.ApplicationInput;
+import se.uu.it.dtlsfuzzer.sut.input.CertificateInput;
 import se.uu.it.dtlsfuzzer.sut.input.CertificateRequestInput;
 import se.uu.it.dtlsfuzzer.sut.input.ChangeCipherSpecInput;
 import se.uu.it.dtlsfuzzer.sut.input.ClientHelloInput;
@@ -43,6 +44,7 @@ class Alphabet {
             @XmlElement(type = CertificateRequestInput.class, name = "CertificateRequestInput"),
             @XmlElement(type = FinishedInput.class, name = "FinishedInput"),
             @XmlElement(type = ClientKeyExchangeInput.class, name = "ClientKeyExchangeInput"),
+            @XmlElement(type = CertificateInput.class, name = "CertificateInput"),
             @XmlElement(type = ApplicationInput.class, name = "ApplicationInput"),
             @XmlElement(type = HelloRequestInput.class, name = "HelloRequestInput")})
     private List<TlsInput> inputs;

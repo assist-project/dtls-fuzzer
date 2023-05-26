@@ -24,19 +24,33 @@
 		<maven.compiler.target>11</maven.compiler.target>
 		<learnlib.version>0.16.0</learnlib.version>
 		<automatalib.version>0.10.0</automatalib.version>
+		<jaxb-api.version>2.3.1</jaxb-api.version>
+		<jaxb-impl.version>2.3.4</jaxb-impl.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>de.rub.nds.tlsattacker</groupId>
-			<artifactId>TLS-Core</artifactId>
-			<version>3.8.1</version>
+			<groupId>de.rub.nds.tls.attacker</groupId>
+			<artifactId>tls-core</artifactId>
+			<version>4.0.2</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>de.learnlib.distribution</groupId>
 			<artifactId>learnlib-distribution</artifactId>
 			<type>pom</type>
+		</dependency>
+		<!-- jaxb api -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>${jaxb-api.version}</version>
+		</dependency>
+		<!-- jaxb implementation -->
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>${jaxb-impl.version}</version>
 		</dependency>
 	</dependencies>
 	

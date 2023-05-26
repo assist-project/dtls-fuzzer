@@ -35,8 +35,8 @@
     </GenericTlsInput>
     <GenericTlsInput name="EMPTY_CERTIFICATE">
         <Certificate>
-            <certificateListConfig>
-            </certificateListConfig>
+            <certificatesListConfig>
+            </certificatesListConfig>
         </Certificate>
     </GenericTlsInput>
     <GenericTlsInput name="CERTIFICATE_VERIFY">

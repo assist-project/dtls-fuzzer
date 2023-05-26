@@ -22,15 +22,8 @@
             </data>
         </Application>
     </GenericTlsInput>
-    <GenericTlsInput name="CERTIFICATE">
-        <Certificate/>
-    </GenericTlsInput>
-    <GenericTlsInput name="EMPTY_CERTIFICATE">
-        <Certificate>
-            <certificateListConfig>
-            </certificateListConfig>
-        </Certificate>
-    </GenericTlsInput>
+    <CertificateInput name="CERTIFICATE"/>
+    <CertificateInput name="EMPTY_CERTIFICATE" empty ="true"/>
     <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY"/>
     <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE"/>
 </alphabet>

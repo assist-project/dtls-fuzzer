@@ -6,7 +6,7 @@ import static se.uu.it.dtlsfuzzer.config.ToolName.STATE_FUZZER_SERVER;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.google.common.io.Files;
-import de.rub.nds.tlsattacker.util.UnlimitedStrengthEnabler;
+//import de.rub.nds.tls.attacker.util.UnlimitedStrengthEnabler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class Main {
 
 
     public static void main(String args[]) throws IOException, JAXBException, XMLStreamException {
-        UnlimitedStrengthEnabler.enable();
+        // UnlimitedStrengthEnabler.enable();
         Security.addProvider(new BouncyCastleProvider());
         int startCmd = 0;
         int endCmd = 0;
