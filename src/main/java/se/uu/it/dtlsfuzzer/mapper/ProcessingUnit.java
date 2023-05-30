@@ -10,7 +10,7 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 /**
  * All work involving execution of an input is performed on a processing unit.
- * The work is done is multiple phases, each of which involving a few fields on the class.
+ * The work is done in multiple phases, each of which involving a few fields on the class.
  * First an input is prepared for execution.
  * Then messages are generated and prepared.
  * Handshake messages are distributed in fragments.
@@ -21,7 +21,7 @@ public class ProcessingUnit {
     // the starting input
     private TlsInput input;
 
-    // the messages is generated
+    // the messages generated
     private List<TlsMessage> messages;
 
     // how handshake messages are distributed into fragments
@@ -107,7 +107,6 @@ public class ProcessingUnit {
     public void setMessagesToPack(List<TlsMessage> messagesToPack) {
         this.messagesToPack = messagesToPack;
     }
-
 
     public List<Record> getRecordsSent() {
         return recordsSent;

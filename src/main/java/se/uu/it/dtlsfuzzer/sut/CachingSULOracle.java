@@ -59,8 +59,7 @@ public class CachingSULOracle<I, O> implements MealyMembershipOracle<I, O> {
         root.addObservation(input, output);
     }
 
-    @Nullable
-    private Word<O> answerFromCache(Word<I> input) {
+    @Nullable private Word<O> answerFromCache(Word<I> input) {
         if (terminatingOutputs.isEmpty())
             return root.answerQuery(input);
         else {
