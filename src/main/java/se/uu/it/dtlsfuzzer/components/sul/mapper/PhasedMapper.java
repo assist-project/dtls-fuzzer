@@ -10,7 +10,6 @@ import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.protocol.handler.TlsMessageHandler;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
 import java.io.ByteArrayOutputStream;
@@ -106,7 +105,7 @@ public class PhasedMapper extends MapperComposer {
 
                 for (TlsMessage message : unit.getMessagesToPack()) {
                     if (msgType != message.getProtocolMessageType()) {
-                        AbstractRecord record = state.getTlsContext().getRecordLayer().getFreshRecord();
+                        Record record = state.getTlsContext().getRecordLayer().getFreshRecord();
                         packingResults.add(new PackingResult(messagesInRecord, Arrays.asList(record)));
                         messagesInRecord = new ArrayList<>();
                     }
@@ -124,7 +123,7 @@ public class PhasedMapper extends MapperComposer {
         case RECORD_PREPARATION:
             for (PackingResult messageRecord : unit.getMessageRecords()) {
                 ProtocolMessageType messageType = messageRecord.getMessages().get(0).getProtocolMessageType();
-                AbstractRecord record = messageRecord.getRecords().get(0);
+                Record record = messageRecord.getRecords().get(0);
                 try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                     for (TlsMessage message : messageRecord.getMessages()) {
                         outputStream.write(message.getCompleteResultingMessage().getValue());

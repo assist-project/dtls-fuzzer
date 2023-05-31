@@ -15,7 +15,6 @@ import de.rub.nds.tlsattacker.core.protocol.handler.UnknownMessageHandler;
 import de.rub.nds.tlsattacker.core.protocol.handler.factory.HandlerFactory;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
-import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.record.RecordCryptoComputations;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
@@ -130,7 +129,7 @@ public class TlsMessageReceiver {
             }
         }
 
-        return new MessageActionResult(group.getAbstractRecords(), processedMessages, processedFragments);
+        return new MessageActionResult(group.getRecords(), processedMessages, processedFragments);
     }
 
     /*
@@ -252,8 +251,8 @@ public class TlsMessageReceiver {
     }
 
     private void parseRecords(byte[] receivedBytes, Collection<Record> parsedRecords, TlsContext context) {
-        List<AbstractRecord> records = context.getRecordLayer().parseRecords(receivedBytes);
-        for (AbstractRecord record : records) {
+        List<Record> records = context.getRecordLayer().parseRecords(receivedBytes);
+        for (Record record : records) {
             if (!(record instanceof Record)) {
                 throw new ReceiveMessageException(
                         String.format("Record of type %s is not supported", record.getClass()));
@@ -311,10 +310,6 @@ public class TlsMessageReceiver {
             return Collections.unmodifiableList(records);
         }
 
-        public List<AbstractRecord> getAbstractRecords() {
-            return Collections.unmodifiableList(records);
-        }
-
         ProtocolMessageType getProtocolMessageType() {
             return ProtocolMessageType.getContentType(contentType);
         }
@@ -361,7 +356,7 @@ public class TlsMessageReceiver {
             return records.stream().anyMatch(r -> isRecordInvalid(r));
         }
 
-        private boolean isRecordInvalid(AbstractRecord record) {
+        private boolean isRecordInvalid(Record record) {
             if (record instanceof Record) {
                 RecordCryptoComputations computations = ((Record) record).getComputations();
                 if (computations != null && (Objects.equals(computations.getMacValid(), Boolean.FALSE)
