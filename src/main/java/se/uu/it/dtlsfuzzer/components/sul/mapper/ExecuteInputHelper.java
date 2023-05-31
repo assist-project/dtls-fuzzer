@@ -8,7 +8,7 @@ import de.rub.nds.tlsattacker.core.protocol.handler.TlsMessageHandler;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.record.AbstractRecord;
+import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
@@ -67,9 +67,9 @@ public class ExecuteInputHelper {
      * Packs messages/fragments into records ready to be sent.
      */
     public final PackingResult packMessages(List<TlsMessage> messages, State state) {
-        List<AbstractRecord> records = new ArrayList<>();
+        List<Record> records = new ArrayList<>();
         for (TlsMessage message : messages) {
-            AbstractRecord record = state.getTlsContext().getRecordLayer().getFreshRecord();
+            Record record = state.getTlsContext().getRecordLayer().getFreshRecord();
             records.add(record);
             byte[] data = message.getCompleteResultingMessage().getValue();
             state.getTlsContext().getRecordLayer().prepareRecords(data, message.getProtocolMessageType(),
@@ -81,7 +81,7 @@ public class ExecuteInputHelper {
     /**
      * Sends records over the network.
      */
-    public final void sendRecords(List<AbstractRecord> records, State state) {
+    public final void sendRecords(List<Record> records, State state) {
         SendMessageHelper helper = new SendMessageHelper();
         try {
             helper.sendRecords(records, state.getTlsContext());
