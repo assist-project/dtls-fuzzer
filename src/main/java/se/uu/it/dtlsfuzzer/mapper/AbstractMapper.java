@@ -9,7 +9,7 @@ import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.output.OutputMapper;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
-public abstract class AbstractMapper implements Mapper{
+public abstract class AbstractMapper implements Mapper {
     private static final Logger LOGGER = LogManager.getLogger();
     private OutputMapper outputMapper;
 

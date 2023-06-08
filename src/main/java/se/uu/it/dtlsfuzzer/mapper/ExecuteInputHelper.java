@@ -19,15 +19,15 @@ import java.util.List;
 
 /**
  * This class is analogous to TLS-Attacker's {@link SendMessageHelper} class.
+ *
  * The difference is that it is greatly simplified, and functionality is made
  * available relevant to fuzzing fragments, specifically a method which splits
  * messages into fragments.
- *
  */
 public class ExecuteInputHelper {
 
     /**
-     * Prepares a TlsMessage, parts were taken from {@link SendMessageHelper}
+     * Prepares a TlsMessage; parts were taken from {@link SendMessageHelper}
      */
     public final void prepareMessage(TlsMessage message, State state) {
         TlsContext context = state.getTlsContext();
@@ -51,7 +51,6 @@ public class ExecuteInputHelper {
             handler.updateDigest(message);
         }
         if (message.getAdjustContext()) {
-
             message.getHandler(context).adjustContext(message);
         }
     }
@@ -81,7 +80,7 @@ public class ExecuteInputHelper {
     }
 
     /**
-     * Send records over the network.
+     * Sends records over the network.
      */
     public final void sendRecords(List<AbstractRecord> records, State state) {
         SendMessageHelper helper = new SendMessageHelper();
