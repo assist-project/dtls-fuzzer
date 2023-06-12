@@ -25,7 +25,7 @@
         <learnlib.version>0.16.0</learnlib.version>
         <automatalib.version>0.10.0</automatalib.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-        <jaxb-impl.version>2.3.4</jaxb-impl.version>
+        <jaxb-impl.version>4.0.3</jaxb-impl.version>
     </properties>
 
     <dependencies>
