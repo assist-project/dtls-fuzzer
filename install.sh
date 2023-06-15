@@ -15,7 +15,7 @@ function check_java() {
             exit
         fi
     else
-        java_vm=`java -version 2>&1 >/dev/null | grep -o "Server VM\|Client VM"`
+        java_vm=$(java -version 2>&1 >/dev/null | grep -o "Server VM\|Client VM")
         if [[ ! $java_vm == "Server VM" ]]
         then
             echo "Required Java Server VM (a JDK instead of JRE), found $java_vm"
