@@ -32,7 +32,7 @@
         <dependency>
             <groupId>de.rub.nds.tls.attacker</groupId>
             <artifactId>tls-core</artifactId>
-            <version>4.0.2</version>
+            <version>5.2.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
