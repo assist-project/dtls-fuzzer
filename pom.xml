@@ -104,7 +104,7 @@
                     </execution>
                 </executions>
             </plugin>
-             <!-- Format the source code (using spotless) -->
+            <!-- Format the source code (using spotless) -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
@@ -142,7 +142,7 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.7.3.4</version>
+                <version>4.7.3.5</version>
                 <configuration>
                     <threshold>High</threshold>
                     <!-- <visitors>FindDeadLocalStores,UnreadFields</visitors> -->
