@@ -133,7 +133,7 @@ public class GenericTlsInput extends DtlsInput {
     // if the name is not set, we use the compact string of a message as a name
     @Override
     public String toString() {
-        String name = name();
+        String name = super.getName();
         if (name == null)
             return message.toCompactString();
         else

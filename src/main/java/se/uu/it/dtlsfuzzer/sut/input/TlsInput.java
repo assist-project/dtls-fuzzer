@@ -1,46 +1,31 @@
 package se.uu.it.dtlsfuzzer.sut.input;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractInput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import se.uu.it.dtlsfuzzer.config.MapperConfig;
-import se.uu.it.dtlsfuzzer.config.SulDelegate;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.mapper.Mapper;
-import se.uu.it.dtlsfuzzer.sut.Symbol;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class TlsInput extends Symbol {
+public abstract class TlsInput extends AbstractInput {
 
-    @XmlAttribute(name = "extendedWait", required = false)
-    private Integer extendedWait;
-
-    protected TlsInput() {
-        super(true);
+    public TlsInput() {
+        super();
     }
 
-    protected TlsInput (String name) {
-        super(name, true);
-    }
-
-    /**
-     * Returns the preferred mapper for this input, or null, if there isn't one, meaning the input does not require alterations to the typical mapping of the input.
-     */
-    public Mapper getPreferredMapper(SulDelegate sulConfig, MapperConfig mapperConfig) {
-        return null;
+    public TlsInput(String name) {
+        super(name);
     }
 
     public abstract TlsMessage generateMessage(State state, ExecutionContext context);
-
-    /**
-     * Enables the input for execution.
-     */
-    public boolean isEnabled(State state, ExecutionContext context) {
-        return true;
-    }
 
     /**
      * Updates context before sending the input
@@ -54,14 +39,6 @@ public abstract class TlsInput extends Symbol {
     public void postSendUpdate(State state, ExecutionContext context) {
     }
 
-    public Integer getExtendedWait() {
-        return extendedWait;
-    }
-
-    public void setExtendedWait(Integer extendedWait) {
-        this.extendedWait = extendedWait;
-    }
-
     /**
      * Updates the context after receiving an output.
      */
@@ -71,8 +48,41 @@ public abstract class TlsInput extends Symbol {
     }
 
     /**
-     * The type of the input should correspond to the type of the message the
-     * input generates.
+     * Returns the preferred mapper for this input, or null, if there isn't one, meaning the input does not require alterations to the typical mapping of the input.
      */
+    public Mapper getPreferredMapper(SulConfig sulConfig, MapperConfig mapperConfig) {
+        return null;
+    }
+
+    /**
+     * Enables the input for execution.
+     */
+    public boolean isEnabled(State state, ExecutionContext context) {
+        return true;
+    }
+
+
+    @Override
+    public void preSendUpdate(
+            com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
+    }
+
+    @Override
+    public ProtocolMessage generateProtocolMessage(
+            com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
+        return null;
+    }
+
+    @Override
+    public void postSendUpdate(
+            com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
+
+    }
+
+    @Override
+    public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
+            com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
+    }
+
     public abstract TlsInputType getInputType();
 }

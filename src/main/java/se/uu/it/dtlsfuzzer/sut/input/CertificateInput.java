@@ -28,5 +28,4 @@ public class CertificateInput extends DtlsInput {
     public TlsInputType getInputType() {
         return TlsInputType.HANDSHAKE;
     }
-
 }

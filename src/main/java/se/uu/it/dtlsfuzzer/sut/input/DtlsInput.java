@@ -34,7 +34,7 @@ public abstract class DtlsInput extends TlsInput {
     }
 
     public final void preSendUpdate(State state, ExecutionContext context) {
-        alias = context.getSulDelegate().getRole();
+        alias = context.getSulDelegate().getFuzzingRole();
 
         // if different epoch than current, set the epoch in TLS context
         if (epoch != null && epoch != state.getTlsContext().getWriteEpoch()) {

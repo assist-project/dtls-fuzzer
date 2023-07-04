@@ -5,8 +5,13 @@
  */
 package se.uu.it.dtlsfuzzer.sut;
 
-import de.learnlib.api.SUL;
-import de.learnlib.api.exception.SULException;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSul;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwrappers.DynamicPortProvider;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractInput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
 import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
@@ -20,10 +25,8 @@ import java.io.IOException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import se.uu.it.dtlsfuzzer.CleanupTasks;
-import se.uu.it.dtlsfuzzer.config.MapperConfig;
-import se.uu.it.dtlsfuzzer.config.SulDelegate;
-import se.uu.it.dtlsfuzzer.config.SulServerDelegate;
+import se.uu.it.dtlsfuzzer.config.ConfigDelegate;
+import se.uu.it.dtlsfuzzer.config.DtlsSulClientConfig;
 import se.uu.it.dtlsfuzzer.mapper.AbstractMapper;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.mapper.Mapper;
@@ -36,7 +39,7 @@ import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
  *
  * @author robert, paul
  */
-public class TlsSUL implements SUL<TlsInput, TlsOutput> {
+public class TlsSUL extends AbstractSul {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -66,7 +69,7 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
     private int count = 0;
 
-    private SulDelegate delegate;
+    private SulConfig delegate;
     private AbstractMapper defaultExecutor;
     private String role;
     private DynamicPortProvider portProvider;
@@ -83,13 +86,17 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     private OutputMapper outputMapper;
     private MapperConfig mapperConfig;
 
-    public TlsSUL(SulDelegate delegate, MapperConfig mapperConfig, AbstractMapper defaultExecutor,
+    private ConfigDelegate configDelegate;
+
+    public TlsSUL(SulConfig delegate, ConfigDelegate configDelegate, MapperConfig mapperConfig, AbstractMapper defaultExecutor,
             CleanupTasks cleanupTasks) {
+        super(delegate, cleanupTasks);
         this.delegate = delegate;
+        this.configDelegate = configDelegate;
         this.defaultExecutor = defaultExecutor;
         this.mapperConfig = mapperConfig;
-        this.role = delegate.getRole();
-        server = !delegate.isClient();
+        this.role = delegate.getFuzzingRole();
+        server = delegate.isFuzzingClient();
         outputMapper = new OutputMapper(mapperConfig);
         if (server) {
             cleanupTasks.submit(new Runnable() {
@@ -115,20 +122,20 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
 
     @Override
     public void pre() {
-        Config config = getNewSulConfig(delegate);
-        delegate.applyDelegate(config);
+        Config config = getNewSulConfig(configDelegate);
+        configDelegate.applyDelegate(config);
 
         state = new State(config, new WorkflowTrace());
-        config.setHighestProtocolVersion(delegate.getProtocolVersion());
-        config.setDefaultSelectedProtocolVersion(delegate.getProtocolVersion());
+        config.setHighestProtocolVersion(configDelegate.getProtocolVersion());
+        config.setDefaultSelectedProtocolVersion(configDelegate.getProtocolVersion());
         state.getTlsContext().setRecordLayer(new TlsRecordLayer(state.getTlsContext()));
         state.getTlsContext().setTransportHandler(null);
 
-        if (delegate.getProtocolVersion().isDTLS()) {
+        if (configDelegate.getProtocolVersion().isDTLS()) {
             if (!server) {
                 OutboundConnection connection = state.getConfig().getDefaultClientConnection();
                 if (portProvider != null) {
-                    connection.setPort(portProvider.getSULPort());
+                    connection.setPort(portProvider.getSulPort());
                 }
                 state.getTlsContext().setTransportHandler(new ClientUdpTransportHandler(connection));
             } else {
@@ -150,9 +157,9 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
             });
             chWaiter.start();
             receivedClientHello = false;
-            if (((SulServerDelegate) delegate).getClientWait() > 0) {
+            if (((DtlsSulClientConfig) delegate).getClientWait() > 0) {
                 try {
-                    Thread.sleep(((SulServerDelegate) delegate).getClientWait());
+                    Thread.sleep(((DtlsSulClientConfig) delegate).getClientWait());
                 } catch (InterruptedException e) {
                     LOGGER.error("Could not sleep thread");
                 }
@@ -219,7 +226,11 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
     }
 
     @Override
-    public TlsOutput step(TlsInput in) throws SULException {
+    public AbstractOutput step(AbstractInput in) {
+        return doStep((TlsInput) in);
+    }
+
+    private TlsOutput doStep(TlsInput in) {
         context.addStepContext();
         Mapper executor = in.getPreferredMapper(delegate, mapperConfig);
         if (executor == null) {
@@ -268,8 +279,8 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
         if (in.getExtendedWait() != null) {
             state.getTlsContext().getTransportHandler().setTimeout(originalTimeout + in.getExtendedWait());
         }
-        if (delegate.getInputResponseTimeout() != null && delegate.getInputResponseTimeout().containsKey(in.name())) {
-            state.getTlsContext().getTransportHandler().setTimeout(delegate.getInputResponseTimeout().get(in.name()));
+        if (delegate.getInputResponseTimeout() != null && delegate.getInputResponseTimeout().containsKey(in.getName())) {
+            state.getTlsContext().getTransportHandler().setTimeout(delegate.getInputResponseTimeout().get(in.getName()));
         }
 
         TlsOutput output = executor.execute(in, state, context);
@@ -279,10 +290,10 @@ public class TlsSUL implements SUL<TlsInput, TlsOutput> {
         return output;
     }
 
-    private Config getNewSulConfig(SulDelegate delegate) {
+    private Config getNewSulConfig(ConfigDelegate delegate) {
         if (config == null) {
             try {
-                config = Config.createConfig(delegate.getSulConfigInputStream());
+                config = Config.createConfig(delegate.getConfigInputStream());
             } catch (IOException e) {
                 throw new RuntimeException("Could not load configuration file");
             }

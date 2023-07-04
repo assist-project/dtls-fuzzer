@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.sut.input.xml;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.xml.AlphabetPojoXml;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,7 +30,7 @@ import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
  */
 @XmlRootElement(name = "alphabet")
 @XmlAccessorType(XmlAccessType.FIELD)
-class Alphabet {
+public class Alphabet extends AlphabetPojoXml {
     @XmlElements(value = {
             @XmlElement(type = GenericTlsInput.class, name = "GenericTlsInput"),
             @XmlElement(type = ChangeCipherSpecInput.class, name = "ChangeCipherSpecInput"),

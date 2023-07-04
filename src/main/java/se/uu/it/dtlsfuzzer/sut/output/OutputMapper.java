@@ -1,12 +1,12 @@
 package se.uu.it.dtlsfuzzer.sut.output;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.state.State;
-import de.rub.nds.tlsattacker.core.workflow.action.GenericReceiveAction;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.MessageActionResult;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import se.uu.it.dtlsfuzzer.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.mapper.DtlsMessageReceiver;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 
@@ -70,17 +69,10 @@ public class OutputMapper {
             List<TlsMessage> tlsMessages = null;
             List<AbstractRecord> tlsRecords = null;
 
-            if (!config.isTlsAttackerReceiver()) {
-                DtlsMessageReceiver receiver = new DtlsMessageReceiver();
+               DtlsMessageReceiver receiver = new DtlsMessageReceiver();
                 MessageActionResult result = receiver.receiveMessages(state.getTlsContext());
                 tlsMessages = result.getMessageList().stream().map(p -> (TlsMessage) p).collect(Collectors.toList());
                 tlsRecords = result.getRecordList();
-            } else {
-                GenericReceiveAction action = new GenericReceiveAction(context.getSulDelegate().getRole());
-                action.execute(state);
-                tlsMessages = action.getMessages().stream().map(p -> (TlsMessage) p).collect(Collectors.toList());
-                tlsRecords = action.getRecords();
-            }
 
             context.getStepContext().setReceivedMessages(tlsMessages);
             context.getStepContext().setReceivedRecords(tlsRecords);
@@ -158,7 +150,7 @@ public class OutputMapper {
             // we add an unknown message
             int nextIndex = unknownResponseLookahed(i, receivedMessages);
             if (nextIndex > 0) {
-                outputStrings.add(TlsOutput.unknown().name());
+                outputStrings.add(TlsOutput.unknown().getName());
                 i = nextIndex;
                 if (i == receivedMessages.size()) {
                     break;
@@ -224,15 +216,15 @@ public class OutputMapper {
         absOutputStrings.addAll(output2.getAtomicAbstractionStrings(2));
         abstraction = toAbstractOutputString(absOutputStrings);
         if (output1.hasMessages() && output2.hasMessages()) {
-            messages = new LinkedList<>(output1.getMessages());
-            messages.addAll(output2.getMessages());
+            messages = new LinkedList<>(output1.getTlsMessages());
+            messages.addAll(output2.getTlsMessages());
         }
         return new TlsOutput(abstraction, messages);
     }
 
     public List<TlsOutput> getAtomicOutputs(TlsOutput output) {
         int minRepeats = config.isMergeRepeating() ? MIN_REPEATS_FOR_REPEATING_OUTPUT : Integer.MAX_VALUE;
-        List<TlsOutput> outputs = output.getAtomicOutputs(minRepeats);
+        List<TlsOutput> outputs = output.getTlsAtomicOutputs(minRepeats);
         return outputs;
     }
 

@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.mapper;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.record.Record;
@@ -12,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
-import se.uu.it.dtlsfuzzer.config.SulDelegate;
 
 public class ExecutionContext {
 
@@ -20,14 +20,14 @@ public class ExecutionContext {
     private Integer renegotiationIndex = 0;
     private boolean enabled = true;
     private Long writeRecordNumberEpoch0 = null;
-    private SulDelegate delegate;
+    private SulConfig delegate;
     private List<Record> deferredRecords;
     private State state;
 
-    public ExecutionContext(SulDelegate delegate, State state) {
+    public ExecutionContext(SulConfig delegate, State state) {
         stepContexes = new ArrayList<>();
-        this.delegate = delegate;
         deferredRecords = new ArrayList<>();
+        this.delegate = delegate;
         this.state = state;
     }
 
@@ -132,7 +132,7 @@ public class ExecutionContext {
         return old;
     }
 
-    public SulDelegate getSulDelegate() {
+    public SulConfig getSulDelegate() {
         return delegate;
     }
 

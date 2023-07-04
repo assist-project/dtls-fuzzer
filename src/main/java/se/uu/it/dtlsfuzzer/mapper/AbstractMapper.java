@@ -1,10 +1,10 @@
 package se.uu.it.dtlsfuzzer.mapper;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import se.uu.it.dtlsfuzzer.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.sut.input.TlsInput;
 import se.uu.it.dtlsfuzzer.sut.output.OutputMapper;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
@@ -18,7 +18,7 @@ public abstract class AbstractMapper implements Mapper {
     }
 
     public final TlsOutput execute(TlsInput input, State state, ExecutionContext context) {
-        LOGGER.debug("Executing input symbol {}", input.name());
+        LOGGER.debug("Executing input symbol {}", input.getName());
         TlsOutput output;
         context.getStepContext().setInput(input);
         if (context.isExecutionEnabled() && input.isEnabled(state, context)) {
@@ -26,7 +26,7 @@ public abstract class AbstractMapper implements Mapper {
         } else {
             output = outputMapper.disabled();
         }
-        LOGGER.debug("Produced output symbol {}", output.name());
+        LOGGER.debug("Produced output symbol {}", output.getName());
         return output;
     }
 

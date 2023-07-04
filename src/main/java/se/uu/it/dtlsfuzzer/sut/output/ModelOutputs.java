@@ -24,7 +24,7 @@ public class ModelOutputs {
     private static String SERVER_KEY_EXCHANGE="SERVER_KEY_EXCHANGE";
 
     public static boolean hasApplication(TlsOutput output) {
-        return output.name().contains(APPLICATION);
+        return output.getName().contains(APPLICATION);
     }
 
     public static TlsOutput getApplicationOutput() {
@@ -32,16 +32,16 @@ public class ModelOutputs {
     }
 
     public static boolean isApplication(TlsOutput output) {
-        return output.name().equals(APPLICATION);
+        return output.getName().equals(APPLICATION);
     }
 
     public static boolean hasCertificate(TlsOutput output) {
-        return output.name().contains(CERTIFICATE);
+        return output.getName().contains(CERTIFICATE);
     }
 
     public static boolean hasNonEmptyCertificate(TlsOutput output) {
-        for (TlsOutput atomicOutput : output.getAtomicOutputs()) {
-            if (atomicOutput.name().contains(CERTIFICATE) && !atomicOutput.name().equals(EMPTY_CERTIFICATE)) {
+        for (TlsOutput atomicOutput : output.getTlsAtomicOutputs()) {
+            if (atomicOutput.getName().contains(CERTIFICATE) && !atomicOutput.getName().equals(EMPTY_CERTIFICATE)) {
                 return true;
             }
         }
@@ -49,15 +49,15 @@ public class ModelOutputs {
     }
 
     public static boolean hasEmptyCertificate(TlsOutput output) {
-        return output.name().contains(EMPTY_CERTIFICATE);
+        return output.getName().contains(EMPTY_CERTIFICATE);
     }
 
     public static boolean hasServerHello(TlsOutput output) {
-        return output.name().contains(SERVER_HELLO);
+        return output.getName().contains(SERVER_HELLO);
     }
 
     public static boolean hasClientHello(TlsOutput output) {
-        return output.name().contains(CLIENT_HELLO);
+        return output.getName().contains(CLIENT_HELLO);
     }
 
     public static TlsOutput getClientHelloOutput() {
@@ -69,27 +69,27 @@ public class ModelOutputs {
     }
 
     public static boolean hasHelloVerifyRequest(TlsOutput output) {
-        return output.name().contains(HELLO_VERIFY_REQUEST);
+        return output.getName().contains(HELLO_VERIFY_REQUEST);
     }
 
     public static boolean hasChangeCipherSpec(TlsOutput output) {
-        return output.name().contains(CHANGE_CIPHER_SPEC);
+        return output.getName().contains(CHANGE_CIPHER_SPEC);
     }
 
     public static boolean hasAlert(TlsOutput output) {
-        return output.name().contains(ALERT);
+        return output.getName().contains(ALERT);
     }
 
     public static boolean hasFinished(TlsOutput output) {
-        return output.name().contains(FINISHED);
+        return output.getName().contains(FINISHED);
     }
 
     public static boolean hasClientKeyExchange(TlsOutput output) {
-        return output.name().contains(CLIENT_KEY_EXCHANGE);
+        return output.getName().contains(CLIENT_KEY_EXCHANGE);
     }
 
     public static boolean hasServerKeyExchange(TlsOutput output) {
-        return output.name().contains(SERVER_KEY_EXCHANGE);
+        return output.getName().contains(SERVER_KEY_EXCHANGE);
     }
 
     public static CertificateKeyType getClientCertificateType(TlsOutput output) {
@@ -98,7 +98,7 @@ public class ModelOutputs {
             return CertificateKeyType.NONE;
         } else {
             String kex = getParameter(output, 0);
-            if (output.name().contains("RAW_EC")) {
+            if (output.getName().contains("RAW_EC")) {
                 return CertificateKeyType.ECDSA;
             } else {
                 for (CertificateKeyType type : CertificateKeyType.values()) {
@@ -112,14 +112,14 @@ public class ModelOutputs {
     }
 
     public static CertificateKeyType getCertificateType(TlsOutput output) {
-        Optional<CertificateKeyType> opt = Arrays.stream(CertificateKeyType.values()).filter(ctype -> output.name().contains(ctype.name())).findFirst();
+        Optional<CertificateKeyType> opt = Arrays.stream(CertificateKeyType.values()).filter(ctype -> output.getName().contains(ctype.name())).findFirst();
         return opt.orElseGet(() -> null);
     }
 
 
     public static KeyExchangeAlgorithm getKeyExchangeAlgorithm(TlsOutput output) {
         if (hasClientKeyExchange(output) || hasServerKeyExchange(output)) {
-            String keyExchange = output.name().split("_")[0];
+            String keyExchange = output.getName().split("_")[0];
             if (keyExchange.endsWith("DHE")) {
                 keyExchange = keyExchange.substring(0, keyExchange.length()-1);
             }
@@ -129,7 +129,7 @@ public class ModelOutputs {
     }
 
     private static String getParameter(TlsOutput output, int idx) {
-        String[] outputSplit = output.name().split("_");
+        String[] outputSplit = output.getName().split("_");
         return outputSplit[idx];
     }
 

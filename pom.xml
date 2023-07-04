@@ -20,8 +20,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <learnlib.version>0.16.0</learnlib.version>
         <automatalib.version>0.10.0</automatalib.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
@@ -52,8 +52,12 @@
             <artifactId>jaxb-impl</artifactId>
             <version>${jaxb-impl.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.protocolfuzzing</groupId>
+            <artifactId>protocolstatefuzzer</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
-
     <build>
         <finalName>dtls-fuzzer</finalName>
         <plugins>
@@ -61,8 +65,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>
