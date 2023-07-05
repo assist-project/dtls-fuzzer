@@ -31,5 +31,4 @@ public class AlertInput extends DtlsInput {
     public TlsInputType getInputType() {
         return TlsInputType.ALERT;
     }
-
 }

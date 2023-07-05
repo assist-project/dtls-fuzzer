@@ -10,6 +10,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.mapper.ExecutionContext;
 import se.uu.it.dtlsfuzzer.mapper.Mapper;
 import se.uu.it.dtlsfuzzer.sut.output.TlsOutput;
@@ -25,7 +26,23 @@ public abstract class TlsInput extends AbstractInput {
         super(name);
     }
 
+    /**
+     * The name (abstraction) by which the symbol can be referred.
+     * A name uniquely determines a symbol.
+     */
+    @XmlAttribute(name = "name", required = true)
+    private String xmlName = null;
+
     public abstract TlsMessage generateMessage(State state, ExecutionContext context);
+
+    /**
+     * Update name to the XML-supplied name
+     */
+    public void updateName() {
+        if (xmlName != null) {
+            super.setName(xmlName);
+        }
+    }
 
     /**
      * Updates context before sending the input

@@ -24,6 +24,9 @@ public class AlphabetFactory implements AlphabetBuilder {
         try {
             List<AbstractInput> inputs = new ArrayList<AbstractInput>();
             Alphabet<TlsInput> tlsAlphabet = AlphabetSerializer.read(stream);
+            for (TlsInput input : tlsAlphabet) {
+               input.updateName();
+            }
             tlsAlphabet.forEach(in -> inputs.add(in));
             return new ListAlphabet<>(inputs);
         } catch (Exception e) {
