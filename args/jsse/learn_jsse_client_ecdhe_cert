@@ -21,7 +21,7 @@ START
 ${alphabets.clients}/jsse_ecdhe_cert.xml
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -output
 output/jsse-${jsse.version}_client_ecdhe_cert

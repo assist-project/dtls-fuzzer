@@ -15,7 +15,7 @@ ${alphabets.clients}/tinydtls_psk8.xml
 # learning config
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -protocol
 DTLS12

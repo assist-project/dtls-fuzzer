@@ -19,7 +19,7 @@ ${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
 ${alphabets.servers}/psk.xml
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -output
 output/wolfssl-${wolfssl.version}_server_psk

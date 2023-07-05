@@ -12,7 +12,7 @@ ${alphabets.clients}/dhe_ecdhe_rsa_cert.xml
 100
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD

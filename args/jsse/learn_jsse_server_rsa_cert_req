@@ -21,7 +21,7 @@ START
 ${alphabets.servers}/jsse_rsa.xml
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -output
 output/jsse-${jsse.version}_server_rsa_cert_req

@@ -27,7 +27,7 @@ output/piondtls-${piondtls.version}_server_psk
 ${alphabets.servers}/psk8.xml
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -depth
 1

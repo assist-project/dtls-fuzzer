@@ -25,7 +25,7 @@ ${alphabets.servers}/scandium_psk.xml
 10
 -depth
 1
--queries
+-equivalenceQueryBound
 20000
 -output
 output/scandium-${scandium.version}_server_psk

@@ -19,7 +19,7 @@ DTLS12
 ${alphabets.clients}/tinydtls_ecdhe8_cert.xml
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD

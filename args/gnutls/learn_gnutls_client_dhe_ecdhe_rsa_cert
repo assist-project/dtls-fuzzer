@@ -19,7 +19,7 @@ experiments/configs/gnutls_client_include_oo.config
 ${alphabets.clients}/dhe_ecdhe_rsa_cert.xml
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD

@@ -11,7 +11,7 @@ ${alphabets.clients}/piondtls_ecdhe_cert.xml
 100
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -protocol
 DTLS12

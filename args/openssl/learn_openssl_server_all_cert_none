@@ -15,7 +15,7 @@ ${fuzzer.dir}/suts/openssl-${openssl.version}/apps/openssl s_server -psk 1234 -k
 # learning config
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD

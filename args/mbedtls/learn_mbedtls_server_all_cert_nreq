@@ -15,7 +15,7 @@ ${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_server2 dtls=1 ps
 # learner config
 -alphabet
 ${alphabets.servers}/dhe_ecdhe_psk_rsa_cert.xml
--queries
+-equivalenceQueryBound
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD

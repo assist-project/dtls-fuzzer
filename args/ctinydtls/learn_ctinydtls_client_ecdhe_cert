@@ -17,7 +17,7 @@ ${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sut.port} localhost
 # learning config
 -alphabet
 ${alphabets.clients}/ecdhe8_cert.xml
--queries
+-equivalenceQueryBound
 20000
 -randLength
 10
