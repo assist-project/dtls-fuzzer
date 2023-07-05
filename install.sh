@@ -2,6 +2,16 @@
 #
 # Installs some necessary packages and then installs DTLS-Fuzzer.
 
+# SCRIPT_DIR should correpond to dtls-fuzzer's root directory
+readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
+
+# this version should be the same as that in pom.xml
+readonly PROTOCOLSTATEFUZZER_COMMIT="425b2f78"
+readonly PROTOCOLSTATEFUZZER_REP_URL="git@github.com:protocol-fuzzing/protocol-state-fuzzer.git"
+readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
+readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-425b2f78.patch"
+
 function check_java() {
     if ! command -v java &> /dev/null
     then
@@ -40,10 +50,34 @@ function check_mvn() {
     fi
 }
 
+function clone_rep() {
+    sut_dir=$1
+    rep_url=$2
+    rep_com=$3
+    echo "Cloning repository $rep_url commit $rep_com to $sut_dir"
+    git clone $rep_url $sut_dir
+    if [[ -n "$rep_com" ]]; then
+        ( cd $sut_dir ; git checkout $rep_com ) #; rm -rf $sut_dir/.git )
+    fi
+}
+
+function install_protocolstatefuzzer() {
+    clone_rep $PROTOCOLSTATEFUZZER_FOLDER $PROTOCOLSTATEFUZZER_REP_URL $PROTOCOLSTATEFUZZER_COMMIT
+    (
+        cd $PROTOCOLSTATEFUZZER_FOLDER
+        echo "Patching ProtocolState-Fuzzer for compatibility with Java 11"
+        git apply $PROTOCOLSTATEFUZZER_PATCH
+        echo "Installing ProtocolState-Fuzzer"
+        mvn install
+    )
+}
+
 # Check for the presence of Java and maven and if 'apt-get' is present, install them
 check_java
 check_mvn
 
+# Install ProtocolState-Fuzzer before patching for Java 11
+install_protocolstatefuzzer
 
 # Install DTLS-Fuzzer
 echo "Installing DTLS-Fuzzer..."
