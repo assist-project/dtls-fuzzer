@@ -2,7 +2,7 @@ state-fuzzer-server
 
 # SUT config
 -connect
-localhost:${sut.port}
+localhost:${sul.port}
 -startWait
 100
 -alphabet
@@ -12,7 +12,7 @@ ${alphabets.servers}/ecdhe8_cert.xml
 -sulConfig
 experiments/configs/tinydtls_server.config
 -cmd
-${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sut.port}
+${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sul.port}
 -protocol
 DTLS12
 

@@ -2,7 +2,7 @@ state-fuzzer-client
 
 # SUT config
 -port
-${sut.port}
+${sul.port}
 -startWait
 0
 -alphabet
@@ -12,7 +12,7 @@ ${alphabets.clients}/tinydtls_psk8.xml
 -protocol
 DTLS12
 -cmd
-${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sut.port} localhost
+${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sul.port} localhost
 -sulConfig
 experiments/configs/tinydtls_client.config
 

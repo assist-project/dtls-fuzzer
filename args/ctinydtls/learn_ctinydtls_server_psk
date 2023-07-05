@@ -2,7 +2,7 @@ state-fuzzer-server
 
 # SUT config
 -connect
-localhost:${sut.port}
+localhost:${sul.port}
 -startWait
 100
 -alphabet
@@ -22,6 +22,6 @@ RANDOM_WP_METHOD,WP_METHOD
 -output
 output/ctinydtls_server_psk
 -cmd
-${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sut.port}
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sul.port}
 -depth
 1

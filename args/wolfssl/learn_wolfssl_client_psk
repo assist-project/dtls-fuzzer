@@ -2,7 +2,7 @@ state-fuzzer-client
 
 # SUT config
 -port
-${sut.port}
+${sul.port}
 -startWait
 200
 -responseWait
@@ -10,7 +10,7 @@ ${sut.port}
 -protocol
 DTLS12
 -cmd
-${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/client/client  -i -x -p ${sut.port} -s -u -l PSK-AES128-CBC-SHA256
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/client/client  -i -x -p ${sul.port} -s -u -l PSK-AES128-CBC-SHA256
 -processDir
 ${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
 

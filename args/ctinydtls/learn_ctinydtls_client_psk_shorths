@@ -2,13 +2,13 @@ state-fuzzer-client
 
 # SUT config
 -port
-${sut.port}
+${sul.port}
 -startWait
 0
 -responseWait
 100
 -cmd
-${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sut.port} localhost
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sul.port} localhost
 -alphabet
 ${alphabets.clients}/tinydtls_psk8.xml
 

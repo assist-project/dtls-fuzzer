@@ -4,13 +4,13 @@ state-fuzzer-server
 -protocol
 DTLS12
 -connect
-localhost:${sut.port}
+localhost:${sul.port}
 -startWait
 100
 -responseWait
 100
 -cmd
-${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-serv  --udp --x509keyfile ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem --x509certfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --x509cafile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --pskpasswd ${fuzzer.dir}/experiments/keystore/keys.psk --priority NORMAL:+PSK:+SRP  --disable-client-cert --mtu 1500 -p ${sut.port}
+${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-serv  --udp --x509keyfile ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem --x509certfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --x509cafile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --pskpasswd ${fuzzer.dir}/experiments/keystore/keys.psk --priority NORMAL:+PSK:+SRP  --disable-client-cert --mtu 1500 -p ${sul.port}
 
 # learning config
 -alphabet
