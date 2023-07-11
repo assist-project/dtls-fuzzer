@@ -1,13 +1,13 @@
 package se.uu.it.dtlsfuzzer.components.sul.core.config;
 
 import com.beust.jcommander.ParametersDelegate;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulClientConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulClientConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConnectionConfig;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.ServerDelegate;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
 
-public class DtlsSulClientConfig extends SulClientConfig implements ConfigDelegateProvider {
+public class DtlsSulClientConfig extends SulClientConfigStandard implements ConfigDelegateProvider {
 
     @ParametersDelegate
     private ClientConfigDelegate configDelegate;

@@ -1,23 +1,29 @@
 package se.uu.it.dtlsfuzzer;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.config.LearnerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapperStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzer;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerComposerStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerClientConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerClientConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerConfigBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerEnabler;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunner;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.config.TestRunnerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.config.TestRunnerEnabler;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.TimingProbe;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.TimingProbeBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeEnabler;
 import se.uu.it.dtlsfuzzer.components.sul.core.TlsSulBuilder;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.DtlsSulClientConfig;
@@ -28,14 +34,13 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.AlphabetFactory;
 public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilder, TestRunnerBuilder, TimingProbeBuilder {
 
     protected AlphabetBuilder alphabetBuilder = new AlphabetFactory();
-    private MapperConfig mapperConfig = new MapperConfig();
+    private MapperConfig mapperConfig = new MapperConfigStandard();
 
  // SulBuilderImpl needs to be implemented
     protected SulBuilder sulBuilder = new TlsSulBuilder(mapperConfig, new PhasedMapper(mapperConfig));
     protected SulWrapper sulWrapper = new SulWrapperStandard();
 
     MultiBuilder() {
-
     }
 
     @Override
@@ -55,12 +60,14 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilde
 
     @Override
     public StateFuzzerClientConfig buildClientConfig() {
-        return new StateFuzzerClientConfig(new DtlsSulClientConfig());
+        return new StateFuzzerClientConfigStandard(new LearnerConfigStandard(), new DtlsSulClientConfig(),
+                new TestRunnerConfigStandard(), new TimingProbeConfigStandard());
     }
 
     @Override
     public StateFuzzerServerConfig buildServerConfig() {
-        return new StateFuzzerServerConfig(new DtlsSulServerConfig());
+        return new StateFuzzerServerConfigStandard(new LearnerConfigStandard(), new DtlsSulServerConfig(),
+                new TestRunnerConfigStandard(), new TimingProbeConfigStandard());
     }
 
 }
