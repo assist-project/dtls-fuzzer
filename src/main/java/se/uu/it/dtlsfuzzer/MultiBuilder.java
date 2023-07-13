@@ -32,12 +32,12 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.AlphabetFactory;
 
 public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilder, TestRunnerBuilder, TimingProbeBuilder {
 
-    protected AlphabetBuilder alphabetBuilder = new AlphabetFactory();
+    private AlphabetBuilder alphabetBuilder = new AlphabetFactory();
     private MapperConfig mapperConfig = new MapperConfigStandard();
 
  // SulBuilderImpl needs to be implemented
-    protected SulBuilder sulBuilder = new TlsSulBuilder(mapperConfig);
-    protected SulWrapper sulWrapper = new SulWrapperStandard();
+    private SulBuilder sulBuilder = new TlsSulBuilder(mapperConfig);
+    private SulWrapper sulWrapper = new SulWrapperStandard();
 
     MultiBuilder() {
     }
