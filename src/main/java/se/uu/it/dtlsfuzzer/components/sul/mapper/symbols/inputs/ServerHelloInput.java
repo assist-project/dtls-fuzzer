@@ -1,17 +1,20 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.record.AbstractRecord;
-import de.rub.nds.tlsattacker.core.state.State;
+import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang3.tuple.Pair;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class ServerHelloInput extends DtlsInput {
 
@@ -34,25 +37,26 @@ public class ServerHelloInput extends DtlsInput {
     }
 
     @Override
-    public TlsMessage generateMessage(State state, ExecutionContext context) {
-        state.getConfig().setDefaultServerSupportedCipherSuites(
+    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+        Config config = getConfig(context);
+        config.setDefaultServerSupportedCipherSuites(
                 Arrays.asList(suite));
-        state.getConfig().setDefaultClientSupportedCipherSuites(suite);
+        config.setDefaultClientSupportedCipherSuites(suite);
         if (suite.name().contains("EC")) {
-            state.getConfig().setAddECPointFormatExtension(true);
-            state.getConfig().setAddEllipticCurveExtension(true);
+            config.setAddECPointFormatExtension(true);
+            config.setAddEllipticCurveExtension(true);
         } else {
-            state.getConfig().setAddECPointFormatExtension(false);
-            state.getConfig().setAddEllipticCurveExtension(false);
+            config.setAddECPointFormatExtension(false);
+            getConfig(context).setAddEllipticCurveExtension(false);
         }
         if (suite.isPsk()) {
-            state.getConfig().setAddClientCertificateTypeExtension(false);
-            state.getConfig().setAddServerCertificateTypeExtension(false);
+            config.setAddClientCertificateTypeExtension(false);
+            config.setAddServerCertificateTypeExtension(false);
         }
 
-        ServerHelloMessage message = new ServerHelloMessage(state.getConfig());
+        ServerHelloMessage sh = new ServerHelloMessage(config);
 
-        return message;
+        return new TlsProtocolMessage(sh);
     }
 
     @Override
@@ -65,11 +69,13 @@ public class ServerHelloInput extends DtlsInput {
     }
 
     @Override
-    public TlsOutput postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
+    public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
+            ExecutionContext context) {
+        TlsExecutionContext ctx = getTlsExecutionContext(context);
         if (shortHs && context.isExecutionEnabled()) {
-            Pair<TlsMessage, AbstractRecord> lastChPair = null;
+            Pair<TlsMessage, Record> lastChPair = null;
             int lastChStepIndex = -1;
-            List<Pair<TlsMessage, AbstractRecord>> msgRecPairs = context.getReceivedMessagesAndRecords();
+            List<Pair<TlsMessage, Record>> msgRecPairs = ctx.getReceivedMessagesAndRecords();
             for (int i=0; i<msgRecPairs.size(); i++) {
                 if (msgRecPairs.get(i).getKey() instanceof ClientHelloMessage) {
                     lastChStepIndex = i;
@@ -80,16 +86,16 @@ public class ServerHelloInput extends DtlsInput {
             assert lastChPair != null;
 
             byte [] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
-            byte [] shBytes = context.getStepContext().getProcessingUnit().getInitialRecordsToSend().get(0).getCleanProtocolMessageBytes().getValue();
+            byte [] shBytes = ctx.getStepContext().getProcessingUnit().getInitialRecordsToSend().get(0).getCleanProtocolMessageBytes().getValue();
 
-            state.getTlsContext().getDigest().reset();
-            if (digestHR && context.getStepContext(lastChStepIndex).getInput() instanceof HelloRequestInput) {
-                byte [] hrBytes = context.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
-                state.getTlsContext().getDigest().append(hrBytes);
+            getTlsContext(ctx).getDigest().reset();
+            if (digestHR && ctx.getStepContext(lastChStepIndex).getInput() instanceof HelloRequestInput) {
+                byte [] hrBytes = ctx.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
+                getTlsContext(context).getDigest().append(hrBytes);
             }
-            state.getTlsContext().getDigest().append(chBytes);
-            state.getTlsContext().getDigest().append(shBytes);
+            getTlsContext(context).getDigest().append(chBytes);
+            getTlsContext(context).getDigest().append(shBytes);
         }
-        return super.postReceiveUpdate(output, state, context);
+        super.postReceiveUpdate(output, abstractOutputChecker, context);
     }
 }

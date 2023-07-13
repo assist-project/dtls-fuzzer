@@ -1,44 +1,23 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.state.State;
-import de.rub.nds.tlsattacker.core.workflow.action.SendAction;
-import java.io.IOException;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposer;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputMapper;
 
-/**
- * A lightweight mapper which sends messages by calling the
- * sendMessages functionality on the SendMessageHelper.
+/*
+ * Basically, it is a redundant class, because it is equivalent to:
  *
- * It does not update the execution context.
+ * new MapperComposer(
+ *     new BasicInputMapper(config, new ModelOutputs()),
+ *     new OutpuMapper(config)
+ * )
  */
-public class BasicMapper extends AbstractMapper {
-
+public class BasicMapper extends MapperComposer {
     public BasicMapper(MapperConfig config) {
-        super(config);
-    }
-
-    @Override
-    protected TlsOutput doExecute(TlsInput input, State state, ExecutionContext context) {
-        BasicMessageSender messageSender = new BasicMessageSender();
-        TlsOutput output = super.doExecute(input, state, context, messageSender);
-        return output;
-    }
-
-    class BasicMessageSender implements MessageSender {
-        @Override
-        public void sendMessage(TlsMessage message, State state, ExecutionContext context) {
-            SendAction sendAction = new SendAction(message);
-            sendAction.execute(state);
-            if (!sendAction.isExecuted()) {
-                try {
-                    state.getTlsContext().getTransportHandler().closeConnection();
-                } catch (IOException E) {
-                    E.printStackTrace();
-                }
-            }
-        }
+        super(
+            new BasicInputMapper(config, new TlsOutputChecker()),
+            new TlsOutputMapper(config)
+        );
     }
 }

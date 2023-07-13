@@ -27,7 +27,6 @@ ${alphabets.clients}/jsse_ecdhe_cert.xml
 output/jsse-${jsse.version}_client_ecdhe_cert
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
--dontCacheTests
 -ceReruns
 3
 -skipNonDetTests

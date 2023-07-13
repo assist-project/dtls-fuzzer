@@ -8,9 +8,11 @@ package se.uu.it.dtlsfuzzer.components.sul.core;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSul;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwrappers.DynamicPortProvider;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractInput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
@@ -27,12 +29,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.ConfigDelegate;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.DtlsSulClientConfig;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.AbstractMapper;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.Mapper;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.OutputMapper;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputMapper;
 
 /**
  * Note: SUT = System Under Test SUL = System Under Learning
@@ -44,21 +44,15 @@ public class TlsSul extends AbstractSul {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private State state = null;
-    private ExecutionContext context = null;
+    private TlsExecutionContext context = null;
 
     private Config config;
 
     /**
-     * the SUT is closed if it has crashed resulting in IMCP packets, or it simply
+     * the Sul is closed if it has crashed resulting in IMCP packets, or it simply
      * terminated the connection
      */
     private boolean closed = false;
-
-    /**
-     * the sut is disabled if an input has disabled it as a result of a learning
-     * purpose
-     */
-    private boolean disabled = false;
 
     /**
      * Are we imitating a server or a client instance.
@@ -70,7 +64,7 @@ public class TlsSul extends AbstractSul {
     private int count = 0;
 
     private SulConfig delegate;
-    private AbstractMapper defaultExecutor;
+    private Mapper defaultExecutor;
     private String role;
     private DynamicPortProvider portProvider;
 
@@ -84,20 +78,18 @@ public class TlsSul extends AbstractSul {
      */
     private boolean receivedClientHello;
     private OutputMapper outputMapper;
-    private MapperConfig mapperConfig;
 
     private ConfigDelegate configDelegate;
 
-    public TlsSul(SulConfig delegate, ConfigDelegate configDelegate, MapperConfig mapperConfig, AbstractMapper defaultExecutor,
+    public TlsSul(SulConfig delegate, ConfigDelegate configDelegate, MapperConfig mapperConfig, Mapper defaultExecutor,
             CleanupTasks cleanupTasks) {
         super(delegate, cleanupTasks);
         this.delegate = delegate;
         this.configDelegate = configDelegate;
         this.defaultExecutor = defaultExecutor;
-        this.mapperConfig = mapperConfig;
-        this.role = delegate.getFuzzingRole();
+        role = delegate.getFuzzingRole();
         server = delegate.isFuzzingClient();
-        outputMapper = new OutputMapper(mapperConfig);
+        outputMapper = new TlsOutputMapper(mapperConfig);
         if (server) {
             cleanupTasks.submit(new Runnable() {
                 @Override
@@ -114,6 +106,7 @@ public class TlsSul extends AbstractSul {
                 }
             });
         }
+        super.sulAdapter = new TlsSulAdapter(delegate.getSulAdapterConfig(), cleanupTasks, delegate.isFuzzingClient());
     }
 
     public void setDynamicPortProvider(DynamicPortProvider portProvider) {
@@ -126,8 +119,6 @@ public class TlsSul extends AbstractSul {
         configDelegate.applyDelegate(config);
 
         state = new State(config, new WorkflowTrace());
-        config.setHighestProtocolVersion(configDelegate.getProtocolVersion());
-        config.setDefaultSelectedProtocolVersion(configDelegate.getProtocolVersion());
         state.getTlsContext().setRecordLayer(new TlsRecordLayer(state.getTlsContext()));
         state.getTlsContext().setTransportHandler(null);
 
@@ -170,8 +161,7 @@ public class TlsSul extends AbstractSul {
 
         closed = false;
         resetWait = delegate.getStartWait();
-        context = new ExecutionContext(delegate, state);
-        disabled = false;
+        context = new TlsExecutionContext(delegate, new TlsState(state));
         LOGGER.debug("Start {}", count++);
     }
 
@@ -230,9 +220,9 @@ public class TlsSul extends AbstractSul {
         return doStep((TlsInput) in);
     }
 
-    private TlsOutput doStep(TlsInput in) {
+    private AbstractOutput doStep(TlsInput in) {
         context.addStepContext();
-        Mapper executor = in.getPreferredMapper(delegate, mapperConfig);
+        Mapper executor = in.getPreferredMapper(delegate);
         if (executor == null) {
             executor = defaultExecutor;
         }
@@ -245,7 +235,7 @@ public class TlsSul extends AbstractSul {
             return outputMapper.disabled();
         }
 
-        TlsOutput output = null;
+        AbstractOutput output = null;
         try {
             if (state == null) {
                 throw new RuntimeException("TLS-Attacker state is not initialized");
@@ -256,7 +246,7 @@ public class TlsSul extends AbstractSul {
 
             output = executeInput(in, executor, role);
 
-            if (output == TlsOutput.disabled() || context.getStepContext().isDisabled()) {
+            if (output == AbstractOutput.disabled() || context.getStepContext().isDisabled()) {
                 // this should lead to a disabled sink state
                 context.disableExecution();
             }
@@ -272,7 +262,7 @@ public class TlsSul extends AbstractSul {
         }
     }
 
-    private TlsOutput executeInput(TlsInput in, Mapper executor, String role) {
+    private AbstractOutput executeInput(TlsInput in, Mapper executor, String role) {
         LOGGER.debug("sent: {}", in.toString());
         state.getTlsContext().setTalkingConnectionEndType(state.getTlsContext().getChooser().getConnectionEndType());
         long originalTimeout = state.getTlsContext().getTransportHandler().getTimeout();
@@ -283,7 +273,7 @@ public class TlsSul extends AbstractSul {
             state.getTlsContext().getTransportHandler().setTimeout(delegate.getInputResponseTimeout().get(in.getName()));
         }
 
-        TlsOutput output = executor.execute(in, state, context);
+        AbstractOutput output = executor.execute(in, context);
 
         LOGGER.debug("received: {}", output);
         state.getTlsContext().getTransportHandler().setTimeout(originalTimeout);
@@ -300,9 +290,5 @@ public class TlsSul extends AbstractSul {
         }
 
         return config.createCopy();
-    }
-
-    public State getState() {
-        return state;
     }
 }

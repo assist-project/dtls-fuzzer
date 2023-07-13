@@ -28,7 +28,6 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.tim
 import se.uu.it.dtlsfuzzer.components.sul.core.TlsSulBuilder;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.DtlsSulClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.DtlsSulServerConfig;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.PhasedMapper;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.AlphabetFactory;
 
 public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilder, TestRunnerBuilder, TimingProbeBuilder {
@@ -37,7 +36,7 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilde
     private MapperConfig mapperConfig = new MapperConfigStandard();
 
  // SulBuilderImpl needs to be implemented
-    protected SulBuilder sulBuilder = new TlsSulBuilder(mapperConfig, new PhasedMapper(mapperConfig));
+    protected SulBuilder sulBuilder = new TlsSulBuilder(mapperConfig);
     protected SulWrapper sulWrapper = new SulWrapperStandard();
 
     MultiBuilder() {

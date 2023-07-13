@@ -1,23 +1,28 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
-import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.MessageActionResult;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsMessageReceiver;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsMessageResponse;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsStepContext;
 
 /**
  * The output mapper performs the following functions:
@@ -34,29 +39,17 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
  * should be implemented here. Also implemented are operations over the mapper
  * such as coalescing to outputs into one or splitting an output into its atoms.
  */
-public class OutputMapper {
+public class TlsOutputMapper extends OutputMapper {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /*
-     * The minimum number of alert/unknown messages before decryption failure is
-     * established.
-     */
-    private static final int MIN_ALERTS_IN_DECRYPTION_FAILURE = 2;
-
-    /*
-     * The minimum number of times an output has to be generated for the
-     * repeating output to be used. Note that 2 is the only value currently
-     * supported.
-     */
-    private static final int MIN_REPEATS_FOR_REPEATING_OUTPUT = 2;
-
-    private MapperConfig config;
-
-    public OutputMapper(MapperConfig config) {
-        this.config = config;
+    public TlsOutputMapper(MapperConfig mapperConfig) {
+        super(mapperConfig);
     }
 
-    public TlsOutput receiveOutput(State state, ExecutionContext context) {
+    public AbstractOutput receiveOutput(ExecutionContext context) {
+        TlsExecutionContext tlsContext = (TlsExecutionContext) context;
+        State state = tlsContext.getState().getState();
+
         try {
             if (state.getTlsContext().getTransportHandler().isClosed()) {
                 return socketClosed();
@@ -66,41 +59,16 @@ public class OutputMapper {
             return socketClosed();
         }
         try {
-            List<TlsMessage> tlsMessages = null;
-            List<AbstractRecord> tlsRecords = null;
+            DtlsMessageReceiver receiver = new DtlsMessageReceiver();
+            MessageActionResult result = receiver.receiveMessages(state.getTlsContext());
+            TlsMessageResponse response = new TlsMessageResponse(result);
+            TlsStepContext tlsStepContext = (TlsStepContext) tlsContext.getStepContext();
+            tlsStepContext.receiveUpdate(response);
 
-               DtlsMessageReceiver receiver = new DtlsMessageReceiver();
-                MessageActionResult result = receiver.receiveMessages(state.getTlsContext());
-                tlsMessages = result.getMessageList().stream().map(p -> (TlsMessage) p).collect(Collectors.toList());
-                tlsRecords = result.getRecordList();
-
-            context.getStepContext().setReceivedMessages(tlsMessages);
-            context.getStepContext().setReceivedRecords(tlsRecords);
-            context.getStepContext().pairReceivedMessagesWithRecords();
-            return extractOutput(state, tlsMessages);
+            return extractOutput(state, response.getMessages());
         } catch (Exception ex) {
             ex.printStackTrace();
             return socketClosed();
-        }
-    }
-
-    public TlsOutput timeout() {
-        return TlsOutput.timeout();
-    }
-
-    public TlsOutput socketClosed() {
-        if (config.isSocketClosedAsTimeout()) {
-            return TlsOutput.timeout();
-        } else {
-            return TlsOutput.socketClosed();
-        }
-    }
-
-    public TlsOutput disabled() {
-        if (config.isDisabledAsTimeout()) {
-            return TlsOutput.timeout();
-        } else {
-            return TlsOutput.disabled();
         }
     }
 
@@ -127,19 +95,21 @@ public class OutputMapper {
         return -1;
     }
 
-    private TlsOutput extractOutput(State state, List<TlsMessage> receivedMessages) {
+    private AbstractOutput extractOutput(State state, List<TlsMessage> receivedMessages) {
         if (isResponseUnknown(receivedMessages)) {
-            return TlsOutput.unknown();
+            return AbstractOutput.unknown();
         }
         if (receivedMessages.isEmpty()) {
-            return TlsOutput.timeout();
+            return timeout();
         } else {
             List<TlsMessage> tlsMessages = receivedMessages.stream().map(p -> (TlsMessage) p)
                     .collect(Collectors.toList());
             List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages, state);
             String abstractOutput = toAbstractOutputString(abstractMessageStrings);
+            List<ProtocolMessage> tlsProtocolMessages =
+            tlsMessages.stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
 
-            return new TlsOutput(abstractOutput, tlsMessages);
+            return new TlsOutput(abstractOutput, tlsProtocolMessages);
         }
     }
 
@@ -150,7 +120,7 @@ public class OutputMapper {
             // we add an unknown message
             int nextIndex = unknownResponseLookahed(i, receivedMessages);
             if (nextIndex > 0) {
-                outputStrings.add(TlsOutput.unknown().getName());
+                outputStrings.add(AbstractOutput.unknown().getName());
                 i = nextIndex;
                 if (i == receivedMessages.size()) {
                     break;
@@ -165,67 +135,19 @@ public class OutputMapper {
     }
 
     private String toAbstractOutputString(List<String> abstractMessageStrings) {
-        // in case we find repeated occurrences of types of messages, we
-        // coalesce them under +, since some implementations may repeat/retransmit the
-        // same message an arbitrary number of times.
-        StringBuilder builder = new StringBuilder();
-        String lastSeen = null;
-        boolean skipStar = false;
-
-        for (String abstractMessageString : abstractMessageStrings) {
-            if (lastSeen != null && lastSeen.equals(abstractMessageString) && config.isMergeRepeating()) {
-                if (!skipStar) {
-                    // insert before ,
-                    builder.insert(builder.length() - 1, TlsOutput.REPEATING_INDICATOR);
-                    skipStar = true;
-                }
-            } else {
-                lastSeen = abstractMessageString;
-                skipStar = false;
-                builder.append(lastSeen);
-                builder.append(TlsOutput.MESSAGE_SEPARATOR);
-            }
-        }
-
-        String abstractOutput = builder.substring(0, builder.length() - 1);
+        String abstractOutput = mergeRepeatingMessages(abstractMessageStrings);
 
         // TODO this is a hack to get learning PionDTLS server to work even when
         // retransmissions are allowed
         // PionDTLS may generate one or several HVR outputs.
         // Here we map HVR to HVR+ so that it still appears deterministic.
-        if (config.getRepeatingOutputs() != null) {
-            for (String outputString : config.getRepeatingOutputs()) {
+        if (mapperConfig.getRepeatingOutputs() != null) {
+            for (String outputString : mapperConfig.getRepeatingOutputs()) {
                 abstractOutput = abstractOutput.replaceAll(outputString + "\\+?", outputString + "\\+");
             }
         }
 
         return abstractOutput;
-    }
-
-    public TlsOutput coalesceOutputs(TlsOutput output1, TlsOutput output2) {
-        if (output1.isTimeout()) {
-            return output2;
-        }
-        if (output2.isTimeout()) {
-            return output1;
-        }
-        String abstraction;
-        List<TlsMessage> messages = null;
-        assert (output1.isRecordResponse() && output2.isRecordResponse());
-        List<String> absOutputStrings = new LinkedList<>(output1.getAtomicAbstractionStrings(2));
-        absOutputStrings.addAll(output2.getAtomicAbstractionStrings(2));
-        abstraction = toAbstractOutputString(absOutputStrings);
-        if (output1.hasMessages() && output2.hasMessages()) {
-            messages = new LinkedList<>(output1.getTlsMessages());
-            messages.addAll(output2.getTlsMessages());
-        }
-        return new TlsOutput(abstraction, messages);
-    }
-
-    public List<TlsOutput> getAtomicOutputs(TlsOutput output) {
-        int minRepeats = config.isMergeRepeating() ? MIN_REPEATS_FOR_REPEATING_OUTPUT : Integer.MAX_VALUE;
-        List<TlsOutput> outputs = output.getTlsAtomicOutputs(minRepeats);
-        return outputs;
     }
 
     private String toOutputString(TlsMessage message, State state) {

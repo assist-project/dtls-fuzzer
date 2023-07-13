@@ -1,9 +1,10 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class DtlsInputWrapper extends DtlsInput{
     private DtlsInput input;
@@ -39,20 +40,20 @@ public class DtlsInputWrapper extends DtlsInput{
     }
 
     @Override
-    public TlsMessage generateMessage(State state, ExecutionContext context) {
-        return input.generateMessage(state, context);
+    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+        return input.generateProtocolMessage(context);
     }
 
-    public void preSendDtlsUpdate(State state, ExecutionContext context) {
-        input.preSendDtlsUpdate(state, context);
+    public void preSendDtlsUpdate(TlsExecutionContext context) {
+        input.preSendDtlsUpdate(context);
     }
 
-    public void postSendDtlsUpdate(State state, ExecutionContext context) {
-        input.postSendDtlsUpdate(state, context);
+    public void postSendDtlsUpdate(TlsExecutionContext context) {
+        input.postSendDtlsUpdate(context);
     }
 
-    public TlsOutput postReceiveUpdate(TlsOutput output, State state,
+    public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
             ExecutionContext context) {
-        return input.postReceiveUpdate(output, state, context);
+        input.postReceiveUpdate(output, abstractOutputChecker, context);
     }
 }

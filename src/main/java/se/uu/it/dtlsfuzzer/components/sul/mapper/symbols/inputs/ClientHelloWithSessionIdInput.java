@@ -1,12 +1,12 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.ResetConnectionAction;
 import javax.xml.bind.annotation.XmlAttribute;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class ClientHelloWithSessionIdInput extends DtlsInput {
 
@@ -46,17 +46,17 @@ public class ClientHelloWithSessionIdInput extends DtlsInput {
     }
 
     @Override
-    public TlsMessage generateMessage(State state, ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         // reset and resume the connection
-        resetTransportHandler(state);
+        resetTransportHandler(getState(context));
         if (suite != null) {
-            state.getConfig().setDefaultClientSupportedCipherSuites(suite);
+            getConfig(context).setDefaultClientSupportedCipherSuites(suite);
         }
-        ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
-        message.setSessionId(state.getTlsContext().getChooser()
+        ClientHelloMessage message = new ClientHelloMessage(getConfig(context));
+        message.setSessionId(getTlsContext(context).getChooser()
                 .getServerSessionId());
 
-        return message;
+        return new TlsProtocolMessage(message);
     }
 
     @Override

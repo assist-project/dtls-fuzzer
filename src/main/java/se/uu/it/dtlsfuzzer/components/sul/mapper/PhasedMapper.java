@@ -1,7 +1,11 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.beust.jcommander.internal.Lists;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractInput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposer;
 import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.protocol.handler.TlsMessageHandler;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
@@ -18,7 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputMapper;
 
 /**
  * A mapper which implements the regular/non-altered way of sending messages.
@@ -26,32 +31,46 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
  * It performs phased execution of inputs, allowing intervention at every phase
  * by just sub-classing and overriding the executePhase method.
  */
-public class PhasedMapper extends AbstractMapper {
+public class PhasedMapper extends MapperComposer {
 
     private ExecuteInputHelper helper;
 
     public PhasedMapper(MapperConfig config) {
-        super(config);
+        super(null, new TlsOutputMapper(config));
         helper = new ExecuteInputHelper();
     }
 
-    protected TlsOutput doExecute(TlsInput input, State state, ExecutionContext context) {
+    @Override
+    public TlsOutputChecker getAbstractOutputChecker() {
+        return new TlsOutputChecker();
+    }
+
+
+
+    @Override
+    protected AbstractOutput doExecute(AbstractInput input, ExecutionContext context) {
+        TlsExecutionContext tlsContext = (TlsExecutionContext) context;
         ProcessingUnit unit = new ProcessingUnit();
-        context.getStepContext().setProcessingUnit(unit);
-        unit.setInput(input);
+
+        tlsContext.getStepContext().setProcessingUnit(unit);
+        unit.setInput((TlsInput) input);
+
         for (Phase currentPhase : Phase.values()) {
-            executePhase(currentPhase, unit, state, context);
+            executePhase(currentPhase, unit, tlsContext);
         }
-        TlsOutput output = unit.getOutput();
+
+        AbstractOutput output = unit.getOutput();
         return output;
     }
 
-    protected void executePhase(Phase currentPhase, ProcessingUnit unit, State state, ExecutionContext context) {
+    protected void executePhase(Phase currentPhase, ProcessingUnit unit, TlsExecutionContext context) {
+        State state = context.getState().getState();
+
         switch (currentPhase) {
 
         case MESSAGE_GENERATION:
-            unit.getInput().preSendUpdate(state, context);
-            List<TlsMessage> messages = Arrays.asList(unit.getInput().generateMessage(state, context));
+            unit.getInput().preSendUpdate(context);
+            List<TlsMessage> messages = Arrays.asList(unit.getInput().generateProtocolMessage(context).getMessage());
             unit.setMessages(messages);
             break;
 
@@ -130,13 +149,13 @@ public class PhasedMapper extends AbstractMapper {
                 helper.sendRecords(new ArrayList<>(unit.getRecordsToSend()), state);
             }
             unit.setRecordsSent(unit.getRecordsToSend());
-            unit.getInput().postSendUpdate(state, context);
+            unit.getInput().postSendUpdate(context);
             break;
 
         case OUTPUT_RECEIVE:
-            TlsOutput output = getOutputMapper().receiveOutput(state, context);
+            AbstractOutput output = getOutputMapper().receiveOutput(context);
             unit.setOutput(output);
-            unit.getInput().postReceiveUpdate(output, state, context);
+            unit.getInput().postReceiveUpdate(output, getAbstractOutputChecker(), context);
             break;
         }
     }

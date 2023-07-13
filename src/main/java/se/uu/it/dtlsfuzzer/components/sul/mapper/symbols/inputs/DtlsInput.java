@@ -1,10 +1,10 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang3.NotImplementedException;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
 
 public abstract class DtlsInput extends TlsInput {
 
@@ -33,8 +33,9 @@ public abstract class DtlsInput extends TlsInput {
         super(name);
     }
 
-    public final void preSendUpdate(State state, ExecutionContext context) {
-        alias = context.getSulDelegate().getFuzzingRole();
+    public final void preSendUpdate(com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
+        alias = getTlsExecutionContext(context).getSulDelegate().getFuzzingRole();
+        TlsState state = getTlsExecutionContext(context).getState();
 
         // if different epoch than current, set the epoch in TLS context
         if (epoch != null && epoch != state.getTlsContext().getWriteEpoch()) {
@@ -51,16 +52,16 @@ public abstract class DtlsInput extends TlsInput {
 //            state.getTlsContext().setWriteSequenceNumber(context.incrementWriteRecordNumberEpoch0());
         }
 
-        preSendDtlsUpdate(state, context);
+        preSendDtlsUpdate(getTlsExecutionContext(context));
     }
 
-    public void preSendDtlsUpdate(State state, ExecutionContext context) {
+    public void preSendDtlsUpdate(TlsExecutionContext context) {
     }
 
-    public final void postSendUpdate(State state, ExecutionContext context) {
+    public final void postSendUpdate(com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
         // reset epoch number and, if original epoch > 0, reactivate encryption
         if (contextEpoch != null) {
-            state.getTlsContext().setWriteEpoch(contextEpoch);
+            getTlsExecutionContext(context).getState().getTlsContext().setWriteEpoch(contextEpoch);
             contextEpoch = null;
         }
 
@@ -74,10 +75,10 @@ public abstract class DtlsInput extends TlsInput {
 //            }
         }
 
-        postSendDtlsUpdate(state, context);
+        postSendDtlsUpdate(getTlsExecutionContext(context));
     }
 
-    public void postSendDtlsUpdate(State state, ExecutionContext context) {
+    public void postSendDtlsUpdate(TlsExecutionContext context) {
     }
 
     public Integer getEpoch() {

@@ -1,14 +1,15 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.cipher.CipherState;
 import de.rub.nds.tlsattacker.core.record.cipher.RecordCipher;
 import de.rub.nds.tlsattacker.core.record.cipher.RecordNullCipher;
+import de.rub.nds.tlsattacker.core.record.crypto.Encryptor;
 import de.rub.nds.tlsattacker.core.record.crypto.RecordCryptoUnit;
-import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class ChangeCipherSpecInput extends DtlsInput {
 
@@ -17,25 +18,27 @@ public class ChangeCipherSpecInput extends DtlsInput {
     }
 
     @Override
-    public void preSendDtlsUpdate(State state, ExecutionContext context) {
-        Long writeSeqNumForCurrentEpoch = state.getTlsContext().getRecordLayer().getEncryptor().getRecordCipher(state.getTlsContext().getWriteEpoch()).getState().getWriteSequenceNumber();
+    public void preSendDtlsUpdate(TlsExecutionContext context) {
+        Encryptor encryptor = getState(context).getTlsContext().getRecordLayer().getEncryptor();
+        int writeEpoch = getState(context).getTlsContext().getWriteEpoch();
+        Long writeSeqNumForCurrentEpoch = encryptor.getRecordCipher(writeEpoch).getState().getWriteSequenceNumber();
         context.setWriteRecordNumberEpoch0(writeSeqNumForCurrentEpoch + 1);
     }
 
-    public TlsMessage generateMessage(State state, ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage(
-                state.getConfig());
-        return ccs;
+                getState(context).getConfig());
+        return new TlsProtocolMessage(ccs);
     }
 
     @Override
-    public void postSendDtlsUpdate(State state, ExecutionContext context) {
+    public void postSendDtlsUpdate(TlsExecutionContext context) {
         // TLS-Attacker 3.8.1 instantiates non-null ciphers even when the pre-master secret has not been yet negotiated.
         // Here, we replace the ciphers instantiated in such cases by null ciphers.
         // This ensures that encrypted messages are more likely to make sense to the SUT.
-        if (state.getTlsContext().getPreMasterSecret() == null) {
-            makeNullCipherAsMostRecent(state.getTlsContext().getRecordLayer().getEncryptor(), state.getTlsContext());
-            makeNullCipherAsMostRecent(state.getTlsContext().getRecordLayer().getDecryptor(), state.getTlsContext());
+        if (getTlsContext(context).getPreMasterSecret() == null) {
+            makeNullCipherAsMostRecent(getTlsContext(context).getRecordLayer().getEncryptor(), getTlsContext(context));
+            makeNullCipherAsMostRecent(getTlsContext(context).getRecordLayer().getDecryptor(), getTlsContext(context));
         }
     }
 

@@ -1,19 +1,17 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractInput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.state.State;
+import de.rub.nds.tlsattacker.core.state.TlsContext;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.Mapper;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class TlsInput extends AbstractInput {
@@ -33,8 +31,6 @@ public abstract class TlsInput extends AbstractInput {
     @XmlAttribute(name = "name", required = true)
     private String xmlName = null;
 
-    public abstract TlsMessage generateMessage(State state, ExecutionContext context);
-
     /**
      * Update name to the XML-supplied name
      */
@@ -44,61 +40,37 @@ public abstract class TlsInput extends AbstractInput {
         }
     }
 
-    /**
-     * Updates context before sending the input
-     */
-    public void preSendUpdate(State state, ExecutionContext context) {
-    }
-
-    /**
-     * Updates the context after sending the input.
-     */
-    public void postSendUpdate(State state, ExecutionContext context) {
-    }
-
-    /**
-     * Updates the context after receiving an output.
-     */
-    public TlsOutput postReceiveUpdate(TlsOutput output, State state,
-            ExecutionContext context) {
-        return output;
-    }
-
-    /**
-     * Returns the preferred mapper for this input, or null, if there isn't one, meaning the input does not require alterations to the typical mapping of the input.
-     */
-    public Mapper getPreferredMapper(SulConfig sulConfig, MapperConfig mapperConfig) {
-        return null;
-    }
-
-    /**
-     * Enables the input for execution.
-     */
-    public boolean isEnabled(State state, ExecutionContext context) {
-        return true;
-    }
-
-
-    @Override
-    public void preSendUpdate(
-            com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
+    public void preSendUpdate(ExecutionContext context) {
     }
 
     @Override
-    public ProtocolMessage generateProtocolMessage(
-            com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
-        return null;
-    }
+    public abstract TlsProtocolMessage generateProtocolMessage(
+            ExecutionContext context);
 
     @Override
     public void postSendUpdate(
-            com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
-
+            ExecutionContext context) {
     }
 
     @Override
     public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
-            com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
+            ExecutionContext context) {
+    }
+
+    protected final TlsExecutionContext getTlsExecutionContext(ExecutionContext context) {
+        return (TlsExecutionContext) context;
+    }
+
+    protected final TlsContext getTlsContext(ExecutionContext context) {
+        return ((TlsExecutionContext) context).getState().getTlsContext();
+    }
+
+    protected final State getState(ExecutionContext context) {
+        return getTlsExecutionContext(context).getState().getState();
+    }
+
+    protected final Config getConfig(ExecutionContext context) {
+        return getTlsExecutionContext(context).getState().getState().getConfig();
     }
 
     public abstract TlsInputType getInputType();

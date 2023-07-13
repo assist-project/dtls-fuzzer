@@ -22,4 +22,3 @@ output/piondtls-${piondtls.version}_client_psk
 ${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role client -port ${sul.port} -cipherSuite TLS_PSK_WITH_AES_128_CCM_8
 -depth
 1
--dontCacheTests

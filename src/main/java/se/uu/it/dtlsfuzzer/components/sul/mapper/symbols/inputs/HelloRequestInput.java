@@ -1,13 +1,15 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.protocol.message.HelloRequestMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.state.State;
 import java.util.Arrays;
 import javax.xml.bind.annotation.XmlAttribute;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.ModelOutputs;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
 public class HelloRequestInput extends DtlsInput {
 
@@ -28,35 +30,37 @@ public class HelloRequestInput extends DtlsInput {
     }
 
     @Override
-    public TlsMessage generateMessage(State state, ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         if (resetSequenceNumber) {
-            origMsgSeqNum = state.getTlsContext().getDtlsWriteHandshakeMessageSequence();
-            state.getTlsContext().setDtlsWriteHandshakeMessageSequence(0);
+            origMsgSeqNum = getTlsContext(context).getDtlsWriteHandshakeMessageSequence();
+            getTlsContext(context).setDtlsWriteHandshakeMessageSequence(0);
         }
         if (retransmittedCHAsRefusal) {
-            clientRandom = state.getTlsContext().getClientRandom();
+            clientRandom = getTlsContext(context).getClientRandom();
         }
-        return new HelloRequestMessage(state.getConfig());
+        HelloRequestMessage hvr = new HelloRequestMessage(getConfig(context));
+        return new TlsProtocolMessage(hvr);
     }
 
     @Override
-    public void postSendDtlsUpdate(State state, ExecutionContext context) {
+    public void postSendDtlsUpdate(TlsExecutionContext context) {
         context.updateRenegotiationIndex();
     }
 
     @Override
-    public TlsOutput postReceiveUpdate(TlsOutput output, State state, ExecutionContext context) {
-        if (!(ModelOutputs.hasClientHello(output))) {
+    public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
+            ExecutionContext context) {
+        if (!(TlsOutputChecker.hasClientHello((TlsOutput) output))) {
             if (disableOnRefusal) {
                 context.disableExecution();
             } else if (resetSequenceNumber) {
-                state.getTlsContext().setDtlsWriteHandshakeMessageSequence(origMsgSeqNum);
+                getTlsContext(context).setDtlsWriteHandshakeMessageSequence(origMsgSeqNum);
             }
         } else if (disableOnRefusal && retransmittedCHAsRefusal
-                && Arrays.equals(clientRandom, state.getTlsContext().getClientRandom())) {
+                && Arrays.equals(clientRandom, getTlsContext(context).getClientRandom())) {
             context.disableExecution();
         }
-        return super.postReceiveUpdate(output, state, context);
+        super.postReceiveUpdate(output, abstractOutputChecker, context);
     }
 
     @Override

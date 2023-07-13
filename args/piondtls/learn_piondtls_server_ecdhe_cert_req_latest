@@ -27,4 +27,3 @@ ${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role server -port ${
 1
 -repeatingOutputs
 HELLO_VERIFY_REQUEST
--dontCacheTests

@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModification;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
@@ -11,7 +12,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import java.util.Arrays;
 import javax.xml.bind.annotation.XmlAttribute;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class ClientHelloInput extends DtlsInput {
 
@@ -49,21 +50,21 @@ public class ClientHelloInput extends DtlsInput {
     }
 
     @Override
-    public TlsMessage generateMessage(State state, ExecutionContext context) {
-        state.getConfig().setDefaultClientSupportedCipherSuites(Arrays.asList(suite));
+    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+        getConfig(context).setDefaultClientSupportedCipherSuites(Arrays.asList(suite));
         if (suite.name().contains("EC")) {
-            state.getConfig().setAddECPointFormatExtension(true);
-            state.getConfig().setAddEllipticCurveExtension(true);
+            getConfig(context).setAddECPointFormatExtension(true);
+            getConfig(context).setAddEllipticCurveExtension(true);
         } else {
-            state.getConfig().setAddECPointFormatExtension(false);
-            state.getConfig().setAddEllipticCurveExtension(false);
+            getConfig(context).setAddECPointFormatExtension(false);
+            getConfig(context).setAddEllipticCurveExtension(false);
         }
 
         if (resetDigest) {
-            state.getTlsContext().getDigest().reset();
+            getTlsContext(context).getDigest().reset();
         }
 
-        ClientHelloMessage message = new ClientHelloMessage(state.getConfig());
+        ClientHelloMessage message = new ClientHelloMessage(getConfig(context));
 
         // we exclude the sessionId
         if (!withSessionId) {
@@ -73,7 +74,7 @@ public class ClientHelloInput extends DtlsInput {
         }
 
         this.message = message;
-        return message;
+        return new TlsProtocolMessage(message);
     }
 
     @Override

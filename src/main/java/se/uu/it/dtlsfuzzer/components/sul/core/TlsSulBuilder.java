@@ -4,13 +4,12 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBui
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.ConfigDelegateProvider;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.AbstractMapper;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.PhasedMapper;
 
 public class TlsSulBuilder implements SulBuilder {
     private TlsSul tlsSul;
 
-    public TlsSulBuilder(MapperConfig mapperConfig, AbstractMapper defaultExecutor) {
+    public TlsSulBuilder(MapperConfig mapperConfig) {
     }
 
     @Override

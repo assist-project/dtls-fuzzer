@@ -25,7 +25,10 @@ public abstract class ConfigDelegate {
         return protocolVersion;
     }
 
-    public abstract void applyDelegate(Config config) throws ConfigurationException;
+    public void applyDelegate(Config config) throws ConfigurationException {
+        config.setHighestProtocolVersion(getProtocolVersion());
+        config.setDefaultSelectedProtocolVersion(getProtocolVersion());
+    }
 
     public InputStream getConfigInputStream() throws IOException {
         if (sulConfig == null) {

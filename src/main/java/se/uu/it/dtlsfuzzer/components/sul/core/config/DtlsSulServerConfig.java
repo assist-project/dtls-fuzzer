@@ -1,7 +1,9 @@
 package se.uu.it.dtlsfuzzer.components.sul.core.config;
 
 import com.beust.jcommander.ParametersDelegate;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulAdapterConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulServerConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConnectionConfig;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.ClientDelegate;
@@ -13,6 +15,7 @@ public class DtlsSulServerConfig  extends SulServerConfigStandard implements Con
     private ServerConfigDelegate configDelegate;
 
     public DtlsSulServerConfig() {
+        super(new MapperConfigStandard(), new SulAdapterConfigStandard());
         configDelegate = new ServerConfigDelegate();
     }
 
@@ -32,11 +35,12 @@ public class DtlsSulServerConfig  extends SulServerConfigStandard implements Con
 
         @Override
         public void applyDelegate(Config config) throws ConfigurationException {
+            super.applyDelegate(config);
             ClientDelegate clientDelegate = new ClientDelegate();
             clientDelegate.setHost(getHost());
             clientDelegate.applyDelegate(config);
-            config.getDefaultServerConnection().setTimeout(getResponseWait().intValue());
-            config.getDefaultServerConnection().setFirstTimeout(getResponseWait().intValue());
+            config.getDefaultClientConnection().setTimeout(getResponseWait().intValue());
+            config.getDefaultClientConnection().setFirstTimeout(getResponseWait().intValue());
         }
     }
 }

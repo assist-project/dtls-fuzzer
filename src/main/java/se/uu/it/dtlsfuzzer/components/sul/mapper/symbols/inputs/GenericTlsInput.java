@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.modifiablevariable.ModifiableVariable;
 import de.rub.nds.tlsattacker.core.https.HttpsRequestMessage;
 import de.rub.nds.tlsattacker.core.https.HttpsResponseMessage;
@@ -49,7 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 /**
@@ -116,9 +117,9 @@ public class GenericTlsInput extends DtlsInput {
         this.message = message;
     }
 
-    public TlsMessage generateMessage(State state, ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         stripFields(message);
-        return message;
+        return new TlsProtocolMessage(message);
     }
 
     // this is only useful for deserializing once learning is done

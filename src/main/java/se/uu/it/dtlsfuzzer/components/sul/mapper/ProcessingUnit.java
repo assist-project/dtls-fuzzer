@@ -1,12 +1,12 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.List;
 import java.util.stream.Collectors;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 /**
  * All work involving execution of an input is performed on a processing unit.
@@ -43,7 +43,7 @@ public class ProcessingUnit {
     private List<Record> recordsSent;
 
     // the output that was received
-    private TlsOutput output;
+    private AbstractOutput output;
 
     public TlsInput getInput() {
         return input;
@@ -116,11 +116,11 @@ public class ProcessingUnit {
         this.recordsSent = recordsSent;
     }
 
-    public TlsOutput getOutput() {
+    public AbstractOutput getOutput() {
         return output;
     }
 
-    public void setOutput(TlsOutput output) {
+    public void setOutput(AbstractOutput output) {
         this.output = output;
     }
 

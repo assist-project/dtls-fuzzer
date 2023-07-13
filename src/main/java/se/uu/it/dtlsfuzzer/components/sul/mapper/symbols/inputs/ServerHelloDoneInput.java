@@ -1,9 +1,8 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloDoneMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.state.State;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class ServerHelloDoneInput extends DtlsInput {
 
@@ -12,8 +11,9 @@ public class ServerHelloDoneInput extends DtlsInput {
     }
 
     @Override
-    public TlsMessage generateMessage(State state, ExecutionContext context) {
-        return new ServerHelloDoneMessage(state.getConfig());
+    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+        ServerHelloDoneMessage shd = new ServerHelloDoneMessage(getConfig(context));
+        return new TlsProtocolMessage(shd);
     }
 
     @Override

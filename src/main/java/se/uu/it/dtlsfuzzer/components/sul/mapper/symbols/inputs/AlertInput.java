@@ -1,12 +1,11 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.constants.AlertDescription;
 import de.rub.nds.tlsattacker.core.constants.AlertLevel;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.state.State;
 import javax.xml.bind.annotation.XmlAttribute;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.ExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class AlertInput extends DtlsInput {
 
@@ -21,10 +20,10 @@ public class AlertInput extends DtlsInput {
     }
 
     @Override
-    public TlsMessage generateMessage(State state, ExecutionContext context) {
-        AlertMessage alert = new AlertMessage(state.getConfig());
+    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+        AlertMessage alert = new AlertMessage(getConfig(context));
         alert.setConfig(new byte [] {level.getValue(), description.getValue()});
-        return alert;
+        return new TlsProtocolMessage(alert);
     }
 
     @Override

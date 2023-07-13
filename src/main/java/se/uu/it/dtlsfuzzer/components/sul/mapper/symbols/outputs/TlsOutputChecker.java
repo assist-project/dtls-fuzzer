@@ -1,5 +1,7 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
 import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
 import java.util.Arrays;
 import java.util.Optional;
@@ -8,7 +10,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.KeyExchangeAlgor
 /**
  * Provides a interface for analyzing outputs so that how the actual strings are formed is decoupled from the checking code.
  */
-public class ModelOutputs {
+public class TlsOutputChecker implements AbstractOutputChecker {
     private static String APPLICATION="APPLICATION";
     private static String FINISHED="FINISHED";
     private static String ALERT="Alert";
@@ -40,7 +42,7 @@ public class ModelOutputs {
     }
 
     public static boolean hasNonEmptyCertificate(TlsOutput output) {
-        for (TlsOutput atomicOutput : output.getTlsAtomicOutputs()) {
+        for (AbstractOutput atomicOutput : output.getAtomicOutputs()) {
             if (atomicOutput.getName().contains(CERTIFICATE) && !atomicOutput.getName().equals(EMPTY_CERTIFICATE)) {
                 return true;
             }
@@ -58,6 +60,11 @@ public class ModelOutputs {
 
     public static boolean hasClientHello(TlsOutput output) {
         return output.getName().contains(CLIENT_HELLO);
+    }
+
+    @Override
+    public boolean hasInitialClientMessage(AbstractOutput abstractOutput) {
+        return hasClientHello((TlsOutput) abstractOutput);
     }
 
     public static TlsOutput getClientHelloOutput() {
@@ -132,5 +139,4 @@ public class ModelOutputs {
         String[] outputSplit = output.getName().split("_");
         return outputSplit[idx];
     }
-
 }
