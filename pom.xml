@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.uu.it</groupId>
     <artifactId>dtls-fuzzer</artifactId>
@@ -24,8 +22,6 @@
         <maven.compiler.target>11</maven.compiler.target>
         <learnlib.version>0.16.0</learnlib.version>
         <automatalib.version>0.10.0</automatalib.version>
-        <jaxb-api.version>2.3.1</jaxb-api.version>
-        <jaxb-impl.version>2.3.4</jaxb-impl.version>
     </properties>
 
     <dependencies>
@@ -39,18 +35,6 @@
             <groupId>de.learnlib.distribution</groupId>
             <artifactId>learnlib-distribution</artifactId>
             <type>pom</type>
-        </dependency>
-        <!-- jaxb api -->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${jaxb-api.version}</version>
-        </dependency>
-        <!-- jaxb implementation -->
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-impl.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.protocolfuzzing</groupId>
@@ -108,7 +92,7 @@
                     </execution>
                 </executions>
             </plugin>
-             <!-- Format the source code (using spotless) -->
+            <!-- Format the source code (using spotless) -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>

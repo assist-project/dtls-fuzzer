@@ -2,7 +2,7 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.protocol.message.ApplicationMessage;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class ApplicationInput extends DtlsInput {

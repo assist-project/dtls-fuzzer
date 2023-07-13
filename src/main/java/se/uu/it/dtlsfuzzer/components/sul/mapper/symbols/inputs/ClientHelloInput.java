@@ -10,8 +10,8 @@ import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Arrays;
-import javax.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class ClientHelloInput extends DtlsInput {

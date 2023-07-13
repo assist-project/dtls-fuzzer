@@ -5,7 +5,7 @@ import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.ResetConnectionAction;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class ClientHelloWithSessionIdInput extends DtlsInput {

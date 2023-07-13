@@ -2,8 +2,8 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Collections;
-import javax.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class CertificateInput extends DtlsInput {
