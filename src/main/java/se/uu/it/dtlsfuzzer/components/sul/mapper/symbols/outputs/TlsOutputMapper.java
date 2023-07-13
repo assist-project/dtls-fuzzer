@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsMessageReceiver;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsMessageReceiver;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsMessageResponse;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsStepContext;
@@ -59,7 +59,7 @@ public class TlsOutputMapper extends OutputMapper {
             return socketClosed();
         }
         try {
-            DtlsMessageReceiver receiver = new DtlsMessageReceiver();
+            TlsMessageReceiver receiver = new TlsMessageReceiver();
             MessageActionResult result = receiver.receiveMessages(state.getTlsContext());
             TlsMessageResponse response = new TlsMessageResponse(result);
             TlsStepContext tlsStepContext = (TlsStepContext) tlsContext.getStepContext();

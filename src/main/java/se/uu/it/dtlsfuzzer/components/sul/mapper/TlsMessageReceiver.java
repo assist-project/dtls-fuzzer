@@ -39,12 +39,12 @@ import org.apache.logging.log4j.Logger;
  * which assumes messages arrive in-order and no time-based re-transmissions
  * occur.
  */
-public class DtlsMessageReceiver {
+public class TlsMessageReceiver {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private ReceiveMessageHelper receiveHelper;
 
-    public DtlsMessageReceiver() {
+    public TlsMessageReceiver() {
         receiveHelper = new ReceiveMessageHelper();
     }
 

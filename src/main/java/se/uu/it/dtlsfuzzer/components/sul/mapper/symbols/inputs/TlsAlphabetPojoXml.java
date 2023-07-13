@@ -1,6 +1,7 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.xml.AlphabetPojoXml;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractInput;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 @XmlRootElement(name = "alphabet")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Alphabet extends AlphabetPojoXml {
+public class TlsAlphabetPojoXml extends AlphabetPojoXml {
     @XmlElements(value = {
             @XmlElement(type = GenericTlsInput.class, name = "GenericTlsInput"),
             @XmlElement(type = ChangeCipherSpecInput.class, name = "ChangeCipherSpecInput"),
@@ -31,17 +32,16 @@ public class Alphabet extends AlphabetPojoXml {
             @XmlElement(type = CertificateInput.class, name = "CertificateInput"),
             @XmlElement(type = ApplicationInput.class, name = "ApplicationInput"),
             @XmlElement(type = HelloRequestInput.class, name = "HelloRequestInput")})
-    private List<TlsInput> inputs;
+    private List<AbstractInput> inputs;
 
-    public Alphabet() {
+    public TlsAlphabetPojoXml() {
     }
 
-    public Alphabet(List<TlsInput> words) {
-        this.inputs = words;
+    public TlsAlphabetPojoXml(List<AbstractInput> inputs) {
+        this.inputs = inputs;
     }
 
-    public List<TlsInput> getWords() {
+    public List<AbstractInput> getInputs() {
         return inputs;
     }
-
 }

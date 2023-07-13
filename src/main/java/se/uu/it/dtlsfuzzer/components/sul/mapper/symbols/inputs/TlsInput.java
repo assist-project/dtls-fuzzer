@@ -1,20 +1,19 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractInput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.xml.AbstractInputXml;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class TlsInput extends AbstractInput {
+public abstract class TlsInput extends AbstractInputXml {
 
     public TlsInput() {
         super();
@@ -22,22 +21,6 @@ public abstract class TlsInput extends AbstractInput {
 
     public TlsInput(String name) {
         super(name);
-    }
-
-    /**
-     * The name (abstraction) by which the symbol can be referred.
-     * A name uniquely determines a symbol.
-     */
-    @XmlAttribute(name = "name", required = true)
-    private String xmlName = null;
-
-    /**
-     * Update name to the XML-supplied name
-     */
-    public void updateName() {
-        if (xmlName != null) {
-            super.setName(xmlName);
-        }
     }
 
     public void preSendUpdate(ExecutionContext context) {

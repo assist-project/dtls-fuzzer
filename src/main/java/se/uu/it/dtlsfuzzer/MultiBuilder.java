@@ -1,6 +1,8 @@
 package se.uu.it.dtlsfuzzer;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.xml.AlphabetSerializerXml;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.config.LearnerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapper;
@@ -28,11 +30,13 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.tim
 import se.uu.it.dtlsfuzzer.components.sul.core.TlsSulBuilder;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.DtlsSulClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.DtlsSulServerConfig;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.AlphabetFactory;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsAlphabetPojoXml;
 
 public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilder, TestRunnerBuilder, TimingProbeBuilder {
 
-    private AlphabetBuilder alphabetBuilder = new AlphabetFactory();
+    private AlphabetBuilder alphabetBuilder = new AlphabetBuilderStandard(
+            new AlphabetSerializerXml<>(TlsAlphabetPojoXml.class));
+
     private MapperConfig mapperConfig = new MapperConfigStandard();
 
  // SulBuilderImpl needs to be implemented
