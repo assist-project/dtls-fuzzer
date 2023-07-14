@@ -106,7 +106,9 @@ public class TlsSul extends AbstractSul {
                 }
             });
         }
-        super.sulAdapter = new TlsSulAdapter(delegate.getSulAdapterConfig(), cleanupTasks, delegate.isFuzzingClient());
+        if (delegate.getSulAdapterConfig().getAdapterPort() != null) {
+            super.sulAdapter = new TlsSulAdapter(delegate.getSulAdapterConfig(), cleanupTasks, delegate.isFuzzingClient());
+        }
     }
 
     public void setDynamicPortProvider(DynamicPortProvider portProvider) {
