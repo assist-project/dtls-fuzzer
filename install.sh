@@ -8,7 +8,7 @@ readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
 # this version should be the same as that in pom.xml
 readonly PROTOCOLSTATEFUZZER_COMMIT="9927e7bc"
-readonly PROTOCOLSTATEFUZZER_REP_URL="git@github.com:protocol-fuzzing/protocol-state-fuzzer.git"
+readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-9927e7bc.patch"
 
