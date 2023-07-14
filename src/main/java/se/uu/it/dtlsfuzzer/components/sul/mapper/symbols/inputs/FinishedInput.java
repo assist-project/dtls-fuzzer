@@ -7,7 +7,6 @@ import de.rub.nds.tlsattacker.core.protocol.message.FinishedMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
 public class FinishedInput extends DtlsInput {
@@ -40,7 +39,7 @@ public class FinishedInput extends DtlsInput {
     public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
             ExecutionContext context) {
         if (resetMSeq) {
-            if (TlsOutputChecker.hasChangeCipherSpec((TlsOutput)output)) {
+            if (TlsOutputChecker.hasChangeCipherSpec(output)) {
                 getTlsContext(context).setDtlsWriteHandshakeMessageSequence(0);
             }
         }

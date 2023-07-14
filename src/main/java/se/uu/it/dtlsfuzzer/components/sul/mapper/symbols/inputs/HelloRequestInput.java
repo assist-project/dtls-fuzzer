@@ -8,7 +8,6 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Arrays;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
 public class HelloRequestInput extends DtlsInput {
@@ -50,7 +49,7 @@ public class HelloRequestInput extends DtlsInput {
     @Override
     public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
             ExecutionContext context) {
-        if (!(TlsOutputChecker.hasClientHello((TlsOutput) output))) {
+        if (!(TlsOutputChecker.hasClientHello(output))) {
             if (disableOnRefusal) {
                 context.disableExecution();
             } else if (resetSequenceNumber) {

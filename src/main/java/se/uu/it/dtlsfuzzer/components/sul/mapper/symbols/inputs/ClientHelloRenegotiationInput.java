@@ -9,7 +9,6 @@ import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
 public class ClientHelloRenegotiationInput extends TlsInput {
@@ -87,7 +86,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
             ExecutionContext context) {
         switch (enabled) {
             case ON_SERVER_HELLO :
-                if (!TlsOutputChecker.hasServerHello((TlsOutput)output)) {
+                if (!TlsOutputChecker.hasServerHello(output)) {
                     getTlsExecutionContext(context).disableExecution();
                 }
                 break;

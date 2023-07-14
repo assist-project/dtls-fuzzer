@@ -25,7 +25,7 @@ public class TlsOutputChecker implements AbstractOutputChecker {
     private static String CLIENT_KEY_EXCHANGE="CLIENT_KEY_EXCHANGE";
     private static String SERVER_KEY_EXCHANGE="SERVER_KEY_EXCHANGE";
 
-    public static boolean hasApplication(TlsOutput output) {
+    public static boolean hasApplication(AbstractOutput output) {
         return output.getName().contains(APPLICATION);
     }
 
@@ -33,15 +33,15 @@ public class TlsOutputChecker implements AbstractOutputChecker {
         return new TlsOutput(APPLICATION);
     }
 
-    public static boolean isApplication(TlsOutput output) {
+    public static boolean isApplication(AbstractOutput output) {
         return output.getName().equals(APPLICATION);
     }
 
-    public static boolean hasCertificate(TlsOutput output) {
+    public static boolean hasCertificate(AbstractOutput output) {
         return output.getName().contains(CERTIFICATE);
     }
 
-    public static boolean hasNonEmptyCertificate(TlsOutput output) {
+    public static boolean hasNonEmptyCertificate(AbstractOutput output) {
         for (AbstractOutput atomicOutput : output.getAtomicOutputs()) {
             if (atomicOutput.getName().contains(CERTIFICATE) && !atomicOutput.getName().equals(EMPTY_CERTIFICATE)) {
                 return true;
@@ -50,21 +50,21 @@ public class TlsOutputChecker implements AbstractOutputChecker {
         return false;
     }
 
-    public static boolean hasEmptyCertificate(TlsOutput output) {
+    public static boolean hasEmptyCertificate(AbstractOutput output) {
         return output.getName().contains(EMPTY_CERTIFICATE);
     }
 
-    public static boolean hasServerHello(TlsOutput output) {
+    public static boolean hasServerHello(AbstractOutput output) {
         return output.getName().contains(SERVER_HELLO);
     }
 
-    public static boolean hasClientHello(TlsOutput output) {
+    public static boolean hasClientHello(AbstractOutput output) {
         return output.getName().contains(CLIENT_HELLO);
     }
 
     @Override
     public boolean hasInitialClientMessage(AbstractOutput abstractOutput) {
-        return hasClientHello((TlsOutput) abstractOutput);
+        return hasClientHello(abstractOutput);
     }
 
     public static TlsOutput getClientHelloOutput() {
@@ -75,27 +75,27 @@ public class TlsOutputChecker implements AbstractOutputChecker {
         return CLIENT_HELLO;
     }
 
-    public static boolean hasHelloVerifyRequest(TlsOutput output) {
+    public static boolean hasHelloVerifyRequest(AbstractOutput output) {
         return output.getName().contains(HELLO_VERIFY_REQUEST);
     }
 
-    public static boolean hasChangeCipherSpec(TlsOutput output) {
+    public static boolean hasChangeCipherSpec(AbstractOutput output) {
         return output.getName().contains(CHANGE_CIPHER_SPEC);
     }
 
-    public static boolean hasAlert(TlsOutput output) {
+    public static boolean hasAlert(AbstractOutput output) {
         return output.getName().contains(ALERT);
     }
 
-    public static boolean hasFinished(TlsOutput output) {
+    public static boolean hasFinished(AbstractOutput output) {
         return output.getName().contains(FINISHED);
     }
 
-    public static boolean hasClientKeyExchange(TlsOutput output) {
+    public static boolean hasClientKeyExchange(AbstractOutput output) {
         return output.getName().contains(CLIENT_KEY_EXCHANGE);
     }
 
-    public static boolean hasServerKeyExchange(TlsOutput output) {
+    public static boolean hasServerKeyExchange(AbstractOutput output) {
         return output.getName().contains(SERVER_KEY_EXCHANGE);
     }
 
