@@ -7,8 +7,6 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.config.
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapperStandard;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzer;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerComposerStandard;
@@ -37,10 +35,8 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilde
     private AlphabetBuilder alphabetBuilder = new AlphabetBuilderStandard(
             new AlphabetSerializerXml<>(TlsAlphabetPojoXml.class));
 
-    private MapperConfig mapperConfig = new MapperConfigStandard();
-
  // SulBuilderImpl needs to be implemented
-    private SulBuilder sulBuilder = new TlsSulBuilder(mapperConfig);
+    private SulBuilder sulBuilder = new TlsSulBuilder();
     private SulWrapper sulWrapper = new SulWrapperStandard();
 
     MultiBuilder() {

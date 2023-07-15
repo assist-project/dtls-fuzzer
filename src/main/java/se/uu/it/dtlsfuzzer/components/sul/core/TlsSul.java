@@ -6,6 +6,7 @@
 package se.uu.it.dtlsfuzzer.components.sul.core;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSul;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulAdapter;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwrappers.DynamicPortProvider;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
@@ -106,9 +107,10 @@ public class TlsSul extends AbstractSul {
                 }
             });
         }
-        if (delegate.getSulAdapterConfig().getAdapterPort() != null) {
-            super.sulAdapter = new TlsSulAdapter(delegate.getSulAdapterConfig(), cleanupTasks, delegate.isFuzzingClient());
-        }
+    }
+
+    void setSulAdapter(SulAdapter sulAdapter) {
+        this.sulAdapter = sulAdapter;
     }
 
     public void setDynamicPortProvider(DynamicPortProvider portProvider) {
