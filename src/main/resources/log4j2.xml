@@ -10,7 +10,9 @@
     </Appenders>
     <Loggers>
         <!-- Application Loggers -->
-        <Logger name="com.github.protocolfuzzing.protocolstatefuzzer" level="info" additivity="false"/>
+        <Logger name="com.github.protocolfuzzing.protocolstatefuzzer" level="info" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+        </Logger>
         <Root level="info">
             <AppenderRef ref="ConsoleAppender" />
         </Root>
