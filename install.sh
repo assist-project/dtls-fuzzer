@@ -7,10 +7,10 @@ readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 &&
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
 # this version should be the same as that in pom.xml
-readonly PROTOCOLSTATEFUZZER_COMMIT="b5befb6"
+readonly PROTOCOLSTATEFUZZER_COMMIT="43c89c3"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
-readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-b5befb6.patch"
+readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-43c89c3.patch"
 
 function check_java() {
     if ! command -v java &> /dev/null
@@ -62,14 +62,20 @@ function clone_rep() {
 }
 
 function install_protocolstatefuzzer() {
-    clone_rep $PROTOCOLSTATEFUZZER_FOLDER $PROTOCOLSTATEFUZZER_REP_URL $PROTOCOLSTATEFUZZER_COMMIT
-    (
-        cd $PROTOCOLSTATEFUZZER_FOLDER
-        echo "Patching ProtocolState-Fuzzer for compatibility with Java 11"
-        git apply $PROTOCOLSTATEFUZZER_PATCH
-        echo "Installing ProtocolState-Fuzzer"
-        mvn install
-    )
+    echo $PROTOCOLSTATEFUZZER_FOLDER
+    if [[ -d $PROTOCOLSTATEFUZZER_FOLDER ]]; then
+        echo "$PROTOCOLSTATEFUZZER_FOLDER folder already exists"
+        echo "Skipping ProtocolState-Fuzzer setup"
+    else
+        clone_rep $PROTOCOLSTATEFUZZER_FOLDER $PROTOCOLSTATEFUZZER_REP_URL $PROTOCOLSTATEFUZZER_COMMIT
+        (
+            cd $PROTOCOLSTATEFUZZER_FOLDER
+            echo "Patching ProtocolState-Fuzzer for compatibility with Java 11"
+            git apply $PROTOCOLSTATEFUZZER_PATCH
+            echo "Installing ProtocolState-Fuzzer"
+            mvn install
+        )
+    fi
 }
 
 # Check for the presence of Java and maven and if 'apt-get' is present, install them
