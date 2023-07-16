@@ -7,10 +7,10 @@ readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 &&
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
 # this version should be the same as that in pom.xml
-readonly PROTOCOLSTATEFUZZER_COMMIT="9927e7bc"
+readonly PROTOCOLSTATEFUZZER_COMMIT="b5befb6"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
-readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-9927e7bc.patch"
+readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-b5befb6.patch"
 
 function check_java() {
     if ! command -v java &> /dev/null
