@@ -26,14 +26,13 @@ public class ChangeCipherSpecInput extends DtlsInput {
     }
 
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
-        ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage(
-                getState(context).getConfig());
+        ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage(getState(context).getConfig());
         return new TlsProtocolMessage(ccs);
     }
 
     @Override
     public void postSendDtlsUpdate(TlsExecutionContext context) {
-        // TLS-Attacker 3.8.1 instantiates non-null ciphers even when the pre-master secret has not been yet negotiated.
+        // TLS-Attacker instantiates non-null ciphers even when the pre-master secret has not been yet negotiated.
         // Here, we replace the ciphers instantiated in such cases by null ciphers.
         // This ensures that encrypted messages are more likely to make sense to the SUT.
         if (getTlsContext(context).getPreMasterSecret() == null) {
