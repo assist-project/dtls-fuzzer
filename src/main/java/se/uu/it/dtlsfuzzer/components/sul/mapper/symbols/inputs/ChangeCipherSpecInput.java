@@ -27,7 +27,7 @@ public class ChangeCipherSpecInput extends DtlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
-        ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage(getState(context).getConfig());
+        ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage();
         return new TlsProtocolMessage(ccs);
     }
 

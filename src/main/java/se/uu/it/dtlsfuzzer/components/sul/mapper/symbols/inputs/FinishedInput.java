@@ -25,7 +25,7 @@ public class FinishedInput extends DtlsInput {
         // Uncomment line to print digest, TODO remove this when polishing things up
         // System.out.println(ArrayConverter.bytesToHexString(state.getTlsContext().getDigest().getRawBytes()));
         FinishedMessage message = new FinishedMessage();
-        lastSequenceNumber = getTlsContext(context).getDtlsWriteHandshakeMessageSequence();
+        lastSequenceNumber = getTlsContext(context).getWriteEpoch();
         return new TlsProtocolMessage(message);
     }
 
