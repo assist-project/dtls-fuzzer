@@ -6,7 +6,6 @@
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
-# this version should be the same as that in pom.xml
 readonly PROTOCOLSTATEFUZZER_COMMIT="43c89c3"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
@@ -82,7 +81,7 @@ function install_protocolstatefuzzer() {
 check_java
 check_mvn
 
-# Install ProtocolState-Fuzzer before patching for Java 11
+# Checkout ProtocolState-Fuzzer repo, apply Java 11 compatibility patch, and install the library
 install_protocolstatefuzzer
 
 # Install DTLS-Fuzzer
