@@ -8,7 +8,6 @@ import de.rub.nds.tlsattacker.core.record.cipher.RecordCipher;
 import de.rub.nds.tlsattacker.core.record.cipher.RecordNullCipher;
 import de.rub.nds.tlsattacker.core.record.crypto.Encryptor;
 import de.rub.nds.tlsattacker.core.record.crypto.RecordCryptoUnit;
-//import de.rub.nds.tlsattacker.core.state.State;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
