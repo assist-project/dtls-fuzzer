@@ -45,8 +45,6 @@ public class PhasedMapper extends MapperComposer {
         return new TlsOutputChecker();
     }
 
-
-
     @Override
     protected AbstractOutput doExecute(AbstractInput input, ExecutionContext context) {
         TlsExecutionContext tlsContext = (TlsExecutionContext) context;
@@ -67,7 +65,6 @@ public class PhasedMapper extends MapperComposer {
         State state = context.getState().getState();
 
         switch (currentPhase) {
-
         case MESSAGE_GENERATION:
             unit.getInput().preSendUpdate(context);
             List<TlsMessage> messages = Arrays.asList(unit.getInput().generateProtocolMessage(context).getMessage());
