@@ -9,10 +9,10 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 public class DtlsInputWrapper extends DtlsInput{
     private DtlsInput input;
 
-
     public DtlsInputWrapper(DtlsInput input) {
         this.input = input;
     }
+
     @Override
     public TlsInputType getInputType() {
         return input.getInputType();
@@ -21,7 +21,6 @@ public class DtlsInputWrapper extends DtlsInput{
     public DtlsInput getInput() {
         return input;
     }
-
 
     public void setEpoch(Integer epoch) {
         input.setEpoch(epoch);
