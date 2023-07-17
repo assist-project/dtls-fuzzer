@@ -7,9 +7,8 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.conf
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposer;
 import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
-import de.rub.nds.tlsattacker.core.protocol.handler.TlsMessageHandler;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
 import java.io.ByteArrayOutputStream;
@@ -70,12 +69,12 @@ public class PhasedMapper extends MapperComposer {
         switch (currentPhase) {
         case MESSAGE_GENERATION:
             unit.getInput().preSendUpdate(context);
-            List<TlsMessage> messages = Arrays.asList(unit.getInput().generateProtocolMessage(context).getMessage());
+            List<ProtocolMessage<? extends ProtocolMessage<?>>> messages = Arrays.asList(unit.getInput().generateProtocolMessage(context).getMessage());
             unit.setMessages(messages);
             break;
 
         case MESSAGE_PREPARATION:
-            for (TlsMessage message : unit.getMessages()) {
+            for (ProtocolMessage<? extends ProtocolMessage<?>> message : unit.getMessages()) {
                 helper.prepareMessage(message, state);
             }
             break;
@@ -83,8 +82,8 @@ public class PhasedMapper extends MapperComposer {
         case FRAGMENT_GENERATION:
             // We assume this is DTLS
             List<FragmentationResult> results = new ArrayList<>();
-            List<TlsMessage> messagesToPack = new ArrayList<>();
-            for (TlsMessage message : unit.getMessages()) {
+            List<ProtocolMessage<? extends ProtocolMessage<?>>> messagesToPack = new ArrayList<>();
+            for (ProtocolMessage<? extends ProtocolMessage<?>> message : unit.getMessages()) {
                 if (message.isHandshakeMessage()) {
                     FragmentationResult result = helper.fragmentMessage((HandshakeMessage) message, state);
                     results.add(result);
@@ -101,9 +100,9 @@ public class PhasedMapper extends MapperComposer {
             List<PackingResult> packingResults = new ArrayList<>();
             if (!unit.getMessagesToPack().isEmpty()) {
                 ProtocolMessageType msgType = unit.getMessagesToPack().get(0).getProtocolMessageType();
-                List<TlsMessage> messagesInRecord = new ArrayList<>();
+                List<ProtocolMessage<? extends ProtocolMessage<?>>> messagesInRecord = new ArrayList<>();
 
-                for (TlsMessage message : unit.getMessagesToPack()) {
+                for (ProtocolMessage<? extends ProtocolMessage<?>> message : unit.getMessagesToPack()) {
                     if (msgType != message.getProtocolMessageType()) {
                         Record record = state.getTlsContext().getRecordLayer().getFreshRecord();
                         packingResults.add(new PackingResult(messagesInRecord, Arrays.asList(record)));
@@ -125,14 +124,14 @@ public class PhasedMapper extends MapperComposer {
                 ProtocolMessageType messageType = messageRecord.getMessages().get(0).getProtocolMessageType();
                 Record record = messageRecord.getRecords().get(0);
                 try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                    for (TlsMessage message : messageRecord.getMessages()) {
+                    for (ProtocolMessage<? extends ProtocolMessage<?>> message : messageRecord.getMessages()) {
                         outputStream.write(message.getCompleteResultingMessage().getValue());
                     }
                     byte data[] = outputStream.toByteArray();
                     state.getTlsContext().getRecordLayer().prepareRecords(data, messageType,
                             Collections.singletonList(record));
-                    for (TlsMessage message : messageRecord.getMessages()) {
-                        TlsMessageHandler<TlsMessage> tlsMessageHandler = message.getHandler(state.getTlsContext());
+                    for (ProtocolMessage<? extends ProtocolMessage<?>> message : messageRecord.getMessages()) {
+                        TlsMessageHandler<ProtocolMessage<? extends ProtocolMessage<?>>> tlsMessageHandler = message.getHandler(state.getTlsContext());
                         tlsMessageHandler.adjustTlsContextAfterSerialize(message);
                     }
 

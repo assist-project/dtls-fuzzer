@@ -1,13 +1,12 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import java.io.IOException;
@@ -68,7 +67,7 @@ public class TlsOutputMapper extends OutputMapper {
         }
     }
 
-    private boolean isResponseUnknown(List<TlsMessage> receivedMessages) {
+    private boolean isResponseUnknown(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
         if (receivedMessages.size() >= MIN_ALERTS_IN_DECRYPTION_FAILURE) {
             return receivedMessages.stream().allMatch(m -> m instanceof AlertMessage || m instanceof UnknownMessage);
         }
@@ -78,10 +77,10 @@ public class TlsOutputMapper extends OutputMapper {
     /*
      * Failure to decrypt shows up as a longer sequence of alarm messages.
      */
-    private int unknownResponseLookahed(int currentIndex, List<TlsMessage> messages) {
+    private int unknownResponseLookahed(int currentIndex, List<ProtocolMessage<? extends ProtocolMessage<?>>> messages) {
         int nextIndex = currentIndex;
 
-        TlsMessage message = messages.get(nextIndex);
+        ProtocolMessage<? extends ProtocolMessage<?>> message = messages.get(nextIndex);
         while ((message instanceof AlertMessage || message instanceof UnknownMessage) && nextIndex < messages.size()) {
             message = messages.get(nextIndex);
             nextIndex++;
@@ -91,24 +90,26 @@ public class TlsOutputMapper extends OutputMapper {
         return -1;
     }
 
-    private AbstractOutput extractOutput(List<TlsMessage> receivedMessages) {
+    private AbstractOutput extractOutput(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
         if (isResponseUnknown(receivedMessages)) {
             return AbstractOutput.unknown();
         }
         if (receivedMessages.isEmpty()) {
             return timeout();
         } else {
-            List<TlsMessage> tlsMessages = receivedMessages.stream().collect(Collectors.toList());
+            List<ProtocolMessage<? extends ProtocolMessage<?>>> tlsMessages =
+                    receivedMessages.stream()//.map(p -> (ProtocolMessage<? extends ProtocolMessage<?>>) p)
+                    .collect(Collectors.toList());
             List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
             String abstractOutput = toAbstractOutputString(abstractMessageStrings);
-            List<ProtocolMessage> tlsProtocolMessages =
+            List<com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage> tlsProtocolMessages =
             tlsMessages.stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
 
             return new TlsOutput(abstractOutput, tlsProtocolMessages);
         }
     }
 
-    private List<String> extractAbstractMessageStrings(List<TlsMessage> receivedMessages) {
+    private List<String> extractAbstractMessageStrings(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
         List<String> outputStrings = new ArrayList<>(receivedMessages.size());
         for (int i = 0; i < receivedMessages.size(); i++) {
             // checking for cases of decryption failures, which which case
@@ -122,7 +123,7 @@ public class TlsOutputMapper extends OutputMapper {
                 }
             }
 
-            TlsMessage m = receivedMessages.get(i);
+            ProtocolMessage<? extends ProtocolMessage<?>> m = receivedMessages.get(i);
             String outputString = toOutputString(m);
             outputStrings.add(outputString);
         }
@@ -145,7 +146,7 @@ public class TlsOutputMapper extends OutputMapper {
         return abstractOutput;
     }
 
-    private String toOutputString(TlsMessage message) {
+    private String toOutputString(ProtocolMessage<? extends ProtocolMessage<?>> message) {
         if (message instanceof CertificateMessage) {
             CertificateMessage cert = (CertificateMessage) message;
             if (cert.getCertificatesListLength().getValue() > 0) {

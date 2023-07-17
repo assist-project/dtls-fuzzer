@@ -1,7 +1,7 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.MessageActionResult;
 import java.util.Collections;
@@ -16,12 +16,15 @@ public class TlsMessageResponse {
 
     private final List<DtlsHandshakeMessageFragment> messageFragments;
 
-    private final List<TlsMessage> messages;
+    private final List<ProtocolMessage<? extends ProtocolMessage<?>>> messages;
 
+    @SuppressWarnings("unchecked")
     public TlsMessageResponse(MessageActionResult result) {
         records = result.getRecordList().stream().map(ar -> (Record) ar).collect(Collectors.toUnmodifiableList());
         messageFragments = Collections.unmodifiableList(result.getMessageFragmentList());
-        messages = result.getMessageList().stream().map(m -> (TlsMessage) m).collect(Collectors.toUnmodifiableList());
+        messages = result.getMessageList().stream().map(m ->
+        ((ProtocolMessage<? extends ProtocolMessage<?>>) m))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public List<Record> getRecords() {
@@ -32,7 +35,7 @@ public class TlsMessageResponse {
         return messageFragments;
     }
 
-    public List<TlsMessage> getMessages() {
+    public List<ProtocolMessage<? extends ProtocolMessage<?>>> getMessages() {
         return messages;
     }
 }
