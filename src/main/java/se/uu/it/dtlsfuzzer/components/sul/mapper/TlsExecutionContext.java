@@ -2,7 +2,10 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
+<<<<<<< HEAD
 import de.rub.nds.tlsattacker.core.config.Config;
+=======
+>>>>>>> 8fe312c2 (Transition from TlsMessage to TlsAttacker's ProtocolMessage)
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.ArrayList;
