@@ -2,7 +2,7 @@ state-fuzzer-client
 
 # SUT config
 -port
-${sut.port}
+${sul.port}
 -startWait
 0
 -alphabet
@@ -15,13 +15,13 @@ DTLS12
 # learning config
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD
 -output
 output/ctinydtls_client_psk
 -cmd
-${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sut.port} localhost
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sul.port} localhost
 -depth
 1

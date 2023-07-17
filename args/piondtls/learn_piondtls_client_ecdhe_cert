@@ -1,7 +1,7 @@
 state-fuzzer-client
 
 -port
-${sut.port}
+${sul.port}
 -startWait
 0
 -alphabet
@@ -10,7 +10,7 @@ ${alphabets.clients}/piondtls_ecdhe_cert.xml
 100
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -protocol
 DTLS12
@@ -19,7 +19,6 @@ RANDOM_WP_METHOD,WP_METHOD
 -output
 output/piondtls-${piondtls.version}_client_ecdhe_cert
 -cmd
-${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role client -port ${sut.port} -cipherSuite TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 -clientAuth NEEDED -trustCert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -serverName tls-attacker.de
+${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role client -port ${sul.port} -cipherSuite TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 -clientAuth NEEDED -trustCert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -serverName tls-attacker.de
 -depth
 1
--dontCacheTests

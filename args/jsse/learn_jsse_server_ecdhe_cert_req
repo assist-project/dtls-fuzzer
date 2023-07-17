@@ -2,7 +2,7 @@ state-fuzzer-server
 
 # SUT config
 -connect
-localhost:${sut.port}
+localhost:${sul.port}
 -startWait
 2000
 -responseWait
@@ -10,7 +10,7 @@ localhost:${sut.port}
 -protocol
 DTLS12
 -cmd
-modules/jdk-${jsse.version}/bin/java -jar suts/jsse-${jsse.version}-dtls-clientserver.jar -port ${sut.port} -hostname localhost -keyLocation experiments/keystore/rsa2048.jks -trustLocation experiments/keystore/rsa2048.jks -threadStarterIpPort localhost:${fuzzer.port} -operation FULL -auth NEEDED
+modules/jdk-${jsse.version}/bin/java -jar suts/jsse-${jsse.version}-dtls-clientserver.jar -port ${sul.port} -hostname localhost -keyLocation experiments/keystore/rsa2048.jks -trustLocation experiments/keystore/rsa2048.jks -threadStarterIpPort localhost:${fuzzer.port} -operation FULL -auth NEEDED
 -adapterPort
 ${fuzzer.port}
 -processTrigger
@@ -21,7 +21,7 @@ START
 ${alphabets.servers}/jsse_ecdhe_cert.xml
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -output
 output/jsse-${jsse.version}_server_ecdhe_cert_req

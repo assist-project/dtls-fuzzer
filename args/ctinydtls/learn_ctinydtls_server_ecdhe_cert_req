@@ -2,13 +2,13 @@ state-fuzzer-server
 
 # SUT config
 -connect
-localhost:${sut.port}
+localhost:${sul.port}
 -startWait
 100
 -responseWait
 100
 -cmd
-${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sut.port}
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sul.port}
 -sulConfig
 experiments/configs/tinydtls_server.config
 -protocol
@@ -19,7 +19,7 @@ DTLS12
 ${alphabets.servers}/ecdhe8_cert.xml
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD

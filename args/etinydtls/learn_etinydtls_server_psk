@@ -2,7 +2,7 @@ state-fuzzer-server
 
 # SUT config
 -connect
-localhost:${sut.port}
+localhost:${sul.port}
 -startWait
 100
 -alphabet
@@ -17,11 +17,11 @@ DTLS12
 RANDOM_WP_METHOD,WP_METHOD
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -output
 output/etinydtls_server_psk
 -cmd
-${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sut.port}
+${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sul.port}
 -depth
 1

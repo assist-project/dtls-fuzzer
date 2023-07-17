@@ -2,7 +2,7 @@ state-fuzzer-server
 
 # SUT config
 -connect
-localhost:${sut.port}
+localhost:${sul.port}
 -startWait
 200
 -responseWait
@@ -10,7 +10,7 @@ localhost:${sut.port}
 -protocol
 DTLS12
 -cmd
-${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/server/server  -i -x -p ${sut.port} -s -u -l PSK-AES128-CBC-SHA256
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/server/server  -i -x -p ${sul.port} -s -u -l PSK-AES128-CBC-SHA256
 -processDir
 ${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
 
@@ -19,7 +19,7 @@ ${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
 ${alphabets.servers}/psk.xml
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -output
 output/wolfssl-${wolfssl.version}_server_psk
