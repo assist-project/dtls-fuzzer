@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,8 +75,8 @@ public class TlsSulAdapter implements SulAdapter {
         try {
             if (!adapterSocket.isConnected()) {
                 adapterSocket.connect(resetAddress);
-                reader = new BufferedReader(new InputStreamReader(adapterSocket.getInputStream()));
-                writer = new PrintWriter(new OutputStreamWriter(adapterSocket.getOutputStream()), true);
+                reader = new BufferedReader(new InputStreamReader(adapterSocket.getInputStream(), StandardCharsets.UTF_8));
+                writer = new PrintWriter(new OutputStreamWriter(adapterSocket.getOutputStream(), StandardCharsets.UTF_8), true);
             }
         } catch(IOException e) {
             throw new TlsSulAdapterException(e);
