@@ -27,12 +27,10 @@ public abstract class TlsInput extends AbstractInputXml {
     }
 
     @Override
-    public abstract TlsProtocolMessage generateProtocolMessage(
-            ExecutionContext context);
+    public abstract TlsProtocolMessage generateProtocolMessage(ExecutionContext context);
 
     @Override
-    public void postSendUpdate(
-            ExecutionContext context) {
+    public void postSendUpdate(ExecutionContext context) {
     }
 
     @Override
