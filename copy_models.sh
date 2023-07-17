@@ -14,16 +14,16 @@ opt_incl_error=0 # if not 0, includes experiments which ended in error (their di
 
 function num_states() {
     model=$1
-    num=` (grep -c circle $model)`
-    echo $num
+    num=$( (grep -c circle "$model"))
+    echo "$num"
 }
 
 function copy_models() {
     experiments_dir=$1
     models_dir=$2
-    mkdir -p $models_dir
-    for exp_dir in $experiments_dir/*; do
-        exp_dirname=$(basename $exp_dir)
+    mkdir -p "$models_dir"
+    for exp_dir in "$experiments_dir"/*; do
+        exp_dirname=$(basename "$exp_dir")
         learned_model="$exp_dir/learnedModel.dot"
         selected_model="$exp_dir/selectedModel.dot"
         learned_model_alphabet="$exp_dir/alphabet.xml"
@@ -55,7 +55,7 @@ function copy_models() {
             if [[ -f $selected_model ]]; then 
                 learned_model=$selected_model
             else
-                last_hyp_num=` (ls $exp_dir | grep -c hyp*)`
+                last_hyp_num=$( (ls "$exp_dir" | grep -c hyp*))
                 if [[ $last_hyp_num  -gt $MAX_HYP_NUM ]]; then
                     last_hyp_num=$MAX_HYP_NUM
                 fi
@@ -69,25 +69,25 @@ function copy_models() {
             sutconfig_name=${sutconfig_name//_stests/}
             sutconfig_name=${sutconfig_name//_incl/}
             model_dir="$models_dir/$sutconfig_name"
-            mkdir -p $model_dir
+            mkdir -p "$model_dir"
 
-            cp $learned_model_alphabet "$model_dir/alphabet.xml" 
-            cp $exp_sulconfig "$model_dir/sul.config"
+            cp "$learned_model_alphabet" "$model_dir/alphabet.xml"
+            cp "$exp_sulconfig" "$model_dir/sul.config"
 
             model="$model_dir/model.dot"
-            cp $learned_model $model
+            cp "$learned_model" "$model"
 
             if [[ opt_build_trimmed -eq 1 ]]; then
                 trimmed_model="$model_dir/trimmed.dot"
-                n_states=$(num_states $learned_model)
+                n_states=$(num_states "$learned_model")
                 if [[ $n_states -le 100 ]]; then
-                    timeout 5s bash $SCRIPT_DIR/trim_model.sh -mt -e -o $trimmed_model $model
+                    timeout 5s bash "$SCRIPT_DIR"/trim_model.sh -mt -e -o "$trimmed_model" "$model"
                 fi
             fi
 
             if [[ opt_build_reduced -eq 1 ]]; then
                 reduced_model="$model_dir/reduced.dot"
-                bash $SCRIPT_DIR/trim_model.sh -ps -mt -e -o $reduced_model $model
+                bash "$SCRIPT_DIR"/trim_model.sh -ps -mt -e -o "$reduced_model" "$model"
             fi
         fi
     done
@@ -140,7 +140,7 @@ esac; shift; done
 
 if [[ -d $2 ]]; then
     if [[ opt_delete -eq 1 ]]; then
-        rm -r $2
+        rm -r "$2"
     elif [[ opt_merge -eq 1 ]]; then
         echo "Will merge with existing"
     else
@@ -149,4 +149,4 @@ if [[ -d $2 ]]; then
     fi
  fi
 
-copy_models $1 $2
+copy_models "$1" "$2"

@@ -4,18 +4,18 @@ state-fuzzer-server
 -protocol
 DTLS12
 -connect
-localhost:${sut.port}
+localhost:${sul.port}
 -startWait
 200
 -responseWait
 20
 -cmd
-${fuzzer.dir}/suts/openssl-${openssl.version}/apps/openssl s_server -psk 1234 -key ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem -cert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -CAfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -verify 1 -accept ${sut.port} -dtls1_2 -mtu 5000
+${fuzzer.dir}/suts/openssl-${openssl.version}/apps/openssl s_server -psk 1234 -key ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem -cert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -CAfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -verify 1 -accept ${sul.port} -dtls1_2 -mtu 5000
 
 # learning config
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -equivalenceAlgorithms
 RANDOM_WP_METHOD,WP_METHOD

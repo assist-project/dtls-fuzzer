@@ -1,6 +1,6 @@
 # SUT config
 -connect
-localhost:${sut.port}
+localhost:${sul.port}
 -startWait
 4000
 -responseWait
@@ -8,7 +8,7 @@ localhost:${sut.port}
 -protocol
 DTLS12
 -cmd
-java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-clientserver.jar -port ${sut.port} -timeout 20000000 -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -clientAuth NEEDED -starterAddress localhost:${fuzzer.port}
+java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-clientserver.jar -port ${sul.port} -timeout 20000000 -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -clientAuth NEEDED -starterAddress localhost:${fuzzer.port}
 -sulConfig
 experiments/configs/scandium_exclude_oo.config
 -adapterPort
@@ -25,7 +25,7 @@ RANDOM_WP_METHOD,WP_METHOD
 output/scandium-${scandium.version}_server_ecdhe_cert_req_excl
 -randLength
 10
--queries
+-equivalenceQueryBound
 20000
 -depth
 1

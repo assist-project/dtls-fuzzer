@@ -2,7 +2,7 @@ state-fuzzer-client
 
 # SUT config
 -port
-${sut.port}
+${sul.port}
 -startWait
 100
 -responseWait
@@ -12,12 +12,12 @@ experiments/configs/tinydtls_client.config
 -protocol
 DTLS12
 -cmd
-${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sut.port} localhost
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sul.port} localhost
 
 # learning config
 -alphabet
 ${alphabets.clients}/ecdhe8_cert.xml
--queries
+-equivalenceQueryBound
 20000
 -randLength
 10
