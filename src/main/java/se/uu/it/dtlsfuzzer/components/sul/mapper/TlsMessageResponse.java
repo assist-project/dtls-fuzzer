@@ -28,11 +28,9 @@ public class TlsMessageResponse {
         return records;
     }
 
-
     public List<DtlsHandshakeMessageFragment> getMessageFragments() {
         return messageFragments;
     }
-
 
     public List<TlsMessage> getMessages() {
         return messages;
