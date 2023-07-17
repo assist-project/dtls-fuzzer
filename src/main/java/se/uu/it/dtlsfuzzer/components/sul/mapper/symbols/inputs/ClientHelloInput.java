@@ -4,11 +4,10 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.cont
 import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModification;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
-import de.rub.nds.tlsattacker.core.dtls.MessageFragmenter;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Arrays;
@@ -38,7 +37,7 @@ public class ClientHelloInput extends DtlsInput {
     @XmlAttribute(name = "withSessionId", required = false)
     private boolean withSessionId = false;
 
-    private TlsMessage message;
+    private ProtocolMessage<? extends ProtocolMessage<?>> message;
 
     public ClientHelloInput() {
         super("CLIENT_HELLO");

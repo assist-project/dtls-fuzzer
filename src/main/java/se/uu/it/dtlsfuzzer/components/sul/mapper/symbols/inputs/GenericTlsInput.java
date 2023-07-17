@@ -2,9 +2,10 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.modifiablevariable.ModifiableVariable;
-import de.rub.nds.tlsattacker.core.https.HttpsRequestMessage;
-import de.rub.nds.tlsattacker.core.https.HttpsResponseMessage;
+import de.rub.nds.tlsattacker.core.http.HttpRequestMessage;
+import de.rub.nds.tlsattacker.core.http.HttpResponseMessage;
 import de.rub.nds.tlsattacker.core.protocol.ModifiableVariableHolder;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ApplicationMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
@@ -41,7 +42,6 @@ import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.SrpClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.SrpServerKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.SupplementalDataMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownHandshakeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
@@ -62,7 +62,7 @@ public class GenericTlsInput extends DtlsInput {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @XmlElements(value = {
-            @XmlElement(type = TlsMessage.class, name = "TlsMessage"),
+            @XmlElement(type = ProtocolMessage.class, name = "ProtocolMessage"),
             @XmlElement(type = CertificateMessage.class, name = "Certificate"),
             @XmlElement(type = CertificateVerifyMessage.class, name = "CertificateVerify"),
             @XmlElement(type = CertificateRequestMessage.class, name = "CertificateRequest"),
@@ -92,8 +92,8 @@ public class GenericTlsInput extends DtlsInput {
             @XmlElement(type = HeartbeatMessage.class, name = "Heartbeat"),
             @XmlElement(type = SupplementalDataMessage.class, name = "SupplementalDataMessage"),
             @XmlElement(type = EncryptedExtensionsMessage.class, name = "EncryptedExtensionMessage"),
-            @XmlElement(type = HttpsRequestMessage.class, name = "HttpsRequest"),
-            @XmlElement(type = HttpsResponseMessage.class, name = "HttpsResponse"),
+            @XmlElement(type = HttpRequestMessage.class, name = "HttpRequest"),
+            @XmlElement(type = HttpResponseMessage.class, name = "HttpResponse"),
             @XmlElement(type = PskClientKeyExchangeMessage.class, name = "PskClientKeyExchange"),
             @XmlElement(type = PskDhClientKeyExchangeMessage.class, name = "PskDhClientKeyExchange"),
             @XmlElement(type = PskDheServerKeyExchangeMessage.class, name = "PskDheServerKeyExchange"),
@@ -105,18 +105,18 @@ public class GenericTlsInput extends DtlsInput {
             @XmlElement(type = SrpClientKeyExchangeMessage.class, name = "SrpClientKeyExchange"),
             @XmlElement(type = EndOfEarlyDataMessage.class, name = "EndOfEarlyData"),
             @XmlElement(type = EncryptedExtensionsMessage.class, name = "EncryptedExtensions")})
-    private TlsMessage message;
+    private ProtocolMessage<? extends ProtocolMessage<?>> message;
 
     public GenericTlsInput() {
         super(null);
     }
 
-    public GenericTlsInput(TlsMessage message) {
+    public GenericTlsInput(ProtocolMessage<? extends ProtocolMessage<?>> message) {
         super(message.toCompactString());
         this.message = message;
     }
 
-    public GenericTlsInput(TlsMessage message, String name) {
+    public GenericTlsInput(ProtocolMessage<? extends ProtocolMessage<?>> message, String name) {
         super(name);
         this.message = message;
     }
@@ -132,7 +132,7 @@ public class GenericTlsInput extends DtlsInput {
         stripFields(message);
     }
 
-    public Class<? extends TlsMessage> getMessageClass() {
+    public Class<? extends ProtocolMessage> getMessageClass() {
         return message.getClass();
     }
 
@@ -149,7 +149,7 @@ public class GenericTlsInput extends DtlsInput {
     /*
      * Sets the original value of all mvar fields to null.
      */
-    private void stripFields(TlsMessage message) {
+    private void stripFields(ProtocolMessage<? extends ProtocolMessage<?>> message) {
         List<ModifiableVariableHolder> holders = new ArrayList<>();
         holders.addAll(message.getAllModifiableVariableHolders());
         for (ModifiableVariableHolder holder : holders) {
@@ -185,7 +185,7 @@ public class GenericTlsInput extends DtlsInput {
         return TlsInputType.fromTlsMessageType(message.getProtocolMessageType());
     }
 
-    public TlsMessage getMessage() {
+    public ProtocolMessage<? extends ProtocolMessage<?>> getMessage() {
         return message;
     }
 

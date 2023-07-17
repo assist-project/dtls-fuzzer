@@ -5,9 +5,9 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abst
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Arrays;
@@ -72,9 +72,9 @@ public class ServerHelloInput extends DtlsInput {
             ExecutionContext context) {
         TlsExecutionContext ctx = getTlsExecutionContext(context);
         if (shortHs && context.isExecutionEnabled()) {
-            Pair<TlsMessage, Record> lastChPair = null;
+            Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record> lastChPair = null;
             int lastChStepIndex = -1;
-            List<Pair<TlsMessage, Record>> msgRecPairs = ctx.getReceivedMessagesAndRecords();
+            List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> msgRecPairs = ctx.getReceivedMessagesAndRecords();
             for (int i=0; i<msgRecPairs.size(); i++) {
                 if (msgRecPairs.get(i).getKey() instanceof ClientHelloMessage) {
                     lastChStepIndex = i;

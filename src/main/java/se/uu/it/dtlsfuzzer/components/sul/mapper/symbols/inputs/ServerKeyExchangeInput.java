@@ -1,10 +1,10 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.DHEServerKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ECDHEServerKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskServerKeyExchangeMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
@@ -30,16 +30,16 @@ public class ServerKeyExchangeInput extends DtlsInput {
         if (algorithm == null) {
             throw new RuntimeException("Algorithm not set");
         }
-        TlsMessage ske = null;
+        ProtocolMessage<? extends ProtocolMessage<?>> ske = null;
         switch (algorithm) {
             case DH :
-                ske = new DHEServerKeyExchangeMessage(getConfig(context));
+                ske = new DHEServerKeyExchangeMessage<>();
                 break;
             case ECDH :
-                ske = new ECDHEServerKeyExchangeMessage(getConfig(context));
+                ske = new ECDHEServerKeyExchangeMessage<>();
                 break;
             case PSK:
-                ske = new PskServerKeyExchangeMessage(getConfig(context));
+                ske = new PskServerKeyExchangeMessage();
                 break;
             default :
                 throw new RuntimeException("Algorithm " + algorithm

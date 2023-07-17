@@ -12,7 +12,7 @@ public class ServerHelloDoneInput extends DtlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
-        ServerHelloDoneMessage shd = new ServerHelloDoneMessage(getConfig(context));
+        ServerHelloDoneMessage shd = new ServerHelloDoneMessage();
         return new TlsProtocolMessage(shd);
     }
 
