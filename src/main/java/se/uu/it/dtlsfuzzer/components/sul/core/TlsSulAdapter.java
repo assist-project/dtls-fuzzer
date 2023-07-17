@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 
 /**
- * An adapter used to communicate with a DTLS SUL launch server responsible for starting/stopping the SUL.
+ * The adapter used to communicate with a DTLS SUL launch server responsible for starting/stopping the SUL.
  * It issues to the server the following commands:
  * <br/>
  * "start" - prompts the launch server to launch the SUL, and respond with "started ${port}" once the SUT is running.

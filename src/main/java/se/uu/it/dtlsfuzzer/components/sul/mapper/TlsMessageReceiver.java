@@ -34,10 +34,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * A simplified version of TLS-Attacker's
- * {@link de.rub.nds.tlsattacker.core.workflow.action.executor.ReceiveMessageHelper}
- * which assumes messages arrive in-order and no time-based re-transmissions
- * occur.
+ * Used to receive records/messages from the SUL.
+ * The code is adapted from TLS-Attacker's
+ * {@link de.rub.nds.tlsattacker.core.workflow.action.executor.ReceiveMessageHelper} class.
+ * Changes were made to simplify it, consistent with our assumption that messages arrive in-order and no time-based re-transmissions occur.
  */
 public class TlsMessageReceiver {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -52,7 +52,7 @@ public class TlsMessageReceiver {
      * Receives and processes records/fragments/messages. Assumes packets are
      * delivered in order and no time-based retransmissions are present.
      */
-    public MessageActionResult receiveMessages(TlsContext context) {
+    public TlsMessageResponse receiveMessages(TlsContext context) {
         context.setTalkingConnectionEndType(context.getChooser().getMyConnectionPeer());
         MessageActionResult result = new MessageActionResult();
         // we use the fragment manager simply as a convenient way of assembling
@@ -67,7 +67,7 @@ public class TlsMessageReceiver {
             result.merge(intermediaryResult);
             bytes = receiveBytes(context);
         }
-        return result;
+        return new TlsMessageResponse(result);
     }
 
     /*

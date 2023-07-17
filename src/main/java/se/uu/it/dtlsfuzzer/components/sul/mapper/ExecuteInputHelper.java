@@ -18,11 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Implements functionality for sending messages/records.
  * This class is analogous to TLS-Attacker's {@link SendMessageHelper} class.
- *
- * The difference is that it is greatly simplified, and functionality is made
- * available relevant to fuzzing fragments, specifically a method which splits
- * messages into fragments.
  */
 public class ExecuteInputHelper {
 

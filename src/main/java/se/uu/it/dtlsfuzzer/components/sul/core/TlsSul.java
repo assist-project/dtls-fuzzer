@@ -36,8 +36,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputMapper;
 
 /**
- * Note: SUT = System Under Test SUL = System Under Learning
- *
+ * Implementation of {@link AbstractSul} that works for both clients and servers.
  * @author robert, paul
  */
 public class TlsSul extends AbstractSul {

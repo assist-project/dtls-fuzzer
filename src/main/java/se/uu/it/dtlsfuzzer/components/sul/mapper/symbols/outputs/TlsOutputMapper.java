@@ -10,7 +10,6 @@ import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import de.rub.nds.tlsattacker.core.workflow.action.executor.MessageActionResult;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +59,7 @@ public class TlsOutputMapper extends OutputMapper {
         }
         try {
             TlsMessageReceiver receiver = new TlsMessageReceiver();
-            MessageActionResult result = receiver.receiveMessages(state.getTlsContext());
-            TlsMessageResponse response = new TlsMessageResponse(result);
+            TlsMessageResponse response = receiver.receiveMessages(state.getTlsContext());
             TlsStepContext tlsStepContext = (TlsStepContext) tlsContext.getStepContext();
             tlsStepContext.receiveUpdate(response);
 

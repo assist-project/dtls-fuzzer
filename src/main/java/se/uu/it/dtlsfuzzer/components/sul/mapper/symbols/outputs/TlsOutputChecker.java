@@ -8,7 +8,7 @@ import java.util.Optional;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.KeyExchangeAlgorithm;
 
 /**
- * Provides a interface for analyzing outputs so that how the actual strings are formed is decoupled from the checking code.
+ * Provides an interface for analyzing outputs so that how the actual strings are formed is decoupled from the checking code.
  */
 public class TlsOutputChecker implements AbstractOutputChecker {
     private static String APPLICATION="APPLICATION";

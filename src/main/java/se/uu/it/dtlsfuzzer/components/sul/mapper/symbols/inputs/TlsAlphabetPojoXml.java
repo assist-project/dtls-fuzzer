@@ -10,7 +10,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
- * POJO class used for .xml de-serialization.
+ * POJO class used for XML (de-)serialization.
  */
 @XmlRootElement(name = "alphabet")
 @XmlAccessorType(XmlAccessType.FIELD)

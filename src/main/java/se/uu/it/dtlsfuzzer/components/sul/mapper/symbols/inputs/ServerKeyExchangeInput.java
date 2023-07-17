@@ -8,7 +8,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
-/*
+/**
  * This input assumes that DH is DHE and ECDH is ECDHE
  */
 public class ServerKeyExchangeInput extends DtlsInput {

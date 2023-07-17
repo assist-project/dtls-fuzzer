@@ -26,10 +26,12 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecke
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputMapper;
 
 /**
- * A mapper which implements the regular/non-altered way of sending messages.
+ * The mapper used to execute abstract inputs on the SUL, and capture its response in abstract outputs.
+ * The mapper maintains a context of the execution in which it stores messages/fragments/records exchanged.
+ * This information is useful when executing subsequent inputs.
  *
- * It performs phased execution of inputs, allowing intervention at every phase
- * by just sub-classing and overriding the executePhase method.
+ * The mapper performs execution in phases in order to facilitate modifying input execution.
+ * Changes in each phase can be implemented by just sub-classing and overriding the executePhase method.
  */
 public class PhasedMapper extends MapperComposer {
 

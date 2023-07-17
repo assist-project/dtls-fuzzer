@@ -18,7 +18,8 @@ public class TlsStepContext extends StepContext {
     private List<Record> receivedRecords;
     private List<Pair<TlsMessage, Record>> receivedMessageRecordPairs;
     /**
-     * Controls whether a flight of records ready to be sent, are done so in separate datagrams
+     * Controls whether each record is sent in a separate datagram,
+     * or in the same datagram as other records in the current flight (size permitting).
      */
     private boolean sendRecordsIndividually;
 
