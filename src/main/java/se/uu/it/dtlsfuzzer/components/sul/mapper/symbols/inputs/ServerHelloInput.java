@@ -39,8 +39,8 @@ public class ServerHelloInput extends DtlsInput {
     @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         Config config = getConfig(context);
-        config.setDefaultServerSupportedCipherSuites(
-                Arrays.asList(suite));
+
+        config.setDefaultServerSupportedCipherSuites(Arrays.asList(suite));
         config.setDefaultClientSupportedCipherSuites(suite);
         if (suite.name().contains("EC")) {
             config.setAddECPointFormatExtension(true);
@@ -55,7 +55,6 @@ public class ServerHelloInput extends DtlsInput {
         }
 
         ServerHelloMessage sh = new ServerHelloMessage(config);
-
         return new TlsProtocolMessage(sh);
     }
 
