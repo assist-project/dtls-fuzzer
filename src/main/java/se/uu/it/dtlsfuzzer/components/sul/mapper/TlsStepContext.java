@@ -1,8 +1,8 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.StepContext;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,9 +14,9 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 
 public class TlsStepContext extends StepContext {
     private ProcessingUnit unit;
-    private List<TlsMessage> receivedMessages;
+    private List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages;
     private List<Record> receivedRecords;
-    private List<Pair<TlsMessage, Record>> receivedMessageRecordPairs;
+    private List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> receivedMessageRecordPairs;
     /**
      * Controls whether each record is sent in a separate datagram,
      * or in the same datagram as other records in the current flight (size permitting).
@@ -28,13 +28,13 @@ public class TlsStepContext extends StepContext {
         sendRecordsIndividually = true;
     }
 
-    public List<TlsMessage> getReceivedMessages() {
+    public List<ProtocolMessage<? extends ProtocolMessage<?>>> getReceivedMessages() {
         return receivedMessages;
     }
     public List<Record> getReceivedRecords() {
         return receivedRecords;
     }
-    public List<Pair<TlsMessage, Record>> getReceivedMessageRecordPairs() {
+    public List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> getReceivedMessageRecordPairs() {
         return receivedMessageRecordPairs;
     }
 
@@ -45,35 +45,35 @@ public class TlsStepContext extends StepContext {
     }
 
     private void pairReceivedMessagesWithRecords() {
-        receivedMessageRecordPairs = new ArrayList<Pair<TlsMessage, Record>>();
+        receivedMessageRecordPairs = new ArrayList<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>>();
 
         if (receivedMessages.size() > receivedRecords.size()) {
             if (receivedRecords.size() == 1) {
-                receivedMessageRecordPairs.add(new ImmutablePair<TlsMessage, Record>(receivedMessages.get(0), receivedRecords.get(0)));
+                receivedMessageRecordPairs.add(new ImmutablePair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>(receivedMessages.get(0), receivedRecords.get(0)));
             }
             else if (receivedRecords.size() > 1) {
                 int msgIndex = 0;
                 int recIndex = 0;
                 int msgSize = receivedMessages.size();
                 int recSize = receivedRecords.size();
-                TlsMessage message = receivedMessages.get(msgIndex);
+                ProtocolMessage<? extends ProtocolMessage<?>> message = receivedMessages.get(msgIndex);
                 while (msgSize - msgIndex > recSize - recIndex  && recIndex < recSize) {
                     while (!(message instanceof AlertMessage) && msgSize - msgIndex >= recSize - recIndex && msgIndex < msgSize - 1) {
-                        receivedMessageRecordPairs.add(new ImmutablePair<TlsMessage, Record>(message, receivedRecords.get(recIndex)));
+                        receivedMessageRecordPairs.add(new ImmutablePair<>(message, receivedRecords.get(recIndex)));
                         msgIndex++;
                         recIndex++;
                         message = receivedMessages.get(msgIndex);
                     }
-                    TlsMessage alertMessage = receivedMessages.get(msgIndex);
+                    ProtocolMessage<? extends ProtocolMessage<?>> alertMessage = receivedMessages.get(msgIndex);
                     while (message instanceof AlertMessage && msgSize - msgIndex >= recSize - recIndex && msgIndex < msgSize - 1) {
                         msgIndex++;
                         message = receivedMessages.get(msgIndex);
                     }
-                    receivedMessageRecordPairs.add(new ImmutablePair<TlsMessage, Record>(alertMessage, receivedRecords.get(recIndex)));
+                    receivedMessageRecordPairs.add(new ImmutablePair<>(alertMessage, receivedRecords.get(recIndex)));
                     recIndex++;
                 }
                 while (recIndex < recSize) {
-                    receivedMessageRecordPairs.add(new ImmutablePair<TlsMessage, Record>(receivedMessages.get(msgIndex), receivedRecords.get(recIndex)));
+                    receivedMessageRecordPairs.add(new ImmutablePair<>(receivedMessages.get(msgIndex), receivedRecords.get(recIndex)));
                     msgIndex++;
                     recIndex++;
                 }
@@ -81,8 +81,8 @@ public class TlsStepContext extends StepContext {
         }
         else {
             Iterator<Record> itRecords = receivedRecords.iterator();
-            for (TlsMessage message : receivedMessages) {
-                receivedMessageRecordPairs.add(new ImmutablePair<TlsMessage, Record>(message, itRecords.next()));
+            for (ProtocolMessage<? extends ProtocolMessage<?>> message : receivedMessages) {
+                receivedMessageRecordPairs.add(new ImmutablePair<>(message, itRecords.next()));
             }
         }
     }

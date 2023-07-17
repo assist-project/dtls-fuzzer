@@ -2,8 +2,7 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
-import de.rub.nds.tlsattacker.core.record.AbstractRecord;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,8 +60,8 @@ public class TlsExecutionContext extends ExecutionContextStepped {
         return stepContexts.stream().map(step -> (TlsStepContext) step);
     }
 
-    public List<AbstractRecord> getAllRecords() {
-        List<AbstractRecord> records = new ArrayList<>();
+    public List<Record> getAllRecords() {
+        List<Record> records = new ArrayList<>();
         getTlsStepContextStream().forEach(tlsStep -> {
             if (tlsStep.getProcessingUnit().getRecordsSent() != null) {
                 records.addAll(tlsStep.getProcessingUnit().getRecordsSent());
@@ -79,22 +78,22 @@ public class TlsExecutionContext extends ExecutionContextStepped {
                 .flatMap(s -> s.getProcessingUnit().getRecordsSent().stream()).collect(Collectors.toList());
     }
 
-    public List<TlsMessage> getReceivedMessages() {
+    public List<ProtocolMessage<? extends ProtocolMessage<?>>> getReceivedMessages() {
         return getTlsStepContextStream().filter(s -> s.getReceivedMessages() != null)
                 .flatMap(s -> s.getReceivedMessages().stream()).collect(Collectors.toList());
     }
 
-    private List<Pair<TlsMessage, Record>> getReceivedMessagesAndRecords(Integer startingIndex) {
+    private List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> getReceivedMessagesAndRecords(Integer startingIndex) {
         return getTlsStepContextStream().skip(startingIndex)
                 .filter(s -> s.getReceivedMessageRecordPairs() != null)
                 .flatMap(s -> s.getReceivedMessageRecordPairs().stream()).collect(Collectors.toList());
     }
 
-    public List<Pair<TlsMessage, Record>> getReceivedMessagesAndRecords() {
+    public List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> getReceivedMessagesAndRecords() {
         return getReceivedMessagesAndRecords(0);
     }
 
-    public List<Pair<TlsMessage, Record>> getHandshakeReceivedMessagesAndRecords() {
+    public List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> getHandshakeReceivedMessagesAndRecords() {
         return getReceivedMessagesAndRecords(renegotiationIndex);
     }
 

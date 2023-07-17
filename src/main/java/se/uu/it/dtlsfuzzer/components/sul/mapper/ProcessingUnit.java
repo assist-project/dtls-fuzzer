@@ -1,8 +1,8 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,13 +22,13 @@ public class ProcessingUnit {
     private TlsInput input;
 
     // the messages generated
-    private List<TlsMessage> messages;
+    private List<ProtocolMessage<? extends ProtocolMessage<?>>> messages;
 
     // how handshake messages are distributed into fragments
     private List<FragmentationResult> messageFragments;
 
     // the messages ready to be packed in records
-    private List<TlsMessage> messagesToPack;
+    private List<ProtocolMessage<? extends ProtocolMessage<?>>> messagesToPack;
 
     // how messages are distributed into records
     private List<PackingResult> messageRecords;
@@ -53,11 +53,11 @@ public class ProcessingUnit {
         this.input = input;
     }
 
-    public List<TlsMessage> getMessages() {
+    public List<ProtocolMessage<? extends ProtocolMessage<?>>> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<TlsMessage> messages) {
+    public void setMessages(List<ProtocolMessage<? extends ProtocolMessage<?>>> messages) {
         this.messages = messages;
     }
 
@@ -100,11 +100,11 @@ public class ProcessingUnit {
         this.initialRecordsToSend = records;
     }
 
-    public List<TlsMessage> getMessagesToPack() {
+    public List<ProtocolMessage<? extends ProtocolMessage<?>>> getMessagesToPack() {
         return messagesToPack;
     }
 
-    public void setMessagesToPack(List<TlsMessage> messagesToPack) {
+    public void setMessagesToPack(List<ProtocolMessage<? extends ProtocolMessage<?>>> messagesToPack) {
         this.messagesToPack = messagesToPack;
     }
 

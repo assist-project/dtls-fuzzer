@@ -29,12 +29,12 @@ public class ExecuteInputHelper {
     /**
      * Prepares a TlsMessage; parts were taken from {@link SendMessageHelper}
      */
-    public final void prepareMessage(TlsMessage message, State state) {
+    public final void prepareMessage(ProtocolMessage<? extends ProtocolMessage<?>> message, State state) {
         TlsContext context = state.getTlsContext();
-        Preparator<ProtocolMessage> preparator = message.getHandler(context).getPreparator(message);
+        Preparator<ProtocolMessage<? extends ProtocolMessage<?>>> preparator = message.getHandler(context).getPreparator(message);
         preparator.prepare();
         preparator.afterPrepare();
-        Serializer<ProtocolMessage> serializer = message.getHandler(context).getSerializer(message);
+        Serializer<ProtocolMessage<? extends ProtocolMessage<?>>> serializer = message.getHandler(context).getSerializer(message);
         byte[] completeMessage = serializer.serialize();
         message.setCompleteResultingMessage(completeMessage);
 
