@@ -37,7 +37,7 @@ public class HelloRequestInput extends DtlsInput {
         if (retransmittedCHAsRefusal) {
             clientRandom = getTlsContext(context).getClientRandom();
         }
-        HelloRequestMessage hvr = new HelloRequestMessage(getConfig(context));
+        HelloRequestMessage hvr = new HelloRequestMessage();
         return new TlsProtocolMessage(hvr);
     }
 
