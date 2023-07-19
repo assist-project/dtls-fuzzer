@@ -66,10 +66,10 @@ public class ExecuteInputHelper {
     /**
      * Packs messages/fragments into records ready to be sent.
      */
-    public final PackingResult packMessages(List<TlsMessage> messages, State state) {
+    public final PackingResult packMessages(List<ProtocolMessage<? extends ProtocolMessage<?>>> messages, State state) {
         List<Record> records = new ArrayList<>();
-        for (TlsMessage message : messages) {
-            Record record = state.getTlsContext().getRecordLayer().getFreshRecord();
+        for (ProtocolMessage<? extends ProtocolMessage<?>> message : messages) {
+            Record record = new Record(state.getConfig());
             records.add(record);
             byte[] data = message.getCompleteResultingMessage().getValue();
             state.getTlsContext().getRecordLayer().prepareRecords(data, message.getProtocolMessageType(),
