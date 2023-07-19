@@ -104,14 +104,14 @@ public class PhasedMapper extends MapperComposer {
 
                 for (ProtocolMessage<? extends ProtocolMessage<?>> message : unit.getMessagesToPack()) {
                     if (msgType != message.getProtocolMessageType()) {
-                        Record record = state.getTlsContext().getRecordLayer().getFreshRecord();
+                        Record record = new Record(context.getConfig());
                         packingResults.add(new PackingResult(messagesInRecord, Arrays.asList(record)));
                         messagesInRecord = new ArrayList<>();
                     }
                     messagesInRecord.add(message);
                 }
                 packingResults.add(new PackingResult(messagesInRecord,
-                        Arrays.asList(state.getTlsContext().getRecordLayer().getFreshRecord())));
+                        Arrays.asList(new Record(context.getConfig()))));
             }
             unit.setMessageRecords(packingResults);
             unit.setRecordsToSend(packingResults.stream().map(fr -> fr.getRecords()).flatMap(l -> l.stream())

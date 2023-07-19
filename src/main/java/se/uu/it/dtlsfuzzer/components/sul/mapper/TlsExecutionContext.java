@@ -2,6 +2,7 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.ArrayList;
@@ -51,6 +52,10 @@ public class TlsExecutionContext extends ExecutionContextStepped {
     @Override
     public TlsStepContext getStepContext(int index) {
         return (TlsStepContext) super.getStepContext(index);
+    }
+
+    public Config getConfig() {
+        return getState().getState().getConfig();
     }
 
     /**
