@@ -80,7 +80,8 @@ public class TlsMessageReceiver {
             // decrypt and update context (e.g. readSequenceNumber) for each record in the
             // group
             for (Record record : group.getRecords()) {
-                context.getRecordLayer().decryptAndDecompressRecord(record);
+                context.getRecordLayer().getDecryptor().decrypt(record);
+                context.getRecordLayer().getDecompressor().decompress(record);
                 record.adjustContext(context);
             }
 
@@ -100,26 +101,26 @@ public class TlsMessageReceiver {
      * processing messages and fragments.
      */
     private MessageActionResult processRecordGroup(RecordGroup group, FragmentManager fragmentManager, TlsContext context) {
-        List<ProtocolMessage> processedMessages = new ArrayList<>();
+        List<ProtocolMessage<? extends ProtocolMessage<?>>> processedMessages = new ArrayList<>();
         List<DtlsHandshakeMessageFragment> processedFragments = new ArrayList<>();
 
         // handle decrypted payload extracting/processing messages
-        List<ProtocolMessage> handledMessages = handleRecordBytes(group.getCleanProtocolMessageBytes(),
+        List<ProtocolMessage<? extends ProtocolMessage<?>>> handledMessages = handleRecordBytes(group.getCleanProtocolMessageBytes(),
                 group.getProtocolMessageType(), group.getEpoch(), context);
 
         // for Handshake fragments, we do another processing round, this time
         // extracting/processing handshake messages
-        for (ProtocolMessage message : handledMessages) {
+        for (ProtocolMessage<? extends ProtocolMessage<?>> message : handledMessages) {
             if (message instanceof DtlsHandshakeMessageFragment) {
                 DtlsHandshakeMessageFragment messageFragment = (DtlsHandshakeMessageFragment) message;
                 processedFragments.add(messageFragment);
                 fragmentManager.addMessageFragment(messageFragment);
                 boolean complete = fragmentManager
-                        .isFragmentedMessageComplete(messageFragment.getMessageSeq().getValue(), group.epoch);
+                        .isFragmentedMessageComplete(messageFragment.getMessageSequence().getValue(), group.epoch);
                 if (complete) {
                     DtlsHandshakeMessageFragment combinedFragment = fragmentManager
-                            .getCombinedMessageFragment(messageFragment.getMessageSeq().getValue(), group.epoch);
-                    ProtocolMessage handshakeMessage = handleCombinedFragment(combinedFragment, context);
+                            .getCombinedMessageFragment(messageFragment.getMessageSequence().getValue(), group.epoch);
+                    ProtocolMessage<? extends ProtocolMessage<?>> handshakeMessage = handleCombinedFragment(combinedFragment, context);
                     processedMessages.add(handshakeMessage);
                 }
             } else {
@@ -133,7 +134,7 @@ public class TlsMessageReceiver {
     /*
      * Parse and extract Handshake message from a combined fragment.
      */
-    private ProtocolMessage handleCombinedFragment(DtlsHandshakeMessageFragment combinedFragment, TlsContext context) {
+    private ProtocolMessage<? extends ProtocolMessage<?>> handleCombinedFragment(DtlsHandshakeMessageFragment combinedFragment, TlsContext context) {
         byte[] messageBytes = convertDtlsFragmentToCleanTlsBytes(combinedFragment);
         HandshakeMessageType handshakeMessageType = HandshakeMessageType.getMessageType(messageBytes[0]);
         ProtocolMessageHandler<?> protocolMessageHandler = HandlerFactory.getHandler(context,
@@ -141,11 +142,11 @@ public class TlsMessageReceiver {
 
         // this informs TLS-Attacker of the message_seq to use for the HandshakeMessage,
         // when updating the digest
-        context.setDtlsReadHandshakeMessageSequence(combinedFragment.getMessageSeq().getValue());
+        context.setDtlsReadHandshakeMessageSequence(combinedFragment.getMessageSequence().getValue());
         ParserResult result = receiveHelper.parseMessage(protocolMessageHandler, messageBytes, 0, false, context);
-        ProtocolMessage message = result.getMessage();
+        ProtocolMessage<? extends ProtocolMessage<?>> message = result.getMessage();
         if (message instanceof HandshakeMessage) {
-            ((HandshakeMessage) message).setMessageSequence(combinedFragment.getMessageSeq());
+            ((HandshakeMessage) message).setMessageSequence(combinedFragment.getMessageSequence());
         }
         return message;
     }
@@ -153,10 +154,10 @@ public class TlsMessageReceiver {
     /*
      * Handles decrypted record bytes.
      */
-    private List<ProtocolMessage> handleRecordBytes(byte[] recordBytes, ProtocolMessageType type, int epoch,
+    private List<ProtocolMessage<? extends ProtocolMessage<?>>> handleRecordBytes(byte[] recordBytes, ProtocolMessageType type, int epoch,
             TlsContext context) {
         int dataPointer = 0;
-        List<ProtocolMessage> receivedMessages = new ArrayList<>();
+        List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages = new ArrayList<>();
 
         while (dataPointer < recordBytes.length) {
             ParserResult result = null;
