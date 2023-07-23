@@ -175,7 +175,7 @@ opt_force=0
 # works for most SUTs
 function get_ver() {
     sut=$1
-    echo ${sut##*-}
+    echo "${sut##*-}"
 }
 
 function get_sutvarname() {
@@ -183,7 +183,7 @@ function get_sutvarname() {
     do
         sut="${!varname}"
         if [[ "$sut" = "$1" ]]; then
-            echo $varname
+            echo "$varname"
             return 1
         fi
     done
@@ -206,7 +206,7 @@ function lib_to_varname() {
     name=$1
 
     dotstripped=${name//\./}
-    hyphenrepl=`echo $dotstripped | sed -e 's/-/_/g'`
+    hyphenrepl=${dotstripped//-/_/g}
     toupper=${hyphenrepl^^}
     echo "$toupper"
 }
@@ -220,22 +220,22 @@ function solve_arch() {
         echo "Creating folder $DOWNLOAD_DIR for storing code downloaded from the Internet"
         mkdir $DOWNLOAD_DIR
     fi
-    arch_file=$DOWNLOAD_DIR/`(basename $arch_url)`
-    echo $arch_file
+    arch_file=$DOWNLOAD_DIR/$(basename "$arch_url")
+    echo "$arch_file"
     echo "Fetching/unpacking from $arch_url into $target_dir"
     if [[ ! -f "$arch_file" ]]
     then
         echo "Downloading archive from url to $arch_file"
-        wget -nc --no-check-certificate $arch_url -O $arch_file
+        wget -nc --no-check-certificate "$arch_url" -O "$arch_file"
     fi
 
     if [[ ! -s $arch_file ]]; then
         echo "Failed to load the archive at the URL: $arch_url"
-        rm $arch_file
+        rm "$arch_file"
         exit 1
     fi
     
-    mkdir $target_dir
+    mkdir "$target_dir"
     # ${arch_file##*.} retrieves the substring between the last index of . and the end of $arch_file
     arch=`echo "${arch_file##*.}"`
     if [[ $arch == "xz" ]]
@@ -245,10 +245,10 @@ function solve_arch() {
         tar_param="zxvf"
     fi
     
-    if [ $target_dir ] ; then
-        tar $tar_param $arch_file -C $target_dir --strip-components=1
+    if [ "$target_dir" ] ; then
+        tar "$tar_param" "$arch_file" -C "$target_dir" --strip-components=1
     else 
-        tar $tar_param $arch_file
+        tar "$tar_param" "$arch_file"
     fi
 }
 
@@ -258,7 +258,7 @@ function clone_rep() {
     rep_com=$3
     
     echo "Cloning repository $rep_url commit $rep_com to $sut_dir"
-    git clone $rep_url $sut_dir
+    git clone "$rep_url" "$sut_dir"
     if [[ -n "$rep_com" ]]; then
         ( cd "$sut_dir" || exit ; git checkout "$rep_com" )
     fi
