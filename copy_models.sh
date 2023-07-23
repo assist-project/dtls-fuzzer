@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+readonly SCRIPT_DIR
 readonly MAX_HYP_NUM=1000
 
 opt_excl=''
@@ -42,12 +43,12 @@ function copy_models() {
         fi
 
         if [[ $opt_excl -eq 1 && $exp_dirname =~ $opt_excl ]]; then
-            echo "Ignoring $exp_dirname  due to the exclude option"
+            echo "Ignoring $exp_dirname due to the exclude option"
             continue
         fi
 
         if [[ $opt_incl -eq 1 && ! $exp_dirname =~ $opt_incl ]]; then
-            echo "Ignoring $exp_dirname  due to the include (only) option"
+            echo "Ignoring $exp_dirname due to the include (only) option"
             continue
         fi
 
@@ -55,12 +56,11 @@ function copy_models() {
             if [[ -f $selected_model ]]; then 
                 learned_model=$selected_model
             else
-                last_hyp_num=$( (ls "$exp_dir" | grep -c hyp*))
+                last_hyp_num=$( (find "$exp_dir" -name "hyp*.dot" | wc -l) )
                 if [[ $last_hyp_num  -gt $MAX_HYP_NUM ]]; then
                     last_hyp_num=$MAX_HYP_NUM
                 fi
-                last_hyp="$exp_dir/hyp$last_hyp_num.dot"
-                learned_model=$last_hyp
+                learned_model="$exp_dir/hyp$last_hyp_num.dot"
             fi
         fi
         if [[ -f $learned_model ]]; then
@@ -104,7 +104,6 @@ if [[ $# = 0 || $# = 1 ]]; then
     echo "-ie | --include-error  : include experiments which ended in error"
     exit 0
 fi
-
 
 
 while [[ "$1" =~ ^- ]]; do case $1 in
