@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
 #
-# Setup SUT which may involve downloading, patching, installing dependencies and building
-# The goal is to have a runnable SUT
+# Setup SUT which may involve downloading, patching, installing dependencies
+# and building. The goal is to have a runnable SUT.
+
+# XXX: Take me out
+# shellcheck disable=SC2034  # all _URL variables are indirectly used
 
 # SCRIPT_DIR should correpond to dtls-fuzzer's root directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
-# the (temporary) directory storing all the archived sources that were downloaded
-readonly DOWNLOAD_DIR="/tmp/dtls-fuzzer"
+# the user-specific (temporary) directory storing all the archived sources that are downloaded
+DOWNLOAD_DIR="/tmp/dtls-fuzzer-$(whoami)"
+readonly DOWNLOAD_DIR
 # dir where the suts are stored
 readonly SUTS_DIR="$SCRIPT_DIR/suts"
 # where binaries are located
 readonly BIN_DIR="$SCRIPT_DIR/bin"
 # patches
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
-# source folders (similar to patches, contain files to replace certain files in the SUT folder with )
+# source folders (similar to patches, contain files to replace certain files in the SUT folder with)
 readonly SOURCES_DIR="$SCRIPT_DIR/experiments/sources"
 # dir where the modules SUTs rely on are stored
 readonly MODULES_DIR="$SCRIPT_DIR/modules"
@@ -218,7 +222,7 @@ function solve_arch() {
     if [[ ! -d $DOWNLOAD_DIR ]]
     then
         echo "Creating folder $DOWNLOAD_DIR for storing code downloaded from the Internet"
-        mkdir $DOWNLOAD_DIR
+        mkdir "$DOWNLOAD_DIR"
     fi
     arch_file=$DOWNLOAD_DIR/$(basename "$arch_url")
     echo "$arch_file"
@@ -237,17 +241,17 @@ function solve_arch() {
     
     mkdir "$target_dir"
     # ${arch_file##*.} retrieves the substring between the last index of . and the end of $arch_file
-    arch=`echo "${arch_file##*.}"`
+    arch=${arch_file##*.}
     if [[ $arch == "xz" ]]
     then
         tar_param="-xJf"
-    else 
+    else
         tar_param="zxvf"
     fi
     
     if [ "$target_dir" ] ; then
         tar "$tar_param" "$arch_file" -C "$target_dir" --strip-components=1
-    else 
+    else
         tar "$tar_param" "$arch_file"
     fi
 }
@@ -448,14 +452,14 @@ function install_sut_dep() {
     fi
 }
 
-# Builds the SUT. In this process also installs/deploys all necessary dependencies
+# Builds the SUT and also installs/deploys all necessary dependencies.
 function make_sut() {
     sut=$1
     sut_dir=$2
 
     if [[ $sut == jsse* ]]; then
         ver=$(get_ver "$sut")
-        (cd "$sut_dir" || exit ; JAVA_HOME=$MODULES_DIR/jdk-$ver mvn install assembly:single; cp target/jsse-dtls-clientserver.jar ../jsse-"$ver"-dtls-clientserver.jar)
+        ( cd "$sut_dir" || exit ; JAVA_HOME=$MODULES_DIR/jdk-$ver mvn install assembly:single; cp target/jsse-dtls-clientserver.jar ../jsse-"$ver"-dtls-clientserver.jar)
         return 0
     elif [[ $sut == pion* ]]; then
         ( cd "$sut_dir" || exit ; go build -o dtls-clientserver main/main.go )
