@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Script for improving the visuals of a learned model
 
-readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+readonly SCRIPT_DIR
 readonly EXP_SCRIPTS_DIR="$SCRIPT_DIR/experiments/scripts/"
 readonly COLOR_FILE="$EXP_SCRIPTS_DIR/coloredPaths.json"
 readonly REPL_FILE="$EXP_SCRIPTS_DIR/replacements.json"
