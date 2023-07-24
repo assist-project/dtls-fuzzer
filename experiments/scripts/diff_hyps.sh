@@ -11,17 +11,16 @@ if [ $# != 3 ]; then
 fi
 
 if [[ ! -d $dir1 ]]; then
-    echo $dir1": No such directory"
+    echo "$dir1"": No such directory"
     exit 1
 fi
 if [[ ! -d $dir2 ]]; then
-    echo $dir2": No such directory"
+    echo "$dir2"": No such directory"
     exit 1
 fi
 
-for ((i = 1 ; i <= $num_rounds ; i++)); do
-    diff --unified=0 $dir1/hyp$i.dot $dir2/hyp$i.dot
-    if [ $? != 0 ]; then
+for ((i = 1 ; i <= num_rounds ; i++)); do
+    if ! diff --unified=0 "$dir1"/hyp$i.dot "$dir2"/hyp$i.dot; then
         exit 1
     fi
 done

@@ -2,8 +2,9 @@
 #
 # Installs some necessary packages and then installs DTLS-Fuzzer.
 
-# SCRIPT_DIR should correpond to dtls-fuzzer's root directory
-readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+# SCRIPT_DIR should correspond to dtls-fuzzer's root directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+readonly SCRIPT_DIR
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
 readonly PROTOCOLSTATEFUZZER_COMMIT="43c89c3"
@@ -54,9 +55,9 @@ function clone_rep() {
     rep_url=$2
     rep_com=$3
     echo "Cloning repository $rep_url commit $rep_com to $sut_dir"
-    git clone $rep_url $sut_dir
+    git clone "$rep_url" "$sut_dir"
     if [[ -n "$rep_com" ]]; then
-        ( cd $sut_dir ; git checkout $rep_com ) #; rm -rf $sut_dir/.git )
+        ( cd "$sut_dir" || exit ; git checkout "$rep_com" )
     fi
 }
 
@@ -68,9 +69,9 @@ function install_protocolstatefuzzer() {
     else
         clone_rep $PROTOCOLSTATEFUZZER_FOLDER $PROTOCOLSTATEFUZZER_REP_URL $PROTOCOLSTATEFUZZER_COMMIT
         (
-            cd $PROTOCOLSTATEFUZZER_FOLDER
+            cd $PROTOCOLSTATEFUZZER_FOLDER || exit
             echo "Patching ProtocolState-Fuzzer for compatibility with Java 11"
-            git apply $PROTOCOLSTATEFUZZER_PATCH
+            git apply "$PROTOCOLSTATEFUZZER_PATCH"
             echo "Installing ProtocolState-Fuzzer"
             mvn install
         )

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #TODO Add parameter
 
 MODELS_DIR="new_models/"
@@ -9,28 +10,28 @@ REPL_FILE=replacements.json
 
 # transforms capitalized snake case (CLIENT_HELLO) to came case (ClientHello)
 function toCamel() {
-    sed -i -r 's/([A-Z])([A-Z]*)_*/\1\L\2/g' $1
+    sed -i -r 's/([A-Z])([A-Z]*)_*/\1\L\2/g' "$1"
 }
 
 # transforms camel case (ClientHello) to capitals (CH) for ultimate trimmage
 function toCapitals() {
-    sed -i -r 's/([A-Z])[a-z]*/\1/g' $1
+    sed -i -r 's/([A-Z])[a-z]*/\1/g' "$1"
 }
 
 # shortens state labels from (for example) s3 to 3
 function shortenStateLabels() {
-    sed -i -r 's/\"s([0-9])/\"\1/g' $1
+    sed -i -r 's/\"s([0-9])/\"\1/g' "$1"
 }
 
 function fullTrim() {
     extra=''
-    if [ $3 ]; then 
+    if [ "$3" ]; then 
         extra='-ego "\s*App"'
     else
         extra=''
     fi
-    echo java -jar $SCRIPTS_DIR/dot-trimmer.jar -r $SCRIPTS_DIR/$REPL_FILE -i $1 -o $2 -t 3 -pc $COLOR_FILE $extra
-    java -jar $SCRIPTS_DIR/dot-trimmer.jar -r $SCRIPTS_DIR/$REPL_FILE -i $1 -o $2 -t 3 -pc $COLOR_FILE $extra
+    echo java -jar $SCRIPTS_DIR/dot-trimmer.jar -r $SCRIPTS_DIR/$REPL_FILE -i "$1" -o "$2" -t 3 -pc $COLOR_FILE "$extra"
+    java -jar $SCRIPTS_DIR/dot-trimmer.jar -r $SCRIPTS_DIR/$REPL_FILE -i "$1" -o "$2" -t 3 -pc $COLOR_FILE "$extra"
 }
 
 # trimming used in the model
@@ -41,26 +42,26 @@ function fullTrim() {
 #}
 
 function format() {
-    echo Formatting $1; python $SCRIPTS_DIR/dotformat.py $1 $2
+    echo Formatting "$1"; python $SCRIPTS_DIR/dotformat.py "$1" "$2"
 }
 
 function simplify() {
     model=$1
     smodel=${model%dot}simplified.dot
-    cp $model $smodel
-    toCamel $smodel
+    cp "$model" "$smodel"
+    toCamel "$smodel"
     #stmodel=${model%dot}strimmed.dot $2
     #selectiveTrim $smodel $stmodel
     #format $stmodel $stmodel
-    if [ $2 ]; then 
+    if [ "$2" ]; then 
         tmodel=${model%dot}reduced.dot
     else
         tmodel=${model%dot}trimmed.dot
     fi
-    fullTrim $smodel $tmodel $2
-    format $tmodel $tmodel
-    shortenStateLabels $tmodel
-    rm $smodel 
+    fullTrim "$smodel" "$tmodel" "$2"
+    format "$tmodel" "$tmodel"
+    shortenStateLabels "$tmodel"
+    rm "$smodel"
 }
 
 if [ $# = 0 ]; then 
@@ -69,13 +70,13 @@ if [ $# = 0 ]; then
     rm $MODELS_DIR/*formatted*dot
     rm $MODELS_DIR/*trimmed*dot
     echo "Simplifying formatted .dot files in models directory"
-    for dot_file in $MODELS_DIR/*.dot; do
-        echo $dot_file
-        simplify $dot_file
+    for dot_file in "$MODELS_DIR"/*.dot; do
+        echo "$dot_file"
+        simplify "$dot_file"
     done
 else
     echo "Simplifying supplied .dot model"
-    simplify $1 $2
+    simplify "$1" "$2"
 fi 
 
 
