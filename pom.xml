@@ -42,6 +42,7 @@
             <version>1.0.0</version>
         </dependency>
     </dependencies>
+
     <build>
         <finalName>dtls-fuzzer</finalName>
         <plugins>
@@ -102,6 +103,7 @@
                         <format>
                             <includes>
                                 <include>*.md</include>
+                                <include>*.sh</include>
                                 <include>*.xml</include>
                             </includes>
                             <endWithNewline />
@@ -125,6 +127,14 @@
                         <!-- <palantirJavaFormat /> -->
                     </java>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Static code analysis -->
             <plugin>
@@ -135,6 +145,14 @@
                     <threshold>High</threshold>
                     <!-- <visitors>FindDeadLocalStores,UnreadFields</visitors> -->
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Build a JAR -->
             <plugin>
