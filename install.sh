@@ -33,7 +33,7 @@ function check_java() {
             exit
         fi
     fi
-} 
+}
 
 function check_mvn() {
     if ! command -v mvn &> /dev/null
@@ -45,7 +45,7 @@ function check_mvn() {
             sudo apt-get install maven
         else
             echo "Install Apache maven, add it to PATH and re-run"
-            exit 
+            exit
         fi
     fi
 }

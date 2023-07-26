@@ -53,7 +53,7 @@ function copy_models() {
         fi
 
         if [[ ! -f $learned_model ]]; then
-            if [[ -f $selected_model ]]; then 
+            if [[ -f $selected_model ]]; then
                 learned_model=$selected_model
             else
                 last_hyp_num=$( (find "$exp_dir" -name "hyp*.dot" | wc -l) )

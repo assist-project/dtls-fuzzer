@@ -67,13 +67,13 @@ function trim() {
     smodel=$model_dir/$model_name.simplified.dot
     cp "$model" "$smodel"
     to_camel "$smodel"
-    
+
     if [[ -n $opt_output ]]; then
         tmodel=$opt_output
     else
         tmodel=$model_dir/$model_name.trimmed.dot
     fi
-    
+
     if [[ $opt_disable_dottrimmer -eq 1 ]]; then
         echo "dot-trimmer functionality is disabled, hence coloring/label replacement/state prunning will not be applied"
         cp "$smodel" "$tmodel"
@@ -93,12 +93,12 @@ function trim() {
         dot -Tpdf "$tmodel" > "$pdffile"
     fi
 
-    if [[ $opt_view -eq 1 && -f $tmodel ]] ; then 
+    if [[ $opt_view -eq 1 && -f $tmodel ]] ; then
         xdot "$tmodel"
     fi
 }
 
-if [ $# = 0 ]; then 
+if [ $# = 0 ]; then
     echo "Usage trim_model.sh dot_model [-o|--output dot_output] [-ps|--prune-states] [-mt|--merge-transitions] [-dd|--disable-dottrimmer] [-e|--export] [-v|--view] dot_model"
 else
     while [[ "$1" =~ ^- ]]; do case $1 in
@@ -140,5 +140,4 @@ else
 
     echo "Trimming and coloring $1"
     trim "$1"
-fi 
-
+fi

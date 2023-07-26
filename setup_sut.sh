@@ -198,7 +198,7 @@ function get_sutvarname() {
 function get_rep_url() {
     sut=$1
     return_var=$(get_sutvarname "$sut")
-    
+
     # is our SUT fetched from a repository?
     rep_url_var="$return_var"_REP_URL
     rep_url="${!rep_url_var}"
@@ -238,7 +238,7 @@ function solve_arch() {
         rm "$arch_file"
         exit 1
     fi
-    
+
     mkdir "$target_dir"
     # ${arch_file##*.} retrieves the substring between the last index of . and the end of $arch_file
     arch=${arch_file##*.}
@@ -248,7 +248,7 @@ function solve_arch() {
     else
         tar_param="zxvf"
     fi
-    
+
     if [ "$target_dir" ] ; then
         tar "$tar_param" "$arch_file" -C "$target_dir" --strip-components=1
     else
@@ -260,7 +260,7 @@ function clone_rep() {
     sut_dir=$1
     rep_url=$2
     rep_com=$3
-    
+
     echo "Cloning repository $rep_url commit $rep_com to $sut_dir"
     git clone "$rep_url" "$sut_dir"
     if [[ -n "$rep_com" ]]; then
@@ -268,7 +268,7 @@ function clone_rep() {
     fi
 }
 
-# Downloads the SUT source files and places them in a SUT directory 
+# Downloads the SUT source files and places them in a SUT directory
 function download_sut() {
     sut=$1
     sut_dir=$2
@@ -284,15 +284,15 @@ function download_sut() {
         rep_com_var="$return_var"_COMMIT
         rep_com="${!rep_com_var}"
         clone_rep "$sut_dir" "$rep_url" "$rep_com"
-        return 
+        return
     fi
 
     # maybe the SUT is retrieved from a URL pointing to some archive
     arch_url_var="$return_var"_ARCH_URL
     arch_url="${!arch_url_var}"
-    if [[ -n "$arch_url" ]]; then 
+    if [[ -n "$arch_url" ]]; then
         solve_arch "$arch_url" "$sut_dir"
-        return 
+        return
     fi
 
     # maybe the SUT is stored locally, in which case we only have to copy/paste the sources
@@ -300,7 +300,7 @@ function download_sut() {
     local_dir="${!local_dir_var}"
     if [[ -n "$local_dir" ]]; then
         cp -r "$local_dir" "$sut_dir"
-        return 
+        return
     fi
 }
 
@@ -310,15 +310,15 @@ function apply_patch() {
     sut_dir=$2
     #$(echo $sut | cut -d '-' -f 1)
     sut_patch=$PATCHES_DIR/$sut.patch
-    
-    if [[ -f $sut_patch ]] 
+
+    if [[ -f $sut_patch ]]
     then
         echo "Applying patch $sut_patch"
         rep_url=$(get_rep_url "$sut")
         if [[ -n "$rep_url" ]]; then
             echo "via git apply"
             ( cd "$sut_dir" || exit ; git apply "$sut_patch" )
-        else 
+        else
             echo "via patch"
             patch -s -p0 < "$sut_patch"
         fi
@@ -353,7 +353,7 @@ function install_dep() {
 
     if [[ ! -d "$dep_dir" ]]; then
         solve_arch "$dep_url" "$dep_dir"
-        if [[ -f $dep_dir/configure ]]; then 
+        if [[ -f $dep_dir/configure ]]; then
             ( cd "$dep_dir" || exit ; ./configure ; sudo make install )
         elif [[ -f $dep_dir/pom.xml ]]; then
             ( cd "$dep_dir" || exit ; mvn install -DskipTests )
@@ -364,10 +364,10 @@ function install_dep() {
 # Gets nettle library
 function get_nettle() {
     sut=$1
- 
+
     if [[ $sut == "$GNUTLS_371" || $sut == "$GNUTLS_LATEST" ]]; then
         echo $NETTLE_36
-    else 
+    else
         echo $NETTLE_341
     fi
 }
@@ -422,7 +422,7 @@ function install_sut_dep() {
             ver=$(get_ver "$sut")
             if [[ $sut == *piondtls-1* ]]; then
                 go get github.com/pion/dtls@v"$ver"
-            elif [[ $sut == *piondtls-2* ]]; then 
+            elif [[ $sut == *piondtls-2* ]]; then
                 go get github.com/pion/dtls/v2@v"$ver"
             fi
         fi
@@ -434,12 +434,12 @@ function install_sut_dep() {
         install_dep "$nettle" "$nettle_url"
     elif [[ $sut == etinydtls* ]]; then
         install_dep $M4 $M4_ARCH_URL
-        install_dep $AUTOCONF $AUTOCONF_ARCH_URL  
-    elif [[ $sut == wolfssl* ]]; then
-	install_dep $M4 $M4_ARCH_URL
         install_dep $AUTOCONF $AUTOCONF_ARCH_URL
-	install_dep $LIBTOOL $LIBTOOL_ARCH_URL
-    elif [[ $sut == scandium* ]]; then 
+    elif [[ $sut == wolfssl* ]]; then
+        install_dep $M4 $M4_ARCH_URL
+        install_dep $AUTOCONF $AUTOCONF_ARCH_URL
+        install_dep $LIBTOOL $LIBTOOL_ARCH_URL
+    elif [[ $sut == scandium* ]]; then
         if [[ $sut == "$SCANDIUM_OLD" ]]; then
             install_dep $CALIFORNIUM_OLD $CALIFORNIUM_OLD_ARCH_URL
         elif [[ $sut == "$SCANDIUM_230" ]]; then
@@ -465,9 +465,9 @@ function make_sut() {
         ( cd "$sut_dir" || exit ; go build -o dtls-clientserver main/main.go )
         return 0
     elif [[ $sut == gnutls* ]]; then
-        ( 
+        (
             cd "$sut_dir" || exit
-            if [[ ! -f ./configure ]]; then 
+            if [[ ! -f ./configure ]]; then
                 ./bootstrap
             fi
             PKG_CONFIG_PATH="$MODULES_DIR/$nettle:$PKG_CONFIG_PATH" ./configure --enable-static --with-guile-site-dir=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-doc
@@ -481,8 +481,8 @@ function make_sut() {
     elif [[ $sut == openssl* ]]; then
         if [[ $opt_debug_build -eq 1 ]]; then
             ( cd "$sut_dir" || exit ; ./config -d -static )
-        else 
-            ( cd "$sut_dir" || exit ; ./config -static )  
+        else
+            ( cd "$sut_dir" || exit ; ./config -static )
         fi
     elif [[ $sut == wolfssl* ]]; then
         # this configuration is for PSK wolfssl
@@ -522,17 +522,16 @@ function setup_sut() {
         if [[ opt_force -eq 0 ]]; then
             echo "Delete $sut_dir or $SUTS_DIR to re-setup, or use --force option"
             return
-        else 
+        else
             echo "Removing existing SUT"
             rm -r "$sut_dir"
         fi
     fi
 
     # download the SUT sources
-    download_sut "$sut" "$sut_dir" 
+    download_sut "$sut" "$sut_dir"
 
     if [[ $opt_no_patch -eq 0 ]]; then
-    
         if [[ ! $opt_create_patch -eq 0 ]]; then
             sut_orig_dir=$sut_dir"_orig"
             cp -r "$sut_dir" "$sut_orig_dir"
@@ -554,13 +553,13 @@ function setup_sut() {
         install_sut_dep "$sut"
     fi
 
-    if [[ $opt_no_build -eq 0 ]]; then 
+    if [[ $opt_no_build -eq 0 ]]; then
         # build the SUT
         make_sut "$sut" "$sut_dir"
     fi
 }
 
-if [[ -z $USE_AS_LIBRARY ]]; then 
+if [[ -z $USE_AS_LIBRARY ]]; then
     if [ $# = 0 ]; then
         echo "Usage: setup_sut.sh  [options] [SUT]..."
         echo "Where SUT is an element in: "
@@ -606,10 +605,10 @@ if [[ -z $USE_AS_LIBRARY ]]; then
             ;;
         esac; shift; done
         for sut in "$@"
-        do 
+        do
             if [[ ! " ${sut_strings[*]} " =~ ${sut} ]]; then
                 echo "SUT $sut not recognized"
-            else 
+            else
                 setup_sut "$sut"
             fi
         done
