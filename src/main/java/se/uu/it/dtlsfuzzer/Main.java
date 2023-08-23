@@ -11,7 +11,10 @@ public class Main {
     public static void main(String args[]) throws IOException, XMLStreamException {
         Security.addProvider(new BouncyCastleProvider());
         MultiBuilder mb = new MultiBuilder();
-        CommandLineParser parser = new CommandLineParser(mb, mb, mb, mb, new String [] { Main.class.getPackageName()});
-        parser.parse(args);
+        String[] parentLoggers = {Main.class.getPackageName()};
+
+        CommandLineParser commandLineParser = new CommandLineParser(mb, mb, mb, mb);
+        commandLineParser.setExternalParentLoggers(parentLoggers);
+        commandLineParser.parse(args);
     }
 }
