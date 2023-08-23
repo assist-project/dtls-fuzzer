@@ -4,8 +4,20 @@
     <artifactId>dtls-fuzzer</artifactId>
     <version>0.2-SNAPSHOT</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <jaxb-api.version>4.0.0</jaxb-api.version>
+        <jcommander.version>1.82</jcommander.version>
+        <learnlib.version>0.16.0</learnlib.version>
+        <log4j.version>2.20.0</log4j.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
+            <!-- learnlib and automatalib -->
             <dependency>
                 <groupId>de.learnlib</groupId>
                 <artifactId>learnlib-parent</artifactId>
@@ -13,18 +25,47 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- jcommander -->
+            <dependency>
+                <groupId>com.beust</groupId>
+                <artifactId>jcommander</artifactId>
+                <version>${jcommander.version}</version>
+            </dependency>
+
+            <!-- log4j2 -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+            <!-- jaxb api -->
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jaxb-api.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <learnlib.version>0.16.0</learnlib.version>
-        <automatalib.version>0.10.0</automatalib.version>
-    </properties>
-
     <dependencies>
+        <dependency>
+            <groupId>com.github.protocolfuzzing</groupId>
+            <artifactId>protocolstatefuzzer</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.rub.nds</groupId>
+            <artifactId>modifiable-variable</artifactId>
+            <version>4.0.0</version>
+        </dependency>
         <dependency>
             <groupId>de.rub.nds.tls.attacker</groupId>
             <artifactId>tls-core</artifactId>
@@ -32,14 +73,27 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>de.learnlib.distribution</groupId>
-            <artifactId>learnlib-distribution</artifactId>
-            <type>pom</type>
+            <groupId>de.rub.nds.tls.attacker</groupId>
+            <artifactId>transport</artifactId>
+            <version>4.0.2</version>
         </dependency>
         <dependency>
-            <groupId>com.github.protocolfuzzing</groupId>
-            <artifactId>protocolstatefuzzer</artifactId>
-            <version>1.0.0</version>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.64</version>
         </dependency>
     </dependencies>
 
