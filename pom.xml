@@ -9,7 +9,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <jaxb-api.version>4.0.0</jaxb-api.version>
+        <jakarta-xml.version>4.0.0</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.16.0</learnlib.version>
         <log4j.version>2.20.0</log4j.version>
@@ -33,20 +33,18 @@
                 <version>${jcommander.version}</version>
             </dependency>
 
-            <!-- log4j2 -->
+            <!-- log4j-api -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-bom</artifactId>
+                <artifactId>log4j-api</artifactId>
                 <version>${log4j.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
             </dependency>
 
-            <!-- jaxb api -->
+            <!-- jakarta-xml api -->
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>${jaxb-api.version}</version>
+                <version>${jakarta-xml.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -134,6 +132,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
