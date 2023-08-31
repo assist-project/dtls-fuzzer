@@ -3,7 +3,6 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.modifiablevariable.bytearray.ByteArrayModificationFactory;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
-import de.rub.nds.modifiablevariable.integer.ModifiableInteger;
 import de.rub.nds.tlsattacker.core.constants.ClientCertificateType;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateRequestMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -30,8 +29,6 @@ public class CertificateRequestInput extends DtlsInput {
             ModifiableByteArray ctbyte = new ModifiableByteArray();
             ctbyte.setModification(ByteArrayModificationFactory.explicitValue(new byte[] {certificateType.getValue()}));
             message.setClientCertificateTypes(ctbyte);
-            ModifiableInteger ctcount = new ModifiableInteger();
-            ctcount.setOriginalValue(1);
         }
         return new TlsProtocolMessage(message);
     }
