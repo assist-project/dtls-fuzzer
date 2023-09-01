@@ -21,9 +21,9 @@ public abstract class DtlsInput extends TlsInput {
     @XmlAttribute(name = "encryptedEnabled", required = false)
     private boolean encryptionEnabled = true;
 
-    private String alias = null;
+    // private String alias = null;
     private Integer contextEpoch = null;
-    private Long contextWriteNumber = null;
+    // private Long contextWriteNumber = null;
 
     protected DtlsInput() {
         super();
@@ -34,7 +34,7 @@ public abstract class DtlsInput extends TlsInput {
     }
 
     public final void preSendUpdate(com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
-        alias = getTlsExecutionContext(context).getSulDelegate().getFuzzingRole();
+//         alias = getTlsExecutionContext(context).getSulDelegate().getFuzzingRole();
         TlsState state = getTlsExecutionContext(context).getState();
 
         // if different epoch than current, set the epoch in TLS context
