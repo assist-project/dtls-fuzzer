@@ -14,9 +14,6 @@ public class HelloVerifyRequestInput extends DtlsInput {
     @XmlAttribute(name = "resetDigest", required = false)
     private boolean resetDigest = true;
 
-    // @XmlAttribute(name = "digestHR", required = false)
-    // private boolean digestHR = false;
-
     public HelloVerifyRequestInput() {
         super("HELLO_VERIFY_REQUEST");
     }
