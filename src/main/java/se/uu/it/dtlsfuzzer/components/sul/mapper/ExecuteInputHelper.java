@@ -43,10 +43,9 @@ public class ExecuteInputHelper {
             }
         }
 
-        if (message instanceof TlsMessage) {
-            TlsMessageHandler<TlsMessage> handler = message.getHandler(context);
-            handler.updateDigest(message);
-        }
+        TlsMessageHandler<TlsMessage> handler = message.getHandler(context);
+        handler.updateDigest(message);
+
         if (message.getAdjustContext()) {
             message.getHandler(context).adjustContext(message);
         }
