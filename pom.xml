@@ -62,7 +62,7 @@
         <dependency>
             <groupId>de.rub.nds</groupId>
             <artifactId>modifiable-variable</artifactId>
-            <version>4.0.0</version>
+            <version>4.1.2</version>
         </dependency>
         <dependency>
             <groupId>de.rub.nds.tls.attacker</groupId>
