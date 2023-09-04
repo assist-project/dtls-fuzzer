@@ -21,9 +21,7 @@ public abstract class DtlsInput extends TlsInput {
     @XmlAttribute(name = "encryptedEnabled", required = false)
     private boolean encryptionEnabled = true;
 
-    private String alias = null;
     private Integer contextEpoch = null;
-    private Long contextWriteNumber = null;
 
     protected DtlsInput() {
         super();
@@ -34,7 +32,6 @@ public abstract class DtlsInput extends TlsInput {
     }
 
     public final void preSendUpdate(com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
-        alias = getTlsExecutionContext(context).getSulDelegate().getFuzzingRole();
         TlsState state = getTlsExecutionContext(context).getState();
 
         // if different epoch than current, set the epoch in TLS context
@@ -46,10 +43,6 @@ public abstract class DtlsInput extends TlsInput {
         // if epoch > 0, deactivate encryption
         if (!encryptionEnabled) {
             throw new NotImplementedException("Disabling encryption is not currently supported.");
-//            DeactivateEncryptionAction action = new DeactivateEncryptionAction();
-//            action.setConnectionAlias(alias);
-//            action.execute(state);
-//            state.getTlsContext().setWriteSequenceNumber(context.incrementWriteRecordNumberEpoch0());
         }
 
         preSendDtlsUpdate(getTlsExecutionContext(context));
@@ -67,12 +60,6 @@ public abstract class DtlsInput extends TlsInput {
 
         if (!encryptionEnabled) {
             throw new NotImplementedException("Re-enabling encryption is not currently supported.");
-//            ActivateEncryptionAction action = new ActivateEncryptionAction();
-//            action.setConnectionAlias(alias);
-//            action.execute(state);
-//            if (contextWriteNumber != null) {
-//                state.getTlsContext().setWriteSequenceNumber(contextWriteNumber);
-//            }
         }
 
         postSendDtlsUpdate(getTlsExecutionContext(context));
