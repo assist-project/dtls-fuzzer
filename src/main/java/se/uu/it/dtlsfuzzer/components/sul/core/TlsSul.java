@@ -186,18 +186,20 @@ public class TlsSul extends AbstractSul {
             if (server && !receivedClientHello) {
                 receiveClientHello();
             }
-            state.getTlsContext().getTransportHandler().closeConnection();
-            if (resetWait > 0) {
-                Thread.sleep(resetWait);
+            TransportHandler transportHandler = state.getTlsContext().getTransportHandler();
+            if (transportHandler == null) {
+                LOGGER.error("Transport handler is null");
+            } else {
+                transportHandler.closeConnection();
+                if (resetWait > 0) {
+                    Thread.sleep(resetWait);
+                }
             }
         } catch (IOException e) {
             LOGGER.error("Could not close connections");
             LOGGER.error(e, null);
         } catch (InterruptedException e) {
             LOGGER.error("Could not sleep thread");
-            LOGGER.error(e, null);
-        } catch (NullPointerException e) {
-            LOGGER.error("Transport handler is null");
             LOGGER.error(e, null);
         }
     }
@@ -242,9 +244,12 @@ public class TlsSul extends AbstractSul {
         try {
             if (state == null) {
                 throw new RuntimeException("TLS-Attacker state is not initialized");
-            } else if (state.getTlsContext().getTransportHandler().isClosed() || closed) {
-                closed = true;
-                return outputMapper.socketClosed();
+            } else {
+                TransportHandler transportHandler = state.getTlsContext().getTransportHandler();
+                if (transportHandler == null || transportHandler.isClosed() || closed) {
+                    closed = true;
+                    return outputMapper.socketClosed();
+                }
             }
 
             output = executeInput(in, executor, role);
@@ -258,8 +263,8 @@ public class TlsSul extends AbstractSul {
                 closed = true;
             }
             return output;
-        } catch (IOException | NullPointerException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
             closed = true;
             return outputMapper.socketClosed();
         }
