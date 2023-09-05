@@ -168,6 +168,7 @@
                                 <include>*.md</include>
                                 <include>*.sh</include>
                                 <include>*.xml</include>
+                                <include>*/*.xml</include>
                             </includes>
                             <endWithNewline />
                             <trimTrailingWhitespace />
@@ -205,8 +206,7 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.7.3.5</version>
                 <configuration>
-                    <threshold>High</threshold>
-                    <!-- <visitors>FindDeadLocalStores,UnreadFields</visitors> -->
+                    <includeFilterFile>.spotbugs/include.xml</includeFilterFile>
                 </configuration>
                 <executions>
                     <execution>

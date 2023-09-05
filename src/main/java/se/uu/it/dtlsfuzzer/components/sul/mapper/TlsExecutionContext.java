@@ -111,11 +111,13 @@ public class TlsExecutionContext extends ExecutionContextStepped {
         return writeRecordNumberEpoch0;
     }
 
-    public Long incrementWriteRecordNumberEpoch0() {
+    /**
+      public Long incrementWriteRecordNumberEpoch0() {
         Long old = writeRecordNumberEpoch0;
         writeRecordNumberEpoch0++;
         return old;
-    }
+      }
+    **/
 
     public SulConfig getSulDelegate() {
         return delegate;
