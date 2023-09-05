@@ -94,6 +94,9 @@ public class TlsSulAdapter implements SulAdapter {
         String resp = null;
         try {
             resp = reader.readLine();
+            if (resp == null) {
+                throw new TlsSulAdapterException("Received no response");
+            }
         } catch (IOException e) {
             throw new TlsSulAdapterException(e);
         }
@@ -119,8 +122,8 @@ public class TlsSulAdapter implements SulAdapter {
             String response;
             try {
                 response = reader.readLine();
-                if (!response.equals(RESP_STOPPED)) {
-                    throw new TlsSulAdapterException(String.format("Received invalid response to %s command", CMD_STOP));
+                if (response == null || !response.equals(RESP_STOPPED)) {
+                    throw new TlsSulAdapterException(String.format("Received invalid or no response to %s command", CMD_STOP));
                 }
                 stopped = true;
             } catch (IOException e) {
@@ -137,11 +140,11 @@ public class TlsSulAdapter implements SulAdapter {
         try {
             if (reader.ready()) {
                 String response = reader.readLine();
-                if (response.equals(RESP_STOPPED)) {
+                if (response == null || response.equals(RESP_STOPPED)) {
                     LOGGER.debug("Server stopped");
                     stopped = true;
                 } else {
-                    throw new TlsSulAdapterException("Received invalid response");
+                    throw new TlsSulAdapterException("Received invalid or no response");
                 }
             }
         } catch (IOException e) {
