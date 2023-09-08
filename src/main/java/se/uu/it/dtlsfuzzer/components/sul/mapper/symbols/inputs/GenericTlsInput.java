@@ -117,6 +117,7 @@ public class GenericTlsInput extends DtlsInput {
         this.message = message;
     }
 
+    @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         stripFields(message);
         return new TlsProtocolMessage(message);

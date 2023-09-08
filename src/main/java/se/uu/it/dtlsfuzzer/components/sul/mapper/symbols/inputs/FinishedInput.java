@@ -36,6 +36,7 @@ public class FinishedInput extends DtlsInput {
         getTlsContext(context).setDtlsWriteHandshakeMessageSequence(lastSequenceNumber + 1);
     }
 
+    @Override
     public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
             ExecutionContext context) {
         if (resetMSeq) {
