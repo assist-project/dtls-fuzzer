@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsMessageReceiver;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsMessageResponse;
@@ -39,7 +37,6 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsStepContext;
  * such as coalescing to outputs into one or splitting an output into its atoms.
  */
 public class TlsOutputMapper extends OutputMapper {
-    private static final Logger LOGGER = LogManager.getLogger();
 
     public TlsOutputMapper(MapperConfig mapperConfig) {
         super(mapperConfig);
@@ -64,7 +61,7 @@ public class TlsOutputMapper extends OutputMapper {
             TlsStepContext tlsStepContext = (TlsStepContext) tlsContext.getStepContext();
             tlsStepContext.receiveUpdate(response);
 
-            return extractOutput(state, response.getMessages());
+            return extractOutput(response.getMessages());
         } catch (Exception ex) {
             ex.printStackTrace();
             return socketClosed();
@@ -94,7 +91,7 @@ public class TlsOutputMapper extends OutputMapper {
         return -1;
     }
 
-    private AbstractOutput extractOutput(State state, List<TlsMessage> receivedMessages) {
+    private AbstractOutput extractOutput(List<TlsMessage> receivedMessages) {
         if (isResponseUnknown(receivedMessages)) {
             return AbstractOutput.unknown();
         }
@@ -103,7 +100,7 @@ public class TlsOutputMapper extends OutputMapper {
         } else {
             List<TlsMessage> tlsMessages = receivedMessages.stream().map(p -> (TlsMessage) p)
                     .collect(Collectors.toList());
-            List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages, state);
+            List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
             String abstractOutput = toAbstractOutputString(abstractMessageStrings);
             List<ProtocolMessage> tlsProtocolMessages =
             tlsMessages.stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
@@ -112,7 +109,7 @@ public class TlsOutputMapper extends OutputMapper {
         }
     }
 
-    private List<String> extractAbstractMessageStrings(List<TlsMessage> receivedMessages, State state) {
+    private List<String> extractAbstractMessageStrings(List<TlsMessage> receivedMessages) {
         List<String> outputStrings = new ArrayList<>(receivedMessages.size());
         for (int i = 0; i < receivedMessages.size(); i++) {
             // checking for cases of decryption failures, which which case
@@ -127,7 +124,7 @@ public class TlsOutputMapper extends OutputMapper {
             }
 
             TlsMessage m = receivedMessages.get(i);
-            String outputString = toOutputString(m, state);
+            String outputString = toOutputString(m);
             outputStrings.add(outputString);
         }
         return outputStrings;
@@ -149,11 +146,11 @@ public class TlsOutputMapper extends OutputMapper {
         return abstractOutput;
     }
 
-    private String toOutputString(TlsMessage message, State state) {
+    private String toOutputString(TlsMessage message) {
         if (message instanceof CertificateMessage) {
             CertificateMessage cert = (CertificateMessage) message;
             if (cert.getCertificatesListLength().getValue() > 0) {
-                String certTypeString = getCertSignatureTypeString(cert, state);
+                String certTypeString = getCertSignatureTypeString(cert);
                 return certTypeString + "_" + message.toCompactString();
             } else {
                 return "EMPTY_" + message.toCompactString();
@@ -166,7 +163,7 @@ public class TlsOutputMapper extends OutputMapper {
      * Best-effort method to get the signature key type string from a non-empty
      * certificate.
      */
-    private String getCertSignatureTypeString(CertificateMessage message, State state) {
+    private String getCertSignatureTypeString(CertificateMessage message) {
         String certType = "UNKNOWN";
         if (message.getCertificateKeyPair() == null) {
             throw new NotImplementedException("Raw public keys not supported");
