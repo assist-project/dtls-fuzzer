@@ -49,7 +49,7 @@ public class HelloRequestInput extends DtlsInput {
     @Override
     public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
             ExecutionContext context) {
-        if (!(TlsOutputChecker.hasClientHello(output))) {
+        if (! TlsOutputChecker.hasClientHello(output)) {
             if (disableOnRefusal) {
                 context.disableExecution();
             } else if (resetSequenceNumber) {
