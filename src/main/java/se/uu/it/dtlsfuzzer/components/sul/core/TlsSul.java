@@ -112,6 +112,7 @@ public class TlsSul extends AbstractSul {
         this.sulAdapter = sulAdapter;
     }
 
+    @Override
     public void setDynamicPortProvider(DynamicPortProvider portProvider) {
         this.portProvider = portProvider;
     }

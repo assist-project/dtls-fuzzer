@@ -36,6 +36,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
         super("CLIENT_HELLO_RENEGOTIATION");
     }
 
+    @Override
     public boolean isEnabled(ExecutionContext context) {
         switch (enabled) {
             case OWN_EPOCH_CHANGE :
@@ -82,6 +83,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
         return new TlsProtocolMessage(message);
     }
 
+    @Override
     public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
             ExecutionContext context) {
         switch (enabled) {

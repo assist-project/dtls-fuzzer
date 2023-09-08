@@ -22,18 +22,22 @@ public class DtlsInputWrapper extends DtlsInput{
         return input;
     }
 
+    @Override
     public void setEpoch(Integer epoch) {
         input.setEpoch(epoch);
     }
 
+    @Override
     public Integer getEpoch() {
         return input.getEpoch();
     }
 
+    @Override
     public void setEncryptionEnabled(boolean encrypted) {
         input.setEncryptionEnabled(encrypted);
     }
 
+    @Override
     public boolean isEncryptionEnabled() {
         return input.isEncryptionEnabled();
     }
@@ -43,14 +47,17 @@ public class DtlsInputWrapper extends DtlsInput{
         return input.generateProtocolMessage(context);
     }
 
+    @Override
     public void preSendDtlsUpdate(TlsExecutionContext context) {
         input.preSendDtlsUpdate(context);
     }
 
+    @Override
     public void postSendDtlsUpdate(TlsExecutionContext context) {
         input.postSendDtlsUpdate(context);
     }
 
+    @Override
     public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
             ExecutionContext context) {
         input.postReceiveUpdate(output, abstractOutputChecker, context);

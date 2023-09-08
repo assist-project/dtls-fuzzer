@@ -25,6 +25,7 @@ public class ChangeCipherSpecInput extends DtlsInput {
         context.setWriteRecordNumberEpoch0(writeSeqNumForCurrentEpoch + 1);
     }
 
+    @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage(getState(context).getConfig());
         return new TlsProtocolMessage(ccs);

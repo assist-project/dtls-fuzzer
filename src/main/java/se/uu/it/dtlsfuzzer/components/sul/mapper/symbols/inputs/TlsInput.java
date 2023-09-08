@@ -23,6 +23,7 @@ public abstract class TlsInput extends AbstractInputXml {
         super(name);
     }
 
+    @Override
     public void preSendUpdate(ExecutionContext context) {
     }
 
@@ -54,5 +55,6 @@ public abstract class TlsInput extends AbstractInputXml {
         return getTlsExecutionContext(context).getState().getState().getConfig();
     }
 
+    @Override
     public abstract TlsInputType getInputType();
 }

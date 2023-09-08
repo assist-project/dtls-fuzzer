@@ -71,6 +71,7 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * Connects to the SUL launch server if not already connected.
      */
+    @Override
     public void connect() {
         try {
             if (!adapterSocket.isConnected()) {
@@ -86,6 +87,7 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * Asks the SUL launch server to launch a new SUL thread.
      */
+    @Override
     public void start() {
         if (!checkStopped()) {
             throw new TlsSulAdapterException("SUL still running");
@@ -116,7 +118,8 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * Asks the SUL launch server to terminate the current SUL thread (if the thread hasn't terminated already).
      */
-    public void stop(){
+    @Override
+    public void stop() {
         if (!checkStopped()) {
             writer.println(CMD_STOP);
             String response;
@@ -135,6 +138,7 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean checkStopped() {
         // has the SUT stopped after executing the input?
         try {
@@ -156,6 +160,7 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Integer getSulPort() {
         return sulPort;
     }
