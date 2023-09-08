@@ -78,7 +78,7 @@ public class ProcessingUnit {
 
     /**
      * automatically updates {@link ProcessingUnit#recordsToSend}
-     * @param recordsToSend
+     * @param messageRecords  the message records
      */
     public void setMessageRecords(List<PackingResult> messageRecords) {
         this.messageRecords = messageRecords;
