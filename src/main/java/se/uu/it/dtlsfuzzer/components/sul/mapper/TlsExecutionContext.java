@@ -7,7 +7,6 @@ import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -63,7 +62,7 @@ public class TlsExecutionContext extends ExecutionContextStepped {
     }
 
     public List<AbstractRecord> getAllRecords() {
-        List<AbstractRecord> records = new LinkedList<>();
+        List<AbstractRecord> records = new ArrayList<>();
         getTlsStepContextStream().forEach(tlsStep -> {
             if (tlsStep.getProcessingUnit().getRecordsSent() != null) {
                 records.addAll(tlsStep.getProcessingUnit().getRecordsSent());

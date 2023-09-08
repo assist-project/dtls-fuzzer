@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
@@ -160,7 +159,7 @@ public class TlsMessageReceiver {
     private List<ProtocolMessage> handleRecordBytes(byte[] recordBytes, ProtocolMessageType type, int epoch,
             TlsContext context) {
         int dataPointer = 0;
-        List<ProtocolMessage> receivedMessages = new LinkedList<>();
+        List<ProtocolMessage> receivedMessages = new ArrayList<>();
 
         while (dataPointer < recordBytes.length) {
             ParserResult result = null;
