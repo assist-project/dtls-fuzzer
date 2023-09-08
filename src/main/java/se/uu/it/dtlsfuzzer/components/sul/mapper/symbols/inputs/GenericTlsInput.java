@@ -54,7 +54,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 /**
- *
+ * The union of all TLS input messages.
  */
 public class GenericTlsInput extends DtlsInput {
     @XmlElements(value = {
