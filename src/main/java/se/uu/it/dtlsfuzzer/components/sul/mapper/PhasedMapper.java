@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
@@ -81,8 +80,8 @@ public class PhasedMapper extends MapperComposer {
 
         case FRAGMENT_GENERATION:
             // We assume this is DTLS
-            List<FragmentationResult> results = new LinkedList<>();
-            List<TlsMessage> messagesToPack = new LinkedList<>();
+            List<FragmentationResult> results = new ArrayList<>();
+            List<TlsMessage> messagesToPack = new ArrayList<>();
             for (TlsMessage message : unit.getMessages()) {
                 if (message.isHandshakeMessage()) {
                     FragmentationResult result = helper.fragmentMessage((HandshakeMessage) message, state);
@@ -97,16 +96,16 @@ public class PhasedMapper extends MapperComposer {
             break;
 
         case RECORD_GENERATION:
-            List<PackingResult> packingResults = new LinkedList<>();
+            List<PackingResult> packingResults = new ArrayList<>();
             if (!unit.getMessagesToPack().isEmpty()) {
                 ProtocolMessageType msgType = unit.getMessagesToPack().get(0).getProtocolMessageType();
-                List<TlsMessage> messagesInRecord = new LinkedList<>();
+                List<TlsMessage> messagesInRecord = new ArrayList<>();
 
                 for (TlsMessage message : unit.getMessagesToPack()) {
                     if (msgType != message.getProtocolMessageType()) {
                         AbstractRecord record = state.getTlsContext().getRecordLayer().getFreshRecord();
                         packingResults.add(new PackingResult(messagesInRecord, Arrays.asList(record)));
-                        messagesInRecord = new LinkedList<>();
+                        messagesInRecord = new ArrayList<>();
                     }
                     messagesInRecord.add(message);
                 }

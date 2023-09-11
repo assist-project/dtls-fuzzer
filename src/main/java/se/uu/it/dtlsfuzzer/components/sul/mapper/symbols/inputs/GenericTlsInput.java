@@ -48,7 +48,7 @@ import de.rub.nds.tlsattacker.core.state.State;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import java.lang.reflect.Field;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
@@ -146,7 +146,7 @@ public class GenericTlsInput extends DtlsInput {
      * Sets the original value of all mvar fields to null.
      */
     private void stripFields(TlsMessage message) {
-        List<ModifiableVariableHolder> holders = new LinkedList<>();
+        List<ModifiableVariableHolder> holders = new ArrayList<>();
         holders.addAll(message.getAllModifiableVariableHolders());
         for (ModifiableVariableHolder holder : holders) {
             List<Field> fields = holder.getAllModifiableVariableFields();

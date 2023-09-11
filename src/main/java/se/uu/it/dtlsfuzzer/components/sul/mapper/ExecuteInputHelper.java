@@ -13,8 +13,8 @@ import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.SendMessageHelper;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -64,7 +64,7 @@ public class ExecuteInputHelper {
      * Packs messages/fragments into records ready to be sent.
      */
     public final PackingResult packMessages(List<TlsMessage> messages, State state) {
-        List<AbstractRecord> records = new LinkedList<>();
+        List<AbstractRecord> records = new ArrayList<>();
         for (TlsMessage message : messages) {
             AbstractRecord record = state.getTlsContext().getRecordLayer().getFreshRecord();
             records.add(record);
