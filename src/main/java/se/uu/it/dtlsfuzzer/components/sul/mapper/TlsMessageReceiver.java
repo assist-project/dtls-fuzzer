@@ -139,7 +139,7 @@ public class TlsMessageReceiver {
     private ProtocolMessage handleCombinedFragment(DtlsHandshakeMessageFragment combinedFragment, TlsContext context) {
         byte[] messageBytes = convertDtlsFragmentToCleanTlsBytes(combinedFragment);
         HandshakeMessageType handshakeMessageType = HandshakeMessageType.getMessageType(messageBytes[0]);
-        ProtocolMessageHandler protocolMessageHandler = HandlerFactory.getHandler(context,
+        ProtocolMessageHandler<?> protocolMessageHandler = HandlerFactory.getHandler(context,
                 ProtocolMessageType.HANDSHAKE, handshakeMessageType);
 
         // this informs TLS-Attacker of the message_seq to use for the HandshakeMessage,
@@ -214,7 +214,7 @@ public class TlsMessageReceiver {
             ProtocolMessageType typeFromRecord, TlsContext context) throws ParserException, AdjustmentException {
 
         HandshakeMessageType handshakeMessageType = HandshakeMessageType.getMessageType(protocolMessageBytes[pointer]);
-        ProtocolMessageHandler protocolMessageHandler = HandlerFactory.getHandler(context, typeFromRecord,
+        ProtocolMessageHandler<?> protocolMessageHandler = HandlerFactory.getHandler(context, typeFromRecord,
                 handshakeMessageType);
         return receiveHelper.parseMessage(protocolMessageHandler, protocolMessageBytes, pointer, false, context);
     }
