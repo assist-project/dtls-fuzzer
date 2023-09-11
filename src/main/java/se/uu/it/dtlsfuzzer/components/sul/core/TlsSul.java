@@ -65,7 +65,6 @@ public class TlsSul extends AbstractSul {
 
     private SulConfig delegate;
     private Mapper defaultExecutor;
-    private String role;
     private DynamicPortProvider portProvider;
 
     /**
@@ -87,7 +86,6 @@ public class TlsSul extends AbstractSul {
         this.delegate = delegate;
         this.configDelegate = configDelegate;
         this.defaultExecutor = defaultExecutor;
-        role = delegate.getFuzzingRole();
         server = delegate.isFuzzingClient();
         outputMapper = new TlsOutputMapper(mapperConfig);
         if (server) {
@@ -253,7 +251,7 @@ public class TlsSul extends AbstractSul {
                 }
             }
 
-            output = executeInput(in, executor, role);
+            output = executeInput(in, executor);
 
             if (output == AbstractOutput.disabled() || context.getStepContext().isDisabled()) {
                 // this should lead to a disabled sink state
@@ -271,7 +269,7 @@ public class TlsSul extends AbstractSul {
         }
     }
 
-    private AbstractOutput executeInput(TlsInput in, Mapper executor, String role) {
+    private AbstractOutput executeInput(TlsInput in, Mapper executor) {
         LOGGER.debug("sent: {}", in.toString());
         state.getTlsContext().setTalkingConnectionEndType(state.getTlsContext().getChooser().getConnectionEndType());
         long originalTimeout = state.getTlsContext().getTransportHandler().getTimeout();

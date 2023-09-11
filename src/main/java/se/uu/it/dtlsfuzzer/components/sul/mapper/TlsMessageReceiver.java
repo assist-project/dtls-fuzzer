@@ -137,7 +137,7 @@ public class TlsMessageReceiver {
      * Parse and extract Handshake message from a combined fragment.
      */
     private ProtocolMessage handleCombinedFragment(DtlsHandshakeMessageFragment combinedFragment, TlsContext context) {
-        byte[] messageBytes = convertDtlsFragmentToCleanTlsBytes(combinedFragment, context);
+        byte[] messageBytes = convertDtlsFragmentToCleanTlsBytes(combinedFragment);
         HandshakeMessageType handshakeMessageType = HandshakeMessageType.getMessageType(messageBytes[0]);
         ProtocolMessageHandler protocolMessageHandler = HandlerFactory.getHandler(context,
                 ProtocolMessageType.HANDSHAKE, handshakeMessageType);
@@ -197,7 +197,7 @@ public class TlsMessageReceiver {
     /*
      * Processes a fragmented message by extracting the underlying message.
      */
-    private byte[] convertDtlsFragmentToCleanTlsBytes(DtlsHandshakeMessageFragment fragment, TlsContext context) {
+    private byte[] convertDtlsFragmentToCleanTlsBytes(DtlsHandshakeMessageFragment fragment) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         stream.write(fragment.getType().getValue());
         try {
@@ -224,12 +224,6 @@ public class TlsMessageReceiver {
         DtlsHandshakeMessageFragmentHandler dtlsHandshakeMessageHandler = new DtlsHandshakeMessageFragmentHandler(
                 context);
         return receiveHelper.parseMessage(dtlsHandshakeMessageHandler, recordBytes, pointer, false, context);
-    }
-
-    private ParserResult tryHandleAsUnknownHandshakeMessage(byte[] protocolMessageBytes, int pointer,
-            ProtocolMessageType typeFromRecord, TlsContext context) throws ParserException, AdjustmentException {
-        ProtocolMessageHandler pmh = HandlerFactory.getHandler(context, typeFromRecord, HandshakeMessageType.UNKNOWN);
-        return receiveHelper.parseMessage(pmh, protocolMessageBytes, pointer, false, context);
     }
 
     private ParserResult tryHandleAsUnknownMessage(byte[] protocolMessageBytes, int pointer, TlsContext context,

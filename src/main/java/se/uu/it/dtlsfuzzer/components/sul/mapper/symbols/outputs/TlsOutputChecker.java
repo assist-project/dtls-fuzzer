@@ -14,8 +14,8 @@ public class TlsOutputChecker implements AbstractOutputChecker {
     private static String APPLICATION="APPLICATION";
     private static String FINISHED="FINISHED";
     private static String ALERT="Alert";
-    private static String CLOSE_NOTIFY="Alert(WARNING,CLOSE_NOTIFY)";
-    private static String UNEXPECTED_MESSAGE="Alert(FATAL,UNEXPECTED_MESSAGE)";
+    // private static String CLOSE_NOTIFY="Alert(WARNING,CLOSE_NOTIFY)";
+    // private static String UNEXPECTED_MESSAGE="Alert(FATAL,UNEXPECTED_MESSAGE)";
     private static String CLIENT_HELLO="CLIENT_HELLO";
     private static String SERVER_HELLO="SERVER_HELLO";
     private static String CHANGE_CIPHER_SPEC="CHANGE_CIPHER_SPEC";
