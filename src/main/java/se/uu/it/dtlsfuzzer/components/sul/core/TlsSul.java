@@ -253,7 +253,7 @@ public class TlsSul extends AbstractSul {
 
             output = executeInput(in, executor);
 
-            if (output == AbstractOutput.disabled() || context.getStepContext().isDisabled()) {
+            if (output.equals(AbstractOutput.disabled()) || context.getStepContext().isDisabled()) {
                 // this should lead to a disabled sink state
                 context.disableExecution();
             }
