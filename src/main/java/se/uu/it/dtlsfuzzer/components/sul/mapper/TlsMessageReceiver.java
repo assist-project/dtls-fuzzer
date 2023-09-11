@@ -227,12 +227,6 @@ public class TlsMessageReceiver {
         return receiveHelper.parseMessage(dtlsHandshakeMessageHandler, recordBytes, pointer, false, context);
     }
 
-    // private ParserResult tryHandleAsUnknownHandshakeMessage(byte[] protocolMessageBytes, int pointer,
-    //         ProtocolMessageType typeFromRecord, TlsContext context) throws ParserException, AdjustmentException {
-    //     ProtocolMessageHandler pmh = HandlerFactory.getHandler(context, typeFromRecord, HandshakeMessageType.UNKNOWN);
-    //     return receiveHelper.parseMessage(pmh, protocolMessageBytes, pointer, false, context);
-    // }
-
     private ParserResult tryHandleAsUnknownMessage(byte[] protocolMessageBytes, int pointer, TlsContext context,
             ProtocolMessageType recordContentMessageType) throws ParserException, AdjustmentException {
         UnknownMessageHandler unknownHandler = new UnknownMessageHandler(context, recordContentMessageType);

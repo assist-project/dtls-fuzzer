@@ -65,7 +65,6 @@ public class TlsSul extends AbstractSul {
 
     private SulConfig delegate;
     private Mapper defaultExecutor;
-    // private String role;
     private DynamicPortProvider portProvider;
 
     /**
@@ -87,7 +86,6 @@ public class TlsSul extends AbstractSul {
         this.delegate = delegate;
         this.configDelegate = configDelegate;
         this.defaultExecutor = defaultExecutor;
-        // role = delegate.getFuzzingRole();
         server = delegate.isFuzzingClient();
         outputMapper = new TlsOutputMapper(mapperConfig);
         if (server) {

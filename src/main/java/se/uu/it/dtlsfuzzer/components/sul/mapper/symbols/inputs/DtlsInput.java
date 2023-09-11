@@ -1,6 +1,5 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-//import de.rub.nds.tlsattacker.core.state.TlsContext;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang3.NotImplementedException;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
@@ -86,7 +85,4 @@ public abstract class DtlsInput extends TlsInput {
         this.encryptionEnabled = encrypted;
     }
 
-    // private long getWriteSequenceNumber(TlsContext context) {
-    //     return context.getRecordLayer().getEncryptor().getRecordCipher(epoch).getState().getWriteSequenceNumber();
-    // }
 }
