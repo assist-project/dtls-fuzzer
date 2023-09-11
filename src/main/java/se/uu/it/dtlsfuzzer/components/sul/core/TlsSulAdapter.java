@@ -102,7 +102,7 @@ public class TlsSulAdapter implements SulAdapter {
         } catch (IOException e) {
             throw new TlsSulAdapterException(e);
         }
-        String[] split = resp.split("\\ ");
+        String[] split = resp.split("\\ ", -1);
         if (!split[0].equals(RESP_STARTED)) {
             throw new TlsSulAdapterException(String.format("Received invalid response to %s command", CMD_START));
         }

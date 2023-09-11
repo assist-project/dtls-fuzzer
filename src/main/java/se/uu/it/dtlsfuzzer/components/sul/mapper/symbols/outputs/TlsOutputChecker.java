@@ -126,7 +126,7 @@ public class TlsOutputChecker implements AbstractOutputChecker {
 
     public static KeyExchangeAlgorithm getKeyExchangeAlgorithm(TlsOutput output) {
         if (hasClientKeyExchange(output) || hasServerKeyExchange(output)) {
-            String keyExchange = output.getName().split("_")[0];
+            String keyExchange = output.getName().split("_", -1)[0];
             if (keyExchange.endsWith("DHE")) {
                 keyExchange = keyExchange.substring(0, keyExchange.length()-1);
             }
@@ -136,7 +136,7 @@ public class TlsOutputChecker implements AbstractOutputChecker {
     }
 
     private static String getParameter(TlsOutput output, int idx) {
-        String[] outputSplit = output.getName().split("_");
+        String[] outputSplit = output.getName().split("_", -1);
         return outputSplit[idx];
     }
 }
