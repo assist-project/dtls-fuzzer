@@ -153,7 +153,7 @@ public class GenericTlsInput extends DtlsInput {
             for (Field f : fields) {
                 f.setAccessible(true);
 
-                ModifiableVariable mv = null;
+                ModifiableVariable<?> mv = null;
                 try {
                     mv = (ModifiableVariable) f.get(holder);
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
