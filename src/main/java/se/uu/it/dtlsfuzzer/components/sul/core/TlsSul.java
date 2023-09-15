@@ -98,6 +98,7 @@ public class TlsSul extends AbstractSul {
                                     "Causing existing ClientHello waiter thread to terminate by closing the connection.");
                             state.getTlsContext().getTransportHandler().closeConnection();
                         } catch (IOException e) {
+                            LOGGER.error("IOException in TlsSul.run()");
                             e.printStackTrace();
                         }
                     }

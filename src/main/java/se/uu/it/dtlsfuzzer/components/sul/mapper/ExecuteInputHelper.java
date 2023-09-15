@@ -16,12 +16,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Implements functionality for sending messages/records.
  * This class is analogous to TLS-Attacker's {@link SendMessageHelper} class.
  */
 public class ExecuteInputHelper {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Prepares a TlsMessage; parts were taken from {@link SendMessageHelper}
@@ -83,6 +86,7 @@ public class ExecuteInputHelper {
         try {
             helper.sendRecords(records, state.getTlsContext());
         } catch (IOException e) {
+            LOGGER.error("IOException in ExecuteInputHelper.sendRecords()");
             e.printStackTrace();
         }
     }

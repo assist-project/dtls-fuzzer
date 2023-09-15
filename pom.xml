@@ -108,9 +108,9 @@
                     <showWarnings>true</showWarnings>
                     <compilerArgs>
                         <!--arg>-Werror</arg>-->
-                        <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:all</arg>
                         <arg>-XDcompilePolicy=simple</arg>
-                        <arg>-Xplugin:ErrorProne -Xep:AddressSelection:OFF -Xep:CatchAndPrintStackTrace:OFF</arg>
+                        <arg>-Xplugin:ErrorProne -Xep:AddressSelection:OFF</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
