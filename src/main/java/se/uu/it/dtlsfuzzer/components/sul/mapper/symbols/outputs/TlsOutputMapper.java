@@ -58,7 +58,7 @@ public class TlsOutputMapper extends OutputMapper {
         try {
             TlsMessageReceiver receiver = new TlsMessageReceiver();
             TlsMessageResponse response = receiver.receiveMessages(state.getTlsContext());
-            TlsStepContext tlsStepContext = (TlsStepContext) tlsContext.getStepContext();
+            TlsStepContext tlsStepContext = tlsContext.getStepContext();
             tlsStepContext.receiveUpdate(response);
 
             return extractOutput(response.getMessages());
@@ -98,8 +98,7 @@ public class TlsOutputMapper extends OutputMapper {
         if (receivedMessages.isEmpty()) {
             return timeout();
         } else {
-            List<TlsMessage> tlsMessages = receivedMessages.stream().map(p -> (TlsMessage) p)
-                    .collect(Collectors.toList());
+            List<TlsMessage> tlsMessages = receivedMessages.stream().collect(Collectors.toList());
             List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
             String abstractOutput = toAbstractOutputString(abstractMessageStrings);
             List<ProtocolMessage> tlsProtocolMessages =
