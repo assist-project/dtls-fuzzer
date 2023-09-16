@@ -97,9 +97,7 @@ public class TlsOutputMapper extends OutputMapper {
         if (receivedMessages.isEmpty()) {
             return timeout();
         } else {
-            List<ProtocolMessage<? extends ProtocolMessage<?>>> tlsMessages =
-                    receivedMessages.stream()//.map(p -> (ProtocolMessage<? extends ProtocolMessage<?>>) p)
-                    .collect(Collectors.toList());
+            List<ProtocolMessage<? extends ProtocolMessage<?>>> tlsMessages = receivedMessages.stream().collect(Collectors.toList());
             List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
             String abstractOutput = toAbstractOutputString(abstractMessageStrings);
             List<com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage> tlsProtocolMessages =
