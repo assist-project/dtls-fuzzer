@@ -183,7 +183,7 @@
                                 <include>*.md</include>
                                 <include>*.sh</include>
                                 <include>*.xml</include>
-                                <include>.mvn/*.xml</include>
+                                <include>.spotbugs/*.xml</include>
                             </includes>
                             <endWithNewline />
                             <trimTrailingWhitespace />
