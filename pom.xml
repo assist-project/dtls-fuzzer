@@ -9,7 +9,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <jakarta-xml.version>4.0.0</jakarta-xml.version>
+        <jakarta-xml.version>4.0.1</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.16.0</learnlib.version>
         <log4j.version>2.20.0</log4j.version>
@@ -160,7 +160,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.39.0</version>
+                <version>2.40.0</version>
                 <configuration>
                     <formats>
                         <format>
