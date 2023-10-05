@@ -50,6 +50,8 @@ import jakarta.xml.bind.annotation.XmlElements;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
@@ -57,6 +59,8 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
  * The union of all TLS input messages.
  */
 public class GenericTlsInput extends DtlsInput {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @XmlElements(value = {
             @XmlElement(type = TlsMessage.class, name = "TlsMessage"),
             @XmlElement(type = CertificateMessage.class, name = "Certificate"),
@@ -157,17 +161,17 @@ public class GenericTlsInput extends DtlsInput {
                 try {
                     mv = (ModifiableVariable) f.get(holder);
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
+                    LOGGER.error("IOException in GenericTlsInput.stripFields()");
                     ex.printStackTrace();
                 }
                 if (mv != null) {
-                    if (mv.getModification() != null
-                            || mv.isCreateRandomModification()) {
+                    if (mv.getModification() != null || mv.isCreateRandomModification()) {
                         mv.setOriginalValue(null);
                     } else {
                         try {
                             f.set(holder, null);
-                        } catch (IllegalArgumentException
-                                | IllegalAccessException ex) {
+                        } catch (IllegalArgumentException | IllegalAccessException ex) {
+                            LOGGER.error("IOException in GenericTlsInput.stripFields()");
                             ex.printStackTrace();
                         }
                     }

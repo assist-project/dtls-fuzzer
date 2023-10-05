@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputMapper;
@@ -33,6 +35,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputMapper
  * Changes in each phase can be implemented by just sub-classing and overriding the executePhase method.
  */
 public class PhasedMapper extends MapperComposer {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private ExecuteInputHelper helper;
 
@@ -135,6 +138,7 @@ public class PhasedMapper extends MapperComposer {
                     }
 
                 } catch (IOException e) {
+                    LOGGER.error("IOException in record preparation case of PhasedMapper.executePhase()");
                     e.printStackTrace();
                 }
             }

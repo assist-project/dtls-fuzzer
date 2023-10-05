@@ -98,6 +98,7 @@ public class TlsSul extends AbstractSul {
                                     "Causing existing ClientHello waiter thread to terminate by closing the connection.");
                             state.getTlsContext().getTransportHandler().closeConnection();
                         } catch (IOException e) {
+                            LOGGER.error("IOException in TlsSul.run()");
                             e.printStackTrace();
                         }
                     }
@@ -253,7 +254,7 @@ public class TlsSul extends AbstractSul {
 
             output = executeInput(in, executor);
 
-            if (output == AbstractOutput.disabled() || context.getStepContext().isDisabled()) {
+            if (output.equals(AbstractOutput.disabled()) || context.getStepContext().isDisabled()) {
                 // this should lead to a disabled sink state
                 context.disableExecution();
             }

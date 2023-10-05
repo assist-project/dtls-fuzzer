@@ -9,6 +9,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
+        <error-prone.version>2.22.0</error-prone.version>
         <jakarta-xml.version>4.0.1</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.16.0</learnlib.version>
@@ -104,6 +105,20 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <!--arg>-Werror</arg>-->
+                        <arg>-Xlint:all</arg>
+                        <arg>-XDcompilePolicy=simple</arg>
+                        <arg>-Xplugin:ErrorProne -Xep:AddressSelection:OFF</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>${error-prone.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -168,7 +183,7 @@
                                 <include>*.md</include>
                                 <include>*.sh</include>
                                 <include>*.xml</include>
-                                <include>*/*.xml</include>
+                                <include>.spotbugs/*.xml</include>
                             </includes>
                             <endWithNewline />
                             <trimTrailingWhitespace />

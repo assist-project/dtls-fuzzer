@@ -57,6 +57,7 @@ public class TlsSulAdapter implements SulAdapter {
                             adapterSocket.close();
                         }
                     } catch (IOException e) {
+                        LOGGER.error("IOException in TlsSulAdapter.run()");
                         e.printStackTrace();
                     }
                 }
