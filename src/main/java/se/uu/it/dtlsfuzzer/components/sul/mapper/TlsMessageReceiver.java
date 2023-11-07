@@ -272,7 +272,7 @@ public class TlsMessageReceiver {
         }
     }
 
-    static class RecordGroup {
+    static final class RecordGroup {
         private List<Record> records;
         private byte contentType;
         private int epoch;

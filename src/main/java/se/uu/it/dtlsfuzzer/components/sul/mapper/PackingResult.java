@@ -9,7 +9,7 @@ import java.util.List;
  * Limitations of our setup restricts us to sending one record per message.
  */
 // FIXME fragments cannot be split over multiple records
-public class PackingResult {
+public final class PackingResult {
     private List<TlsMessage> messages;
     private List<AbstractRecord> records;
     public PackingResult(List<TlsMessage> messages,

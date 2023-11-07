@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
  * "stop" - prompts the launch server to stop the current SUL process.
  * The server generates "stopped" to signal that the SUL process has terminated.
  */
-public class TlsSulAdapter implements SulAdapter {
+public final class TlsSulAdapter implements SulAdapter {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String CMD_STOP = "stop";
