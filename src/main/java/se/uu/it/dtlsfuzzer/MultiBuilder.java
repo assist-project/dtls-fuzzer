@@ -35,7 +35,7 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilde
     private AlphabetBuilder alphabetBuilder = new AlphabetBuilderStandard(
             new AlphabetSerializerXml<>(TlsAlphabetPojoXml.class));
 
- // SulBuilderImpl needs to be implemented
+    // SulBuilderImpl needs to be implemented
     private SulBuilder sulBuilder = new TlsSulBuilder();
     private SulWrapper sulWrapper = new SulWrapperStandard();
 
@@ -44,17 +44,17 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilde
 
     @Override
     public TimingProbe build(TimingProbeEnabler timingProbeEnabler) {
-        return new TimingProbe(timingProbeEnabler, alphabetBuilder, sulBuilder, sulWrapper);
+        return new TimingProbe(timingProbeEnabler, alphabetBuilder, sulBuilder, sulWrapper).initialize();
     }
 
     @Override
     public TestRunner build(TestRunnerEnabler testRunnerEnabler) {
-        return new TestRunner(testRunnerEnabler, alphabetBuilder, sulBuilder, sulWrapper);
+        return new TestRunner(testRunnerEnabler, alphabetBuilder, sulBuilder, sulWrapper).initialize();
     }
 
     @Override
     public StateFuzzer build(StateFuzzerEnabler stateFuzzerEnabler) {
-        return new StateFuzzerStandard(new StateFuzzerComposerStandard(stateFuzzerEnabler, alphabetBuilder, sulBuilder, sulWrapper));
+        return new StateFuzzerStandard(new StateFuzzerComposerStandard(stateFuzzerEnabler, alphabetBuilder, sulBuilder, sulWrapper).initialize());
     }
 
     @Override
