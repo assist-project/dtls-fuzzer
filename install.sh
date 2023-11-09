@@ -7,10 +7,10 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="43c89c3"
+readonly PROTOCOLSTATEFUZZER_COMMIT="302ccd5"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
-readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-43c89c3.patch"
+readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-302ccd5.patch"
 
 function check_java() {
     if ! command -v java &> /dev/null
@@ -73,7 +73,7 @@ function install_protocolstatefuzzer() {
             echo "Patching ProtocolState-Fuzzer for compatibility with Java 11"
             git apply "$PROTOCOLSTATEFUZZER_PATCH"
             echo "Installing ProtocolState-Fuzzer"
-            mvn install
+            mvn install -DskipTests
         )
     fi
 }
