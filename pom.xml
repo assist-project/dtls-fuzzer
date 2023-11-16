@@ -12,7 +12,7 @@
         <error-prone.version>2.23.0</error-prone.version>
         <jakarta-xml.version>4.0.1</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
-        <learnlib.version>0.16.0</learnlib.version>
+        <learnlib.version>0.17.0</learnlib.version>
         <log4j.version>2.21.0</log4j.version>
     </properties>
 
