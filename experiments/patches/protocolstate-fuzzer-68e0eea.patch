@@ -112,11 +112,11 @@ index 3698c93..d57a009 100644
  import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
  import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestParser;
 +import com.google.common.collect.Lists;
- import de.learnlib.acex.analyzers.AcexAnalyzers;
- import de.learnlib.algorithms.kv.mealy.KearnsVaziraniMealy;
- import de.learnlib.algorithms.lstar.ce.ObservationTableCEXHandlers;
-@@ -26,7 +27,6 @@ import net.automatalib.words.Alphabet;
- import net.automatalib.words.Word;
+ import de.learnlib.acex.AcexAnalyzers;
+ import de.learnlib.algorithm.LearningAlgorithm.MealyLearner;
+ import de.learnlib.algorithm.kv.mealy.KearnsVaziraniMealy;
+@@ -26,7 +27,6 @@ import net.automatalib.alphabet.Alphabet;
+ import net.automatalib.word.Word;
  
  import java.io.IOException;
 -import java.util.ArrayList;
@@ -219,7 +219,7 @@ index 4a1fea8..31dc808 100644
 +++ b/src/main/java/com/github/protocolfuzzing/protocolstatefuzzer/components/learner/oracles/CacheInconsistencyException.java
 @@ -2,8 +2,6 @@ package com.github.protocolfuzzing.protocolstatefuzzer.components.learner.oracle
  
- import net.automatalib.words.Word;
+ import net.automatalib.word.Word;
  
 -import java.io.Serial;
 -
@@ -240,7 +240,7 @@ index e829299..925b0c7 100644
 +++ b/src/main/java/com/github/protocolfuzzing/protocolstatefuzzer/components/learner/oracles/NonDeterminismException.java
 @@ -2,8 +2,6 @@ package com.github.protocolfuzzing.protocolstatefuzzer.components.learner.oracle
  
- import net.automatalib.words.Word;
+ import net.automatalib.word.Word;
  
 -import java.io.Serial;
 -
@@ -435,8 +435,8 @@ index 27e161f..208ab0f 100644
 --- a/src/main/java/com/github/protocolfuzzing/protocolstatefuzzer/utils/AutomatonUtils.java
 +++ b/src/main/java/com/github/protocolfuzzing/protocolstatefuzzer/utils/AutomatonUtils.java
 @@ -3,8 +3,13 @@ package com.github.protocolfuzzing.protocolstatefuzzer.utils;
- import net.automatalib.automata.UniversalDeterministicAutomaton;
- import net.automatalib.words.Word;
+ import net.automatalib.automaton.UniversalDeterministicAutomaton;
+ import net.automatalib.word.Word;
  
 -import java.io.Serial;
 -import java.util.*;
