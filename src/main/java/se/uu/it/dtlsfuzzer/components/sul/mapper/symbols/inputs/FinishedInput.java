@@ -33,7 +33,7 @@ public class FinishedInput extends DtlsInput {
     public void postSendDtlsUpdate(TlsExecutionContext context) {
         getTlsContext(context).getDigest().reset();
         // we have to make this change for learning to scale
-        getTlsContext(context).setDtlsWriteHandshakeMessageSequence(lastSequenceNumber + 1);
+        getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), lastSequenceNumber + 1);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class FinishedInput extends DtlsInput {
             ExecutionContext context) {
         if (resetMSeq) {
             if (TlsOutputChecker.hasChangeCipherSpec(output)) {
-                getTlsContext(context).setDtlsWriteHandshakeMessageSequence(0);
+                getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0);
             }
         }
         super.postReceiveUpdate(output, abstractOutputChecker, context);
