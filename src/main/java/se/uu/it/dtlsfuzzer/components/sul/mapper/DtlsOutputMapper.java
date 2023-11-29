@@ -4,6 +4,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abst
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
+
 import de.rub.nds.tlsattacker.core.layer.LayerConfiguration;
 import de.rub.nds.tlsattacker.core.layer.LayerStackProcessingResult;
 import de.rub.nds.tlsattacker.core.layer.ProtocolLayer;
@@ -70,7 +71,7 @@ public class DtlsOutputMapper extends OutputMapper {
             return new TlsOutput(abstractOutput, tlsProtocolMessages);
         }
     }
-
+    
     private boolean isResponseUnknown(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
         if (receivedMessages.size() >= MIN_ALERTS_IN_DECRYPTION_FAILURE) {
             return receivedMessages.stream().allMatch(m -> m instanceof AlertMessage || m instanceof UnknownMessage);
