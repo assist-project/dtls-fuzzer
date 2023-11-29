@@ -15,6 +15,9 @@
         <learnlib.version>0.17.0</learnlib.version>
         <log4j.version>2.23.1</log4j.version>
         <osgi.version>8.1.0</osgi.version>
+        <attacker.core.version>5.1.6</attacker.core.version>
+        <attacker.transport.version>5.1.6</attacker.transport.version>
+        <modifiable-variable.version>4.1.2</modifiable-variable.version>
     </properties>
 
     <dependencyManagement>
@@ -80,18 +83,18 @@
         <dependency>
             <groupId>de.rub.nds</groupId>
             <artifactId>modifiable-variable</artifactId>
-            <version>4.1.2</version>
+            <version>${modifiable-variable.version}</version>
         </dependency>
         <dependency>
             <groupId>de.rub.nds.tls.attacker</groupId>
             <artifactId>tls-core</artifactId>
-            <version>5.1.6</version>
+            <version>${attacker.core.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>de.rub.nds.tls.attacker</groupId>
             <artifactId>transport</artifactId>
-            <version>4.0.2</version>
+            <version>${attacker.transport.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
