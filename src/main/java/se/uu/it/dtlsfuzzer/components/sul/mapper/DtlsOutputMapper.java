@@ -1,72 +1,82 @@
-package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
+package se.uu.it.dtlsfuzzer.components.sul.mapper;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.NotImplementedException;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
+
+import de.rub.nds.tlsattacker.core.layer.LayerConfiguration;
+import de.rub.nds.tlsattacker.core.layer.LayerStackProcessingResult;
+import de.rub.nds.tlsattacker.core.layer.ProtocolLayer;
+import de.rub.nds.tlsattacker.core.layer.SpecificReceiveLayerConfiguration;
+import de.rub.nds.tlsattacker.core.layer.constant.ImplementedLayers;
+import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.State;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.apache.commons.lang3.NotImplementedException;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsMessageReceiver;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsMessageResponse;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsStepContext;
+import de.rub.nds.tlsattacker.core.workflow.action.executor.MessageActionResult;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-/**
- * The output mapper performs the following functions:
- * <ol>
- * <li>receives the SUT's response (records) over the wire;</li>
- * <li>processes the response by:</li>
- * <ul>
- * <li>updating the internal state;</li>
- * <li>converting response to a corresponding {@link TlsOutput}.</li>
- * </ul>
- * </ol>
- *
- * Everything having to do with how a response is converted into a TlsOutput
- * should be implemented here. Also implemented are operations over the mapper
- * such as coalescing to outputs into one or splitting an output into its atoms.
- */
-public class TlsOutputMapper extends OutputMapper {
+public class DtlsOutputMapper extends OutputMapper {
 
-    public TlsOutputMapper(MapperConfig mapperConfig) {
+    public DtlsOutputMapper(MapperConfig mapperConfig) {
         super(mapperConfig);
     }
 
     @Override
     public AbstractOutput receiveOutput(ExecutionContext context) {
-        TlsExecutionContext tlsContext = (TlsExecutionContext) context;
-        State state = tlsContext.getState().getState();
-
+        TlsContext tlsContext = ((TlsExecutionContext) context).getState().getTlsContext();
         try {
-            if (state.getTlsContext().getTransportHandler().isClosed()) {
+            if (tlsContext.getTransportHandler().isClosed()) {
                 return socketClosed();
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
             return socketClosed();
         }
-        try {
-            TlsMessageReceiver receiver = new TlsMessageReceiver();
-            TlsMessageResponse response = receiver.receiveMessages(state.getTlsContext());
-            TlsStepContext tlsStepContext = tlsContext.getStepContext();
-            tlsStepContext.receiveUpdate(response);
+        tlsContext.setTalkingConnectionEndType(tlsContext.getChooser().getMyConnectionPeer());
+        
+        // Reseting protocol stack layers and creating configurations for each layer 
+        List<LayerConfiguration> layerConfigs = new ArrayList<>(tlsContext.getLayerStack().getLayerList().size());
+        for (ProtocolLayer<?,?> layer : tlsContext.getLayerStack().getLayerList()) {
+            layer.clear();
+            SpecificReceiveLayerConfiguration<?> receiveConfig = new SpecificReceiveLayerConfiguration<>(layer.getLayerType());
+            layerConfigs.add(receiveConfig);
+        }
+        
+        // receiving data
+        LayerStackProcessingResult data = tlsContext.getLayerStack().receiveData(layerConfigs);
+        List<ProtocolMessage<? extends ProtocolMessage<?>>> messages = data.getResultForLayer(ImplementedLayers.MESSAGE).getUsedContainers();
+        AbstractOutput output = extractOutput(messages);
+        return output;
+    }
+    
+    private AbstractOutput extractOutput(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
+        if (isResponseUnknown(receivedMessages)) {
+            return AbstractOutput.unknown();
+        }
+        if (receivedMessages.isEmpty()) {
+            return timeout();
+        } else {
+            List<ProtocolMessage<? extends ProtocolMessage<?>>> tlsMessages = receivedMessages.stream().collect(Collectors.toList());
+            List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
+            String abstractOutput = toAbstractOutputString(abstractMessageStrings);
+            List<com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage> tlsProtocolMessages =
+            tlsMessages.stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
 
-            return extractOutput(response.getMessages());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return socketClosed();
+            return new TlsOutput(abstractOutput, tlsProtocolMessages);
         }
     }
-
+    
     private boolean isResponseUnknown(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
         if (receivedMessages.size() >= MIN_ALERTS_IN_DECRYPTION_FAILURE) {
             return receivedMessages.stream().allMatch(m -> m instanceof AlertMessage || m instanceof UnknownMessage);
@@ -88,23 +98,6 @@ public class TlsOutputMapper extends OutputMapper {
         if (nextIndex - currentIndex >= MIN_ALERTS_IN_DECRYPTION_FAILURE)
             return nextIndex;
         return -1;
-    }
-
-    private AbstractOutput extractOutput(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
-        if (isResponseUnknown(receivedMessages)) {
-            return AbstractOutput.unknown();
-        }
-        if (receivedMessages.isEmpty()) {
-            return timeout();
-        } else {
-            List<ProtocolMessage<? extends ProtocolMessage<?>>> tlsMessages = receivedMessages.stream().collect(Collectors.toList());
-            List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
-            String abstractOutput = toAbstractOutputString(abstractMessageStrings);
-            List<com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage> tlsProtocolMessages =
-            tlsMessages.stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
-
-            return new TlsOutput(abstractOutput, tlsProtocolMessages);
-        }
     }
 
     private List<String> extractAbstractMessageStrings(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
@@ -170,4 +163,5 @@ public class TlsOutputMapper extends OutputMapper {
         }
         return certType;
     }
+
 }
