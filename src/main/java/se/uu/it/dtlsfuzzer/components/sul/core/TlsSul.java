@@ -124,7 +124,7 @@ public class TlsSul extends AbstractSul {
     public void pre() {
         Config config = getNewSulConfig(configDelegate);
         state = new State(config, new WorkflowTrace());
-        state.getTlsContext().setTransportHandler(null);
+        TransportHandler transportHandler = null;
 
         if (configDelegate.getProtocolVersion().isDTLS()) {
             if (!server) {
@@ -132,15 +132,15 @@ public class TlsSul extends AbstractSul {
                 if (portProvider != null) {
                     connection.setPort(portProvider.getSulPort());
                 }
-                state.getTlsContext().setTransportHandler(new ClientUdpTransportHandler(connection));
+                transportHandler = new ClientUdpTransportHandler(connection);
             } else {
                 InboundConnection connection = state.getConfig().getDefaultServerConnection();
-
-                state.getTlsContext().setTransportHandler(new ServerUdpTransportHandler(connection));
+                transportHandler = new ServerUdpTransportHandler(connection);
             }
         } else {
             throw new NotImplementedException(String.format("%s not supported", configDelegate.getProtocolVersion()));
         }
+        state.getTlsContext().setTransportHandler(transportHandler);
 
         if (server) {
             chWaiter = new Thread(new Runnable() {
