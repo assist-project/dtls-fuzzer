@@ -4,6 +4,8 @@ import com.beust.jcommander.Parameter;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
+import de.rub.nds.tlsattacker.core.layer.constant.LayerConfiguration;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +30,11 @@ public abstract class ConfigDelegate {
     public void applyDelegate(Config config) throws ConfigurationException {
         config.setHighestProtocolVersion(getProtocolVersion());
         config.setDefaultSelectedProtocolVersion(getProtocolVersion());
+        if (getProtocolVersion().isDTLS()) {
+            config.setDefaultLayerConfiguration(LayerConfiguration.DTLS);
+        } else {
+            throw new ConfigurationException("Only DTLS protocols are supported");
+        }
     }
 
     public InputStream getConfigInputStream() throws IOException {
