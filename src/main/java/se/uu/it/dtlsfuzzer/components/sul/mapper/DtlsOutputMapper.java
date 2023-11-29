@@ -39,7 +39,7 @@ public class DtlsOutputMapper extends OutputMapper {
         }
         tlsContext.setTalkingConnectionEndType(tlsContext.getChooser().getMyConnectionPeer());
 
-        // Reseting protocol stack layers and creating configurations for each layer
+        // Resetting protocol stack layers and creating configurations for each layer
         List<LayerConfiguration> layerConfigs = new ArrayList<>(tlsContext.getLayerStack().getLayerList().size());
         for (ProtocolLayer<?,?> layer : tlsContext.getLayerStack().getLayerList()) {
             layer.clear();
