@@ -70,7 +70,7 @@ public class DtlsOutputMapper extends OutputMapper {
             return new TlsOutput(abstractOutput, tlsProtocolMessages);
         }
     }
-    
+
     private boolean isResponseUnknown(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
         if (receivedMessages.size() >= MIN_ALERTS_IN_DECRYPTION_FAILURE) {
             return receivedMessages.stream().allMatch(m -> m instanceof AlertMessage || m instanceof UnknownMessage);
