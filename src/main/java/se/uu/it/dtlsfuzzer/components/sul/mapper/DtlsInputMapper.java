@@ -1,16 +1,9 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
-import java.io.IOException;
-import java.util.Collections;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.InputMapper;
-
 import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.layer.SpecificSendLayerConfiguration;
 import de.rub.nds.tlsattacker.core.layer.constant.ImplementedLayers;
@@ -27,9 +20,13 @@ import de.rub.nds.tlsattacker.core.protocol.ProtocolMessageSerializer;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.State;
+import java.io.IOException;
+import java.util.Collections;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DtlsInputMapper extends InputMapper {
-    
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     public DtlsInputMapper(MapperConfig mapperConfig, AbstractOutputChecker outputChecker) {
@@ -49,7 +46,7 @@ public class DtlsInputMapper extends InputMapper {
             LOGGER.info("Error sending message to SUT");
         }
     }
-    
+
     public <PM extends ProtocolMessage<PM>> void sendMessage(ProtocolMessage<PM> message, State state) throws IOException {
         byte[] bytes = generateMessageBytesAdjustContext(message, state);
         sendMessageBytes(bytes, state, message.getProtocolMessageType());
@@ -57,7 +54,7 @@ public class DtlsInputMapper extends InputMapper {
             ((ProtocolMessageHandler) message.getHandler(state.getTlsContext())).adjustContextAfterSerialize(message);
         }
     }
-    
+
     private void sendMessageBytes(byte [] bytes, State state, ProtocolMessageType type) throws IOException {
         RecordLayerHint recordLayerHint = new RecordLayerHint(type);
         DtlsFragmentLayer dtlsLayer = (DtlsFragmentLayer) state.getTlsContext().getLayerStack().getLayer(DtlsFragmentLayer.class);
@@ -69,7 +66,7 @@ public class DtlsInputMapper extends InputMapper {
         recordLayer.setLayerConfiguration(recordLayerConfig);
         dtlsLayer.sendData(recordLayerHint, bytes);
     }
-    
+
     private final byte [] generateMessageBytesAdjustContext(ProtocolMessage<? extends ProtocolMessage<?>> message, State state) throws IOException {
          ProtocolMessagePreparator<? extends ProtocolMessage<?>> preparator = message.getPreparator(state.getTlsContext());
          preparator.prepare();

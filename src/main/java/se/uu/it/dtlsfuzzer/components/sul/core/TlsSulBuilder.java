@@ -3,7 +3,6 @@ package se.uu.it.dtlsfuzzer.components.sul.core;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposer;
-
 import se.uu.it.dtlsfuzzer.components.sul.core.config.ConfigDelegateProvider;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsInputMapper;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsOutputMapper;
