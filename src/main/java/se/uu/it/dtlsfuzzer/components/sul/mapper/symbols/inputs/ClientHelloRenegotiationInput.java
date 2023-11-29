@@ -58,9 +58,9 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         getTlsContext(context).getDigest().reset();
         if (resetMSeq) {
-            getTlsContext(context).setDtlsWriteHandshakeMessageSequence(0);
+            getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0);
         }
-        getTlsContext(context).setDtlsReadHandshakeMessageSequence(0);
+        getTlsContext(context).setReadSequenceNumber(getTlsContext(context).getReadEpoch(), 0);
         if (suite != null) {
             getConfig(context).setDefaultClientSupportedCipherSuites(suite);
         }

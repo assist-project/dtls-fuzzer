@@ -12,13 +12,11 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwra
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractInput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
 import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
-import de.rub.nds.tlsattacker.core.record.layer.TlsRecordLayer;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.transport.TransportHandler;
@@ -33,7 +31,6 @@ import se.uu.it.dtlsfuzzer.components.sul.core.config.DtlsSulClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputMapper;
 
 /**
  * Implementation of {@link AbstractSul} that works for both clients and servers.
@@ -80,14 +77,14 @@ public class TlsSul extends AbstractSul {
 
     private ConfigDelegate configDelegate;
 
-    public TlsSul(SulConfig delegate, ConfigDelegate configDelegate, MapperConfig mapperConfig, Mapper defaultExecutor,
+    public TlsSul(SulConfig delegate, ConfigDelegate configDelegate, Mapper defaultExecutor, OutputMapper outputMapper,
             CleanupTasks cleanupTasks) {
         super(delegate, cleanupTasks);
         this.delegate = delegate;
         this.configDelegate = configDelegate;
         this.defaultExecutor = defaultExecutor;
         server = delegate.isFuzzingClient();
-        outputMapper = new TlsOutputMapper(mapperConfig);
+        this.outputMapper = outputMapper;
         if (server) {
             cleanupTasks.submit(new Runnable() {
                 @Override
@@ -120,10 +117,8 @@ public class TlsSul extends AbstractSul {
     public void pre() {
         Config config = getNewSulConfig(configDelegate);
         configDelegate.applyDelegate(config);
-
         state = new State(config, new WorkflowTrace());
-        state.getTlsContext().setRecordLayer(new TlsRecordLayer(state.getTlsContext()));
-        state.getTlsContext().setTransportHandler(null);
+        TransportHandler transportHandler = null;
 
         if (configDelegate.getProtocolVersion().isDTLS()) {
             if (!server) {
@@ -131,15 +126,15 @@ public class TlsSul extends AbstractSul {
                 if (portProvider != null) {
                     connection.setPort(portProvider.getSulPort());
                 }
-                state.getTlsContext().setTransportHandler(new ClientUdpTransportHandler(connection));
+                transportHandler = new ClientUdpTransportHandler(connection);
             } else {
                 InboundConnection connection = state.getConfig().getDefaultServerConnection();
-
-                state.getTlsContext().setTransportHandler(new ServerUdpTransportHandler(connection));
+                transportHandler = new ServerUdpTransportHandler(connection);
             }
         } else {
-            throw new NotImplementedException("TLS is not currently supported");
+            throw new NotImplementedException(String.format("%s not supported", configDelegate.getProtocolVersion()));
         }
+        state.getTlsContext().setTransportHandler(transportHandler);
 
         if (server) {
             chWaiter = new Thread(new Runnable() {

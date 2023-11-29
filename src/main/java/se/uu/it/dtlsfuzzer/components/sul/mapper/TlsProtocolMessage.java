@@ -1,20 +1,19 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 
 /**
  * The ProtocolMessage is a wrapper around a TLS-Attacker ProtocolMessage.
  */
-public class TlsProtocolMessage implements ProtocolMessage {
+public class TlsProtocolMessage implements com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage {
 
-    private final TlsMessage message;
+    private final ProtocolMessage<? extends ProtocolMessage<?>> message;
 
-    public TlsProtocolMessage(TlsMessage message) {
+    public TlsProtocolMessage(ProtocolMessage<? extends ProtocolMessage<?>> message) {
         this.message = message;
     }
 
-    public TlsMessage getMessage() {
+    public ProtocolMessage<? extends ProtocolMessage<?>> getMessage() {
         return message;
     }
 }
