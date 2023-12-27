@@ -13,7 +13,7 @@
         <jakarta-xml.version>4.0.1</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.17.0</learnlib.version>
-        <log4j.version>2.20.0</log4j.version>
+        <log4j.version>2.22.1</log4j.version>
     </properties>
 
     <dependencyManagement>
