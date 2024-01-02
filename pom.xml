@@ -13,7 +13,8 @@
         <jakarta-xml.version>4.0.1</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.17.0</learnlib.version>
-        <log4j.version>2.20.0</log4j.version>
+        <log4j.version>2.22.1</log4j.version>
+        <osgi.version>8.1.0</osgi.version>
     </properties>
 
     <dependencyManagement>
@@ -46,6 +47,14 @@
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jakarta-xml.version}</version>
+            </dependency>
+
+            <!-- resolves a warning -->
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>osgi.annotation</artifactId>
+                <version>${osgi.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -93,6 +102,10 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.64</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
         </dependency>
     </dependencies>
 
@@ -157,6 +170,11 @@
                         <configuration>
                             <failOnWarning>true</failOnWarning>
                             <ignoreUnusedRuntime>true</ignoreUnusedRuntime>
+                            <ignoredUnusedDeclaredDependencies>
+                                <ignoredUnusedDeclaredDependency>
+                                    org.osgi:osgi.annotation:jar:*
+                                </ignoredUnusedDeclaredDependency>
+                            </ignoredUnusedDeclaredDependencies>
                         </configuration>
                     </execution>
                     <execution>
