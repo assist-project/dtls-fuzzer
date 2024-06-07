@@ -310,15 +310,16 @@ public class TlsSul extends AbstractSul {
      * Exports the TLS-Attacker configuration file after relevant parameters have been parsed.
      */
     private void exportEffectiveSulConfig(ConfigDelegate delegate) {
-        Config config = getNewSulConfig(delegate);
-        delegate.applyDelegate(config);
         try {
+            Config config = getNewSulConfig(delegate);
+            delegate.applyDelegate(config);
             FileOutputStream fos = new FileOutputStream(configDelegate.getExportEffectiveSulConfig());
-                JAXBContext ctx = JAXBContext.newInstance(Config.class);
-                Marshaller marshaller = ctx.createMarshaller();
-                marshaller.marshal(config, fos);
-            } catch(Exception e) {
-                throw new RuntimeException("Could not export configuration file");
-          }
+            JAXBContext ctx = JAXBContext.newInstance(Config.class);
+            Marshaller marshaller = ctx.createMarshaller();
+            marshaller.marshal(config, fos);
+        } catch(Exception e) {
+            LOGGER.error("Could not export configuration file");
+            e.printStackTrace();
+        }
     }
 }
