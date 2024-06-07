@@ -14,31 +14,31 @@ function build_jks() {
     jks=$3
     pkcs12=$jks.p12
     # Create exporting key and cert PEM files to a PKCS12 file.
-    openssl pkcs12 -export -in $cert -inkey $key -out $pkcs12 -name "DTLS-Fuzzer" -passout "pass:$PASSWORD"
+    openssl pkcs12 -export -in "$cert" -inkey "$key" -out "$pkcs12" -name "DTLS-Fuzzer" -passout "pass:$PASSWORD"
     # Importing from the PKCS12 onto a JKS file.
-    keytool -importkeystore -srckeystore $pkcs12 -srcstoretype pkcs12 -destkeystore $jks -deststoretype JKS -storepass $PASSWORD -noprompt -keypass $PASSWORD -srcstorepass $PASSWORD
+    keytool -importkeystore -srckeystore "$pkcs12" -srcstoretype pkcs12 -destkeystore "$jks" -deststoretype JKS -storepass "$PASSWORD" -noprompt -keypass "$PASSWORD" -srcstorepass "$PASSWORD"
     # Remove PKCS12 file
-    rm $pkcs12 
+    rm "$pkcs12"
 }
 
 
 
-if [ $# != 1 ]; then
+if [ "$#" != 1 ]; then
     echo "Usage: ${0##*/} output_folder"
     echo "Creates key and cert files in PEM and JKS format, and stores them in the specified directory"
     exit 1
 fi
 
-if [[ ! -d $output_folder ]]; then
-    mkdir $output_folder
+if [[ ! -d "$output_folder" ]]; then
+    mkdir "$output_folder"
 fi
 
 # 
 for len in 2048 4096
 do
-    openssl genpkey -algorithm RSA -out $output_folder/rsa${len}_key.pem -pkeyopt rsa_keygen_bits:${len} 
-    openssl req -key $output_folder/rsa${len}_key.pem -new -x509 -days $DAYS_VALIDITY -out $output_folder/rsa${len}_cert.pem -subj "/CN=dtls-fuzzer.com"
-    build_jks $output_folder/rsa${len}_key.pem $output_folder/rsa${len}_cert.pem $output_folder/rsa${len}.jks
+    openssl genpkey -algorithm RSA -out "$output_folder/rsa${len}_key.pem" -pkeyopt rsa_keygen_bits:"${len}"
+    openssl req -key "$output_folder/rsa${len}_key.pem" -new -x509 -days "$DAYS_VALIDITY" -out "$output_folder/rsa${len}_cert.pem" -subj "/CN=dtls-fuzzer.com"
+    build_jks "$output_folder/rsa${len}_key.pem" "$output_folder/rsa${len}_cert.pem" "$output_folder/rsa${len}.jks"
 done
 
 # Maps curve names as according to RFC 5480 to those understood by OpenSSL.
@@ -49,15 +49,15 @@ function map_curve() {
     if [[ "$curve" = "secp256r1" ]]; then
         echo "prime256v1"
     else
-        echo $curve
+        echo "$curve"
     fi
 }
 
 
-for named_curve in secp256r1
+for named_curve in secp256r1 secp256k1
 do
     openssl_curve=$(map_curve ${named_curve})
-    openssl ecparam -name ${openssl_curve} -genkey -out $output_folder/ec_${named_curve}_key.pem
-    openssl req -key $output_folder/ec_${named_curve}_key.pem -new -x509 -days $DAYS_VALIDITY -out $output_folder/ec_${named_curve}_cert.pem -subj "/CN=dtls-fuzzer.com"
-    build_jks $output_folder/ec_${named_curve}_key.pem $output_folder/ec_${named_curve}_cert.pem $output_folder/ec_${named_curve}.jks
+    openssl ecparam -name "${openssl_curve}" -genkey -out "$output_folder/ec_${named_curve}_key.pem"
+    openssl req -key "$output_folder/ec_${named_curve}_key.pem" -new -x509 -days "$DAYS_VALIDITY" -out "$output_folder/ec_${named_curve}_cert.pem" -subj "/CN=dtls-fuzzer.com"
+    build_jks "$output_folder/ec_${named_curve}_key.pem" "$output_folder/ec_${named_curve}_cert.pem" "$output_folder/ec_${named_curve}.jks"
 done
