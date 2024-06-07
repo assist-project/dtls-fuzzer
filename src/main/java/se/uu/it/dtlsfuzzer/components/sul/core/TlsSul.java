@@ -24,6 +24,9 @@ import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.transport.TransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ClientUdpTransportHandler;
 import de.rub.nds.tlsattacker.transport.udp.ServerUdpTransportHandler;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
@@ -59,8 +62,8 @@ public class TlsSul extends AbstractSul {
      */
     private boolean server;
 
-    private long resetWait = 0;
 
+    private long resetWait = 0;
     private int count = 0;
 
     private SulConfig delegate;
@@ -104,6 +107,9 @@ public class TlsSul extends AbstractSul {
                     }
                 }
             });
+        }
+        if (configDelegate.getExportEffectiveSulConfig() != null) {
+            exportEffectiveSulConfig(configDelegate);
         }
     }
 
@@ -298,5 +304,21 @@ public class TlsSul extends AbstractSul {
         }
 
         return config.createCopy();
+    }
+
+    /*
+     * Exports the TLS-Attacker configuration file after relevant parameters have been parsed.
+     */
+    private void exportEffectiveSulConfig(ConfigDelegate delegate) {
+        Config config = getNewSulConfig(delegate);
+        delegate.applyDelegate(config);
+        try {
+            FileOutputStream fos = new FileOutputStream(configDelegate.getExportEffectiveSulConfig());
+                JAXBContext ctx = JAXBContext.newInstance(Config.class);
+                Marshaller marshaller = ctx.createMarshaller();
+                marshaller.marshal(config, fos);
+            } catch(Exception e) {
+                throw new RuntimeException("Could not export configuration file");
+          }
     }
 }
