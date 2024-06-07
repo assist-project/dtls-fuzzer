@@ -10,7 +10,7 @@ localhost:${sul.port}
 -protocol
 DTLS12
 -cmd
-modules/jdk-${jsse.version}/bin/java -jar suts/jsse-${jsse.version}-dtls-clientserver.jar -port ${sul.port} -hostname localhost -keyLocation experiments/keystore/rsa2048.jks -trustLocation experiments/keystore/rsa2048.jks -threadStarterIpPort localhost:${fuzzer.port} -operation FULL -auth DISABLED
+modules/jdk-${jsse.version}/bin/java -jar suts/jsse-${jsse.version}-dtls-clientserver.jar -port ${sul.port} -hostname localhost -keyLocation ${keystore}/rsa2048.jks -trustLocation ${keystore}/rsa2048.jks -threadStarterIpPort localhost:${fuzzer.port} -operation FULL -auth DISABLED
 -adapterPort
 ${fuzzer.port}
 -processTrigger

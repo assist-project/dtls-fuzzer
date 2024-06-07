@@ -19,7 +19,7 @@ RANDOM_WP_METHOD,WP_METHOD
 -output
 output/piondtls-${piondtls.version}_server_ecdhe_cert_req
 -cmd
-${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role server -port ${sul.port} -cipherSuite TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 -clientAuth NEEDED -trustCert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -serverName tls-attacker.de
+${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role server -port ${sul.port} -cipherSuite TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 -clientAuth NEEDED -trustCert ${keystore}/rsa2048_cert.pem -serverName tls-attacker.de
 -termCmd
 /bin/bash ${fuzzer.dir}/experiments/scripts/stop_proc_at_port.sh ${sul.port} server
 -depth

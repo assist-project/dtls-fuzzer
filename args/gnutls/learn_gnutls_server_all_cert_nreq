@@ -10,7 +10,7 @@ localhost:${sul.port}
 -responseWait
 100
 -cmd
-${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-serv  --udp --x509keyfile ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem --x509certfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --x509cafile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --pskpasswd ${fuzzer.dir}/experiments/keystore/keys.psk --priority NORMAL:+PSK:+SRP --mtu 1500 -p ${sul.port}
+${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-serv  --udp --x509keyfile ${keystore}/rsa2048_key.pem --x509certfile ${keystore}/rsa2048_cert.pem --x509cafile ${keystore}/rsa2048_cert.pem --pskpasswd ${keystore}/keys.psk --priority NORMAL:+PSK:+SRP --mtu 1500 -p ${sul.port}
 
 # learning config
 -alphabet
