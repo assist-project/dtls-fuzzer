@@ -11,8 +11,10 @@ ${sul.port}
 100
 -cmd
 ${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-cli  --udp --heartbeat --pskusername Client_identity --pskkey 12345678  --priority NORMAL:-KX-ALL:+ECDHE-PSK:+DHE-PSK:+PSK localhost:${sul.port}
--sulConfig
-experiments/configs/gnutls_client_include_oo.config
+-psk
+12345678
+-identity
+Client_identity
 
 # learner config
 -alphabet

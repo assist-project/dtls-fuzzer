@@ -12,11 +12,10 @@ import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
 public class DtlsSulClientConfig extends SulClientConfigStandard implements ConfigDelegateProvider {
 
     @ParametersDelegate
-    private ClientConfigDelegate configDelegate;
+    private ClientConfigDelegate configDelegate = new ClientConfigDelegate();
 
     public DtlsSulClientConfig() {
         super(new MapperConfigStandard(), new SulAdapterConfigStandard());
-        configDelegate = new ClientConfigDelegate();
     }
 
     @Override
