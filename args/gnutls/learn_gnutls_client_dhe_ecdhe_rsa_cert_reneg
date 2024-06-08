@@ -10,7 +10,7 @@ ${sul.port}
 -responseWait
 100
 -cmd
-${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-cli --udp --heartbeat --pskusername Client_identity --pskkey 12345678 --priority NORMAL:-KX-ALL:+RSA:+ECDHE-PSK:+DHE-PSK:+PSK:+ECDHE-RSA:+DHE-RSA --x509cafile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --x509keyfile ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem --x509certfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem --insecure localhost:${sul.port}
+${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-cli --udp --heartbeat --pskusername Client_identity --pskkey 12345678 --priority NORMAL:-KX-ALL:+RSA:+ECDHE-PSK:+DHE-PSK:+PSK:+ECDHE-RSA:+DHE-RSA --x509cafile ${keystore}/rsa2048_cert.pem --x509keyfile ${keystore}/rsa2048_key.pem --x509certfile ${keystore}/rsa2048_cert.pem --insecure localhost:${sul.port}
 -sulConfig
 experiments/configs/gnutls_client_include_oo.config
 

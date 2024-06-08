@@ -10,7 +10,7 @@ ${sul.port}
 -protocol
 DTLS12
 -cmd
-java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-clientserver.jar -client -port ${sul.port} -timeout 20000000 -trustLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -keyLocation ${fuzzer.dir}/experiments/keystore/ec_secp256r1.jks -clientAuth NEEDED -starterAddress localhost:${fuzzer.port}
+java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-clientserver.jar -client -port ${sul.port} -timeout 20000000 -trustLocation ${keystore}/ec_secp256r1.jks -trustPassword password -trustAlias dtls-fuzzer -keyLocation ${keystore}/ec_secp256r1.jks -keyPassword password -keyAlias dtls-fuzzer -clientAuth NEEDED -starterAddress localhost:${fuzzer.port}
 -sulConfig
 experiments/configs/scandium.config
 -adapterPort

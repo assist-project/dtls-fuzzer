@@ -17,12 +17,19 @@ public abstract class ConfigDelegate {
     @Parameter(names = "-protocol", required = false, description = "Protocol analyzed, determines transport layer used", converter = ProtocolVersionConverter.class)
     private ProtocolVersion protocolVersion = ProtocolVersion.DTLS12;
 
+    @Parameter(names = "-exportEffectiveSulConfig", required = false, hidden = true, description = "Exports to the specified file the TLS-Attacker configuration file AFTER arguments have been processed.")
+    private String exportEffectiveSulConfig;
+
     public String getSulConfig() {
         return sulConfig;
     }
 
     public ProtocolVersion getProtocolVersion() {
         return protocolVersion;
+    }
+
+    public String getExportEffectiveSulConfig() {
+        return exportEffectiveSulConfig;
     }
 
     public void applyDelegate(Config config) throws ConfigurationException {

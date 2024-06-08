@@ -10,7 +10,7 @@ ${sul.port}
 -responseWait
 20
 -cmd
-${fuzzer.dir}/suts/openssl-${openssl.version}/apps/openssl s_client -psk 1234 -key ${fuzzer.dir}/experiments/keystore/rsa2048_key.pem -cert ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -CAfile ${fuzzer.dir}/experiments/keystore/rsa2048_cert.pem -port ${sul.port} -dtls1_2 -mtu 5000
+${fuzzer.dir}/suts/openssl-${openssl.version}/apps/openssl s_client -psk 1234 -key ${keystore}/rsa2048_key.pem -cert ${keystore}/rsa2048_cert.pem -CAfile ${keystore}/rsa2048_cert.pem -port ${sul.port} -dtls1_2 -mtu 5000
 
 # learner config
 -randLength
