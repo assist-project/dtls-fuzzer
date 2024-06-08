@@ -26,8 +26,8 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.tim
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeEnabler;
 import se.uu.it.dtlsfuzzer.components.sul.core.TlsSulBuilder;
-import se.uu.it.dtlsfuzzer.components.sul.core.config.DtlsSulClientConfig;
-import se.uu.it.dtlsfuzzer.components.sul.core.config.DtlsSulServerConfig;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulClientConfig;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulServerConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsAlphabetPojoXml;
 
 public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilder, TestRunnerBuilder, TimingProbeBuilder {
@@ -59,13 +59,13 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilde
 
     @Override
     public StateFuzzerClientConfig buildClientConfig() {
-        return new StateFuzzerClientConfigStandard(new LearnerConfigStandard(), new DtlsSulClientConfig(),
+        return new StateFuzzerClientConfigStandard(new LearnerConfigStandard(), new TlsSulClientConfig(),
                 new TestRunnerConfigStandard(), new TimingProbeConfigStandard());
     }
 
     @Override
     public StateFuzzerServerConfig buildServerConfig() {
-        return new StateFuzzerServerConfigStandard(new LearnerConfigStandard(), new DtlsSulServerConfig(),
+        return new StateFuzzerServerConfigStandard(new LearnerConfigStandard(), new TlsSulServerConfig(),
                 new TestRunnerConfigStandard(), new TimingProbeConfigStandard());
     }
 

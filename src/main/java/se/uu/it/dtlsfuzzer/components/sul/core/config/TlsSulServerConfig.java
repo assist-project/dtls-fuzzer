@@ -9,24 +9,23 @@ import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.ClientDelegate;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
 
-public class DtlsSulServerConfig  extends SulServerConfigStandard implements ConfigDelegateProvider {
+public class TlsSulServerConfig  extends SulServerConfigStandard implements TlsSulConfig {
 
     @ParametersDelegate
     private ServerConfigDelegate configDelegate = new ServerConfigDelegate();
 
-    public DtlsSulServerConfig() {
+    public TlsSulServerConfig() {
         super(new MapperConfigStandard(), new SulAdapterConfigStandard());
-    }
-
-    @Override
-    public ConfigDelegate getConfigDelegate() {
-        return configDelegate;
     }
 
     @Override
     public void applyDelegate(MapperConnectionConfig config) {
     }
 
+    @Override
+    public ConfigDelegate getConfigDelegate() {
+        return configDelegate;
+    }
 
     private class ServerConfigDelegate extends ConfigDelegate {
         ServerConfigDelegate() {
