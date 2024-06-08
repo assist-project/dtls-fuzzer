@@ -45,11 +45,10 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputMapper
 public class TlsSul extends AbstractSul {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private static Config config;
 
     private State state = null;
     private TlsExecutionContext context = null;
-
-    private Config config;
 
     /**
      * the Sul is closed if it has crashed resulting in IMCP packets, or it simply
@@ -108,9 +107,6 @@ public class TlsSul extends AbstractSul {
                 }
             });
         }
-        if (configDelegate.getExportEffectiveSulConfig() != null) {
-            exportEffectiveSulConfig(configDelegate);
-        }
     }
 
     void setSulAdapter(SulAdapter sulAdapter) {
@@ -125,8 +121,6 @@ public class TlsSul extends AbstractSul {
     @Override
     public void pre() {
         Config config = getNewSulConfig(configDelegate);
-        configDelegate.applyDelegate(config);
-
         state = new State(config, new WorkflowTrace());
         state.getTlsContext().setRecordLayer(new TlsRecordLayer(state.getTlsContext()));
         state.getTlsContext().setTransportHandler(null);
@@ -298,6 +292,10 @@ public class TlsSul extends AbstractSul {
         if (config == null) {
             try {
                 config = Config.createConfig(delegate.getConfigInputStream());
+                delegate.applyDelegate(config);
+                if (delegate.getExportEffectiveSulConfig() != null) {
+                    exportEffectiveSulConfig(config, delegate.getExportEffectiveSulConfig());
+                }
             } catch (IOException e) {
                 throw new RuntimeException("Could not load configuration file");
             }
@@ -309,11 +307,9 @@ public class TlsSul extends AbstractSul {
     /*
      * Exports the TLS-Attacker configuration file after relevant parameters have been parsed.
      */
-    private void exportEffectiveSulConfig(ConfigDelegate delegate) {
+    private void exportEffectiveSulConfig(Config config, String path) {
         try {
-            Config config = getNewSulConfig(delegate);
-            delegate.applyDelegate(config);
-            FileOutputStream fos = new FileOutputStream(configDelegate.getExportEffectiveSulConfig());
+            FileOutputStream fos = new FileOutputStream(path);
             JAXBContext ctx = JAXBContext.newInstance(Config.class);
             Marshaller marshaller = ctx.createMarshaller();
             marshaller.marshal(config, fos);
