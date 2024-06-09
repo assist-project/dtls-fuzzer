@@ -42,6 +42,13 @@
                 <version>${log4j.version}</version>
             </dependency>
 
+            <!-- log4j bridge to slf4j-api versions after 1.7.x -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j2-impl</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
             <!-- jakarta-xml api -->
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
@@ -97,6 +104,10 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
