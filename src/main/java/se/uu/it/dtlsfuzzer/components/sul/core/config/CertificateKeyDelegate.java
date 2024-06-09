@@ -55,7 +55,6 @@ public class CertificateKeyDelegate extends Delegate {
                 CustomPrivateKey customPrivateKey = CertificateUtils.parseCustomPrivateKey(privateKey);
                 customPrivateKey.adjustInConfig(config, ConnectionEndType.CLIENT);
                 customPrivateKey.adjustInConfig(config, ConnectionEndType.SERVER);
-
             } catch (IOException ex) {
                 LOGGER.warn("Could not read private key", ex);
             }
