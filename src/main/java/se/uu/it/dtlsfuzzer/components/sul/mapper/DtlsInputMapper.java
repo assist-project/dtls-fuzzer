@@ -55,7 +55,7 @@ public class DtlsInputMapper extends InputMapper {
         }
     }
 
-	private void sendMessageBytes(byte [] bytes, State state, ProtocolMessageType type) throws IOException {
+    private void sendMessageBytes(byte [] bytes, State state, ProtocolMessageType type) throws IOException {
         RecordLayerHint recordLayerHint = new RecordLayerHint(type);
         DtlsFragmentLayer dtlsLayer = (DtlsFragmentLayer) state.getTlsContext().getLayerStack().getLayer(DtlsFragmentLayer.class);
         LayerType dtlsLayerType = ImplementedLayers.DTLS_FRAGMENT;
@@ -67,7 +67,7 @@ public class DtlsInputMapper extends InputMapper {
         dtlsLayer.sendData(recordLayerHint, bytes);
     }
 
-	private final byte [] generateMessageBytesAdjustContext(ProtocolMessage<? extends ProtocolMessage<?>> message, State state) throws IOException {
+    private final byte [] generateMessageBytesAdjustContext(ProtocolMessage<? extends ProtocolMessage<?>> message, State state) throws IOException {
          ProtocolMessagePreparator<? extends ProtocolMessage<?>> preparator = message.getPreparator(state.getTlsContext());
          preparator.prepare();
          preparator.afterPrepare();
