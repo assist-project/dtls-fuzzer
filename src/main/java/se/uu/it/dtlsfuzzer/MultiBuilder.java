@@ -54,7 +54,9 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilde
 
     @Override
     public StateFuzzer build(StateFuzzerEnabler stateFuzzerEnabler) {
-        return new StateFuzzerStandard(new StateFuzzerComposerStandard(stateFuzzerEnabler, alphabetBuilder, sulBuilder, sulWrapper));
+        StateFuzzerComposerStandard composer = new StateFuzzerComposerStandard(stateFuzzerEnabler, alphabetBuilder, sulBuilder, sulWrapper);
+        composer.initialize();
+        return new StateFuzzerStandard(composer);
     }
 
     @Override

@@ -35,7 +35,7 @@ public class FinishedInput extends DtlsInput {
     public void postSendDtlsUpdate(TlsExecutionContext context) {
         getTlsContext(context).getDigest().reset();
         // we have to make this change for learning to scale
-//        getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), lastSequenceNumber + 1);
+        getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), lastSequenceNumber + 1);
     }
 
     @Override
