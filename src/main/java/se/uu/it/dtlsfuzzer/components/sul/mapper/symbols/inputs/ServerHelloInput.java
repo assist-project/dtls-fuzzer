@@ -72,9 +72,9 @@ public class ServerHelloInput extends DtlsInput {
             ExecutionContext context) {
         TlsExecutionContext ctx = getTlsExecutionContext(context);
         if (shortHs && context.isExecutionEnabled()) {
-            Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record> lastChPair = null;
+            Pair<? extends ProtocolMessage<?>, Record> lastChPair = null;
             int lastChStepIndex = -1;
-            List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> msgRecPairs = ctx.getReceivedMessagesAndRecords();
+            List<Pair<? extends ProtocolMessage<?>, Record>> msgRecPairs = ctx.getReceivedMessagesAndRecords();
             for (int i=0; i<msgRecPairs.size(); i++) {
                 if (msgRecPairs.get(i).getKey() instanceof ClientHelloMessage) {
                     lastChStepIndex = i;
@@ -84,14 +84,15 @@ public class ServerHelloInput extends DtlsInput {
 
             assert lastChPair != null;
 
-            byte [] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
-            byte [] shBytes = ctx.getStepContext().getProcessingUnit().getInitialRecordsToSend().get(0).getCleanProtocolMessageBytes().getValue();
-
+            // we reset the digest and append to it, in reverse order SH, the last CH before the SH and optionally the HR which prompted the CH (if such a HR was sent)
             getTlsContext(ctx).getDigest().reset();
+
             if (digestHR && ctx.getStepContext(lastChStepIndex).getInput() instanceof HelloRequestInput) {
                 byte [] hrBytes = ctx.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
                 getTlsContext(context).getDigest().append(hrBytes);
             }
+            byte [] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
+            byte [] shBytes = ctx.getStepContext().getSentRecords().get(0).getCleanProtocolMessageBytes().getValue();
             getTlsContext(context).getDigest().append(chBytes);
             getTlsContext(context).getDigest().append(shBytes);
         }

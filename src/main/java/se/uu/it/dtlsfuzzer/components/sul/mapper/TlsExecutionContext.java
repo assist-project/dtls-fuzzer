@@ -6,7 +6,6 @@ import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,11 +16,9 @@ public class TlsExecutionContext extends ExecutionContextStepped {
     private Integer renegotiationIndex = 0;
     private Long writeRecordNumberEpoch0 = null;
     private SulConfig delegate;
-    private List<Record> deferredRecords;
 
     public TlsExecutionContext(SulConfig delegate, TlsState state) {
         super(state);
-        deferredRecords = new ArrayList<>();
         this.delegate = delegate;
     }
 
@@ -68,8 +65,8 @@ public class TlsExecutionContext extends ExecutionContextStepped {
     public List<Record> getAllRecords() {
         List<Record> records = new ArrayList<>();
         getTlsStepContextStream().forEach(tlsStep -> {
-            if (tlsStep.getProcessingUnit().getRecordsSent() != null) {
-                records.addAll(tlsStep.getProcessingUnit().getRecordsSent());
+            if (tlsStep.getSentRecords() != null) {
+                records.addAll(tlsStep.getSentRecords());
             }
             if (tlsStep.getReceivedRecords() != null) {
                 records.addAll(tlsStep.getReceivedRecords());
@@ -79,8 +76,8 @@ public class TlsExecutionContext extends ExecutionContextStepped {
     }
 
     public List<Record> getSentRecords() {
-        return getTlsStepContextStream().filter(s -> s.getProcessingUnit().getRecordsSent() != null)
-                .flatMap(s -> s.getProcessingUnit().getRecordsSent().stream()).collect(Collectors.toList());
+        return getTlsStepContextStream().filter(s -> s.getSentRecords() != null)
+                .flatMap(s -> s.getReceivedRecords().stream()).collect(Collectors.toList());
     }
 
     public List<ProtocolMessage<? extends ProtocolMessage<?>>> getReceivedMessages() {
@@ -88,17 +85,17 @@ public class TlsExecutionContext extends ExecutionContextStepped {
                 .flatMap(s -> s.getReceivedMessages().stream()).collect(Collectors.toList());
     }
 
-    private List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> getReceivedMessagesAndRecords(Integer startingIndex) {
+    private List<Pair<? extends ProtocolMessage<?>, Record>> getReceivedMessagesAndRecords(Integer startingIndex) {
         return getTlsStepContextStream().skip(startingIndex)
                 .filter(s -> s.getReceivedMessageRecordPairs() != null)
                 .flatMap(s -> s.getReceivedMessageRecordPairs().stream()).collect(Collectors.toList());
     }
 
-    public List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> getReceivedMessagesAndRecords() {
+    public List<Pair<? extends ProtocolMessage<?>, Record>> getReceivedMessagesAndRecords() {
         return getReceivedMessagesAndRecords(0);
     }
 
-    public List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> getHandshakeReceivedMessagesAndRecords() {
+    public List<Pair<? extends ProtocolMessage<?>, Record>> getHandshakeReceivedMessagesAndRecords() {
         return getReceivedMessagesAndRecords(renegotiationIndex);
     }
 
@@ -128,17 +125,5 @@ public class TlsExecutionContext extends ExecutionContextStepped {
 
     public SulConfig getSulDelegate() {
         return delegate;
-    }
-
-    public List<Record> getDeferredRecords() {
-        return new ArrayList<>(deferredRecords);
-    }
-
-    public void addDeferredRecords(Collection<Record> records) {
-        deferredRecords.addAll(records);
-    }
-
-    public void clearDeferredRecords() {
-        deferredRecords.clear();
     }
 }

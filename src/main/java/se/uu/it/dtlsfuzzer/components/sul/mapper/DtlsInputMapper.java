@@ -45,6 +45,7 @@ public class DtlsInputMapper extends InputMapper {
         } catch (IOException e) {
             LOGGER.error("Failed to send message {}", protocolMessage.toCompactString());
         }
+        ((TlsExecutionContext) context).getStepContext().updateSend(state);
     }
 
 //

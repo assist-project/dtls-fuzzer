@@ -1,90 +1,80 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.StepContext;
+import de.rub.nds.tlsattacker.core.layer.impl.DtlsFragmentLayer;
+import de.rub.nds.tlsattacker.core.layer.impl.MessageLayer;
+import de.rub.nds.tlsattacker.core.layer.impl.RecordLayer;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
+import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
 import de.rub.nds.tlsattacker.core.record.Record;
+import de.rub.nds.tlsattacker.core.state.State;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 
 
 public class TlsStepContext extends StepContext {
-    private ProcessingUnit unit;
-    private List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages;
+
+    private List<ProtocolMessage<?>> sentMessages;
+    private List<DtlsHandshakeMessageFragment> sentFragments;
+    private List<Record> sentRecords;
+
+    private List<ProtocolMessage<?>> receivedMessages;
+    private List<DtlsHandshakeMessageFragment> receivedFragments;
     private List<Record> receivedRecords;
-    private List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> receivedMessageRecordPairs;
-    /**
-     * Controls whether each record is sent in a separate datagram,
-     * or in the same datagram as other records in the current flight (size permitting).
-     */
-    private boolean sendRecordsIndividually;
 
     public TlsStepContext(int index) {
         super(index);
-        sendRecordsIndividually = true;
+    }
+
+    /**
+     * Should be called after receiving a response from the SUT.
+     */
+    void updateReceive(State state) {
+        MessageLayer messageLayer = (MessageLayer) state.getTlsContext().getLayerStack().getLayer(MessageLayer.class);
+        receivedMessages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers());
+        DtlsFragmentLayer fragmentLayer = state.getTlsContext().getDtlsFragmentLayer();
+        receivedFragments = new ArrayList<>(fragmentLayer.getLayerResult().getUsedContainers());
+        RecordLayer recordLayer = state.getTlsContext().getRecordLayer();
+        receivedRecords = new ArrayList<>(recordLayer.getLayerResult().getUsedContainers());
+    }
+
+    /**
+     * Should be called after executing an input on the SUT.
+     */
+    void updateSend(State state) {
+        MessageLayer messageLayer = (MessageLayer) state.getTlsContext().getLayerStack().getLayer(MessageLayer.class);
+        sentMessages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers());
+        DtlsFragmentLayer fragmentLayer = state.getTlsContext().getDtlsFragmentLayer();
+        sentFragments = new ArrayList<>(fragmentLayer.getLayerResult().getUsedContainers());
+        RecordLayer recordLayer = state.getTlsContext().getRecordLayer();
+        sentRecords = new ArrayList<>(recordLayer.getLayerResult().getUsedContainers());
     }
 
     public List<ProtocolMessage<? extends ProtocolMessage<?>>> getReceivedMessages() {
         return receivedMessages;
     }
+    public List<ProtocolMessage<? extends ProtocolMessage<?>>> getSentMessages() {
+        return sentMessages;
+    }
+
+    public List<DtlsHandshakeMessageFragment> getSentFragments() {
+        return sentFragments;
+    }
+
+    public List<DtlsHandshakeMessageFragment> getReceivedFragments() {
+        return receivedFragments;
+    }
+
     public List<Record> getReceivedRecords() {
         return receivedRecords;
     }
-    public List<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>> getReceivedMessageRecordPairs() {
-        return receivedMessageRecordPairs;
-    }
 
-    public void receiveUpdate(TlsMessageResponse response) {
-        this.receivedRecords = response.getRecords();
-        this.receivedMessages = response.getMessages();
-        pairReceivedMessagesWithRecords();
-    }
-
-    private void pairReceivedMessagesWithRecords() {
-        receivedMessageRecordPairs = new ArrayList<Pair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>>();
-
-        if (receivedMessages.size() > receivedRecords.size()) {
-            if (receivedRecords.size() == 1) {
-                receivedMessageRecordPairs.add(new ImmutablePair<ProtocolMessage<? extends ProtocolMessage<?>>, Record>(receivedMessages.get(0), receivedRecords.get(0)));
-            }
-            else if (receivedRecords.size() > 1) {
-                int msgIndex = 0;
-                int recIndex = 0;
-                int msgSize = receivedMessages.size();
-                int recSize = receivedRecords.size();
-                ProtocolMessage<? extends ProtocolMessage<?>> message = receivedMessages.get(msgIndex);
-                while (msgSize - msgIndex > recSize - recIndex  && recIndex < recSize) {
-                    while (!(message instanceof AlertMessage) && msgSize - msgIndex >= recSize - recIndex && msgIndex < msgSize - 1) {
-                        receivedMessageRecordPairs.add(new ImmutablePair<>(message, receivedRecords.get(recIndex)));
-                        msgIndex++;
-                        recIndex++;
-                        message = receivedMessages.get(msgIndex);
-                    }
-                    ProtocolMessage<? extends ProtocolMessage<?>> alertMessage = receivedMessages.get(msgIndex);
-                    while (message instanceof AlertMessage && msgSize - msgIndex >= recSize - recIndex && msgIndex < msgSize - 1) {
-                        msgIndex++;
-                        message = receivedMessages.get(msgIndex);
-                    }
-                    receivedMessageRecordPairs.add(new ImmutablePair<>(alertMessage, receivedRecords.get(recIndex)));
-                    recIndex++;
-                }
-                while (recIndex < recSize) {
-                    receivedMessageRecordPairs.add(new ImmutablePair<>(receivedMessages.get(msgIndex), receivedRecords.get(recIndex)));
-                    msgIndex++;
-                    recIndex++;
-                }
-            }
-        }
-        else {
-            Iterator<Record> itRecords = receivedRecords.iterator();
-            for (ProtocolMessage<? extends ProtocolMessage<?>> message : receivedMessages) {
-                receivedMessageRecordPairs.add(new ImmutablePair<>(message, itRecords.next()));
-            }
-        }
+    public List<Record> getSentRecords() {
+        return sentRecords;
     }
 
     @Override
@@ -92,19 +82,9 @@ public class TlsStepContext extends StepContext {
         return (TlsInput) input;
     }
 
-    public ProcessingUnit getProcessingUnit() {
-        return unit;
+    public  List<Pair<? extends ProtocolMessage<?>, Record>> getReceivedMessageRecordPairs() {
+        assert receivedRecords.size() == receivedMessages.size();
+        return IntStream.range(0, receivedMessages.size()).boxed().map(i -> Pair.of(receivedMessages.get(i), receivedRecords.get(i))).collect(Collectors.toList());
     }
 
-    public void setProcessingUnit(ProcessingUnit unit) {
-        this.unit = unit;
-    }
-
-    public boolean isSendRecordsIndividually() {
-        return sendRecordsIndividually;
-    }
-
-    public void setSendRecordsIndividually(boolean sendRecordsIndividually) {
-        this.sendRecordsIndividually = sendRecordsIndividually;
-    }
 }
