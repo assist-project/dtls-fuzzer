@@ -18,11 +18,13 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 
 public class TlsStepContext extends StepContext {
 
-    private List<ProtocolMessage<?>> sentMessages;
+    @SuppressWarnings("rawtypes")
+    private List<ProtocolMessage> sentMessages;
     private List<DtlsHandshakeMessageFragment> sentFragments;
     private List<Record> sentRecords;
 
-    private List<ProtocolMessage<?>> receivedMessages;
+    @SuppressWarnings("rawtypes")
+    private List<ProtocolMessage> receivedMessages;
     private List<DtlsHandshakeMessageFragment> receivedFragments;
     private List<Record> receivedRecords;
 
@@ -54,10 +56,12 @@ public class TlsStepContext extends StepContext {
         sentRecords = new ArrayList<>(recordLayer.getLayerResult().getUsedContainers());
     }
 
-    public List<ProtocolMessage<? extends ProtocolMessage<?>>> getReceivedMessages() {
+    @SuppressWarnings("rawtypes")
+    public List<ProtocolMessage> getReceivedMessages() {
         return receivedMessages;
     }
-    public List<ProtocolMessage<? extends ProtocolMessage<?>>> getSentMessages() {
+    @SuppressWarnings("rawtypes")
+    public List<ProtocolMessage> getSentMessages() {
         return sentMessages;
     }
 
@@ -82,9 +86,9 @@ public class TlsStepContext extends StepContext {
         return (TlsInput) input;
     }
 
-    public  List<Pair<? extends ProtocolMessage<?>, Record>> getReceivedMessageRecordPairs() {
+    @SuppressWarnings("rawtypes")
+    public  List<Pair<ProtocolMessage, Record>> getReceivedMessageRecordPairs() {
         assert receivedRecords.size() == receivedMessages.size();
         return IntStream.range(0, receivedMessages.size()).boxed().map(i -> Pair.of(receivedMessages.get(i), receivedRecords.get(i))).collect(Collectors.toList());
     }
-
 }
