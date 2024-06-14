@@ -12,6 +12,17 @@ readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protoc
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-$PROTOCOLSTATEFUZZER_COMMIT.patch"
 
+readonly TLSATTACKER_COMMIT="v5.1.6"
+readonly TLSATTACKER_REP_URL="https://github.com/tls-attacker/TLS-Attacker.git"
+readonly TLSATTACKER_FOLDER="TLS-Attacker"
+
+
+
+readonly TLSATTACKER_PATCH="$PATCHES_DIR/TLS-Attacker-$TLSATTACKER_COMMIT.patch"
+
+echo "I am here shit"
+echo $TLSATTACKER_REP_URL $TLSATTACKER_COMMIT
+
 function check_java() {
     if ! command -v java &> /dev/null
     then
@@ -55,6 +66,7 @@ function clone_rep() {
     rep_url=$2
     rep_com=$3
     echo "Cloning repository $rep_url commit $rep_com to $sut_dir"
+    echo     git clone "$rep_url" "$sut_dir"
     git clone "$rep_url" "$sut_dir"
     if [[ -n "$rep_com" ]]; then
         ( cd "$sut_dir" || exit ; git checkout "$rep_com" )
@@ -78,12 +90,32 @@ function install_protocolstatefuzzer() {
     fi
 }
 
+function install_tlsattacker() {
+    echo $TLSATTACKER_FOLDER
+    if [[ -d $TLSATTACKER_FOLDER ]]; then
+        echo "$TLSATTACKER_FOLDER folder already exists"
+        echo "Skipping TLS-Attacker setup"
+    else
+        clone_rep "$TLSATTACKER_FOLDER" "$TLSATTACKER_REP_URL" "$TLSATTACKER_COMMIT"
+        (
+            cd $TLSATTACKER_FOLDER || exit
+            echo "Patching TLS-Attacker to remove deplicate discard and fragment reordering."
+            git apply "$TLSATTACKER_PATCH"
+            echo "Installing TLS-Attacker"
+            mvn install -DskipTests
+        )
+    fi
+}
+
 # Check for the presence of Java and maven and if 'apt-get' is present, install them
 check_java
 check_mvn
 
 # Checkout ProtocolState-Fuzzer repo, apply Java 11 compatibility patch, and install the library
 install_protocolstatefuzzer
+
+# Checkout TLS-Attacker repo, patch it and install the library
+install_tlsattacker
 
 # Install DTLS-Fuzzer
 echo "Installing DTLS-Fuzzer..."
