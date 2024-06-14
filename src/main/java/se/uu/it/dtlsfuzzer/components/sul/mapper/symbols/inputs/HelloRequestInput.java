@@ -21,7 +21,7 @@ public class HelloRequestInput extends DtlsInput {
     @XmlAttribute(name = "retransmittedCHAsRefusal")
     private boolean retransmittedCHAsRefusal = true;
 
-    private Long origMsgSeqNum;
+    private int origMsgSeqNum;
     private byte[] clientRandom;
 
     public HelloRequestInput() {
@@ -31,8 +31,8 @@ public class HelloRequestInput extends DtlsInput {
     @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         if (resetSequenceNumber) {
-            origMsgSeqNum = getTlsContext(context).getWriteSequenceNumber(getTlsContext(context).getWriteEpoch());
-            getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0);
+            origMsgSeqNum = getTlsContext(context).getDtlsFragmentLayer().getWriteHandshakeMessageSequence();
+            getTlsContext(context).getDtlsFragmentLayer().setWriteHandshakeMessageSequence(0);
         }
         if (retransmittedCHAsRefusal) {
             clientRandom = getTlsContext(context).getClientRandom();
@@ -53,7 +53,7 @@ public class HelloRequestInput extends DtlsInput {
             if (disableOnRefusal) {
                 context.disableExecution();
             } else if (resetSequenceNumber) {
-                getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), origMsgSeqNum);
+                getTlsContext(context).getDtlsFragmentLayer().setWriteHandshakeMessageSequence(origMsgSeqNum);
             }
         } else if (disableOnRefusal && retransmittedCHAsRefusal
                 && Arrays.equals(clientRandom, getTlsContext(context).getClientRandom())) {
