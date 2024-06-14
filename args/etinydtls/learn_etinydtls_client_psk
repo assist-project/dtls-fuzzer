@@ -15,6 +15,9 @@ DTLS12
 ${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sul.port} localhost
 -sulConfig
 experiments/configs/tinydtls_client.config
+# increased response wait for CCS, which can crash the SUT
+-inputResponseTimeout
+CHANGE_CIPHER_SPEC:400
 
 # learning config
 -randLength
