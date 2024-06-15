@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.uu.it</groupId>
     <artifactId>dtls-fuzzer</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
