@@ -60,3 +60,24 @@ index 4af681aa8..3b03b78de 100644
                  }
              }
          }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java
+index 34778e092..2f8c02119 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java
+@@ -11,6 +11,7 @@ package de.rub.nds.tlsattacker.core.record.crypto;
+ import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
+ import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+ import de.rub.nds.tlsattacker.core.exceptions.CryptoException;
++import de.rub.nds.tlsattacker.core.exceptions.EndOfStreamException;
+ import de.rub.nds.tlsattacker.core.exceptions.ParserException;
+ import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
+ import de.rub.nds.tlsattacker.core.record.Record;
+@@ -59,7 +60,7 @@ public class RecordDecryptor extends Decryptor {
+                     || record.getContentMessageType() != ProtocolMessageType.CHANGE_CIPHER_SPEC) {
+                 try {
+                     recordCipher.decrypt(record);
+-                } catch (ParserException | CryptoException ex) {
++                } catch (ParserException | CryptoException | EndOfStreamException ex) {
+                     if (recordCipherList.indexOf(recordCipher) > 0) {
+                         LOGGER.warn(
+                                 "Failed to decrypt record, will try to process with previous cipher");
