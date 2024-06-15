@@ -417,17 +417,6 @@ function install_sut_dep() {
         fi
 
         install_dep "$jdk_name" "$jdk_url"
-    elif [[ $sut == pion* ]]; then
-        if [[ $sut == *usenix* ]]; then
-            go get github.com/pion/dtls@$PIONDTLS_USENIX_REP_COMMIT
-        else
-            ver=$(get_ver "$sut")
-            if [[ $sut == *piondtls-1* ]]; then
-                go get github.com/pion/dtls@v"$ver"
-            elif [[ $sut == *piondtls-2* ]]; then
-                go get github.com/pion/dtls/v2@v"$ver"
-            fi
-        fi
     elif [[ $sut == gnutls* ]]; then
         install_dep $M4 $M4_ARCH_URL
         sudo apt-get install pkg-config
@@ -464,7 +453,7 @@ function make_sut() {
         ( cd "$sut_dir" || exit ; JAVA_HOME=$MODULES_DIR/jdk-$ver mvn install assembly:single; cp target/jsse-dtls-clientserver.jar ../jsse-"$ver"-dtls-clientserver.jar)
         return 0
     elif [[ $sut == pion* ]]; then
-        ( cd "$sut_dir" || exit ; go build -o dtls-clientserver main/main.go )
+        ( cd "$sut_dir" || exit ; go mod tidy ; go build -o dtls-clientserver main/main.go )
         return 0
     elif [[ $sut == gnutls* ]]; then
         (
