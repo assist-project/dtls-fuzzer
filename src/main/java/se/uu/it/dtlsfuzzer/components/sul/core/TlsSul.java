@@ -44,24 +44,32 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 public class TlsSul extends AbstractSul {
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    /**
+     * Stores original TLS-Attacker config parsed from file.
+     * It is cloned on each run.
+     */
     private static Config config;
 
-    private State state = null;
+
+    /**
+     * Configures cloned TLS-Attacker config based on user-supplied arguments.
+     */
+    private ConfigDelegate configDelegate;
+
+    /**
+     * Stores the DTLS execution context.
+     */
     private TlsExecutionContext context = null;
 
     /**
-     * the Sul is closed if it has crashed resulting in IMCP packets, or it simply
-     * terminated the connection
+     * Set if the SUL is observed to have terminated the connection (e.g., following a crash).
      */
     private boolean closed = false;
 
     /**
-     * Are we imitating a server or a client instance.
+     * Counts the number of calls to pre() for logging purposes.
      */
-    private boolean server;
-
-
-    private long resetWait = 0;
     private int count = 0;
 
     /**
@@ -70,28 +78,31 @@ public class TlsSul extends AbstractSul {
     private Thread chWaiter;
 
     /**
-     * Have we received a ClientHello in the current run?
+     * Used to signal when an initial ClientHello is received from the client.
      */
     private boolean receivedClientHello;
+
+    /**
+     * Output mapper used to generate special output symbols.
+     */
     private OutputMapper outputMapper;
 
-    private ConfigDelegate configDelegate;
 
-    public TlsSul(TlsSulConfig sulConfig, MapperConfig mapperConfig, Mapper defaultExecutor,
+    public TlsSul(TlsSulConfig sulConfig, MapperConfig mapperConfig, Mapper mapper,
             CleanupTasks cleanupTasks) {
         super(sulConfig, cleanupTasks);
-        configDelegate = sulConfig.getConfigDelegate();
-        server = sulConfig.isFuzzingClient();
+        this.mapper = mapper;
         outputMapper = new DtlsOutputMapper(mapperConfig);
-        if (server) {
+        configDelegate = sulConfig.getConfigDelegate();
+        if (sulConfig.isFuzzingClient()) {
             cleanupTasks.submit(new Runnable() {
                 @Override
                 public void run() {
-                    if (state != null && chWaiter != null && chWaiter.isAlive()) {
+                    if (context != null && chWaiter != null && chWaiter.isAlive()) {
                         try {
                             LOGGER.debug(
                                     "Causing existing ClientHello waiter thread to terminate by closing the connection.");
-                            state.getTlsContext().getTransportHandler().closeConnection();
+                            context.getTlsContext().getTransportHandler().closeConnection();
                         } catch (IOException e) {
                             LOGGER.error("IOException in TlsSul.run()");
                             e.printStackTrace();
@@ -106,15 +117,15 @@ public class TlsSul extends AbstractSul {
         this.sulAdapter = sulAdapter;
     }
 
-
     @Override
     public void pre() {
         Config config = getNewSulConfig(configDelegate);
-        state = new State(config, new WorkflowTrace());
+        State state = new State(config, new WorkflowTrace());
+        context = new TlsExecutionContext((TlsSulConfig) sulConfig, new TlsState(state));
         TransportHandler transportHandler = null;
 
         if (configDelegate.getProtocolVersion().isDTLS()) {
-            if (!server) {
+            if (!sulConfig.isFuzzingClient()) {
                 OutboundConnection connection = state.getConfig().getDefaultClientConnection();
                 if (dynamicPortProvider != null) {
                     connection.setPort(dynamicPortProvider.getSulPort());
@@ -129,7 +140,7 @@ public class TlsSul extends AbstractSul {
         }
         state.getTlsContext().setTransportHandler(transportHandler);
 
-        if (server) {
+        if (sulConfig.isFuzzingClient()) {
             chWaiter = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -151,15 +162,13 @@ public class TlsSul extends AbstractSul {
         }
 
         closed = false;
-        resetWait = sulConfig.getStartWait();
-        context = new TlsExecutionContext(sulConfig, new TlsState(state));
         LOGGER.debug("Start {}", count++);
     }
 
     private void initializeTransportHandler() {
         try {
             LOGGER.debug("Initializing transport handler");
-            TransportHandler transportHandler = state.getTlsContext().getTransportHandler();
+            TransportHandler transportHandler = context.getTlsContext().getTransportHandler();
             transportHandler.preInitialize();
             transportHandler.initialize();
         } catch (IOException e) {
@@ -171,16 +180,16 @@ public class TlsSul extends AbstractSul {
     @Override
     public void post() {
         try {
-            if (server && !receivedClientHello) {
+            if (sulConfig.isFuzzingClient() && !receivedClientHello) {
                 receiveClientHello();
             }
-            TransportHandler transportHandler = state.getTlsContext().getTransportHandler();
+            TransportHandler transportHandler = context.getTlsContext().getTransportHandler();
             if (transportHandler == null) {
                 LOGGER.error("Transport handler is null");
             } else {
                 transportHandler.closeConnection();
-                if (resetWait > 0) {
-                    Thread.sleep(resetWait);
+                if (sulConfig.getStartWait() > 0) {
+                    Thread.sleep(sulConfig.getStartWait());
                 }
             }
         } catch (IOException e) {
@@ -220,7 +229,7 @@ public class TlsSul extends AbstractSul {
             mapper = this.mapper;
         }
 
-        if (server && !receivedClientHello) {
+        if (sulConfig.isFuzzingClient() && !receivedClientHello) {
             receiveClientHello();
         }
 
@@ -230,14 +239,10 @@ public class TlsSul extends AbstractSul {
 
         AbstractOutput output = null;
         try {
-            if (state == null) {
-                throw new RuntimeException("TLS-Attacker state is not initialized");
-            } else {
-                TransportHandler transportHandler = state.getTlsContext().getTransportHandler();
-                if (transportHandler == null || transportHandler.isClosed() || closed) {
-                    closed = true;
-                    return outputMapper.socketClosed();
-                }
+            TransportHandler transportHandler = context.getTlsContext().getTransportHandler();
+            if (transportHandler == null || transportHandler.isClosed() || closed) {
+                closed = true;
+                return outputMapper.socketClosed();
             }
 
             output = executeInput(in, mapper);
@@ -247,7 +252,7 @@ public class TlsSul extends AbstractSul {
                 context.disableExecution();
             }
 
-            if (state.getTlsContext().isReceivedTransportHandlerException()) {
+            if (context.getTlsContext().isReceivedTransportHandlerException()) {
                 closed = true;
             }
             return output;
@@ -258,21 +263,21 @@ public class TlsSul extends AbstractSul {
         }
     }
 
-    private AbstractOutput executeInput(TlsInput in, Mapper executor) {
+    private AbstractOutput executeInput(TlsInput in, Mapper mapper) {
         LOGGER.debug("sent: {}", in.toString());
-        state.getTlsContext().setTalkingConnectionEndType(state.getTlsContext().getChooser().getConnectionEndType());
-        long originalTimeout = state.getTlsContext().getTransportHandler().getTimeout();
+        context.getTlsContext().setTalkingConnectionEndType(context.getTlsContext().getChooser().getConnectionEndType());
+        long originalTimeout = context.getTlsContext().getTransportHandler().getTimeout();
         if (in.getExtendedWait() != null) {
-            state.getTlsContext().getTransportHandler().setTimeout(originalTimeout + in.getExtendedWait());
+            context.getTlsContext().getTransportHandler().setTimeout(originalTimeout + in.getExtendedWait());
         }
         if (sulConfig.getInputResponseTimeout() != null && sulConfig.getInputResponseTimeout().containsKey(in.getName())) {
-            state.getTlsContext().getTransportHandler().setTimeout(sulConfig.getInputResponseTimeout().get(in.getName()));
+            context.getTlsContext().getTransportHandler().setTimeout(sulConfig.getInputResponseTimeout().get(in.getName()));
         }
 
-        AbstractOutput output = executor.execute(in, context);
+        AbstractOutput output = mapper.execute(in, context);
 
         LOGGER.debug("received: {}", output);
-        state.getTlsContext().getTransportHandler().setTimeout(originalTimeout);
+        context.getTlsContext().getTransportHandler().setTimeout(originalTimeout);
         return output;
     }
 

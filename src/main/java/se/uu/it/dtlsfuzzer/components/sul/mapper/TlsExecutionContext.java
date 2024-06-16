@@ -1,8 +1,8 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
 import de.rub.nds.tlsattacker.core.config.Config;
+import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
 import java.util.ArrayList;
@@ -10,21 +10,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
 
 public class TlsExecutionContext extends ExecutionContextStepped {
 
     private Integer renegotiationIndex = 0;
     private Long writeRecordNumberEpoch0 = null;
-    private SulConfig delegate;
+    private TlsSulConfig tlsSulConfig;
 
-    public TlsExecutionContext(SulConfig delegate, TlsState state) {
+    public TlsExecutionContext(TlsSulConfig tlsSulConfig, TlsState state) {
         super(state);
-        this.delegate = delegate;
+        this.tlsSulConfig = tlsSulConfig;
     }
 
     @Override
     public TlsState getState() {
         return (TlsState) state;
+    }
+
+    public TlsContext getTlsContext() {
+        return ((TlsState) state).getTlsContext();
+    }
+
+    public TlsSulConfig getTlsSulConfig() {
+        return tlsSulConfig;
+    }
+
+    public Config getConfig() {
+        return getState().getState().getConfig();
     }
 
     /**
@@ -49,10 +62,6 @@ public class TlsExecutionContext extends ExecutionContextStepped {
     @Override
     public TlsStepContext getStepContext(int index) {
         return (TlsStepContext) super.getStepContext(index);
-    }
-
-    public Config getConfig() {
-        return getState().getState().getConfig();
     }
 
     /**
@@ -122,8 +131,4 @@ public class TlsExecutionContext extends ExecutionContextStepped {
         return old;
       }
     **/
-
-    public SulConfig getSulDelegate() {
-        return delegate;
-    }
 }
