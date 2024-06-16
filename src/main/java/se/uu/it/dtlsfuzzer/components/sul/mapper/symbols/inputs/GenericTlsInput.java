@@ -159,7 +159,7 @@ public class GenericTlsInput extends DtlsInput {
 
                 ModifiableVariable<?> mv = null;
                 try {
-                    mv = (ModifiableVariable) f.get(holder);
+                    mv = (ModifiableVariable<?>) f.get(holder);
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
                     LOGGER.error("IOException in GenericTlsInput.stripFields()");
                     ex.printStackTrace();

@@ -6,10 +6,9 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.cont
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
 import de.rub.nds.tlsattacker.core.layer.GenericReceiveLayerConfiguration;
 import de.rub.nds.tlsattacker.core.layer.LayerConfiguration;
-import de.rub.nds.tlsattacker.core.layer.LayerStackProcessingResult;
 import de.rub.nds.tlsattacker.core.layer.ProtocolLayer;
-import de.rub.nds.tlsattacker.core.layer.constant.ImplementedLayers;
 import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
+import de.rub.nds.tlsattacker.core.layer.impl.MessageLayer;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
@@ -27,7 +26,6 @@ public class DtlsOutputMapper extends OutputMapper {
         super(mapperConfig);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public AbstractOutput receiveOutput(ExecutionContext context) {
         TlsContext tlsContext = ((TlsExecutionContext) context).getState().getTlsContext();
@@ -40,7 +38,8 @@ public class DtlsOutputMapper extends OutputMapper {
         }
         tlsContext.setTalkingConnectionEndType(tlsContext.getChooser().getMyConnectionPeer());
 
-        // Resetting protocol stack layers and creating configurations for each layer
+        // resetting protocol stack layers and creating configurations for each layer
+        @SuppressWarnings("rawtypes")
         List<LayerConfiguration> layerConfigs = new ArrayList<>(tlsContext.getLayerStack().getLayerList().size());
         for (ProtocolLayer<?,?> layer : tlsContext.getLayerStack().getLayerList()) {
             layer.clear();
@@ -48,16 +47,18 @@ public class DtlsOutputMapper extends OutputMapper {
             layerConfigs.add(receiveConfig);
         }
 
-        // receiving data
-        LayerStackProcessingResult data = tlsContext.getLayerStack().receiveData(layerConfigs);
-        List<ProtocolMessage<?>> messages = data.getResultForLayer(ImplementedLayers.MESSAGE).getUsedContainers();
+        // receiving data at the Message Layer
+        tlsContext.getLayerStack().receiveData(layerConfigs);
+        MessageLayer messageLayer = (MessageLayer) tlsContext.getLayerStack().getLayer(MessageLayer.class);
+        List<ProtocolMessage<?>> messages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers());
         AbstractOutput output = extractOutput(messages);
-        // updating the execution context with the SUT response
+
+        // updating the execution context with the 'containers' that were produced at each layer
         ((TlsExecutionContext) context).getStepContext().updateReceive(((TlsExecutionContext) context).getState().getState());
         return output;
     }
 
-    private AbstractOutput extractOutput(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
+    private AbstractOutput extractOutput(List<ProtocolMessage<?>> receivedMessages) {
         if (isResponseUnknown(receivedMessages)) {
             return AbstractOutput.unknown();
         }
@@ -74,7 +75,7 @@ public class DtlsOutputMapper extends OutputMapper {
         }
     }
 
-    private boolean isResponseUnknown(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
+    private boolean isResponseUnknown(List<ProtocolMessage<?>> receivedMessages) {
         if (receivedMessages.size() >= MIN_ALERTS_IN_DECRYPTION_FAILURE) {
             return receivedMessages.stream().allMatch(m -> m instanceof AlertMessage || m instanceof UnknownMessage);
         }
@@ -84,7 +85,7 @@ public class DtlsOutputMapper extends OutputMapper {
     /*
      * Failure to decrypt shows up as a longer sequence of alarm messages.
      */
-    private int unknownResponseLookahed(int currentIndex, List<ProtocolMessage<? extends ProtocolMessage<?>>> messages) {
+    private int unknownResponseLookahed(int currentIndex, List<ProtocolMessage<?>> messages) {
         int nextIndex = currentIndex;
 
         ProtocolMessage<? extends ProtocolMessage<?>> message = messages.get(nextIndex);
@@ -97,7 +98,7 @@ public class DtlsOutputMapper extends OutputMapper {
         return -1;
     }
 
-    private List<String> extractAbstractMessageStrings(List<ProtocolMessage<? extends ProtocolMessage<?>>> receivedMessages) {
+    private List<String> extractAbstractMessageStrings(List<ProtocolMessage<?>> receivedMessages) {
         List<String> outputStrings = new ArrayList<>(receivedMessages.size());
         for (int i = 0; i < receivedMessages.size(); i++) {
             // checking for cases of decryption failures, which which case
@@ -134,7 +135,7 @@ public class DtlsOutputMapper extends OutputMapper {
         return abstractOutput;
     }
 
-    private String toOutputString(ProtocolMessage<? extends ProtocolMessage<?>> message) {
+    private String toOutputString(ProtocolMessage<?> message) {
         if (message instanceof CertificateMessage) {
             CertificateMessage cert = (CertificateMessage) message;
             if (cert.getCertificatesListLength().getValue() > 0) {
