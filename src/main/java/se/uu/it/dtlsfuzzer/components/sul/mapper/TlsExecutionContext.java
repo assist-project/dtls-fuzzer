@@ -80,22 +80,22 @@ public class TlsExecutionContext extends ExecutionContextStepped {
                 .flatMap(s -> s.getReceivedRecords().stream()).collect(Collectors.toList());
     }
 
-    public List<? extends ProtocolMessage<?>> getReceivedMessages() {
+    public List<ProtocolMessage<?>> getReceivedMessages() {
         return getTlsStepContextStream().filter(s -> s.getReceivedMessages() != null)
                 .flatMap(s -> s.getReceivedMessages().stream()).collect(Collectors.toList());
     }
 
-    private List<Pair<? extends ProtocolMessage<?>, Record>> getReceivedMessagesAndRecords(Integer startingIndex) {
+    private List<Pair<ProtocolMessage<?>, Record>> getReceivedMessagesAndRecords(Integer startingIndex) {
         return getTlsStepContextStream().skip(startingIndex)
                 .filter(s -> s.getReceivedMessageRecordPairs() != null)
                 .flatMap(s -> s.getReceivedMessageRecordPairs().stream()).collect(Collectors.toList());
     }
 
-    public List<Pair<? extends ProtocolMessage<?>, Record>> getReceivedMessagesAndRecords() {
+    public List<Pair<ProtocolMessage<?>, Record>> getReceivedMessagesAndRecords() {
         return getReceivedMessagesAndRecords(0);
     }
 
-    public List<Pair<? extends ProtocolMessage<?>, Record>> getHandshakeReceivedMessagesAndRecords() {
+    public List<Pair<ProtocolMessage<?>, Record>> getHandshakeReceivedMessagesAndRecords() {
         return getReceivedMessagesAndRecords(renegotiationIndex);
     }
 

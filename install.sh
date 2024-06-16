@@ -15,13 +15,7 @@ readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-$PROTOCOLS
 readonly TLSATTACKER_COMMIT="v5.1.6"
 readonly TLSATTACKER_REP_URL="https://github.com/tls-attacker/TLS-Attacker.git"
 readonly TLSATTACKER_FOLDER="TLS-Attacker"
-
-
-
 readonly TLSATTACKER_PATCH="$PATCHES_DIR/TLS-Attacker-$TLSATTACKER_COMMIT.patch"
-
-echo "I am here shit"
-echo $TLSATTACKER_REP_URL $TLSATTACKER_COMMIT
 
 function check_java() {
     if ! command -v java &> /dev/null

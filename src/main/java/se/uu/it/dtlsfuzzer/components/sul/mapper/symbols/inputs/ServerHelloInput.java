@@ -72,9 +72,9 @@ public class ServerHelloInput extends DtlsInput {
             ExecutionContext context) {
         TlsExecutionContext ctx = getTlsExecutionContext(context);
         if (shortHs && context.isExecutionEnabled()) {
-            Pair<? extends ProtocolMessage<?>, Record> lastChPair = null;
+            Pair<ProtocolMessage<?>, Record> lastChPair = null;
             int lastChStepIndex = -1;
-            List<? extends Pair<? extends ProtocolMessage<?>, Record>> msgRecPairs = ctx.getReceivedMessagesAndRecords();
+            List<Pair<ProtocolMessage<?>, Record>> msgRecPairs = ctx.getReceivedMessagesAndRecords();
             for (int i=0; i<msgRecPairs.size(); i++) {
                 if (msgRecPairs.get(i).getKey() instanceof ClientHelloMessage) {
                     lastChStepIndex = i;

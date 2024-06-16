@@ -35,7 +35,8 @@ public class TlsStepContext extends StepContext {
      */
     void updateReceive(State state) {
         MessageLayer messageLayer = (MessageLayer) state.getTlsContext().getLayerStack().getLayer(MessageLayer.class);
-        receivedMessages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers());
+        receivedMessages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers().size());
+        messageLayer.getLayerResult().getUsedContainers().forEach(m -> receivedMessages.add((ProtocolMessage<?>) m));
         DtlsFragmentLayer fragmentLayer = state.getTlsContext().getDtlsFragmentLayer();
         receivedFragments = new ArrayList<>(fragmentLayer.getLayerResult().getUsedContainers());
         RecordLayer recordLayer = state.getTlsContext().getRecordLayer();
@@ -47,7 +48,8 @@ public class TlsStepContext extends StepContext {
      */
     void updateSend(State state) {
         MessageLayer messageLayer = (MessageLayer) state.getTlsContext().getLayerStack().getLayer(MessageLayer.class);
-        sentMessages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers());
+        sentMessages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers().size());
+        messageLayer.getLayerResult().getUsedContainers().forEach(m -> sentMessages.add((ProtocolMessage<?>) m));
         DtlsFragmentLayer fragmentLayer = state.getTlsContext().getDtlsFragmentLayer();
         sentFragments = new ArrayList<>(fragmentLayer.getLayerResult().getUsedContainers());
         RecordLayer recordLayer = state.getTlsContext().getRecordLayer();
@@ -84,8 +86,9 @@ public class TlsStepContext extends StepContext {
         return (TlsInput) input;
     }
 
-    public  List<? extends Pair<? extends ProtocolMessage<?>, Record>> getReceivedMessageRecordPairs() {
+    public  List<Pair<ProtocolMessage<?>, Record>> getReceivedMessageRecordPairs() {
         assert receivedRecords.size() == receivedMessages.size();
-        return IntStream.range(0, receivedMessages.size()).boxed().map(i -> Pair.of(receivedMessages.get(i), receivedRecords.get(i))).collect(Collectors.toList());
+        return IntStream.range(0, receivedMessages.size()).boxed().map(i ->
+        Pair.<ProtocolMessage<?>, Record>of((ProtocolMessage<?>)receivedMessages.get(i), receivedRecords.get(i))).collect(Collectors.toList());
     }
 }
