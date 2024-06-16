@@ -132,7 +132,7 @@ public class GenericTlsInput extends DtlsInput {
         stripFields(message);
     }
 
-    public Class<? extends ProtocolMessage> getMessageClass() {
+    public Class<?> getMessageClass() {
         return message.getClass();
     }
 

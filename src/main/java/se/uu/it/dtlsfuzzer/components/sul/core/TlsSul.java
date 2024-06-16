@@ -8,8 +8,6 @@ package se.uu.it.dtlsfuzzer.components.sul.core;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSul;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulAdapter;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwrappers.DynamicPortProvider;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractInput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
@@ -66,10 +64,6 @@ public class TlsSul extends AbstractSul {
     private long resetWait = 0;
     private int count = 0;
 
-    private SulConfig sulConfig;
-    private Mapper defaultExecutor;
-    private DynamicPortProvider portProvider;
-
     /**
      * Reference to thread waiting for a ClientHello to be received from the client.
      */
@@ -86,9 +80,7 @@ public class TlsSul extends AbstractSul {
     public TlsSul(TlsSulConfig sulConfig, MapperConfig mapperConfig, Mapper defaultExecutor,
             CleanupTasks cleanupTasks) {
         super(sulConfig, cleanupTasks);
-        this.sulConfig = sulConfig;
         configDelegate = sulConfig.getConfigDelegate();
-        this.defaultExecutor = defaultExecutor;
         server = sulConfig.isFuzzingClient();
         outputMapper = new DtlsOutputMapper(mapperConfig);
         if (server) {
@@ -114,10 +106,6 @@ public class TlsSul extends AbstractSul {
         this.sulAdapter = sulAdapter;
     }
 
-    @Override
-    public void setDynamicPortProvider(DynamicPortProvider portProvider) {
-        this.portProvider = portProvider;
-    }
 
     @Override
     public void pre() {
@@ -128,8 +116,8 @@ public class TlsSul extends AbstractSul {
         if (configDelegate.getProtocolVersion().isDTLS()) {
             if (!server) {
                 OutboundConnection connection = state.getConfig().getDefaultClientConnection();
-                if (portProvider != null) {
-                    connection.setPort(portProvider.getSulPort());
+                if (dynamicPortProvider != null) {
+                    connection.setPort(dynamicPortProvider.getSulPort());
                 }
                 transportHandler = new ClientUdpTransportHandler(connection);
             } else {
@@ -227,9 +215,9 @@ public class TlsSul extends AbstractSul {
 
     private AbstractOutput doStep(TlsInput in) {
         context.addStepContext();
-        Mapper executor = in.getPreferredMapper(sulConfig);
-        if (executor == null) {
-            executor = defaultExecutor;
+        Mapper mapper = in.getPreferredMapper(sulConfig);
+        if (mapper == null) {
+            mapper = this.mapper;
         }
 
         if (server && !receivedClientHello) {
@@ -252,7 +240,7 @@ public class TlsSul extends AbstractSul {
                 }
             }
 
-            output = executeInput(in, executor);
+            output = executeInput(in, mapper);
 
             if (output.equals(AbstractOutput.disabled()) || context.getStepContext().isDisabled()) {
                 // this should lead to a disabled sink state
