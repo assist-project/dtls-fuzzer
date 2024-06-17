@@ -13,8 +13,7 @@ public class ApplicationInput extends DtlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
-        ApplicationMessage appMessage = new ApplicationMessage(getState(context).getConfig(),
-                DatatypeConverter.parseHexBinary("5468697320697320612068656c6c6f206d65737361676521"));
+        ApplicationMessage appMessage = new ApplicationMessage(DatatypeConverter.parseHexBinary("5468697320697320612068656c6c6f206d65737361676521"));
 
         return new TlsProtocolMessage(appMessage);
     }

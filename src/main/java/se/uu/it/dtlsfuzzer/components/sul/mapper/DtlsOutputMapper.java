@@ -1,74 +1,82 @@
-package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
+package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
+import de.rub.nds.tlsattacker.core.layer.GenericReceiveLayerConfiguration;
+import de.rub.nds.tlsattacker.core.layer.LayerConfiguration;
+import de.rub.nds.tlsattacker.core.layer.ProtocolLayer;
+import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
+import de.rub.nds.tlsattacker.core.layer.impl.MessageLayer;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
-import de.rub.nds.tlsattacker.core.state.State;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.NotImplementedException;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsMessageReceiver;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsMessageResponse;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsStepContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-/**
- * The output mapper performs the following functions:
- * <ol>
- * <li>receives the SUT's response (records) over the wire;</li>
- * <li>processes the response by:</li>
- * <ul>
- * <li>updating the internal state;</li>
- * <li>converting response to a corresponding {@link TlsOutput}.</li>
- * </ul>
- * </ol>
- *
- * Everything having to do with how a response is converted into a TlsOutput
- * should be implemented here. Also implemented are operations over the mapper
- * such as coalescing to outputs into one or splitting an output into its atoms.
- */
-public class TlsOutputMapper extends OutputMapper {
+public class DtlsOutputMapper extends OutputMapper {
 
-    public TlsOutputMapper(MapperConfig mapperConfig) {
+    public DtlsOutputMapper(MapperConfig mapperConfig) {
         super(mapperConfig);
     }
 
     @Override
     public AbstractOutput receiveOutput(ExecutionContext context) {
-        TlsExecutionContext tlsContext = (TlsExecutionContext) context;
-        State state = tlsContext.getState().getState();
-
+        TlsContext tlsContext = ((TlsExecutionContext) context).getState().getTlsContext();
         try {
-            if (state.getTlsContext().getTransportHandler().isClosed()) {
+            if (tlsContext.getTransportHandler().isClosed()) {
                 return socketClosed();
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
             return socketClosed();
         }
-        try {
-            TlsMessageReceiver receiver = new TlsMessageReceiver();
-            TlsMessageResponse response = receiver.receiveMessages(state.getTlsContext());
-            TlsStepContext tlsStepContext = tlsContext.getStepContext();
-            tlsStepContext.receiveUpdate(response);
+        tlsContext.setTalkingConnectionEndType(tlsContext.getChooser().getMyConnectionPeer());
 
-            return extractOutput(response.getMessages());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return socketClosed();
+        // resetting protocol stack layers and creating configurations for each layer
+        @SuppressWarnings("rawtypes")
+        List<LayerConfiguration> layerConfigs = new ArrayList<>(tlsContext.getLayerStack().getLayerList().size());
+        for (ProtocolLayer<?,?> layer : tlsContext.getLayerStack().getLayerList()) {
+            layer.clear();
+            GenericReceiveLayerConfiguration receiveConfig = new GenericReceiveLayerConfiguration(layer.getLayerType());
+            layerConfigs.add(receiveConfig);
+        }
+
+        // receiving data at the Message Layer
+        tlsContext.getLayerStack().receiveData(layerConfigs);
+        MessageLayer messageLayer = (MessageLayer) tlsContext.getLayerStack().getLayer(MessageLayer.class);
+        List<ProtocolMessage<?>> messages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers().size());
+        messageLayer.getLayerResult().getUsedContainers().stream().forEach(m -> messages.add((ProtocolMessage<?>) m));
+
+        AbstractOutput output = extractOutput(messages);
+        // updating the execution context with the 'containers' that were produced at each layer
+        ((TlsExecutionContext) context).getStepContext().updateReceive(((TlsExecutionContext) context).getState().getState());
+        return output;
+    }
+
+    private AbstractOutput extractOutput(List<ProtocolMessage<?>> receivedMessages) {
+        if (isResponseUnknown(receivedMessages)) {
+            return AbstractOutput.unknown();
+        }
+        if (receivedMessages.isEmpty()) {
+            return timeout();
+        } else {
+            List<ProtocolMessage<? extends ProtocolMessage<?>>> tlsMessages = receivedMessages.stream().collect(Collectors.toList());
+            List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
+            String abstractOutput = toAbstractOutputString(abstractMessageStrings);
+            List<com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage> tlsProtocolMessages =
+            tlsMessages.stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
+
+            return new TlsOutput(abstractOutput, tlsProtocolMessages);
         }
     }
 
-    private boolean isResponseUnknown(List<TlsMessage> receivedMessages) {
+    private boolean isResponseUnknown(List<ProtocolMessage<?>> receivedMessages) {
         if (receivedMessages.size() >= MIN_ALERTS_IN_DECRYPTION_FAILURE) {
             return receivedMessages.stream().allMatch(m -> m instanceof AlertMessage || m instanceof UnknownMessage);
         }
@@ -78,10 +86,10 @@ public class TlsOutputMapper extends OutputMapper {
     /*
      * Failure to decrypt shows up as a longer sequence of alarm messages.
      */
-    private int unknownResponseLookahed(int currentIndex, List<TlsMessage> messages) {
+    private int unknownResponseLookahed(int currentIndex, List<ProtocolMessage<?>> messages) {
         int nextIndex = currentIndex;
 
-        TlsMessage message = messages.get(nextIndex);
+        ProtocolMessage<? extends ProtocolMessage<?>> message = messages.get(nextIndex);
         while ((message instanceof AlertMessage || message instanceof UnknownMessage) && nextIndex < messages.size()) {
             message = messages.get(nextIndex);
             nextIndex++;
@@ -91,24 +99,7 @@ public class TlsOutputMapper extends OutputMapper {
         return -1;
     }
 
-    private AbstractOutput extractOutput(List<TlsMessage> receivedMessages) {
-        if (isResponseUnknown(receivedMessages)) {
-            return AbstractOutput.unknown();
-        }
-        if (receivedMessages.isEmpty()) {
-            return timeout();
-        } else {
-            List<TlsMessage> tlsMessages = receivedMessages.stream().collect(Collectors.toList());
-            List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
-            String abstractOutput = toAbstractOutputString(abstractMessageStrings);
-            List<ProtocolMessage> tlsProtocolMessages =
-            tlsMessages.stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
-
-            return new TlsOutput(abstractOutput, tlsProtocolMessages);
-        }
-    }
-
-    private List<String> extractAbstractMessageStrings(List<TlsMessage> receivedMessages) {
+    private List<String> extractAbstractMessageStrings(List<ProtocolMessage<?>> receivedMessages) {
         List<String> outputStrings = new ArrayList<>(receivedMessages.size());
         for (int i = 0; i < receivedMessages.size(); i++) {
             // checking for cases of decryption failures, which which case
@@ -122,7 +113,7 @@ public class TlsOutputMapper extends OutputMapper {
                 }
             }
 
-            TlsMessage m = receivedMessages.get(i);
+            ProtocolMessage<? extends ProtocolMessage<?>> m = receivedMessages.get(i);
             String outputString = toOutputString(m);
             outputStrings.add(outputString);
         }
@@ -145,7 +136,7 @@ public class TlsOutputMapper extends OutputMapper {
         return abstractOutput;
     }
 
-    private String toOutputString(TlsMessage message) {
+    private String toOutputString(ProtocolMessage<?> message) {
         if (message instanceof CertificateMessage) {
             CertificateMessage cert = (CertificateMessage) message;
             if (cert.getCertificatesListLength().getValue() > 0) {
@@ -171,4 +162,5 @@ public class TlsOutputMapper extends OutputMapper {
         }
         return certType;
     }
+
 }
