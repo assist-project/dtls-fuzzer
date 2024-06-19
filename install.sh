@@ -7,7 +7,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="68211ad"
+readonly PROTOCOLSTATEFUZZER_COMMIT="9be551"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/Kax-y/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-$PROTOCOLSTATEFUZZER_COMMIT.patch"
