@@ -17,6 +17,11 @@ readonly TLSATTACKER_REP_URL="https://github.com/tls-attacker/TLS-Attacker.git"
 readonly TLSATTACKER_FOLDER="TLS-Attacker"
 readonly TLSATTACKER_PATCH="$PATCHES_DIR/TLS-Attacker-$TLSATTACKER_COMMIT.patch"
 
+readonly RALIB_COMMIT="cfb36f"
+readonly RALIB_REP_URL="https://github.com/LearnLib/ralib.git"
+readonly RALIB_FOLDER="ralib"
+readonly RALIB_PATCH="$PATCHES_DIR/ralib-$RALIB_COMMIT.patch"
+
 function check_java() {
     if ! command -v java &> /dev/null
     then
@@ -67,6 +72,25 @@ function clone_rep() {
     fi
 }
 
+function install_ralib() {
+    echo $RALIB_FOLDER
+    if [[ -d $RALIB_FOLDER ]]; then
+        echo "$RALIB_FOLDER folder already exists"
+        echo "Skipping ralib setup"
+    else
+        clone_rep "$RALIB_FOLDER" "$RALIB_REP_URL" "$RALIB_COMMIT"
+        (
+            cd $RALIB_FOLDER || exit
+            echo "Patching ralib to target java 11."
+            git apply "$RALIB_PATCH"
+            echo "Installing ralib"
+            mvn install -DskipTests
+        )
+    fi
+}
+
+
+
 function install_protocolstatefuzzer() {
     echo $PROTOCOLSTATEFUZZER_FOLDER
     if [[ -d $PROTOCOLSTATEFUZZER_FOLDER ]]; then
@@ -102,6 +126,9 @@ function install_tlsattacker() {
 # Check for the presence of Java and maven and if 'apt-get' is present, install them
 check_java
 check_mvn
+
+# Install ralib with bytecode for java 11.
+install_ralib
 
 # Checkout ProtocolState-Fuzzer repo, apply Java 11 compatibility patch, and install the library
 install_protocolstatefuzzer
