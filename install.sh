@@ -84,7 +84,7 @@ function install_ralib() {
             echo "Patching ralib to target java 11."
             git apply "$RALIB_PATCH"
             echo "Installing ralib"
-            mvn install -DskipTests
+            mvn install -DskipTests -Dspotbugs.skip=True -Dspotless.skip=True
         )
     fi
 }
@@ -101,7 +101,7 @@ function install_protocolstatefuzzer() {
         (
             cd $PROTOCOLSTATEFUZZER_FOLDER || exit
             echo "Installing ProtocolState-Fuzzer"
-            mvn install -DskipTests
+            mvn install -DskipTests -Dspotbugs.skip=True -Dspotless.skip=True
         )
     fi
 }
@@ -118,7 +118,7 @@ function install_tlsattacker() {
             echo "Patching TLS-Attacker to remove deplicate discard and fragment reordering."
             git apply "$TLSATTACKER_PATCH"
             echo "Installing TLS-Attacker"
-            mvn install -DskipTests
+            mvn install -DskipTests -Dspotbugs.skip=True -Dspotless.skip=True
         )
     fi
 }
