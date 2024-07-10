@@ -1,31 +1,31 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
 import java.util.Arrays;
 import java.util.Optional;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.KeyExchangeAlgorithm;
 
 /**
- * Provides an interface for analyzing outputs so that how the actual strings are formed is decoupled from the checking code.
+ * Provides an interface for analyzing outputs so that how the actual strings
+ * are formed is decoupled from the checking code.
  */
-public class TlsOutputChecker implements AbstractOutputChecker {
-    private static String APPLICATION="APPLICATION";
-    private static String FINISHED="FINISHED";
-    private static String ALERT="Alert";
+public class TlsOutputChecker implements OutputChecker<TlsOutput> {
+    private static String APPLICATION = "APPLICATION";
+    private static String FINISHED = "FINISHED";
+    private static String ALERT = "Alert";
     // private static String CLOSE_NOTIFY="Alert(WARNING,CLOSE_NOTIFY)";
     // private static String UNEXPECTED_MESSAGE="Alert(FATAL,UNEXPECTED_MESSAGE)";
-    private static String CLIENT_HELLO="CLIENT_HELLO";
-    private static String SERVER_HELLO="SERVER_HELLO";
-    private static String CHANGE_CIPHER_SPEC="CHANGE_CIPHER_SPEC";
-    private static String CERTIFICATE="CERTIFICATE";
-    private static String EMPTY_CERTIFICATE="EMPTY_CERTIFICATE";
-    private static String HELLO_VERIFY_REQUEST="HELLO_VERIFY_REQUEST";
-    private static String CLIENT_KEY_EXCHANGE="CLIENT_KEY_EXCHANGE";
-    private static String SERVER_KEY_EXCHANGE="SERVER_KEY_EXCHANGE";
+    private static String CLIENT_HELLO = "CLIENT_HELLO";
+    private static String SERVER_HELLO = "SERVER_HELLO";
+    private static String CHANGE_CIPHER_SPEC = "CHANGE_CIPHER_SPEC";
+    private static String CERTIFICATE = "CERTIFICATE";
+    private static String EMPTY_CERTIFICATE = "EMPTY_CERTIFICATE";
+    private static String HELLO_VERIFY_REQUEST = "HELLO_VERIFY_REQUEST";
+    private static String CLIENT_KEY_EXCHANGE = "CLIENT_KEY_EXCHANGE";
+    private static String SERVER_KEY_EXCHANGE = "SERVER_KEY_EXCHANGE";
 
-    public static boolean hasApplication(AbstractOutput output) {
+    public static boolean hasApplication(TlsOutput output) {
         return output.getName().contains(APPLICATION);
     }
 
@@ -33,16 +33,16 @@ public class TlsOutputChecker implements AbstractOutputChecker {
         return new TlsOutput(APPLICATION);
     }
 
-    public static boolean isApplication(AbstractOutput output) {
+    public static boolean isApplication(TlsOutput output) {
         return output.getName().equals(APPLICATION);
     }
 
-    public static boolean hasCertificate(AbstractOutput output) {
+    public static boolean hasCertificate(TlsOutput output) {
         return output.getName().contains(CERTIFICATE);
     }
 
-    public static boolean hasNonEmptyCertificate(AbstractOutput output) {
-        for (AbstractOutput atomicOutput : output.getAtomicOutputs()) {
+    public static boolean hasNonEmptyCertificate(TlsOutput output) {
+        for (TlsOutput atomicOutput : output.getAtomicOutputs()) {
             if (atomicOutput.getName().contains(CERTIFICATE) && !atomicOutput.getName().equals(EMPTY_CERTIFICATE)) {
                 return true;
             }
@@ -50,20 +50,20 @@ public class TlsOutputChecker implements AbstractOutputChecker {
         return false;
     }
 
-    public static boolean hasEmptyCertificate(AbstractOutput output) {
+    public static boolean hasEmptyCertificate(TlsOutput output) {
         return output.getName().contains(EMPTY_CERTIFICATE);
     }
 
-    public static boolean hasServerHello(AbstractOutput output) {
+    public static boolean hasServerHello(TlsOutput output) {
         return output.getName().contains(SERVER_HELLO);
     }
 
-    public static boolean hasClientHello(AbstractOutput output) {
+    public static boolean hasClientHello(TlsOutput output) {
         return output.getName().contains(CLIENT_HELLO);
     }
 
     @Override
-    public boolean hasInitialClientMessage(AbstractOutput abstractOutput) {
+    public boolean hasInitialClientMessage(TlsOutput abstractOutput) {
         return hasClientHello(abstractOutput);
     }
 
@@ -75,32 +75,32 @@ public class TlsOutputChecker implements AbstractOutputChecker {
         return CLIENT_HELLO;
     }
 
-    public static boolean hasHelloVerifyRequest(AbstractOutput output) {
+    public static boolean hasHelloVerifyRequest(TlsOutput output) {
         return output.getName().contains(HELLO_VERIFY_REQUEST);
     }
 
-    public static boolean hasChangeCipherSpec(AbstractOutput output) {
+    public static boolean hasChangeCipherSpec(TlsOutput output) {
         return output.getName().contains(CHANGE_CIPHER_SPEC);
     }
 
-    public static boolean hasAlert(AbstractOutput output) {
+    public static boolean hasAlert(TlsOutput output) {
         return output.getName().contains(ALERT);
     }
 
-    public static boolean hasFinished(AbstractOutput output) {
+    public static boolean hasFinished(TlsOutput output) {
         return output.getName().contains(FINISHED);
     }
 
-    public static boolean hasClientKeyExchange(AbstractOutput output) {
+    public static boolean hasClientKeyExchange(TlsOutput output) {
         return output.getName().contains(CLIENT_KEY_EXCHANGE);
     }
 
-    public static boolean hasServerKeyExchange(AbstractOutput output) {
+    public static boolean hasServerKeyExchange(TlsOutput output) {
         return output.getName().contains(SERVER_KEY_EXCHANGE);
     }
 
     public static CertificateKeyType getClientCertificateType(TlsOutput output) {
-        assert(hasCertificate(output) && output.isAtomic());
+        assert (hasCertificate(output) && output.isAtomic());
         if (hasEmptyCertificate(output)) {
             return CertificateKeyType.NONE;
         } else {
@@ -119,16 +119,16 @@ public class TlsOutputChecker implements AbstractOutputChecker {
     }
 
     public static CertificateKeyType getCertificateType(TlsOutput output) {
-        Optional<CertificateKeyType> opt = Arrays.stream(CertificateKeyType.values()).filter(ctype -> output.getName().contains(ctype.name())).findFirst();
+        Optional<CertificateKeyType> opt = Arrays.stream(CertificateKeyType.values())
+                .filter(ctype -> output.getName().contains(ctype.name())).findFirst();
         return opt.orElseGet(() -> null);
     }
-
 
     public static KeyExchangeAlgorithm getKeyExchangeAlgorithm(TlsOutput output) {
         if (hasClientKeyExchange(output) || hasServerKeyExchange(output)) {
             String keyExchange = output.getName().split("_", -1)[0];
             if (keyExchange.endsWith("DHE")) {
-                keyExchange = keyExchange.substring(0, keyExchange.length()-1);
+                keyExchange = keyExchange.substring(0, keyExchange.length() - 1);
             }
             return KeyExchangeAlgorithm.valueOf(keyExchange);
         }
@@ -138,5 +138,29 @@ public class TlsOutputChecker implements AbstractOutputChecker {
     private static String getParameter(TlsOutput output, int idx) {
         String[] outputSplit = output.getName().split("_", -1);
         return outputSplit[idx];
+    }
+
+    @Override
+    public boolean isTimeout(TlsOutput output) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isTimeout'");
+    }
+
+    @Override
+    public boolean isUnknown(TlsOutput output) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isUnknown'");
+    }
+
+    @Override
+    public boolean isSocketClosed(TlsOutput output) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isSocketClosed'");
+    }
+
+    @Override
+    public boolean isDisabled(TlsOutput output) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isDisabled'");
     }
 }
