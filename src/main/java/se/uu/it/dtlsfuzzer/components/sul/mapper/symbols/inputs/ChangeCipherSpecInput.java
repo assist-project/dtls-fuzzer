@@ -1,6 +1,5 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
 import de.rub.nds.tlsattacker.core.record.cipher.CipherState;
@@ -26,16 +25,18 @@ public class ChangeCipherSpecInput extends DtlsInput {
     }
 
     @Override
-    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage();
         return new TlsProtocolMessage(ccs);
     }
 
     @Override
     public void postSendDtlsUpdate(TlsExecutionContext context) {
-        // TLS-Attacker instantiates non-null ciphers even when the pre-master secret has not been yet negotiated.
+        // TLS-Attacker instantiates non-null ciphers even when the pre-master secret
+        // has not been yet negotiated.
         // Here, we replace the ciphers instantiated in such cases by null ciphers.
-        // This ensures that encrypted messages are more likely to make sense to the SUT.
+        // This ensures that encrypted messages are more likely to make sense to the
+        // SUT.
         if (getTlsContext(context).getPreMasterSecret() == null) {
             makeNullCipherAsMostRecent(getTlsContext(context).getRecordLayer().getEncryptor(), getTlsContext(context));
             makeNullCipherAsMostRecent(getTlsContext(context).getRecordLayer().getDecryptor(), getTlsContext(context));
@@ -44,7 +45,7 @@ public class ChangeCipherSpecInput extends DtlsInput {
 
     private void makeNullCipherAsMostRecent(RecordCryptoUnit cryptoUnit, TlsContext context) {
         RecordCipher cipher = cryptoUnit.getRecordMostRecentCipher();
-        if (! (cipher instanceof RecordNullCipher)) {
+        if (!(cipher instanceof RecordNullCipher)) {
             cryptoUnit.removeCiphers(1);
             CipherState cipherState = cipher.getState();
             cryptoUnit.addNewRecordCipher(new RecordNullCipher(context, cipherState));
