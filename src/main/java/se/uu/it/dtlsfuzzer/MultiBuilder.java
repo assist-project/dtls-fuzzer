@@ -4,6 +4,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabe
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.xml.AlphabetSerializerXml;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.config.LearnerConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.statistics.MealyMachineWrapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapperStandard;
@@ -19,44 +20,54 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.St
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunner;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.config.TestRunnerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.config.TestRunnerEnabler;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.TimingProbe;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.TimingProbeBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.TimingProbeStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeEnabler;
 import se.uu.it.dtlsfuzzer.components.sul.core.TlsSulBuilder;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulServerConfig;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsAlphabetPojoXml;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class MultiBuilder implements StateFuzzerConfigBuilder, StateFuzzerBuilder, TestRunnerBuilder, TimingProbeBuilder {
+public class MultiBuilder implements StateFuzzerConfigBuilder,
+        StateFuzzerBuilder<MealyMachineWrapper<TlsInput, TlsOutput>>, TestRunnerBuilder, TimingProbeBuilder {
 
-    private AlphabetBuilder alphabetBuilder = new AlphabetBuilderStandard(
-            new AlphabetSerializerXml<>(TlsAlphabetPojoXml.class));
+    private AlphabetBuilder<TlsInput> alphabetBuilder = new AlphabetBuilderStandard<TlsInput>(
+            new AlphabetSerializerXml<Tlsinput, TlsAlphabetPojoXml>(TlsInput.class, TlsAlphabetPojoXml.class));
 
     // SulBuilderImpl needs to be implemented
-    private SulBuilder sulBuilder = new TlsSulBuilder();
-    private SulWrapper sulWrapper = new SulWrapperStandard();
+    private SulBuilder<TlsInput, TlsOutput, TlsExecutionContext> sulBuilder = new TlsSulBuilder();
+    private SulWrapper<TlsInput, TlsOutput, TlsExecutionContext> sulWrapper = new SulWrapperStandard<TlsInput, TlsOutput, TlsExecutionContext>();
 
     MultiBuilder() {
     }
 
     @Override
     public TimingProbe build(TimingProbeEnabler timingProbeEnabler) {
-        return new TimingProbe(timingProbeEnabler, alphabetBuilder, sulBuilder, sulWrapper);
+        return new TimingProbeStandard<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext>(timingProbeEnabler,
+                alphabetBuilder, sulBuilder, sulWrapper);
     }
 
     @Override
     public TestRunner build(TestRunnerEnabler testRunnerEnabler) {
-        return new TestRunner(testRunnerEnabler, alphabetBuilder, sulBuilder, sulWrapper);
+        return new TestRunnerStandard<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext>(testRunnerEnabler,
+                alphabetBuilder, sulBuilder, sulWrapper);
     }
 
     @Override
-    public StateFuzzer build(StateFuzzerEnabler stateFuzzerEnabler) {
-        StateFuzzerComposerStandard composer = new StateFuzzerComposerStandard(stateFuzzerEnabler, alphabetBuilder, sulBuilder, sulWrapper);
+    public StateFuzzer<MealyMachineWrapper<TlsInput, TlsOutput>> build(StateFuzzerEnabler stateFuzzerEnabler) {
+        StateFuzzerComposerStandard<TlsInput, TlsOutput, TlsExecutionContext> composer = new StateFuzzerComposerStandard<TlsInput, TlsOutput, TlsExecutionContext>(
+                stateFuzzerEnabler, alphabetBuilder, sulBuilder, sulWrapper);
         composer.initialize();
-        return new StateFuzzerStandard(composer);
+        return new StateFuzzerStandard<>(composer);
     }
 
     @Override

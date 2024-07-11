@@ -11,8 +11,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class TlsExecutionContext extends ExecutionContextStepped {
+public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOutput, TlsState, TlsStepContext> {
 
     private Integer renegotiationIndex = 0;
     private Long writeRecordNumberEpoch0 = null;
@@ -125,10 +127,10 @@ public class TlsExecutionContext extends ExecutionContextStepped {
     }
 
     /**
-      public Long incrementWriteRecordNumberEpoch0() {
-        Long old = writeRecordNumberEpoch0;
-        writeRecordNumberEpoch0++;
-        return old;
-      }
-    **/
+     * public Long incrementWriteRecordNumberEpoch0() {
+     * Long old = writeRecordNumberEpoch0;
+     * writeRecordNumberEpoch0++;
+     * return old;
+     * }
+     **/
 }
