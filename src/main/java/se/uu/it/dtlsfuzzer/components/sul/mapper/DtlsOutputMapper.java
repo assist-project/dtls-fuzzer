@@ -21,6 +21,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage, TlsExecutionContext> {
+    public static final int MIN_ALERTS_IN_DECRYPTION_FAILURE = 3;
 
     public DtlsOutputMapper(MapperConfig mapperConfig, OutputBuilder<TlsOutput> outputBuilder,
             OutputChecker<TlsOutput> outputChecker) {

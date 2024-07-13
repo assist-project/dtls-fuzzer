@@ -46,10 +46,9 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
      * {@inheritDoc}
      */
     @Override
-    public void addStepContext() {
-        stepContexts.add(new TlsStepContext(stepContexts.size()));
+    protected TlsStepContext buildStepContext() {
+        return new TlsStepContext(stepContexts.size());
     }
-
     /**
      * {@inheritDoc}
      */

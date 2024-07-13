@@ -3,7 +3,7 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper;
 import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
 import de.rub.nds.tlsattacker.core.state.State;
 
-public class TlsState implements com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.State {
+public class TlsState {
     private State state;
 
     public TlsState(State state) {
