@@ -1,9 +1,10 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposer;
-
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputBuilder;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
 public class DtlsMapperComposer
         extends MapperComposer<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext, TlsState> {
@@ -12,12 +13,12 @@ public class DtlsMapperComposer
     }
 
     @Override
-    public DtlsOutputChecker getOutputChecker() {
-        return (DtlsOutputChecker) super.getOutputChecker();
+    public TlsOutputChecker getOutputChecker() {
+        return (TlsOutputChecker) super.getOutputChecker();
     }
 
     @Override
-    public DtlsOutputBuilder getOutputBuilder() {
-        return (DtlsOutputBuilder) super.getOutputBuilder();
+    public TlsOutputBuilder getOutputBuilder() {
+        return (TlsOutputBuilder) super.getOutputBuilder();
     }
 }

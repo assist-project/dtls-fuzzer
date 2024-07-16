@@ -10,11 +10,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulAda
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwrappers.DynamicPortProvider;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputBuilder;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
@@ -37,7 +33,6 @@ import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsMapperComposer;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsOutputMapper;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
@@ -100,6 +95,10 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
 
     private CleanupTasks cleanupTasks;
 
+    private SulAdapter sulAdapter;
+
+    private DynamicPortProvider dynamicPortProvider;
+
     public TlsSul(TlsSulConfig sulConfig, MapperConfig mapperConfig,
             DtlsMapperComposer mapperComposer,
             CleanupTasks cleanupTasks) {
@@ -127,10 +126,6 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
                 }
             });
         }
-    }
-
-    void setSulAdapter(SulAdapter sulAdapter) {
-        this.sulAdapter = sulAdapter;
     }
 
     @Override
@@ -240,10 +235,11 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
 
     private TlsOutput doStep(TlsInput in) {
         context.addStepContext();
-        Mapper mapper = in.getPreferredMapper(sulConfig);
-        if (mapper == null) {
-            mapper = this.mapper;
-        }
+        // Mapper<TlsInput, TlsOutput, TlsExecutionContext> mapper = this.getMapper();
+        // if (mapper == null) { todo: dead store according to spotbugs, see if this is
+        // needed.
+        // mapper = this.mapper;
+        // }
 
         if (sulConfig.isFuzzingClient() && !receivedClientHello) {
             receiveClientHello();
@@ -335,37 +331,35 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
 
     @Override
     public SulConfig getSulConfig() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getSulConfig'");
+        return this.sulConfig;
     }
 
     @Override
     public CleanupTasks getCleanupTasks() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCleanupTasks'");
-    }
-
-    @Override
-    public void setDynamicPortProvider(DynamicPortProvider dynamicPortProvider) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setDynamicPortProvider'");
+        return cleanupTasks;
     }
 
     @Override
     public DynamicPortProvider getDynamicPortProvider() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDynamicPortProvider'");
+        return dynamicPortProvider;
+    }
+
+    @Override
+    public void setDynamicPortProvider(DynamicPortProvider dynamicPortProvider) {
+        this.dynamicPortProvider = dynamicPortProvider;
     }
 
     @Override
     public Mapper<TlsInput, TlsOutput, TlsExecutionContext> getMapper() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMapper'");
+        return this.mapperComposer;
     }
 
     @Override
     public SulAdapter getSulAdapter() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getSulAdapter'");
+        return this.sulAdapter;
+    }
+
+    void setSulAdapter(SulAdapter sulAdapter) {
+        this.sulAdapter = sulAdapter;
     }
 }
