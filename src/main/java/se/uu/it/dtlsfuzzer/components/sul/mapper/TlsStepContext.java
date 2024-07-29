@@ -13,10 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.tuple.Pair;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class TlsStepContext extends StepContext<TlsInput, TlsOutput> {
+public class TlsStepContext<I, O> extends StepContext<I, O> {
 
     private List<ProtocolMessage<?>> sentMessages;
     private List<DtlsHandshakeMessageFragment> sentFragments;
@@ -78,11 +76,6 @@ public class TlsStepContext extends StepContext<TlsInput, TlsOutput> {
 
     public List<Record> getSentRecords() {
         return sentRecords;
-    }
-
-    @Override
-    public TlsInput getInput() {
-        return (TlsInput) input;
     }
 
     public List<Pair<ProtocolMessage<?>, Record>> getReceivedMessageRecordPairs() {

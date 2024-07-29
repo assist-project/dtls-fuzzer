@@ -1,6 +1,8 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
+
+import de.learnlib.ralib.words.PSymbolInstance;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
@@ -11,17 +13,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class TlsExecutionContext
-        extends ExecutionContextStepped<TlsInput, TlsOutput, TlsState, TlsStepContext<TlsInput, TlsOutput>> {
+public class TlsExecutionContextRA extends
+        ExecutionContextStepped<PSymbolInstance, PSymbolInstance, TlsState, TlsStepContext<PSymbolInstance, PSymbolInstance>> {
 
     private Integer renegotiationIndex = 0;
     private Long writeRecordNumberEpoch0 = null;
     private TlsSulConfig tlsSulConfig;
 
-    public TlsExecutionContext(TlsSulConfig tlsSulConfig, TlsState state) {
+    public TlsExecutionContextRA(TlsSulConfig tlsSulConfig, TlsState state) {
         super(state);
         this.tlsSulConfig = tlsSulConfig;
     }
@@ -46,7 +46,7 @@ public class TlsExecutionContext
     /**
      * Provides a fresh ordered Stream of TlsStepContext elements.
      */
-    public Stream<TlsStepContext<TlsInput, TlsOutput>> getTlsStepContextStream() {
+    public Stream<TlsStepContext<PSymbolInstance, PSymbolInstance>> getTlsStepContextStream() {
         return stepContexts.stream().map(step -> step);
     }
 
@@ -104,8 +104,8 @@ public class TlsExecutionContext
     }
 
     @Override
-    protected TlsStepContext<TlsInput, TlsOutput> buildStepContext() {
-        return new TlsStepContext<TlsInput, TlsOutput>(stepContexts.size());
+    protected TlsStepContext<PSymbolInstance, PSymbolInstance> buildStepContext() {
+        return new TlsStepContext<>(stepContexts.size());
     }
 
     /**
