@@ -2,7 +2,6 @@ package se.uu.it.dtlsfuzzer.components.sul.core;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
-
 import de.learnlib.ralib.words.PSymbolInstance;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsInputMapperRA;

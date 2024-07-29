@@ -12,7 +12,6 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwra
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
-
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
@@ -32,15 +31,10 @@ import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.ConfigDelegate;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsMapperComposer;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsMapperComposerRA;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsOutputMapper;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsOutputMapperRA;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 /**
  * Implementation of {@link AbstractSul} that works for both clients and

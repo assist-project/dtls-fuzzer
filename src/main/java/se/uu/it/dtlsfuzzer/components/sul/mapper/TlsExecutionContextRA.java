@@ -1,7 +1,6 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
-
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.layer.context.TlsContext;

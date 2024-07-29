@@ -2,12 +2,10 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.MapperOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
-
 import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.learnlib.ralib.words.ParameterizedSymbol;
 import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

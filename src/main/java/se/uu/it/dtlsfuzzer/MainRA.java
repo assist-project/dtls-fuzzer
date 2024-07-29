@@ -1,11 +1,6 @@
 package se.uu.it.dtlsfuzzer;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.statistics.RegisterAutomatonWrapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.entrypoints.CommandLineParser;
-
-import de.learnlib.ralib.words.PSymbolInstance;
-import de.learnlib.ralib.words.ParameterizedSymbol;
-
 import java.io.IOException;
 import java.security.Security;
 import javax.xml.stream.XMLStreamException;

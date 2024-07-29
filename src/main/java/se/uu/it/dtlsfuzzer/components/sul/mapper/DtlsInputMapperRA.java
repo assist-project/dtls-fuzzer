@@ -3,7 +3,6 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.InputMapperRA;
-
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.rub.nds.tlsattacker.core.layer.LayerConfiguration;
 import de.rub.nds.tlsattacker.core.layer.LayerStack;
