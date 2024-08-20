@@ -12,7 +12,7 @@ readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protoc
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-$PROTOCOLSTATEFUZZER_COMMIT.patch"
 
-readonly TLSATTACKER_VERSION="v5.1.6"
+readonly TLSATTACKER_VERSION="v5.2.1"
 readonly TLSATTACKER_REP_URL="https://github.com/tls-attacker/TLS-Attacker.git"
 readonly TLSATTACKER_FOLDER="TLS-Attacker"
 readonly TLSATTACKER_PATCH="$PATCHES_DIR/TLS-Attacker-$TLSATTACKER_VERSION.patch"

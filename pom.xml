@@ -17,8 +17,8 @@
         <log4j.version>2.23.1</log4j.version>
         <modifiable-variable.version>4.1.2</modifiable-variable.version>
         <osgi.version>8.1.0</osgi.version>
-        <tlsattacker.core.version>5.1.6</tlsattacker.core.version>
-        <tlsattacker.transport.version>5.1.6</tlsattacker.transport.version>
+        <tlsattacker.core.version>5.2.1</tlsattacker.core.version>
+        <tlsattacker.transport.version>5.2.1</tlsattacker.transport.version>
     </properties>
 
     <dependencyManagement>
