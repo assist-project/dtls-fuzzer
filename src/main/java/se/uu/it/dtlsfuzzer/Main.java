@@ -13,7 +13,7 @@ public class Main {
         MultiBuilder mb = new MultiBuilder();
         // String[] parentLoggers = {Main.class.getPackageName()};
 
-        CommandLineParser commandLineParser = new CommandLineParser(mb, mb, mb, mb, new String [] {Main.class.getPackageName()});
+        CommandLineParser commandLineParser = new CommandLineParser(mb, mb, mb, mb);
         // commandLineParser.setExternalParentLoggers(parentLoggers);
         commandLineParser.parse(args);
     }

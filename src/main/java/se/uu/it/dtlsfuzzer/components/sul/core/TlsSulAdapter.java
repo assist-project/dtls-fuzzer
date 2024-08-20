@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
  * "stop" - prompts the launch server to stop the current SUL process.
  * The server generates "stopped" to signal that the SUL process has terminated.
  */
-public class TlsSulAdapter implements SulAdapter {
+public final class TlsSulAdapter implements SulAdapter {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String CMD_STOP = "stop";
@@ -57,6 +57,7 @@ public class TlsSulAdapter implements SulAdapter {
                             adapterSocket.close();
                         }
                     } catch (IOException e) {
+                        LOGGER.error("IOException in TlsSulAdapter.run()");
                         e.printStackTrace();
                     }
                 }
@@ -71,6 +72,7 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * Connects to the SUL launch server if not already connected.
      */
+    @Override
     public void connect() {
         try {
             if (!adapterSocket.isConnected()) {
@@ -86,6 +88,7 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * Asks the SUL launch server to launch a new SUL thread.
      */
+    @Override
     public void start() {
         if (!checkStopped()) {
             throw new TlsSulAdapterException("SUL still running");
@@ -94,10 +97,13 @@ public class TlsSulAdapter implements SulAdapter {
         String resp = null;
         try {
             resp = reader.readLine();
+            if (resp == null) {
+                throw new TlsSulAdapterException("Received no response");
+            }
         } catch (IOException e) {
             throw new TlsSulAdapterException(e);
         }
-        String[] split = resp.split("\\ ");
+        String[] split = resp.split("\\ ", -1);
         if (!split[0].equals(RESP_STARTED)) {
             throw new TlsSulAdapterException(String.format("Received invalid response to %s command", CMD_START));
         }
@@ -113,14 +119,15 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * Asks the SUL launch server to terminate the current SUL thread (if the thread hasn't terminated already).
      */
-    public void stop(){
+    @Override
+    public void stop() {
         if (!checkStopped()) {
             writer.println(CMD_STOP);
             String response;
             try {
                 response = reader.readLine();
-                if (!response.equals(RESP_STOPPED)) {
-                    throw new TlsSulAdapterException(String.format("Received invalid response to %s command", CMD_STOP));
+                if (response == null || !response.equals(RESP_STOPPED)) {
+                    throw new TlsSulAdapterException(String.format("Received invalid or no response to %s command", CMD_STOP));
                 }
                 stopped = true;
             } catch (IOException e) {
@@ -132,16 +139,17 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean checkStopped() {
         // has the SUT stopped after executing the input?
         try {
             if (reader.ready()) {
                 String response = reader.readLine();
-                if (response.equals(RESP_STOPPED)) {
+                if (response == null || response.equals(RESP_STOPPED)) {
                     LOGGER.debug("Server stopped");
                     stopped = true;
                 } else {
-                    throw new TlsSulAdapterException("Received invalid response");
+                    throw new TlsSulAdapterException("Received invalid or no response");
                 }
             }
         } catch (IOException e) {
@@ -153,6 +161,7 @@ public class TlsSulAdapter implements SulAdapter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Integer getSulPort() {
         return sulPort;
     }

@@ -5,8 +5,8 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abst
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.xml.AbstractInputXml;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.config.Config;
+import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
 import de.rub.nds.tlsattacker.core.state.State;
-import de.rub.nds.tlsattacker.core.state.TlsContext;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
@@ -23,6 +23,7 @@ public abstract class TlsInput extends AbstractInputXml {
         super(name);
     }
 
+    @Override
     public void preSendUpdate(ExecutionContext context) {
     }
 
@@ -54,5 +55,6 @@ public abstract class TlsInput extends AbstractInputXml {
         return getTlsExecutionContext(context).getState().getState().getConfig();
     }
 
+    @Override
     public abstract TlsInputType getInputType();
 }

@@ -2,17 +2,23 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>se.uu.it</groupId>
     <artifactId>dtls-fuzzer</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <jakarta-xml.version>4.0.0</jakarta-xml.version>
+        <!-- Alphabetically sorted -->
+        <error-prone.version>2.30.0</error-prone.version>
+        <jakarta-xml.version>4.0.2</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
-        <learnlib.version>0.16.0</learnlib.version>
-        <log4j.version>2.20.0</log4j.version>
+        <learnlib.version>0.17.0</learnlib.version>
+        <log4j.version>2.23.1</log4j.version>
+        <modifiable-variable.version>4.1.2</modifiable-variable.version>
+        <osgi.version>8.1.0</osgi.version>
+        <tlsattacker.core.version>5.3.0</tlsattacker.core.version>
+        <tlsattacker.transport.version>5.3.0</tlsattacker.transport.version>
     </properties>
 
     <dependencyManagement>
@@ -40,11 +46,27 @@
                 <version>${log4j.version}</version>
             </dependency>
 
+            <!-- log4j bridge to slf4j-api versions after 1.7.x -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j2-impl</artifactId>
+                <version>${log4j.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
             <!-- jakarta-xml api -->
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jakarta-xml.version}</version>
+            </dependency>
+
+            <!-- resolves a warning -->
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>osgi.annotation</artifactId>
+                <version>${osgi.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -62,18 +84,18 @@
         <dependency>
             <groupId>de.rub.nds</groupId>
             <artifactId>modifiable-variable</artifactId>
-            <version>4.0.0</version>
+            <version>${modifiable-variable.version}</version>
         </dependency>
         <dependency>
             <groupId>de.rub.nds.tls.attacker</groupId>
             <artifactId>tls-core</artifactId>
-            <version>4.0.2</version>
+            <version>${tlsattacker.core.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>de.rub.nds.tls.attacker</groupId>
             <artifactId>transport</artifactId>
-            <version>5.3.0</version>
+            <version>${tlsattacker.transport.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
@@ -82,16 +104,24 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
+            <version>3.16.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.64</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
         </dependency>
     </dependencies>
 
@@ -100,10 +130,24 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <!--arg>-Werror</arg>-->
+                        <arg>-Xlint:all</arg>
+                        <arg>-XDcompilePolicy=simple</arg>
+                        <arg>-Xplugin:ErrorProne -Xep:AddressSelection:OFF</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>${error-prone.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -132,7 +176,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.7.1</version>
                 <executions>
                     <execution>
                         <id>analyze-only</id>
@@ -142,6 +186,11 @@
                         <configuration>
                             <failOnWarning>true</failOnWarning>
                             <ignoreUnusedRuntime>true</ignoreUnusedRuntime>
+                            <ignoredUnusedDeclaredDependencies>
+                                <ignoredUnusedDeclaredDependency>
+                                    org.osgi:osgi.annotation:jar:*
+                                </ignoredUnusedDeclaredDependency>
+                            </ignoredUnusedDeclaredDependencies>
                         </configuration>
                     </execution>
                     <execution>
@@ -160,7 +209,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.39.0</version>
+                <version>2.43.0</version>
                 <configuration>
                     <formats>
                         <format>
@@ -168,6 +217,7 @@
                                 <include>*.md</include>
                                 <include>*.sh</include>
                                 <include>*.xml</include>
+                                <include>.spotbugs/*.xml</include>
                             </includes>
                             <endWithNewline />
                             <trimTrailingWhitespace />
@@ -203,10 +253,9 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.7.3.5</version>
+                <version>4.8.6.2</version>
                 <configuration>
-                    <threshold>High</threshold>
-                    <!-- <visitors>FindDeadLocalStores,UnreadFields</visitors> -->
+                    <includeFilterFile>.spotbugs/include.xml</includeFilterFile>
                 </configuration>
                 <executions>
                     <execution>
@@ -221,7 +270,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <archive>
                         <manifest>

@@ -4,11 +4,8 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.cont
 import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModification;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
-import de.rub.nds.tlsattacker.core.dtls.MessageFragmenter;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
-import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Arrays;
@@ -38,7 +35,7 @@ public class ClientHelloInput extends DtlsInput {
     @XmlAttribute(name = "withSessionId", required = false)
     private boolean withSessionId = false;
 
-    private TlsMessage message;
+    private ClientHelloMessage message;
 
     public ClientHelloInput() {
         super("CLIENT_HELLO");
@@ -87,8 +84,7 @@ public class ClientHelloInput extends DtlsInput {
         // to work also with 1-CH DTLS handshakes.
         // (in which case, the clienthello is digested)
         if (forceDigest && state.getTlsContext().getDigest().getRawBytes().length == 0) {
-            DtlsHandshakeMessageFragment fragment = MessageFragmenter.wrapInSingleFragment((HandshakeMessage) message,
-                    state.getTlsContext());
+            DtlsHandshakeMessageFragment fragment = state.getTlsContext().getDtlsFragmentLayer().wrapInSingleFragment(state.getTlsContext(), message, true);
             state.getTlsContext().getDigest().append(fragment.getCompleteResultingMessage().getValue());
         }
     }

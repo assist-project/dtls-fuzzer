@@ -14,7 +14,7 @@ public class FinishedInput extends DtlsInput {
     @XmlAttribute(name = "resetMSeq", required = true)
     private boolean resetMSeq = false;
 
-    private int lastSequenceNumber;
+    private long lastSequenceNumber;
 
     public FinishedInput() {
         super("FINISHED");
@@ -25,7 +25,9 @@ public class FinishedInput extends DtlsInput {
         // Uncomment line to print digest, TODO remove this when polishing things up
         // System.out.println(ArrayConverter.bytesToHexString(state.getTlsContext().getDigest().getRawBytes()));
         FinishedMessage message = new FinishedMessage();
-        lastSequenceNumber = getTlsContext(context).getDtlsWriteHandshakeMessageSequence();
+        lastSequenceNumber = getTlsContext(context).getWriteSequenceNumber(getTlsContext(context).getWriteEpoch());
+//        getTlsContext(context).setWriteEpoch(getTlsContext(context).getWriteEpoch() + 1);
+//        getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0L);
         return new TlsProtocolMessage(message);
     }
 
@@ -33,14 +35,15 @@ public class FinishedInput extends DtlsInput {
     public void postSendDtlsUpdate(TlsExecutionContext context) {
         getTlsContext(context).getDigest().reset();
         // we have to make this change for learning to scale
-        getTlsContext(context).setDtlsWriteHandshakeMessageSequence(lastSequenceNumber + 1);
+        getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), lastSequenceNumber + 1);
     }
 
+    @Override
     public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
             ExecutionContext context) {
         if (resetMSeq) {
             if (TlsOutputChecker.hasChangeCipherSpec(output)) {
-                getTlsContext(context).setDtlsWriteHandshakeMessageSequence(0);
+                getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0);
             }
         }
         super.postReceiveUpdate(output, abstractOutputChecker, context);

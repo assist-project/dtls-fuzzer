@@ -1,13 +1,13 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
 import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
 import de.rub.nds.tlsattacker.core.record.cipher.CipherState;
 import de.rub.nds.tlsattacker.core.record.cipher.RecordCipher;
 import de.rub.nds.tlsattacker.core.record.cipher.RecordNullCipher;
 import de.rub.nds.tlsattacker.core.record.crypto.Encryptor;
 import de.rub.nds.tlsattacker.core.record.crypto.RecordCryptoUnit;
-import de.rub.nds.tlsattacker.core.state.TlsContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
@@ -25,8 +25,9 @@ public class ChangeCipherSpecInput extends DtlsInput {
         context.setWriteRecordNumberEpoch0(writeSeqNumForCurrentEpoch + 1);
     }
 
+    @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
-        ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage(getState(context).getConfig());
+        ChangeCipherSpecMessage ccs = new ChangeCipherSpecMessage();
         return new TlsProtocolMessage(ccs);
     }
 

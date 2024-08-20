@@ -20,7 +20,7 @@ public class HelloVerifyRequestInput extends DtlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
-        HelloVerifyRequestMessage hvr = new HelloVerifyRequestMessage(getConfig(context));
+        HelloVerifyRequestMessage hvr = new HelloVerifyRequestMessage();
         return new TlsProtocolMessage(hvr);
     }
 

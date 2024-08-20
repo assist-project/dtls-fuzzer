@@ -36,6 +36,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
         super("CLIENT_HELLO_RENEGOTIATION");
     }
 
+    @Override
     public boolean isEnabled(ExecutionContext context) {
         switch (enabled) {
             case OWN_EPOCH_CHANGE :
@@ -57,9 +58,9 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         getTlsContext(context).getDigest().reset();
         if (resetMSeq) {
-            getTlsContext(context).setDtlsWriteHandshakeMessageSequence(0);
+            getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0);
         }
-        getTlsContext(context).setDtlsReadHandshakeMessageSequence(0);
+        getTlsContext(context).setReadSequenceNumber(getTlsContext(context).getReadEpoch(), 0);
         if (suite != null) {
             getConfig(context).setDefaultClientSupportedCipherSuites(suite);
         }
@@ -82,6 +83,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
         return new TlsProtocolMessage(message);
     }
 
+    @Override
     public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
             ExecutionContext context) {
         switch (enabled) {

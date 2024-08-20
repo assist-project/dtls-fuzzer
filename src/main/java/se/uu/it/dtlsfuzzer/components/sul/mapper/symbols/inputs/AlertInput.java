@@ -21,7 +21,7 @@ public class AlertInput extends DtlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
-        AlertMessage alert = new AlertMessage(getConfig(context));
+        AlertMessage alert = new AlertMessage();
         alert.setConfig(new byte [] {level.getValue(), description.getValue()});
         return new TlsProtocolMessage(alert);
     }

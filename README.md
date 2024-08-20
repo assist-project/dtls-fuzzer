@@ -43,7 +43,7 @@ As an example, the folder name `jsse-12_server_rsa_cert_none_incl` indicates an 
 An output folder contains:
 - `alphabet.xml`, the input alphabet;
 - `command.args`, the arguments file used containing various experiment parameters, most notably:
-    - *queries*, the bound on the number of random walk tests which need to pass for a hypothesis to be deemed final
+    - *eqvQueries*, the bound on the number of equivalence queries (random walk tests) which need to pass for a hypothesis to be deemed final
     - *equivalenceAlgorithms*, model-based test algorithms employed
     - *startWait* and *responseWait*, the start and response timeout respectively (we touch on them later)
 - `sul.config`, SUT-dependent configuration for TLS-Attacker, the same configuration can be used to execute workflow traces on the SUT using TLS-Attacker alone;
@@ -160,7 +160,7 @@ We get:
 If all goes well, the server should have printed out "This is a hello message", a message we send after completing the handshake.
 Knowing our setup functions, we can now start learning by running:
 
-    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_psk -queries 200
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_psk -eqvQueries 200
 
 We notice that an output directory, `output/openssl-1.1.1b_psk/` for the experiment has been created.
 We can `ls` this directory to check the current status of the experiment (the number of hypotheses generated...).
@@ -260,7 +260,7 @@ Compared to experiments in the paper, we increased the response timeout for seve
 To shorten learning time, we suggest decreasing the test bound of the random walk algorithm from 20000 to 5000.
 This can be done by:
 
-    java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -queries 5000
+    java -jar target/dtls-fuzzer.jar @args/sut_name/arg_file -eqvQueries 5000
 
 This will overwrite the bound setting in the argument file.
 Aside from GnuTLS, PionDTLS and JSSE, we expect learning to produce the same models for this lower bound.
@@ -317,7 +317,7 @@ Any openssl-1.1.1b configuration (for example `args/openssl/learn_openssl_server
 Experiments terminate quickly (less than a day), exercising all key exchange algorithms.
 Command for client certificate required configuration using all (PSK, RSA, ECDH, DH) key exchange algorithms:
 
-    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_all_cert_req -queries 5000
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_all_cert_req -eqvQueries 5000
 
 Note, when learning OpenSSL it is necessary to point the LD_LIBRARY_PATH variable to the installation directory.
 
@@ -326,26 +326,26 @@ Any mbedtls-2.16.1 configuration can be used for the same reasons as OpenSSL.
 Experiments take more time to complete since the SUT is slower.
 Command for client certificate authentication disabled configuration using all key exchange algorithms:
 
-    java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_server_all_cert_none -queries 5000
+    java -jar target/dtls-fuzzer.jar @args/mbedtls-2.16.1/learn_mbedtls_server_all_cert_none -eqvQueries 5000
 
 
 ### Contiki-NG TinyDTLS using PSK
 A redacted version of the model obtained for this configuration appears in the appendix.
 We can use a low test bound of 2000 since the input alphabet is small, making testing easier.
 
-    java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_server_ctinydtls_psk -queries 2000
+    java -jar target/dtls-fuzzer.jar @args/ctinydtls/learn_server_ctinydtls_psk -eqvQueries 2000
 
 ### WolfSSL 4.0.0 using PSK
 For WolfSSL we provide a PSK configuration for which learning should terminate relatively quickly.
 
-    java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_server_psk -queries 2000
+    java -jar target/dtls-fuzzer.jar @args/wolfssl-4.0.0/learn_wolfssl-4.0.0_server_psk -eqvQueries 2000
 
 ### GnuTLS 3.6.7 with client authentication disabled
 The more recent GnuTLS version we analyzed produced nice, compact models.
 Unfortunately, enabling client authentication lead to a sharp increase in the number of required tests.
 We suggest a configuration which disables it to shorten learning time:
 
-    java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_server_all_cert_none -queries 2000
+    java -jar target/dtls-fuzzer.jar @args/gnutls-3.6.7/learn_gnutls-3.6.7_server_all_cert_none -eqvQueries 2000
 
 ### Scandium PSK (before bug fixes)
 A redacted version of the model obtained for this configuration appears in the paper.
@@ -353,7 +353,7 @@ The model exposes important bugs, unfortunately, the experiment is lengthy.
 The experiment should not be run in parallel with experiments not involving Scandium or JSSE.
 Command:
 
-    java -jar target/dtls-fuzzer.jar @args/scandium-2.0.0/learn_scandium-2.0.0_server_psk -queries 2000
+    java -jar target/dtls-fuzzer.jar @args/scandium-2.0.0/learn_scandium-2.0.0_server_psk -eqvQueries 2000
 
 ### JSSE 12.0.2 with authentication required
 A redacted version of the model obtained for this configuration appears in the paper.
@@ -412,7 +412,7 @@ A .jar for this library is included in `experiments/scripts`.
 ## Displaying help page
 Run:
 
-    java -jar target/dtls-fuzzer.jar -help
+    java -jar target/dtls-fuzzer.jar
 
 ## Learning DTLS implementations
 

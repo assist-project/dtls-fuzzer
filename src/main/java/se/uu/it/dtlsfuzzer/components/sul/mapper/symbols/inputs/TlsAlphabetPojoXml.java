@@ -41,6 +41,7 @@ public class TlsAlphabetPojoXml extends AlphabetPojoXml {
         this.inputs = inputs;
     }
 
+    @Override
     public List<AbstractInput> getInputs() {
         return inputs;
     }
