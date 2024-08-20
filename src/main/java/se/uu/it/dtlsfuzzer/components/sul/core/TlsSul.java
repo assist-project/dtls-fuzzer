@@ -150,9 +150,10 @@ public class TlsSul extends AbstractSul {
             });
             chWaiter.start();
             receivedClientHello = false;
-            if (((TlsSulClientConfig) sulConfig).getClientWait() > 0) {
+            long clientWait = ((TlsSulClientConfig) sulConfig).getClientWait();
+            if (clientWait > 0) {
                 try {
-                    Thread.sleep(((TlsSulClientConfig) sulConfig).getClientWait());
+                    Thread.sleep(clientWait);
                 } catch (InterruptedException e) {
                     LOGGER.error("Could not sleep thread");
                 }
@@ -188,8 +189,9 @@ public class TlsSul extends AbstractSul {
                 LOGGER.error("Transport handler is null");
             } else {
                 transportHandler.closeConnection();
-                if (sulConfig.getStartWait() > 0) {
-                    Thread.sleep(sulConfig.getStartWait());
+                long startWait = sulConfig.getStartWait();
+                if (startWait > 0) {
+                    Thread.sleep(startWait);
                 }
             }
         } catch (IOException e) {
