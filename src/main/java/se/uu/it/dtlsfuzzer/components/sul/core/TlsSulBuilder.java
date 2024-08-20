@@ -19,7 +19,7 @@ public class TlsSulBuilder implements SulBuilder {
     public TlsSul build(SulConfig sulConfig,
             com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks cleanupTasks) {
         DtlsOutputMapper outputMapper = new DtlsOutputMapper(sulConfig.getMapperConfig());
-        TlsSul tlsSul = new TlsSul( (TlsSulConfig) sulConfig, sulConfig.getMapperConfig(),
+        TlsSul tlsSul = new TlsSul((TlsSulConfig) sulConfig, sulConfig.getMapperConfig(),
                 new MapperComposer(new DtlsInputMapper(sulConfig.getMapperConfig(), new TlsOutputChecker()), outputMapper), cleanupTasks);
         if (sulConfig.getSulAdapterConfig().getAdapterPort() != null) {
             if (sulAdapter == null) {
