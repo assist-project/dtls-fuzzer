@@ -2,7 +2,7 @@
 #
 # Installs some necessary packages and then installs DTLS-Fuzzer.
 
-# SCRIPT_DIR should correspond to dtls-fuzzer's root directory
+# SCRIPT_DIR should correspond to DTLS-Fuzzer's root directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
@@ -11,6 +11,11 @@ readonly PROTOCOLSTATEFUZZER_COMMIT="68e0eea"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-$PROTOCOLSTATEFUZZER_COMMIT.patch"
+
+readonly TLSATTACKER_VERSION="v5.1.6"
+readonly TLSATTACKER_REP_URL="https://github.com/tls-attacker/TLS-Attacker.git"
+readonly TLSATTACKER_FOLDER="TLS-Attacker"
+readonly TLSATTACKER_PATCH="$PATCHES_DIR/TLS-Attacker-$TLSATTACKER_VERSION.patch"
 
 function check_java() {
     if ! command -v java &> /dev/null
@@ -55,6 +60,7 @@ function clone_rep() {
     rep_url=$2
     rep_com=$3
     echo "Cloning repository $rep_url commit $rep_com to $sut_dir"
+    echo     git clone "$rep_url" "$sut_dir"
     git clone "$rep_url" "$sut_dir"
     if [[ -n "$rep_com" ]]; then
         ( cd "$sut_dir" || exit ; git checkout "$rep_com" )
@@ -78,12 +84,32 @@ function install_protocolstatefuzzer() {
     fi
 }
 
+function install_tlsattacker() {
+    echo $TLSATTACKER_FOLDER
+    if [[ -d $TLSATTACKER_FOLDER ]]; then
+        echo "$TLSATTACKER_FOLDER folder already exists"
+        echo "Skipping TLS-Attacker setup"
+    else
+        clone_rep "$TLSATTACKER_FOLDER" "$TLSATTACKER_REP_URL" "$TLSATTACKER_VERSION"
+        (
+            cd $TLSATTACKER_FOLDER || exit
+            echo "Patching TLS-Attacker to remove deplicate discard and fragment reordering."
+            git apply "$TLSATTACKER_PATCH"
+            echo "Installing TLS-Attacker"
+            mvn install -DskipTests
+        )
+    fi
+}
+
 # Check for the presence of Java and maven and if 'apt-get' is present, install them
 check_java
 check_mvn
 
 # Checkout ProtocolState-Fuzzer repo, apply Java 11 compatibility patch, and install the library
 install_protocolstatefuzzer
+
+# Checkout TLS-Attacker repo, patch it and install the library
+install_tlsattacker
 
 # Install DTLS-Fuzzer
 echo "Installing DTLS-Fuzzer..."

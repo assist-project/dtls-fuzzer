@@ -1,7 +1,7 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
-import de.rub.nds.tlsattacker.core.config.Config;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.DHClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ECDHClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.GOSTClientKeyExchangeMessage;
@@ -9,7 +9,6 @@ import de.rub.nds.tlsattacker.core.protocol.message.PskClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.PskRsaClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.SrpClientKeyExchangeMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.TlsMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
@@ -34,32 +33,31 @@ public class ClientKeyExchangeInput extends DtlsInput {
     @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         getTlsContext(context).setPreMasterSecret(null);
-        TlsMessage message = null;
+        ProtocolMessage<? extends ProtocolMessage<?>> message = null;
         if (algorithm == null) {
             throw new RuntimeException("Algorithm not set");
         }
-        Config config = getConfig(context);
         switch (algorithm) {
             case RSA :
-                message = new RSAClientKeyExchangeMessage(config);
+                message = new RSAClientKeyExchangeMessage<>();
                 break;
             case PSK :
-                message = new PskClientKeyExchangeMessage(config);
+                message = new PskClientKeyExchangeMessage();
                 break;
             case DH :
-                message = new DHClientKeyExchangeMessage(config);
+                message = new DHClientKeyExchangeMessage<>();
                 break;
             case ECDH :
-                message = new ECDHClientKeyExchangeMessage(config);
+                message = new ECDHClientKeyExchangeMessage<>();
                 break;
             case PSK_RSA :
-                message = new PskRsaClientKeyExchangeMessage(config);
+                message = new PskRsaClientKeyExchangeMessage();
                 break;
             case GOST :
-                message = new GOSTClientKeyExchangeMessage(config);
+                message = new GOSTClientKeyExchangeMessage();
                 break;
             case SRP :
-                message = new SrpClientKeyExchangeMessage(config);
+                message = new SrpClientKeyExchangeMessage();
                 break;
             default :
                 throw new RuntimeException("Algorithm " + algorithm
