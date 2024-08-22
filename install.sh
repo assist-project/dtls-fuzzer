@@ -7,7 +7,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="68e0eea"
+readonly PROTOCOLSTATEFUZZER_COMMIT="398c9bc"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 
@@ -23,9 +23,9 @@ function check_java() {
         if command -v apt-get &> /dev/null
         then
             echo "Installing java using apt-get"
-            sudo apt-get install openjdk-11-jdk
+            sudo apt-get install openjdk-17-jdk
         else
-            echo "Install JDK >= 11, add it to PATH and re-run"
+            echo "Install JDK >= 17, add it to PATH and re-run"
             exit
         fi
     else
@@ -33,7 +33,7 @@ function check_java() {
         if [[ ! $java_vm == "Server VM" ]]
         then
             echo "Required Java Server VM (a JDK instead of JRE), found $java_vm"
-            echo "Install JDK >= 11, add it to PATH and re-run"
+            echo "Install JDK >= 17, add it to PATH and re-run"
             exit
         fi
     fi
@@ -102,10 +102,10 @@ function install_tlsattacker() {
 check_java
 check_mvn
 
-# Checkout ProtocolState-Fuzzer repo, apply Java 11 compatibility patch, and install the library
+# Checkout and install ProtocolState-Fuzzer
 install_protocolstatefuzzer
 
-# Checkout TLS-Attacker repo, patch it and install the library
+# Checkout TLS-Attacker repo, patch it and install it
 install_tlsattacker
 
 # Install DTLS-Fuzzer
