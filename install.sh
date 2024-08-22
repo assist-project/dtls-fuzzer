@@ -10,7 +10,6 @@ readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 readonly PROTOCOLSTATEFUZZER_COMMIT="68e0eea"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
-readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-$PROTOCOLSTATEFUZZER_COMMIT.patch"
 
 readonly TLSATTACKER_VERSION="v5.3.0"
 readonly TLSATTACKER_REP_URL="https://github.com/tls-attacker/TLS-Attacker.git"
@@ -76,8 +75,6 @@ function install_protocolstatefuzzer() {
         clone_rep $PROTOCOLSTATEFUZZER_FOLDER $PROTOCOLSTATEFUZZER_REP_URL $PROTOCOLSTATEFUZZER_COMMIT
         (
             cd $PROTOCOLSTATEFUZZER_FOLDER || exit
-            echo "Patching ProtocolState-Fuzzer for compatibility with Java 11"
-            git apply "$PROTOCOLSTATEFUZZER_PATCH"
             echo "Installing ProtocolState-Fuzzer"
             mvn install -DskipTests
         )
