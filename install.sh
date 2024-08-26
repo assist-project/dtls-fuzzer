@@ -7,10 +7,9 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="68e0eea"
+readonly PROTOCOLSTATEFUZZER_COMMIT="398c9bc"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
-readonly PROTOCOLSTATEFUZZER_PATCH="$PATCHES_DIR/protocolstate-fuzzer-$PROTOCOLSTATEFUZZER_COMMIT.patch"
 
 readonly TLSATTACKER_VERSION="v5.3.0"
 readonly TLSATTACKER_REP_URL="https://github.com/tls-attacker/TLS-Attacker.git"
@@ -24,9 +23,9 @@ function check_java() {
         if command -v apt-get &> /dev/null
         then
             echo "Installing java using apt-get"
-            sudo apt-get install openjdk-11-jdk
+            sudo apt-get install openjdk-17-jdk
         else
-            echo "Install JDK >= 11, add it to PATH and re-run"
+            echo "Install JDK >= 17, add it to PATH and re-run"
             exit
         fi
     else
@@ -34,7 +33,7 @@ function check_java() {
         if [[ ! $java_vm == "Server VM" ]]
         then
             echo "Required Java Server VM (a JDK instead of JRE), found $java_vm"
-            echo "Install JDK >= 11, add it to PATH and re-run"
+            echo "Install JDK >= 17, add it to PATH and re-run"
             exit
         fi
     fi
@@ -76,8 +75,6 @@ function install_protocolstatefuzzer() {
         clone_rep $PROTOCOLSTATEFUZZER_FOLDER $PROTOCOLSTATEFUZZER_REP_URL $PROTOCOLSTATEFUZZER_COMMIT
         (
             cd $PROTOCOLSTATEFUZZER_FOLDER || exit
-            echo "Patching ProtocolState-Fuzzer for compatibility with Java 11"
-            git apply "$PROTOCOLSTATEFUZZER_PATCH"
             echo "Installing ProtocolState-Fuzzer"
             mvn install -DskipTests
         )
@@ -105,10 +102,10 @@ function install_tlsattacker() {
 check_java
 check_mvn
 
-# Checkout ProtocolState-Fuzzer repo, apply Java 11 compatibility patch, and install the library
+# Checkout and install ProtocolState-Fuzzer
 install_protocolstatefuzzer
 
-# Checkout TLS-Attacker repo, patch it and install the library
+# Checkout TLS-Attacker repo, patch it and install it
 install_tlsattacker
 
 # Install DTLS-Fuzzer

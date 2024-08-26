@@ -11,6 +11,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -30,6 +36,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -51,6 +63,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -70,6 +88,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -91,6 +115,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -110,6 +140,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -131,6 +167,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -150,6 +192,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -171,6 +219,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -190,6 +244,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -211,13 +271,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
       - name: Setup Golang
         uses: actions/setup-go@v5
         with:
           go-version: '1.22.2'
-
-      - name: Install DTLS-Fuzzer
-        run: ./install.sh
 
       - name: Setup SUT
         run: ./setup_sut.sh piondtls-2.0.9
@@ -236,13 +302,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
       - name: Setup Golang
         uses: actions/setup-go@v5
         with:
           go-version: '1.22.2'
-
-      - name: Install DTLS-Fuzzer
-        run: ./install.sh
 
       - name: Setup SUT
         run: ./setup_sut.sh piondtls-2.0.9
@@ -260,6 +332,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -280,6 +358,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh
@@ -302,6 +386,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Install DTLS-Fuzzer
         run: ./install.sh
 
@@ -321,6 +411,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
         run: ./install.sh

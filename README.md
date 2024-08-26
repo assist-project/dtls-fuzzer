@@ -69,12 +69,12 @@ For the purpose of evaluating DTLS-Fuzzer it is necessary to perform the followi
 This evaluation section is followed by a guide on using DTLS-Fuzzer which introduces its main use cases.
 
 ## Ensuring pre-requisites
-DTLS-Fuzzer has been tested on Ubuntu 18.04 and Debian 9-11 distributions of Linux.
+DTLS-Fuzzer has been tested on Ubuntu 18.04 and Debian 9-12 distributions of Linux.
 It should work on any recent Linux distribution.
 Support for other platforms has not been tested.
 This guide assumes a Debian-based distribution is used (which has `apt-get`).
 
-Java 11 JDK (Java Development Kit) Virtual Machine (VM) or later is required.
+Java 17 JDK (Java Development Kit) Virtual Machine (VM) or later is required.
 We also rely on maven (the `mvn` utility) for dependency management and deployment.
 
 We recommend using a sufficiently powerful machine, otherwise sensitive timing parameters such as response waiting time, might become too low, causing different outputs to the ones obtained in the paper.
@@ -89,16 +89,16 @@ In a nutshell, the advised pre-requisites are:
 - recent Linux distribution, preferably Debian-based
 - desktop/server machine for experiment reproduction/reliable learning
 - (>=) 4 GB RAM
-- Java 11 JDK
+- Java 17 JDK
 - maven
 - graphviz
 
 ## Setting up the environment
-### Java 11 JDK
-DTLS-Fuzzer requires JDK (Java Development Kit) version 11 or later.
+### Java 17 JDK
+DTLS-Fuzzer requires JDK (Java Development Kit) version 17 or later.
 If Java is not installed, we install the OpenJDK implementation, and can skip the rest of this subsection.
 
-    sudo apt-get install openjdk-11-jdk
+    sudo apt-get install openjdk-17-jdk
 
 If a version of java is installed, we can check which version it is by running:
 
