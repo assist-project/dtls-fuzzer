@@ -11,7 +11,7 @@
 
         <!-- Alphabetically sorted -->
         <commons.lang3.version>3.17.0</commons.lang3.version>
-        <error-prone.version>2.31.0</error-prone.version>
+        <error-prone.version>2.32.0</error-prone.version>
         <jakarta-xml.version>4.0.2</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.17.0</learnlib.version>
@@ -45,6 +45,14 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+
+            <!-- log4j-core -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <!-- log4j bridge to slf4j-api versions after 1.7.x -->
@@ -110,6 +118,10 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
