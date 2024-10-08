@@ -15,7 +15,7 @@
         <jakarta-xml.version>4.0.2</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.17.0</learnlib.version>
-        <log4j.version>2.23.1</log4j.version>
+        <log4j.version>2.24.1</log4j.version>
         <modifiable-variable.version>4.1.2</modifiable-variable.version>
         <osgi.version>8.1.0</osgi.version>
         <tlsattacker.core.version>5.3.0</tlsattacker.core.version>
