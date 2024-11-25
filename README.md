@@ -132,7 +132,7 @@ First we set up the SUT, which is automatically by a `setup_sut.sh` script.
 
 This will create an empty `modules` directory, and a `suts/openssl-1.1.1b` directory.
 
-Then we select an argument file form the `args/openssl` folder.
+Then we select an argument file from the `args/openssl` folder.
 
 We notice there are several argument files to choose from, namely:
 
@@ -155,14 +155,14 @@ A good test is just completing a handshake.
 We supply the argument file, along with a corresponding test from `examples/tests/servers` as parameter.
 We get:
 
-    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_psk -test examples/tests/servers/psk
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -Dopenssl.version=1.1.1b -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_psk -test examples/tests/servers/psk
 
 If all goes well, the server should have printed out "This is a hello message", a message we send after completing the handshake.
 Knowing our setup functions, we can now start learning by running:
 
-    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_psk -eqvQueries 200
+    LD_LIBRARY_PATH=suts/openssl-1.1.1b/ java -Dopenssl.version=1.1.1b -jar target/dtls-fuzzer.jar @args/openssl/learn_openssl_server_psk -eqvQueries 200
 
-We notice that an output directory, `output/openssl-1.1.1b_psk/` for the experiment has been created.
+We notice that an output directory, `output/openssl-1.1.1b_server_psk/` for the experiment has been created.
 We can `ls` this directory to check the current status of the experiment (the number of hypotheses generated...).
 
     ls output/openssl-1.1.1b_server_psk/
@@ -436,7 +436,7 @@ Example for OpenSSL:
 
 With so many paraments, commands can become very long.
 DTLS-Fuzzer uses JCommander to parse arguments, which can also read parameters from a file.
-Go to `experiments/args` for examples of arguments.
+Go to `args` for examples of arguments.
 To supply an argument file to DTLS-Fuzzer provide it as parameter prepended by "@".
 You can also add other explicit arguments to commands (which will overwrite those in the arguments file)
 
