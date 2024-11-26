@@ -132,7 +132,7 @@ First we set up the SUT, which is automatically by a `setup_sut.sh` script.
 
 This will create an empty `modules` directory, and a `suts/openssl-1.1.1b` directory.
 
-Then we select an argument file form the `args/openssl` folder.
+Then we select an argument file from the `args/openssl` folder.
 
 We notice there are several argument files to choose from, namely:
 
