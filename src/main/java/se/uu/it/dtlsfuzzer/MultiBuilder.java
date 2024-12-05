@@ -8,6 +8,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.statist
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapperStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.InputBuilderMealy;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzer;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerComposerStandard;
@@ -53,16 +54,18 @@ public class MultiBuilder implements StateFuzzerConfigBuilder,
 
         @Override
         public TimingProbe build(TimingProbeEnabler timingProbeEnabler) {
-                return new TimingProbeStandard<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext>(
-                                timingProbeEnabler,
-                                alphabetBuilder, sulBuilder, sulWrapper);
+             return new TimingProbeStandard<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext>(
+                     timingProbeEnabler,
+                     new InputBuilderMealy<>(alphabetBuilder.build(timingProbeEnabler.getLearnerConfig())),
+                     alphabetBuilder, sulBuilder, sulWrapper);
         }
 
         @Override
         public TestRunner build(TestRunnerEnabler testRunnerEnabler) {
-                return new TestRunnerStandard<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext>(
+             return new TestRunnerStandard<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext>(
                                 testRunnerEnabler,
-                                alphabetBuilder, sulBuilder, sulWrapper);
+                                new InputBuilderMealy<>(alphabetBuilder.build(testRunnerEnabler.getLearnerConfig())),
+                                sulBuilder, sulWrapper);
         }
 
         @Override

@@ -8,6 +8,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.statist
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapperStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.InputBuilderRA;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerComposerRA;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerRA;
@@ -18,6 +19,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.St
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunner;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBasic;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.config.TestRunnerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.config.TestRunnerEnabler;
@@ -30,6 +32,7 @@ import de.learnlib.ralib.theory.Theory;
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.learnlib.ralib.words.ParameterizedSymbol;
 import java.util.Map;
+import net.automatalib.alphabet.Alphabet;
 import se.uu.it.dtlsfuzzer.components.sul.core.TlsSulBuilderRA;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulServerConfig;
@@ -55,7 +58,8 @@ public class MultiBuilderRA implements StateFuzzerConfigBuilder,
 
         private SulBuilder<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> sulBuilder = new TlsSulBuilderRA(
                         (TlsInputTransformer) alphabetBuilder);
-        private SulWrapper<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> sulWrapper = new SulWrapperStandard<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA>();
+        private SulWrapper<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> sulWrapper =
+                new SulWrapperStandard<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA>();
 
         MultiBuilderRA() {
         }
@@ -71,11 +75,12 @@ public class MultiBuilderRA implements StateFuzzerConfigBuilder,
 
         @Override
         public TestRunner build(TestRunnerEnabler testRunnerEnabler) {
-                return null;
-                // return new TestRunnerStandard<TlsInput, TlsOutput, TlsProtocolMessage,
-                // TlsExecutionContext>(
-                // testRunnerEnabler,
-                // alphabetBuilder, sulBuilder, sulWrapper);
+            Alphabet<ParameterizedSymbol> alphabet = alphabetBuilder.build(testRunnerEnabler.getLearnerConfig());
+            InputBuilderRA inputBuilder = new InputBuilderRA(alphabet.toArray(ParameterizedSymbol []::new));
+            return new TestRunnerBasic<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA>(
+                    testRunnerEnabler,
+                    inputBuilder,
+                    sulBuilder, sulWrapper);
         }
 
         @Override
