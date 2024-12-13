@@ -43,8 +43,9 @@ function relabel_and_color() {
         echo "State pruning disabled"
         extra=''
     fi
-    echo java -jar "$EXP_SCRIPTS_DIR"/dot-trimmer.jar -r "$REPL_FILE" -i "$input_model" -o "$relabelled_model" -t "$other_thr" -pc "$COLOR_FILE" "$extra"
-    java -jar "$EXP_SCRIPTS_DIR"/dot-trimmer.jar -r "$REPL_FILE" -i "$input_model" -o "$relabelled_model" -t "$other_thr" -cp "$COLOR_FILE" "$extra"
+    command="java -jar $EXP_SCRIPTS_DIR/dot-trimmer.jar -r $REPL_FILE -i $input_model -o $relabelled_model -t $other_thr -cp $COLOR_FILE $extra"
+    echo $command
+    eval "$command"
 }
 
 # merges (edges of) transitions connecting the same states by placing them on the same arrow in stacked formation
