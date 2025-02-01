@@ -1,0 +1,35 @@
+diff -ruN suts/wolfssl-5.7.6/wolfssl/test.h suts/wolfssl-5.7.6_patched/wolfssl/test.h
+--- suts/wolfssl-5.7.6/wolfssl/test.h	2024-12-31 18:58:22.000000000 +0100
++++ suts/wolfssl-5.7.6_patched/wolfssl/test.h	2025-01-29 12:51:57.067887324 +0100
+@@ -1863,12 +1863,10 @@
+             wolfSSL_GetVersion(ssl) != WOLFSSL_DTLSV1_3) {
+         /* test key in hex is 0x1a2b3c4d , in decimal 439,041,101 , we're using
+          * unsigned binary */
+-        key[0] = 0x1a;
+-        key[1] = 0x2b;
+-        key[2] = 0x3c;
+-        key[3] = 0x4d;
++        key[0] = 0x12;
++        key[1] = 0x34;
+ 
+-        ret = 4;   /* length of key in octets or 0 for error */
++        ret = 2;   /* length of key in octets or 0 for error */
+     }
+     else {
+         int i;
+@@ -1908,12 +1906,10 @@
+             wolfSSL_GetVersion(ssl) != WOLFSSL_DTLSV1_3) {
+         /* test key in hex is 0x1a2b3c4d , in decimal 439,041,101 , we're using
+          * unsigned binary */
+-        key[0] = 0x1a;
+-        key[1] = 0x2b;
+-        key[2] = 0x3c;
+-        key[3] = 0x4d;
++        key[0] = 0x12;
++        key[1] = 0x34;
+ 
+-        ret = 4;   /* length of key in octets or 0 for error */
++        ret = 2;   /* length of key in octets or 0 for error */
+     }
+     else {
+         int i;
