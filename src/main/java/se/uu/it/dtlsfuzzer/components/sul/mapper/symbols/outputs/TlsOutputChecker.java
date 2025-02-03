@@ -2,7 +2,7 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
 
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
-import de.rub.nds.tlsattacker.core.constants.CertificateKeyType;
+import de.rub.nds.x509attacker.constants.X509PublicKeyType;
 import java.util.Arrays;
 import java.util.Optional;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.KeyExchangeAlgorithm;
@@ -99,16 +99,16 @@ public class TlsOutputChecker implements AbstractOutputChecker {
         return output.getName().contains(SERVER_KEY_EXCHANGE);
     }
 
-    public static CertificateKeyType getClientCertificateType(TlsOutput output) {
+    public static X509PublicKeyType getClientCertificateType(TlsOutput output) {
         assert(hasCertificate(output) && output.isAtomic());
         if (hasEmptyCertificate(output)) {
-            return CertificateKeyType.NONE;
+            return null;
         } else {
             String kex = getParameter(output, 0);
             if (output.getName().contains("RAW_EC")) {
-                return CertificateKeyType.ECDSA;
+                return X509PublicKeyType.ECDH_ECDSA;
             } else {
-                for (CertificateKeyType type : CertificateKeyType.values()) {
+                for (X509PublicKeyType type : X509PublicKeyType.values()) {
                     if (type.name().equals(kex)) {
                         return type;
                     }
@@ -118,8 +118,8 @@ public class TlsOutputChecker implements AbstractOutputChecker {
         throw new RuntimeException("Could not extract key type from certificate output " + output);
     }
 
-    public static CertificateKeyType getCertificateType(TlsOutput output) {
-        Optional<CertificateKeyType> opt = Arrays.stream(CertificateKeyType.values()).filter(ctype -> output.getName().contains(ctype.name())).findFirst();
+    public static X509PublicKeyType getCertificateType(TlsOutput output) {
+        Optional<X509PublicKeyType> opt = Arrays.stream(X509PublicKeyType.values()).filter(ctype -> output.getName().contains(ctype.name())).findFirst();
         return opt.orElseGet(() -> null);
     }
 

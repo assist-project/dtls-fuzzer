@@ -20,6 +20,7 @@
         <osgi.version>8.1.0</osgi.version>
         <tlsattacker.core.version>6.1.4</tlsattacker.core.version>
         <tlsattacker.transport.version>6.1.4</tlsattacker.transport.version>
+        <x509-attacker.version>3.1.7</x509-attacker.version>
     </properties>
 
     <dependencyManagement>
@@ -135,6 +136,11 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.annotation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.rub.nds</groupId>
+            <artifactId>x509-attacker</artifactId>
+            <version>${x509-attacker.version}</version>
         </dependency>
     </dependencies>
 
