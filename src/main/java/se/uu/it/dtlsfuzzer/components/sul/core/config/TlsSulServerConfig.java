@@ -38,7 +38,6 @@ public class TlsSulServerConfig  extends SulServerConfigStandard implements TlsS
             clientDelegate.setHost(getHost());
             clientDelegate.applyDelegate(config);
             config.getDefaultClientConnection().setTimeout(getResponseWait().intValue());
-            config.getDefaultClientConnection().setFirstTimeout(getResponseWait().intValue());
         }
     }
 }
