@@ -5,7 +5,7 @@ import com.beust.jcommander.ParametersDelegate;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
-import de.rub.nds.tlsattacker.core.layer.constant.LayerConfiguration;
+import de.rub.nds.tlsattacker.core.layer.constant.StackConfiguration;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +46,7 @@ public abstract class ConfigDelegate {
         certKeyDelegate.applyDelegate(config);
         preSharedKeyDelegate.applyDelegate(config);
         if (getProtocolVersion().isDTLS()) {
-            config.setDefaultLayerConfiguration(LayerConfiguration.DTLS);
+            config.setDefaultLayerConfiguration(StackConfiguration.DTLS);
         } else {
             throw new ConfigurationException("Only DTLS protocols are supported");
         }
