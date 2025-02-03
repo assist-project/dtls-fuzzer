@@ -105,18 +105,18 @@ public class GenericTlsInput extends DtlsInput {
             @XmlElement(type = SrpClientKeyExchangeMessage.class, name = "SrpClientKeyExchange"),
             @XmlElement(type = EndOfEarlyDataMessage.class, name = "EndOfEarlyData"),
             @XmlElement(type = EncryptedExtensionsMessage.class, name = "EncryptedExtensions")})
-    private ProtocolMessage<? extends ProtocolMessage<?>> message;
+    private ProtocolMessage message;
 
     public GenericTlsInput() {
         super(null);
     }
 
-    public GenericTlsInput(ProtocolMessage<? extends ProtocolMessage<?>> message) {
+    public GenericTlsInput(ProtocolMessage message) {
         super(message.toCompactString());
         this.message = message;
     }
 
-    public GenericTlsInput(ProtocolMessage<? extends ProtocolMessage<?>> message, String name) {
+    public GenericTlsInput(ProtocolMessage message, String name) {
         super(name);
         this.message = message;
     }
@@ -149,7 +149,7 @@ public class GenericTlsInput extends DtlsInput {
     /*
      * Sets the original value of all mvar fields to null.
      */
-    private void stripFields(ProtocolMessage<? extends ProtocolMessage<?>> message) {
+    private void stripFields(ProtocolMessage message) {
         List<ModifiableVariableHolder> holders = new ArrayList<>();
         holders.addAll(message.getAllModifiableVariableHolders());
         for (ModifiableVariableHolder holder : holders) {
@@ -185,7 +185,7 @@ public class GenericTlsInput extends DtlsInput {
         return TlsInputType.fromTlsMessageType(message.getProtocolMessageType());
     }
 
-    public ProtocolMessage<? extends ProtocolMessage<?>> getMessage() {
+    public ProtocolMessage getMessage() {
         return message;
     }
 
