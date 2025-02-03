@@ -16,7 +16,7 @@
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.17.0</learnlib.version>
         <log4j.version>2.24.3</log4j.version>
-        <modifiable-variable.version>4.1.2</modifiable-variable.version>
+        <modifiable-variable.version>4.2.2</modifiable-variable.version>
         <osgi.version>8.1.0</osgi.version>
         <tlsattacker.core.version>6.1.4</tlsattacker.core.version>
         <tlsattacker.transport.version>6.1.4</tlsattacker.transport.version>
