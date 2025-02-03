@@ -40,7 +40,7 @@ public class DtlsOutputMapper extends OutputMapper {
 
         // resetting protocol stack layers and creating configurations for each layer
         @SuppressWarnings("rawtypes")
-        List<LayerConfiguration> layerConfigs = new ArrayList<>(tlsContext.getLayerStack().getLayerList().size());
+        List<LayerConfiguration<?>> layerConfigs = new ArrayList<>(tlsContext.getLayerStack().getLayerList().size());
         for (ProtocolLayer<?,?> layer : tlsContext.getLayerStack().getLayerList()) {
             layer.clear();
             GenericReceiveLayerConfiguration receiveConfig = new GenericReceiveLayerConfiguration(layer.getLayerType());
