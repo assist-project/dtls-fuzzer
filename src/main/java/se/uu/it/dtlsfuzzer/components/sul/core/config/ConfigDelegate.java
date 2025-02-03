@@ -3,6 +3,7 @@ package se.uu.it.dtlsfuzzer.components.sul.core.config;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParametersDelegate;
 import de.rub.nds.tlsattacker.core.config.Config;
+import de.rub.nds.tlsattacker.core.config.delegate.CertificateDelegate;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
 import de.rub.nds.tlsattacker.core.layer.constant.StackConfiguration;
@@ -20,7 +21,7 @@ public abstract class ConfigDelegate {
     private ProtocolVersion protocolVersion = ProtocolVersion.DTLS12;
 
     @ParametersDelegate
-    private CertificateKeyDelegate certKeyDelegate = new CertificateKeyDelegate();
+    private CertificateDelegate certKeyDelegate = new CertificateDelegate();
 
     @ParametersDelegate
     private PreSharedKeyDelegate preSharedKeyDelegate = new PreSharedKeyDelegate();
