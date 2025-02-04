@@ -1,0 +1,49 @@
+diff -ruN suts/wolfssl-5.7.6/wolfssl/internal.h suts/wolfssl-5.7.6_patched/wolfssl/internal.h
+--- suts/wolfssl-5.7.6/wolfssl/internal.h	2024-12-31 18:58:22.000000000 +0100
++++ suts/wolfssl-5.7.6_patched/wolfssl/internal.h	2025-02-01 12:42:17.487161669 +0100
+@@ -1848,8 +1848,8 @@
+     CLIENT_HELLO_FIRST =  35,  /* Protocol + RAN_LEN + sizeof(id_len) */
+     MAX_SUITE_NAME     =  48,  /* maximum length of cipher suite string */
+ 
+-    DTLS_TIMEOUT_INIT       =  1, /* default timeout init for DTLS receive  */
+-    DTLS_TIMEOUT_MAX        = 64, /* default max timeout for DTLS receive */
++    DTLS_TIMEOUT_INIT       = 320, /* default timeout init for DTLS receive  */
++    DTLS_TIMEOUT_MAX        = 640, /* default max timeout for DTLS receive */
+     DTLS_TIMEOUT_MULTIPLIER =  2, /* default timeout multiplier for DTLS recv */
+ 
+     NULL_TERM_LEN        =   1,  /* length of null '\0' termination character */
+diff -ruN suts/wolfssl-5.7.6/wolfssl/test.h suts/wolfssl-5.7.6_patched/wolfssl/test.h
+--- suts/wolfssl-5.7.6/wolfssl/test.h	2024-12-31 18:58:22.000000000 +0100
++++ suts/wolfssl-5.7.6_patched/wolfssl/test.h	2025-02-01 12:36:26.629249563 +0100
+@@ -1863,12 +1863,10 @@
+             wolfSSL_GetVersion(ssl) != WOLFSSL_DTLSV1_3) {
+         /* test key in hex is 0x1a2b3c4d , in decimal 439,041,101 , we're using
+          * unsigned binary */
+-        key[0] = 0x1a;
+-        key[1] = 0x2b;
+-        key[2] = 0x3c;
+-        key[3] = 0x4d;
++        key[0] = 0x12;
++        key[1] = 0x34;
+ 
+-        ret = 4;   /* length of key in octets or 0 for error */
++        ret = 2;   /* length of key in octets or 0 for error */
+     }
+     else {
+         int i;
+@@ -1908,12 +1906,10 @@
+             wolfSSL_GetVersion(ssl) != WOLFSSL_DTLSV1_3) {
+         /* test key in hex is 0x1a2b3c4d , in decimal 439,041,101 , we're using
+          * unsigned binary */
+-        key[0] = 0x1a;
+-        key[1] = 0x2b;
+-        key[2] = 0x3c;
+-        key[3] = 0x4d;
++        key[0] = 0x12;
++        key[1] = 0x34;
+ 
+-        ret = 4;   /* length of key in octets or 0 for error */
++        ret = 2;   /* length of key in octets or 0 for error */
+     }
+     else {
+         int i;
