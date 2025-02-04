@@ -1,0 +1,84 @@
+=== RUN DESCRIPTION ===
+Alphabet: [HELLO_VERIFY_REQUEST, PSK_SERVER_HELLO, SERVER_HELLO_DONE, CHANGE_CIPHER_SPEC, FINISHED, APPLICATION, Alert(WARNING,CLOSE_NOTIFY), Alert(FATAL,UNEXPECTED_MESSAGE)]
+
+StateFuzzerConfigStandard Parameters
+Help: false
+Debug: false
+Quiet: false
+Output Directory: output/wolfssl-5.7.6_client_psk
+Fuzzing Client: true
+
+LearnerConfigStandard Parameters
+Alphabet: examples/alphabets/clients/psk.xml
+Learning Algorithm: TTT
+Equivalence Algorithms: [RANDOM_WP_METHOD, WP_METHOD]
+Max Depth: 1
+Min Length: 5
+Max Length: 15
+Max Equivalence Queries: 20000
+Runs Per Membership Query: 1
+Random Length: 10
+Membership Query Retries: 3
+Log Queries: false
+Prob Reset: 0.0
+Test File: null
+Seed: 0
+Cache Tests: false
+Ce Sanitization: true
+Skip Non Det Tests: false
+Ce Reruns: 3
+Probabilistic Sanitization: true
+Time Limit: null
+Test Limit: null
+Round Limit: 6
+
+SulConfigStandard Parameters
+Response Wait: 200
+Input Response Timeout: null
+Command: /home/west/dtls-fuzzer/suts/wolfssl-5.7.6/examples/client/client  -i -x -p 27087 -s -u -l PSK-AES128-CBC-SHA256
+Terminate Command: null
+Process Dir: /home/west/dtls-fuzzer/suts/wolfssl-5.7.6/
+Redirect Output Streams: false
+Process Trigger: NEW_TEST
+Start Wait: 200
+
+SulClientConfigStandard Parameters
+Client Wait: 50
+Port: 27087
+
+MapperConfigStandard Parameters
+Mapper Connection Config: null
+Repeating Outputs: null
+Socket Closed as Timeout: false
+Disabled as Timeout: false
+Merge Repeating: true
+
+SulAdapterConfigStandard Parameters
+Adapter Port: null
+Adapter Address: localhost
+
+=== STATISTICS ===
+Learning finished: false
+Reason: hypothesis construction round limit reached
+Size of the input alphabet: 8
+Number of states: 12
+Number of hypotheses: 6
+Number of inputs: 1415
+Number of tests: 296
+Number of learning inputs: 990
+Number of learning tests: 263
+Number of inputs up to last hypothesis: 1415
+Number of tests up to last hypothesis: 296
+Time (ms) to learn model: 381840
+Counterexamples:
+CE 1:Query[ε|Alert(WARNING,CLOSE_NOTIFY) PSK_SERVER_HELLO FINISHED APPLICATION SERVER_HELLO_DONE FINISHED SERVER_HELLO_DONE Alert(FATAL,UNEXPECTED_MESSAGE) HELLO_VERIFY_REQUEST SERVER_HELLO_DONE SERVER_HELLO_DONE HELLO_VERIFY_REQUEST / CLIENT_HELLO SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED]
+CE 2:Query[ε|APPLICATION PSK_SERVER_HELLO APPLICATION SERVER_HELLO_DONE APPLICATION CHANGE_CIPHER_SPEC SERVER_HELLO_DONE HELLO_VERIFY_REQUEST HELLO_VERIFY_REQUEST PSK_SERVER_HELLO SERVER_HELLO_DONE HELLO_VERIFY_REQUEST HELLO_VERIFY_REQUEST Alert(WARNING,CLOSE_NOTIFY) FINISHED HELLO_VERIFY_REQUEST / CLIENT_HELLO TIMEOUT TIMEOUT PSK_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED TIMEOUT TIMEOUT Alert(FATAL,UNEXPECTED_MESSAGE) SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED]
+CE 3:Query[ε|APPLICATION CHANGE_CIPHER_SPEC CHANGE_CIPHER_SPEC FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) HELLO_VERIFY_REQUEST / CLIENT_HELLO TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT TIMEOUT]
+CE 4:Query[ε|HELLO_VERIFY_REQUEST PSK_SERVER_HELLO HELLO_VERIFY_REQUEST Alert(FATAL,UNEXPECTED_MESSAGE) Alert(FATAL,UNEXPECTED_MESSAGE) APPLICATION CHANGE_CIPHER_SPEC Alert(WARNING,CLOSE_NOTIFY) APPLICATION HELLO_VERIFY_REQUEST FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) HELLO_VERIFY_REQUEST SERVER_HELLO_DONE APPLICATION HELLO_VERIFY_REQUEST / CLIENT_HELLO+ TIMEOUT TIMEOUT SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED]
+CE 5:Query[ε|PSK_SERVER_HELLO SERVER_HELLO_DONE HELLO_VERIFY_REQUEST PSK_SERVER_HELLO APPLICATION SERVER_HELLO_DONE Alert(WARNING,CLOSE_NOTIFY) APPLICATION CHANGE_CIPHER_SPEC HELLO_VERIFY_REQUEST FINISHED FINISHED SERVER_HELLO_DONE Alert(WARNING,CLOSE_NOTIFY) HELLO_VERIFY_REQUEST / CLIENT_HELLO PSK_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED TIMEOUT TIMEOUT SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED]
+Number of inputs when hypothesis was generated: [8, 186, 771, 1005, 1174, 1415]
+Number of tests when hypothesis was generated: [8, 65, 184, 236, 265, 296]
+Time (ms) when hypothesis was generated: [8166, 62416, 219309, 296503, 332894, 381831]
+Number of inputs when counterexample was found: [56, 341, 803, 1082, 1287]
+Number of tests when counterexample was found: [12, 76, 188, 241, 274]
+Time (ms) when counterexample was found: [11366, 77768, 229267, 301644, 345300]
