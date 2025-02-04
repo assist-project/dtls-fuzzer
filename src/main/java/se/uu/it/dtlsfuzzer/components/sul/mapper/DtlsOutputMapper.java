@@ -13,6 +13,7 @@ import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
+import de.rub.nds.x509attacker.x509.model.X509Certificate;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -155,10 +156,11 @@ public class DtlsOutputMapper extends OutputMapper {
      */
     private String getCertSignatureTypeString(CertificateMessage message) {
         String certType = "UNKNOWN";
-        if (message.getCertificateKeyPair() == null) {
+        if (message.getCertificateEntryList() == null || message.getCertificateEntryList().isEmpty()) {
             throw new NotImplementedException("Raw public keys not supported");
         } else {
-            certType = message.getCertificateKeyPair().getCertSignatureType().name();
+            X509Certificate x509Cert = message.getX509CertificateListFromEntries().get(0);
+            certType = x509Cert.getX509SignatureAlgorithm().getSignatureAlgorithm().name();
         }
         return certType;
     }
