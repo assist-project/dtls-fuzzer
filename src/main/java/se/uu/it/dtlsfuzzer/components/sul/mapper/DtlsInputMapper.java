@@ -9,7 +9,6 @@ import de.rub.nds.tlsattacker.core.layer.LayerStack;
 import de.rub.nds.tlsattacker.core.layer.ProtocolLayer;
 import de.rub.nds.tlsattacker.core.layer.SpecificSendLayerConfiguration;
 import de.rub.nds.tlsattacker.core.layer.constant.ImplementedLayers;
-import de.rub.nds.tlsattacker.core.layer.data.DataContainer;
 import de.rub.nds.tlsattacker.core.layer.impl.MessageLayer;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.state.State;
@@ -38,7 +37,7 @@ public class DtlsInputMapper extends InputMapper {
         LayerStack stack = state.getTlsContext().getLayerStack();
         for (ProtocolLayer<?,?> layer : stack.getLayerList()) {
             layer.clear();
-            layer.setLayerConfiguration(new SpecificSendLayerConfiguration<DataContainer<?>>(layer.getLayerType(), Collections.emptyList()));
+            layer.setLayerConfiguration(new SpecificSendLayerConfiguration<>(layer.getLayerType(), Collections.emptyList()));
         }
 
         // setting a new send configuration at the Message Layer for the message we wish to send
