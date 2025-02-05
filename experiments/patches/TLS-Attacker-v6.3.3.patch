@@ -1,0 +1,44 @@
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-06 00:45:56.613849946 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-05 22:04:30.714610303 +0100
+@@ -523,6 +523,28 @@
+         init();
+     }
+ 
++    public TlsContext(Context context, Config config) {
++        super(context);
++        clientX509Context = new X509Context();
++        serverX509Context = new X509Context();
++        // Client
++        clientX509Context.setSubjectRsaModulus(
++                config.getCertificateChainConfig().get(0).getRsaModulus());
++        clientX509Context.setSubjectRsaPrivateKey(
++                config.getCertificateChainConfig().get(0).getRsaPrivateKey());
++        clientX509Context.setSubjectRsaPublicExponent(
++                config.getCertificateChainConfig().get(0).getRsaPublicExponent());
++        // Server
++        serverX509Context.setSubjectRsaModulus(
++                config.getCertificateChainConfig().get(0).getRsaModulus());
++        serverX509Context.setSubjectRsaPrivateKey(
++                config.getCertificateChainConfig().get(0).getRsaPrivateKey());
++        serverX509Context.setSubjectRsaPublicExponent(
++                config.getCertificateChainConfig().get(0).getRsaPublicExponent());
++        context.setTlsContext(this);
++        init();
++    }
++
+     public List<SrtpProtectionProfile> getClientSupportedSrtpProtectionProfiles() {
+         return this.clientSupportedSrtpProtectionProfiles;
+     }
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-06 00:45:56.505879806 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-05 21:54:04.754021505 +0100
+@@ -168,7 +168,7 @@
+     }
+ 
+     public void prepareWithLayers(StackConfiguration type) {
+-        tlsContext = new TlsContext(this);
++        tlsContext = new TlsContext(this, config);
+         httpContext = new HttpContext(this);
+         tcpContext = new TcpContext(this);
+         quicContext = new QuicContext(this);
