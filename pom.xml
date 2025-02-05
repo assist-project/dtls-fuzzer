@@ -18,9 +18,10 @@
         <log4j.version>2.24.3</log4j.version>
         <modifiable-variable.version>4.2.2</modifiable-variable.version>
         <osgi.version>8.1.0</osgi.version>
-        <tlsattacker.core.version>6.1.4</tlsattacker.core.version>
-        <tlsattacker.transport.version>6.1.4</tlsattacker.transport.version>
+        <tlsattacker.core.version>6.3.3</tlsattacker.core.version>
+        <tlsattacker.transport.version>6.3.3</tlsattacker.transport.version>
         <x509-attacker.version>3.1.7</x509-attacker.version>
+        <protocol-attacker.version>1.1.5</protocol-attacker.version>
     </properties>
 
     <dependencyManagement>
@@ -141,6 +142,11 @@
             <groupId>de.rub.nds</groupId>
             <artifactId>x509-attacker</artifactId>
             <version>${x509-attacker.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.rub.nds</groupId>
+            <artifactId>protocol-attacker</artifactId>
+            <version>${protocol-attacker.version}</version>
         </dependency>
     </dependencies>
 
