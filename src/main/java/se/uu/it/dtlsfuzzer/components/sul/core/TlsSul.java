@@ -120,6 +120,8 @@ public class TlsSul extends AbstractSul {
     @Override
     public void pre() {
         Config config = getNewSulConfig(configDelegate);
+        config.getDefaultClientConnection().setUseIpv6(false); // fix NullPointerException
+        config.getDefaultServerConnection().setUseIpv6(false); // fix NullPointerException
         State state = new State(config, new WorkflowTrace());
         context = new TlsExecutionContext((TlsSulConfig) sulConfig, new TlsState(state));
         TransportHandler transportHandler = null;
