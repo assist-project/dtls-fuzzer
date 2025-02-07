@@ -26,6 +26,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -174,6 +175,17 @@ public class TlsSul extends AbstractSul {
             TransportHandler transportHandler = context.getTlsContext().getTransportHandler();
             transportHandler.preInitialize();
             transportHandler.initialize();
+            if (sulConfig.isFuzzingClient()) {
+                boolean receivedClientHello = false;
+                while (!receivedClientHello) {
+                    try {
+                        transportHandler.fetchData();
+                        receivedClientHello = true;
+                    } catch (SocketTimeoutException e) {
+                        // try again
+                    }
+                }
+            }
         } catch (IOException e) {
             LOGGER.error("Could not initialize transport handler");
             LOGGER.error(e, null);
