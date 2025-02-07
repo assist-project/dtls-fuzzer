@@ -44,7 +44,7 @@ function relabel_and_color() {
         extra=''
     fi
     command="java -jar $EXP_SCRIPTS_DIR/dot-trimmer.jar -r $REPL_FILE -i $input_model -o $relabelled_model -t $other_thr -cp $COLOR_FILE $extra"
-    echo $command
+    echo "$command"
     eval "$command"
 }
 
