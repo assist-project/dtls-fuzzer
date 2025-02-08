@@ -1,6 +1,60 @@
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-08 00:05:52.635760833 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-08 02:35:10.080387775 +0100
+@@ -23,7 +23,6 @@
+ 
+     private Map<FragmentKey, FragmentCollector> fragments;
+     private Config config;
+-    private int lastInterpretedMessageSeq = -1;
+ 
+     public FragmentManager(Config config) {
+         fragments = new HashMap<>();
+@@ -69,21 +68,6 @@
+             boolean onlyIfComplete, boolean skipMessageSequences) {
+         List<DtlsHandshakeMessageFragment> handshakeFragmentList = new LinkedList<>();
+         List<FragmentKey> orderedFragmentKeys = new ArrayList<>(fragments.keySet());
+-        orderedFragmentKeys.sort(
+-                new Comparator<FragmentKey>() {
+-                    @Override
+-                    public int compare(FragmentKey fragmentKey1, FragmentKey fragmentKey2) {
+-                        if (fragmentKey1.getEpoch() > fragmentKey2.getEpoch()) {
+-                            return -1;
+-                        } else if (fragmentKey1.getEpoch() < fragmentKey2.getEpoch()) {
+-                            return 1;
+-                        } else {
+-                            return fragmentKey1
+-                                    .getMessageSeq()
+-                                    .compareTo(fragmentKey2.getMessageSeq());
+-                        }
+-                    }
+-                });
+ 
+         for (FragmentKey key : orderedFragmentKeys) {
+             FragmentCollector fragmentCollector = fragments.get(key);
+@@ -100,11 +84,6 @@
+                 }
+             }
+             if (!fragmentCollector.isInterpreted()) {
+-                if (!skipMessageSequences
+-                        && key.getMessageSeq() != lastInterpretedMessageSeq + 1
+-                        && !fragmentCollector.isRetransmission()) {
+-                    break;
+-                }
+                 if (onlyIfComplete && !fragmentCollector.isMessageComplete()) {
+                     LOGGER.debug(
+                             "Incomplete message. Not processing: msg_sqn: "
+@@ -114,7 +93,7 @@
+                 } else {
+                     handshakeFragmentList.add(fragmentCollector.buildCombinedFragment());
+                     fragmentCollector.setInterpreted(true);
+-                    lastInterpretedMessageSeq = key.getMessageSeq();
++                    clearFragmentedMessage(key.getMessageSeq(), key.getEpoch());
+                 }
+             }
+         }
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 00:44:50.172675726 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-06 01:00:52.335807384 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 02:29:25.443282294 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 00:57:42.272011120 +0100
 @@ -523,6 +523,28 @@
          init();
      }
@@ -31,8 +85,8 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
          return this.clientSupportedSrtpProtectionProfiles;
      }
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-05 00:20:36.923549254 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 00:26:02.533552449 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 02:29:25.443282294 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 00:57:42.272011120 +0100
 @@ -114,7 +114,8 @@
  
              case X509:
@@ -44,8 +98,8 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protoc
                          if (chooser.getConfig().getAutoAdjustCertificate()) {
                              X509PublicKeyType[] certificateKeyTypes =
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 00:44:50.182478248 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-06 01:00:52.335807384 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 02:29:25.443282294 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 00:57:42.272011120 +0100
 @@ -168,7 +168,7 @@
      }
  
