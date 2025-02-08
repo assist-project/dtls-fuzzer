@@ -1,6 +1,6 @@
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-06 00:45:56.613849946 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-05 22:04:30.714610303 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 00:44:50.172675726 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-06 01:00:52.335807384 +0100
 @@ -523,6 +523,28 @@
          init();
      }
@@ -30,9 +30,22 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
      public List<SrtpProtectionProfile> getClientSupportedSrtpProtectionProfiles() {
          return this.clientSupportedSrtpProtectionProfiles;
      }
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-05 00:20:36.923549254 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 00:26:02.533552449 +0100
+@@ -114,7 +114,8 @@
+ 
+             case X509:
+                 List<CertificateEntry> entryList = msg.getCertificateEntryList();
+-                if (chooser.getConfig().getDefaultExplicitCertificateChain() == null) {
++                if (chooser.getConfig().getDefaultExplicitCertificateChain() == null
++                        || entryList != null) {
+                     if (entryList == null) {
+                         if (chooser.getConfig().getAutoAdjustCertificate()) {
+                             X509PublicKeyType[] certificateKeyTypes =
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-06 00:45:56.505879806 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-05 21:54:04.754021505 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 00:44:50.182478248 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-06 01:00:52.335807384 +0100
 @@ -168,7 +168,7 @@
      }
  
