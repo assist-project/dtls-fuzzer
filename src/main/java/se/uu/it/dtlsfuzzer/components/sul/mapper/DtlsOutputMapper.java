@@ -4,6 +4,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abst
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
+import de.rub.nds.protocol.constants.SignatureAlgorithm;
 import de.rub.nds.tlsattacker.core.layer.GenericReceiveLayerConfiguration;
 import de.rub.nds.tlsattacker.core.layer.LayerConfiguration;
 import de.rub.nds.tlsattacker.core.layer.ProtocolLayer;
@@ -155,14 +156,22 @@ public class DtlsOutputMapper extends OutputMapper {
      * certificate.
      */
     private String getCertSignatureTypeString(CertificateMessage message) {
-        String certType = "UNKNOWN";
+        SignatureAlgorithm certType;
         if (message.getCertificateEntryList() == null || message.getCertificateEntryList().isEmpty()) {
             throw new NotImplementedException("Raw public keys not supported");
         } else {
             X509Certificate x509Cert = message.getX509CertificateListFromEntries().get(0);
-            certType = x509Cert.getX509SignatureAlgorithm().getSignatureAlgorithm().name();
+            certType = x509Cert.getX509SignatureAlgorithm().getSignatureAlgorithm();
         }
-        return certType;
+        switch (certType) {
+            case RSA_PKCS1:
+            case RSA_PSS_RSAE:
+            case RSA_SSA_PSS:
+                return "RSA";
+
+            default:
+                throw new NotImplementedException("Signature algorithm mapping not implemented for: " + certType.name());
+        }
     }
 
 }
