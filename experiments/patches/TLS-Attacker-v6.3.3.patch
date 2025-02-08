@@ -1,5 +1,5 @@
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-08 00:05:52.635760833 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-08 16:56:41.298359978 +0100
 +++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-08 02:35:10.080387775 +0100
 @@ -23,7 +23,6 @@
  
@@ -54,39 +54,87 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/F
          }
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 --- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 02:29:25.443282294 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 00:57:42.272011120 +0100
-@@ -523,6 +523,28 @@
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 17:31:48.355691568 +0100
+@@ -60,6 +60,7 @@
+ import de.rub.nds.tlsattacker.core.state.session.TicketSession;
+ import de.rub.nds.tlsattacker.core.workflow.chooser.Chooser;
+ import de.rub.nds.tlsattacker.transport.ConnectionEndType;
++import de.rub.nds.x509attacker.constants.X509PublicKeyType;
+ import de.rub.nds.x509attacker.context.X509Context;
+ import de.rub.nds.x509attacker.x509.X509CertificateChain;
+ import jakarta.xml.bind.annotation.XmlAccessType;
+@@ -73,6 +74,7 @@
+ import java.util.List;
+ import java.util.Random;
+ import java.util.Set;
++import org.apache.commons.lang3.NotImplementedException;
+ 
+ /** Holds all runtime variables of the TLSLayer. */
+ @XmlAccessorType(XmlAccessType.FIELD)
+@@ -522,6 +524,60 @@
+         context.setTlsContext(this);
          init();
      }
- 
++
 +    public TlsContext(Context context, Config config) {
 +        super(context);
 +        clientX509Context = new X509Context();
 +        serverX509Context = new X509Context();
-+        // Client
-+        clientX509Context.setSubjectRsaModulus(
-+                config.getCertificateChainConfig().get(0).getRsaModulus());
-+        clientX509Context.setSubjectRsaPrivateKey(
-+                config.getCertificateChainConfig().get(0).getRsaPrivateKey());
-+        clientX509Context.setSubjectRsaPublicExponent(
-+                config.getCertificateChainConfig().get(0).getRsaPublicExponent());
-+        // Server
-+        serverX509Context.setSubjectRsaModulus(
-+                config.getCertificateChainConfig().get(0).getRsaModulus());
-+        serverX509Context.setSubjectRsaPrivateKey(
-+                config.getCertificateChainConfig().get(0).getRsaPrivateKey());
-+        serverX509Context.setSubjectRsaPublicExponent(
-+                config.getCertificateChainConfig().get(0).getRsaPublicExponent());
++
++        X509PublicKeyType publicKeyType =
++                config.getCertificateChainConfig().get(0).getPublicKeyType();
++        if (publicKeyType == X509PublicKeyType.RSA) {
++            // Client RSA
++            clientX509Context.setSubjectRsaModulus(
++                    config.getCertificateChainConfig().get(0).getRsaModulus());
++            clientX509Context.setSubjectRsaPrivateKey(
++                    config.getCertificateChainConfig().get(0).getRsaPrivateKey());
++            clientX509Context.setSubjectRsaPublicExponent(
++                    config.getCertificateChainConfig().get(0).getRsaPublicExponent());
++            // Server RSA
++            serverX509Context.setSubjectRsaModulus(
++                    config.getCertificateChainConfig().get(0).getRsaModulus());
++            serverX509Context.setSubjectRsaPrivateKey(
++                    config.getCertificateChainConfig().get(0).getRsaPrivateKey());
++            serverX509Context.setSubjectRsaPublicExponent(
++                    config.getCertificateChainConfig().get(0).getRsaPublicExponent());
++        } else if (publicKeyType == X509PublicKeyType.ECDH_ECDSA) {
++            // Client EC
++            clientX509Context.setSubjectEcPrivateKey(
++                    config.getCertificateChainConfig().get(0).getEcPrivateKey());
++            clientX509Context.setSubjectEcPublicKey(
++                    config.getCertificateChainConfig().get(0).getEcPublicKey());
++            clientX509Context.setSubjectNamedCurve(
++                    config.getCertificateChainConfig().get(0).getDefaultSubjectNamedCurve());
++            clientX509Context.setSubjectPublicKeyType(
++                    config.getCertificateChainConfig().get(0).getPublicKeyType());
++            clientX509Context.setSubjectSignatureAlgorithm(
++                    config.getCertificateChainConfig().get(0).getDefaultSignatureAlgorithm());
++            // Server EC
++            serverX509Context.setSubjectEcPrivateKey(
++                    config.getCertificateChainConfig().get(0).getEcPrivateKey());
++            serverX509Context.setSubjectEcPublicKey(
++                    config.getCertificateChainConfig().get(0).getEcPublicKey());
++            serverX509Context.setSubjectNamedCurve(
++                    config.getCertificateChainConfig().get(0).getDefaultSubjectNamedCurve());
++            serverX509Context.setSubjectPublicKeyType(
++                    config.getCertificateChainConfig().get(0).getPublicKeyType());
++            serverX509Context.setSubjectSignatureAlgorithm(
++                    config.getCertificateChainConfig().get(0).getDefaultSignatureAlgorithm());
++        } else {
++            throw new NotImplementedException(
++                    "You may forget to add corresponding patch for TLS-Attacker publicKeyType: "
++                            + publicKeyType.name());
++        }
 +        context.setTlsContext(this);
 +        init();
 +    }
-+
+ 
      public List<SrtpProtectionProfile> getClientSupportedSrtpProtectionProfiles() {
          return this.clientSupportedSrtpProtectionProfiles;
-     }
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
 --- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 02:29:25.443282294 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 00:57:42.272011120 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 22:50:18.692731360 +0100
 @@ -114,7 +114,8 @@
  
              case X509:
@@ -97,6 +145,14 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protoc
                      if (entryList == null) {
                          if (chooser.getConfig().getAutoAdjustCertificate()) {
                              X509PublicKeyType[] certificateKeyTypes =
+@@ -223,7 +224,6 @@
+                 prepareCert(entryList, x509Context, certConfig, i);
+             }
+         }
+-        chooser.getContext().getTlsContext().setTalkingX509Context(x509Context);
+     }
+ 
+     private void prepareCert(
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java
 --- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 02:29:25.443282294 +0100
 +++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 00:57:42.272011120 +0100
