@@ -168,7 +168,8 @@ public class DtlsOutputMapper extends OutputMapper {
             case RSA_PSS_RSAE:
             case RSA_SSA_PSS:
                 return "RSA";
-
+            case ECDSA:
+                return "ECDSA";
             default:
                 throw new NotImplementedException("Signature algorithm mapping not implemented for: " + certType.name());
         }
