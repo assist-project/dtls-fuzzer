@@ -17,6 +17,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
 import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
+import de.rub.nds.tlsattacker.core.layer.impl.FirstCachedUdpLayer;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.transport.TransportHandler;
@@ -179,8 +180,11 @@ public class TlsSul extends AbstractSul {
                 boolean receivedClientHello = false;
                 while (!receivedClientHello) {
                     try {
-                        transportHandler.fetchData();
+                        var firstClientHello = transportHandler.fetchData();
                         receivedClientHello = true;
+                        FirstCachedUdpLayer udpLayer = (FirstCachedUdpLayer)context.getState().getTlsContext().getLayerStack().getLowestLayer();
+                        udpLayer.setFirstClientHelo(firstClientHello);
+                        udpLayer.isFuzzingClient = true;
                     } catch (SocketTimeoutException e) {
                         // try again
                     }

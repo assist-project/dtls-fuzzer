@@ -52,6 +52,18 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/F
                  }
              }
          }
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-06 01:00:52.196179597 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-11 13:39:58.499641217 +0100
+@@ -32,7 +32,7 @@
+                         new MessageLayer(context),
+                         new DtlsFragmentLayer(context),
+                         new RecordLayer(context),
+-                        new UdpLayer(context));
++                        new FirstCachedUdpLayer(context));
+             case QUIC:
+                 return new LayerStack(
+                         context,
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 --- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 02:29:25.443282294 +0100
 +++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 17:31:48.355691568 +0100
@@ -132,6 +144,95 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
  
      public List<SrtpProtectionProfile> getClientSupportedSrtpProtectionProfiles() {
          return this.clientSupportedSrtpProtectionProfiles;
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java	1970-01-01 01:00:00.000000000 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java	2025-02-11 14:55:54.898535062 +0100
+@@ -0,0 +1,64 @@
++/*
++ * TLS-Attacker - A Modular Penetration Testing Framework for TLS
++ *
++ * Copyright 2014-2023 Ruhr University Bochum, Paderborn University, Technology Innovation Institute, and Hackmanit GmbH
++ *
++ * Licensed under Apache License, Version 2.0
++ * http://www.apache.org/licenses/LICENSE-2.0.txt
++ */
++package de.rub.nds.tlsattacker.core.layer.impl;
++
++import de.rub.nds.tlsattacker.core.layer.hints.LayerProcessingHint;
++import de.rub.nds.tlsattacker.core.layer.stream.HintedLayerInputStream;
++import de.rub.nds.tlsattacker.core.state.Context;
++import de.rub.nds.tlsattacker.core.udp.UdpDataPacket;
++import java.io.ByteArrayInputStream;
++import java.io.IOException;
++
++/**
++ * The UDP layer is a wrapper around an underlying UDP socket. It forwards the sockets InputStream
++ * for reading and sends any data over the UDP layer without modifications.
++ */
++public class FirstCachedUdpLayer extends UdpLayer {
++
++    private byte[] firstClientHello = null;
++    private boolean isFirstClientHelloConsumed = false;
++
++    public boolean isFuzzingClient = false;
++
++    public FirstCachedUdpLayer(Context context) {
++        super(context);
++    }
++
++    public void setFirstClientHelo(byte[] bytes) {
++        this.firstClientHello = bytes;
++    }
++
++    public byte[] getFirstClientHelo() {
++        return this.firstClientHello;
++    }
++
++    @Override
++    public void receiveMoreDataForHint(LayerProcessingHint hint) throws IOException {
++        byte[] receivedPacket = null;
++        if (!isFirstClientHelloConsumed && isFuzzingClient) {
++            receivedPacket = firstClientHello;
++            isFirstClientHelloConsumed = true;
++        } else {
++            receivedPacket = getTransportHandler().fetchData();
++        }
++        UdpDataPacket udpDataPacket = new UdpDataPacket();
++        udpDataPacket
++                .getParser(context, new ByteArrayInputStream(receivedPacket))
++                .parse(udpDataPacket);
++        udpDataPacket.getPreparator(context).prepareAfterParse();
++        udpDataPacket.getHandler(context).adjustContext(udpDataPacket);
++        addProducedContainer(udpDataPacket);
++        if (currentInputStream == null) {
++            currentInputStream = new HintedLayerInputStream(null, this);
++            currentInputStream.extendStream(receivedPacket);
++        } else {
++            currentInputStream.extendStream(receivedPacket);
++        }
++    }
++}
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-06 01:00:52.196179597 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-11 11:48:34.040163959 +0100
+@@ -26,7 +26,7 @@
+  */
+ public class UdpLayer extends ProtocolLayer<LayerProcessingHint, UdpDataPacket> {
+ 
+-    private final Context context;
++    protected final Context context;
+ 
+     public UdpLayer(Context context) {
+         super(ImplementedLayers.UDP);
+@@ -88,7 +88,7 @@
+         return new LayerProcessingResult<UdpDataPacket>(null, getLayerType(), true);
+     }
+ 
+-    private UdpTransportHandler getTransportHandler() {
++    protected UdpTransportHandler getTransportHandler() {
+         if (context.getTransportHandler() == null) {
+             throw new RuntimeException("TransportHandler is not set in context!");
+         }
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
 --- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 02:29:25.443282294 +0100
 +++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 22:50:18.692731360 +0100
