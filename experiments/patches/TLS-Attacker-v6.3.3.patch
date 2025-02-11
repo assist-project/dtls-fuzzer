@@ -254,6 +254,18 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protoc
      }
  
      private void prepareCert(
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java	2025-02-06 01:00:52.325833970 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java	2025-02-13 18:18:34.365445319 +0100
+@@ -144,7 +144,7 @@
+     public byte[] decryptPremasterSecret() {
+         BigInteger bigIntegerEncryptedPremasterSecret =
+                 new BigInteger(1, msg.getPublicKey().getValue());
+-        BigInteger serverPrivateKey = chooser.getServerX509Chooser().getConfig().getRsaPrivateKey();
++        BigInteger serverPrivateKey = chooser.getServerX509Chooser().getSubjectRsaPrivateKey();
+         if (chooser.getServerX509Chooser().getSubjectRsaModulus().equals(BigInteger.ZERO)) {
+             LOGGER.warn("RSA modulus is zero, returning new byte[0] as decryptedPremasterSecret");
+             return new byte[0];
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java
 --- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 02:29:25.443282294 +0100
 +++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 00:57:42.272011120 +0100
