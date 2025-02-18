@@ -1,6 +1,6 @@
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-08 16:56:41.298359978 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-08 02:35:10.080387775 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-18 15:27:19.852092651 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-17 17:45:43.036593112 +0100
 @@ -23,7 +23,6 @@
  
      private Map<FragmentKey, FragmentCollector> fragments;
@@ -53,8 +53,8 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/F
              }
          }
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-06 01:00:52.196179597 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-11 13:39:58.499641217 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-18 15:27:19.852092651 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-17 17:45:43.036593112 +0100
 @@ -32,7 +32,7 @@
                          new MessageLayer(context),
                          new DtlsFragmentLayer(context),
@@ -65,8 +65,8 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
                  return new LayerStack(
                          context,
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 02:29:25.443282294 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-08 17:31:48.355691568 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-18 15:27:19.852092651 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java	2025-02-17 17:45:43.036593112 +0100
 @@ -60,6 +60,7 @@
  import de.rub.nds.tlsattacker.core.state.session.TicketSession;
  import de.rub.nds.tlsattacker.core.workflow.chooser.Chooser;
@@ -146,7 +146,7 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
          return this.clientSupportedSrtpProtectionProfiles;
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java
 --- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java	1970-01-01 01:00:00.000000000 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java	2025-02-11 14:55:54.898535062 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java	2025-02-17 17:45:43.036593112 +0100
 @@ -0,0 +1,64 @@
 +/*
 + * TLS-Attacker - A Modular Penetration Testing Framework for TLS
@@ -213,8 +213,8 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
 +    }
 +}
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-06 01:00:52.196179597 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-11 11:48:34.040163959 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-18 15:27:19.852092651 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-17 17:45:43.036593112 +0100
 @@ -26,7 +26,7 @@
   */
  public class UdpLayer extends ProtocolLayer<LayerProcessingHint, UdpDataPacket> {
@@ -234,8 +234,8 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
              throw new RuntimeException("TransportHandler is not set in context!");
          }
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 02:29:25.443282294 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-08 22:50:18.692731360 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-18 15:27:19.852092651 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-17 17:45:43.036593112 +0100
 @@ -114,7 +114,8 @@
  
              case X509:
@@ -255,8 +255,8 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protoc
  
      private void prepareCert(
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java	2025-02-06 01:00:52.325833970 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java	2025-02-13 18:18:34.365445319 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java	2025-02-18 15:27:19.852092651 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/RSAClientKeyExchangePreparator.java	2025-02-17 17:45:43.036593112 +0100
 @@ -144,7 +144,7 @@
      public byte[] decryptPremasterSecret() {
          BigInteger bigIntegerEncryptedPremasterSecret =
@@ -266,9 +266,29 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protoc
          if (chooser.getServerX509Chooser().getSubjectRsaModulus().equals(BigInteger.ZERO)) {
              LOGGER.warn("RSA modulus is zero, returning new byte[0] as decryptedPremasterSecret");
              return new byte[0];
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java	2025-02-18 15:27:19.862061458 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java	2025-02-18 15:01:49.944933950 +0100
+@@ -8,6 +8,7 @@
+  */
+ package de.rub.nds.tlsattacker.core.record.crypto;
+ 
++import de.rub.nds.protocol.exception.EndOfStreamException;
+ import de.rub.nds.protocol.exception.ParserException;
+ import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
+ import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+@@ -55,7 +56,7 @@
+                     || record.getContentMessageType() != ProtocolMessageType.CHANGE_CIPHER_SPEC) {
+                 try {
+                     recordCipher.decrypt(record);
+-                } catch (ParserException | CryptoException ex) {
++                } catch (ParserException | CryptoException | EndOfStreamException ex) {
+                     if (recordCipherList.indexOf(recordCipher) > 0) {
+                         LOGGER.warn(
+                                 "Failed to decrypt record, will try to process with previous cipher");
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 02:29:25.443282294 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-08 00:57:42.272011120 +0100
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-18 15:27:19.862061458 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java	2025-02-17 17:45:43.036593112 +0100
 @@ -168,7 +168,7 @@
      }
  
