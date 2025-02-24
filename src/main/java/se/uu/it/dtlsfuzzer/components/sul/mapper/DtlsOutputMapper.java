@@ -53,7 +53,7 @@ public class DtlsOutputMapper extends OutputMapper {
         tlsContext.getLayerStack().receiveData(layerConfigs);
         MessageLayer messageLayer = (MessageLayer) tlsContext.getLayerStack().getLayer(MessageLayer.class);
         List<ProtocolMessage> messages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers().size());
-        messageLayer.getLayerResult().getUsedContainers().stream().forEach(m -> messages.add((ProtocolMessage) m));
+        messageLayer.getLayerResult().getUsedContainers().stream().forEach(m -> messages.add(m));
 
         AbstractOutput output = extractOutput(messages);
         // updating the execution context with the 'containers' that were produced at each layer
