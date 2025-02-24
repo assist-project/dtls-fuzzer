@@ -155,18 +155,35 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
          }
 diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
 --- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-20 15:19:04.917589863 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-20 15:50:28.959229375 +0100
-@@ -114,7 +114,8 @@
- 
-             case X509:
-                 List<CertificateEntry> entryList = msg.getCertificateEntryList();
--                if (chooser.getConfig().getDefaultExplicitCertificateChain() == null) {
-+                if (chooser.getConfig().getDefaultExplicitCertificateChain() == null
-+                        || entryList != null) {
-                     if (entryList == null) {
-                         if (chooser.getConfig().getAutoAdjustCertificate()) {
-                             X509PublicKeyType[] certificateKeyTypes =
-@@ -223,7 +224,6 @@
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-24 17:22:35.965169130 +0100
+@@ -147,13 +147,20 @@
+                     }
+                     prepareFromEntryList(msg);
+                 } else {
+-                    entryList = new LinkedList<>();
+-                    for (CertificateBytes certificateBytes :
+-                            chooser.getConfig().getDefaultExplicitCertificateChain()) {
+-                        CertificateEntry entry = new CertificateEntry(certificateBytes.getBytes());
+-                        entryList.add(entry);
++                    if (entryList != null) {
++                        // Generate EMPTY_CERTIFICATE
++                        preparePredefinedCerts(entryList);
++                    } else {
++                        // Generate CERTIFICATE
++                        entryList = new LinkedList<>();
++                        for (CertificateBytes certificateBytes :
++                                chooser.getConfig().getDefaultExplicitCertificateChain()) {
++                            CertificateEntry entry =
++                                    new CertificateEntry(certificateBytes.getBytes());
++                            entryList.add(entry);
++                        }
++                        msg.setCertificateEntryList(entryList);
+                     }
+-                    msg.setCertificateEntryList(entryList);
+                     prepareFromEntryList(msg);
+                 }
+                 LOGGER.debug(
+@@ -223,7 +230,6 @@
                  prepareCert(entryList, x509Context, certConfig, i);
              }
          }
