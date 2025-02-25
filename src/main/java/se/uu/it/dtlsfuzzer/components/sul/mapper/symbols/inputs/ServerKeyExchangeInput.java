@@ -30,13 +30,13 @@ public class ServerKeyExchangeInput extends DtlsInput {
         if (algorithm == null) {
             throw new RuntimeException("Algorithm not set");
         }
-        ProtocolMessage<? extends ProtocolMessage<?>> ske = null;
+        ProtocolMessage ske = null;
         switch (algorithm) {
             case DH :
-                ske = new DHEServerKeyExchangeMessage<>();
+                ske = new DHEServerKeyExchangeMessage();
                 break;
             case ECDH :
-                ske = new ECDHEServerKeyExchangeMessage<>();
+                ske = new ECDHEServerKeyExchangeMessage();
                 break;
             case PSK:
                 ske = new PskServerKeyExchangeMessage();

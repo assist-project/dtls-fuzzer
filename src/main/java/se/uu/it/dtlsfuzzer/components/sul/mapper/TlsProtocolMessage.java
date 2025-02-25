@@ -7,13 +7,13 @@ import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
  */
 public class TlsProtocolMessage implements com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage {
 
-    private final ProtocolMessage<? extends ProtocolMessage<?>> message;
+    private final ProtocolMessage message;
 
-    public TlsProtocolMessage(ProtocolMessage<? extends ProtocolMessage<?>> message) {
+    public TlsProtocolMessage(ProtocolMessage message) {
         this.message = message;
     }
 
-    public ProtocolMessage<? extends ProtocolMessage<?>> getMessage() {
+    public ProtocolMessage getMessage() {
         return message;
     }
 }

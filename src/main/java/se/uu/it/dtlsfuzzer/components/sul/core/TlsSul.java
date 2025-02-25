@@ -17,6 +17,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
 import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
+import de.rub.nds.tlsattacker.core.layer.impl.FirstCachedUdpLayer;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.transport.TransportHandler;
@@ -26,6 +27,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -120,6 +122,8 @@ public class TlsSul extends AbstractSul {
     @Override
     public void pre() {
         Config config = getNewSulConfig(configDelegate);
+        config.getDefaultClientConnection().setUseIpv6(false); // fix NullPointerException
+        config.getDefaultServerConnection().setUseIpv6(false); // fix NullPointerException
         State state = new State(config, new WorkflowTrace());
         context = new TlsExecutionContext((TlsSulConfig) sulConfig, new TlsState(state));
         TransportHandler transportHandler = null;
@@ -172,6 +176,20 @@ public class TlsSul extends AbstractSul {
             TransportHandler transportHandler = context.getTlsContext().getTransportHandler();
             transportHandler.preInitialize();
             transportHandler.initialize();
+            if (sulConfig.isFuzzingClient()) {
+                boolean receivedClientHello = false;
+                while (!receivedClientHello) {
+                    try {
+                        var firstClientHello = transportHandler.fetchData();
+                        receivedClientHello = true;
+                        FirstCachedUdpLayer udpLayer = (FirstCachedUdpLayer)context.getState().getTlsContext().getLayerStack().getLowestLayer();
+                        udpLayer.setFirstClientHelo(firstClientHello);
+                        udpLayer.isFuzzingClient = true;
+                    } catch (SocketTimeoutException e) {
+                        // try again
+                    }
+                }
+            }
         } catch (IOException e) {
             LOGGER.error("Could not initialize transport handler");
             LOGGER.error(e, null);

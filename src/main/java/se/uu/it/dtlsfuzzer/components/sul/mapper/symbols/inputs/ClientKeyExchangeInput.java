@@ -33,22 +33,22 @@ public class ClientKeyExchangeInput extends DtlsInput {
     @Override
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         getTlsContext(context).setPreMasterSecret(null);
-        ProtocolMessage<? extends ProtocolMessage<?>> message = null;
+        ProtocolMessage message = null;
         if (algorithm == null) {
             throw new RuntimeException("Algorithm not set");
         }
         switch (algorithm) {
             case RSA :
-                message = new RSAClientKeyExchangeMessage<>();
+                message = new RSAClientKeyExchangeMessage();
                 break;
             case PSK :
                 message = new PskClientKeyExchangeMessage();
                 break;
             case DH :
-                message = new DHClientKeyExchangeMessage<>();
+                message = new DHClientKeyExchangeMessage();
                 break;
             case ECDH :
-                message = new ECDHClientKeyExchangeMessage<>();
+                message = new ECDHClientKeyExchangeMessage();
                 break;
             case PSK_RSA :
                 message = new PskRsaClientKeyExchangeMessage();

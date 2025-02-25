@@ -1,0 +1,213 @@
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-20 15:19:04.898118063 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-20 15:38:12.424092502 +0100
+@@ -23,7 +23,6 @@
+ 
+     private Map<FragmentKey, FragmentCollector> fragments;
+     private Config config;
+-    private int lastInterpretedMessageSeq = -1;
+ 
+     public FragmentManager(Config config) {
+         fragments = new HashMap<>();
+@@ -69,21 +68,6 @@
+             boolean onlyIfComplete, boolean skipMessageSequences) {
+         List<DtlsHandshakeMessageFragment> handshakeFragmentList = new LinkedList<>();
+         List<FragmentKey> orderedFragmentKeys = new ArrayList<>(fragments.keySet());
+-        orderedFragmentKeys.sort(
+-                new Comparator<FragmentKey>() {
+-                    @Override
+-                    public int compare(FragmentKey fragmentKey1, FragmentKey fragmentKey2) {
+-                        if (fragmentKey1.getEpoch() > fragmentKey2.getEpoch()) {
+-                            return -1;
+-                        } else if (fragmentKey1.getEpoch() < fragmentKey2.getEpoch()) {
+-                            return 1;
+-                        } else {
+-                            return fragmentKey1
+-                                    .getMessageSeq()
+-                                    .compareTo(fragmentKey2.getMessageSeq());
+-                        }
+-                    }
+-                });
+ 
+         for (FragmentKey key : orderedFragmentKeys) {
+             FragmentCollector fragmentCollector = fragments.get(key);
+@@ -100,11 +84,6 @@
+                 }
+             }
+             if (!fragmentCollector.isInterpreted()) {
+-                if (!skipMessageSequences
+-                        && key.getMessageSeq() != lastInterpretedMessageSeq + 1
+-                        && !fragmentCollector.isRetransmission()) {
+-                    break;
+-                }
+                 if (onlyIfComplete && !fragmentCollector.isMessageComplete()) {
+                     LOGGER.debug(
+                             "Incomplete message. Not processing: msg_sqn: "
+@@ -114,7 +93,7 @@
+                 } else {
+                     handshakeFragmentList.add(fragmentCollector.buildCombinedFragment());
+                     fragmentCollector.setInterpreted(true);
+-                    lastInterpretedMessageSeq = key.getMessageSeq();
++                    clearFragmentedMessage(key.getMessageSeq(), key.getEpoch());
+                 }
+             }
+         }
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-20 15:19:04.907853961 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-20 15:38:28.834162918 +0100
+@@ -32,7 +32,7 @@
+                         new MessageLayer(context),
+                         new DtlsFragmentLayer(context),
+                         new RecordLayer(context),
+-                        new UdpLayer(context));
++                        new FirstCachedUdpLayer(context));
+             case QUIC:
+                 return new LayerStack(
+                         context,
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java	1970-01-01 01:00:00.000000000 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java	2025-02-20 15:40:32.718070889 +0100
+@@ -0,0 +1,64 @@
++/*
++ * TLS-Attacker - A Modular Penetration Testing Framework for TLS
++ *
++ * Copyright 2014-2023 Ruhr University Bochum, Paderborn University, Technology Innovation Institute, and Hackmanit GmbH
++ *
++ * Licensed under Apache License, Version 2.0
++ * http://www.apache.org/licenses/LICENSE-2.0.txt
++ */
++package de.rub.nds.tlsattacker.core.layer.impl;
++
++import de.rub.nds.tlsattacker.core.layer.hints.LayerProcessingHint;
++import de.rub.nds.tlsattacker.core.layer.stream.HintedLayerInputStream;
++import de.rub.nds.tlsattacker.core.state.Context;
++import de.rub.nds.tlsattacker.core.udp.UdpDataPacket;
++import java.io.ByteArrayInputStream;
++import java.io.IOException;
++
++/**
++ * The UDP layer is a wrapper around an underlying UDP socket. It forwards the sockets InputStream
++ * for reading and sends any data over the UDP layer without modifications.
++ */
++public class FirstCachedUdpLayer extends UdpLayer {
++
++    private byte[] firstClientHello = null;
++    private boolean isFirstClientHelloConsumed = false;
++
++    public boolean isFuzzingClient = false;
++
++    public FirstCachedUdpLayer(Context context) {
++        super(context);
++    }
++
++    public void setFirstClientHelo(byte[] bytes) {
++        this.firstClientHello = bytes;
++    }
++
++    public byte[] getFirstClientHelo() {
++        return this.firstClientHello;
++    }
++
++    @Override
++    public void receiveMoreDataForHint(LayerProcessingHint hint) throws IOException {
++        byte[] receivedPacket = null;
++        if (!isFirstClientHelloConsumed && isFuzzingClient) {
++            receivedPacket = firstClientHello;
++            isFirstClientHelloConsumed = true;
++        } else {
++            receivedPacket = getTransportHandler().fetchData();
++        }
++        UdpDataPacket udpDataPacket = new UdpDataPacket();
++        udpDataPacket
++                .getParser(context, new ByteArrayInputStream(receivedPacket))
++                .parse(udpDataPacket);
++        udpDataPacket.getPreparator(context).prepareAfterParse();
++        udpDataPacket.getHandler(context).adjustContext(udpDataPacket);
++        addProducedContainer(udpDataPacket);
++        if (currentInputStream == null) {
++            currentInputStream = new HintedLayerInputStream(null, this);
++            currentInputStream.extendStream(receivedPacket);
++        } else {
++            currentInputStream.extendStream(receivedPacket);
++        }
++    }
++}
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-20 15:19:04.907853961 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-20 15:42:08.984094197 +0100
+@@ -26,7 +26,7 @@
+  */
+ public class UdpLayer extends ProtocolLayer<LayerProcessingHint, UdpDataPacket> {
+ 
+-    private final Context context;
++    protected final Context context;
+ 
+     public UdpLayer(Context context) {
+         super(ImplementedLayers.UDP);
+@@ -88,7 +88,7 @@
+         return new LayerProcessingResult<UdpDataPacket>(null, getLayerType(), true);
+     }
+ 
+-    private UdpTransportHandler getTransportHandler() {
++    protected UdpTransportHandler getTransportHandler() {
+         if (context.getTransportHandler() == null) {
+             throw new RuntimeException("TransportHandler is not set in context!");
+         }
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-20 15:19:04.917589863 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-24 17:22:35.965169130 +0100
+@@ -147,13 +147,20 @@
+                     }
+                     prepareFromEntryList(msg);
+                 } else {
+-                    entryList = new LinkedList<>();
+-                    for (CertificateBytes certificateBytes :
+-                            chooser.getConfig().getDefaultExplicitCertificateChain()) {
+-                        CertificateEntry entry = new CertificateEntry(certificateBytes.getBytes());
+-                        entryList.add(entry);
++                    if (entryList != null) {
++                        // Generate EMPTY_CERTIFICATE
++                        preparePredefinedCerts(entryList);
++                    } else {
++                        // Generate CERTIFICATE
++                        entryList = new LinkedList<>();
++                        for (CertificateBytes certificateBytes :
++                                chooser.getConfig().getDefaultExplicitCertificateChain()) {
++                            CertificateEntry entry =
++                                    new CertificateEntry(certificateBytes.getBytes());
++                            entryList.add(entry);
++                        }
++                        msg.setCertificateEntryList(entryList);
+                     }
+-                    msg.setCertificateEntryList(entryList);
+                     prepareFromEntryList(msg);
+                 }
+                 LOGGER.debug(
+@@ -223,7 +230,6 @@
+                 prepareCert(entryList, x509Context, certConfig, i);
+             }
+         }
+-        chooser.getContext().getTlsContext().setTalkingX509Context(x509Context);
+     }
+ 
+     private void prepareCert(
+diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java
+--- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java	2025-02-20 15:19:04.927325762 +0100
++++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java	2025-02-20 15:48:31.109280624 +0100
+@@ -8,6 +8,7 @@
+  */
+ package de.rub.nds.tlsattacker.core.record.crypto;
+ 
++import de.rub.nds.protocol.exception.EndOfStreamException;
+ import de.rub.nds.protocol.exception.ParserException;
+ import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
+ import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+@@ -55,7 +56,7 @@
+                     || record.getContentMessageType() != ProtocolMessageType.CHANGE_CIPHER_SPEC) {
+                 try {
+                     recordCipher.decrypt(record);
+-                } catch (ParserException | CryptoException ex) {
++                } catch (ParserException | CryptoException | EndOfStreamException ex) {
+                     if (recordCipherList.indexOf(recordCipher) > 0) {
+                         LOGGER.warn(
+                                 "Failed to decrypt record, will try to process with previous cipher");

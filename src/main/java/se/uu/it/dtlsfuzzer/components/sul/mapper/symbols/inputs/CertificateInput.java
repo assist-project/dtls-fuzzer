@@ -18,7 +18,7 @@ public class CertificateInput extends DtlsInput {
     public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
         CertificateMessage message = new CertificateMessage();
         if (empty) {
-            message.setCertificateListConfig(Collections.emptyList());
+            message.setCertificateEntryList(Collections.emptyList());
         }
         return new TlsProtocolMessage(message);
     }
