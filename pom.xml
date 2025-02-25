@@ -10,7 +10,6 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Alphabetically sorted -->
-        <bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
         <commons.lang3.version>3.17.0</commons.lang3.version>
         <error-prone.version>2.36.0</error-prone.version>
         <jakarta-xml.version>4.0.2</jakarta-xml.version>
@@ -129,11 +128,6 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>${bcprov-jdk15on.version}</version>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
