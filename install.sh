@@ -2,11 +2,6 @@
 #
 # Installs some necessary packages and then installs DTLS-Fuzzer.
 
-# SCRIPT_DIR should correspond to DTLS-Fuzzer's root directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-readonly SCRIPT_DIR
-
-
 readonly PROTOCOLSTATEFUZZER_COMMIT="469ced8"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
