@@ -63,7 +63,7 @@ public class ClientHelloInput extends DtlsInput {
         }
 
         if (resetDigest) {
-            getTlsContext(context).getDigest().reset();
+//            getTlsContext(context).getDigest().reset();
         }
 
         ClientHelloMessage message = new ClientHelloMessage(getConfig(context));
