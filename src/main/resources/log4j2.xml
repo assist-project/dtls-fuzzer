@@ -11,7 +11,7 @@
                              onMismatch="NEUTRAL"/>
                 <RegexFilter regex=".*DEBUG.*"
                              onMatch="ACCEPT"
-                             onMismatch="DENY"/>
+                             onMismatch="NEUTRAL"/>
             </Filters>
             <PatternLayout pattern="%highlight{%d{HH:mm:ss} [%t] %-5level : %logger{3}} - %msg%n%throwable"/>
         </Console>
@@ -20,7 +20,7 @@
         </File> -->
     </Appenders>
     <Loggers>
-        <Logger name="de.rub.nds.tlsattacker" level="debug" additivity="false">
+        <Logger name="de.rub.nds.tlsattacker" level="info" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <!-- Application Loggers -->
