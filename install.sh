@@ -5,7 +5,6 @@
 # SCRIPT_DIR should correspond to DTLS-Fuzzer's root directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
-readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
 
 readonly PROTOCOLSTATEFUZZER_COMMIT="469ced8"
