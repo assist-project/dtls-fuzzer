@@ -482,7 +482,7 @@ function make_sut() {
         ( cd "$sut_dir" || exit ; bash autogen.sh ; AM_CFLAGS='-DHAVE_AES_CBC -DWOLFSSL_AES_128' ./configure --enable-dtls --enable-psk --enable-rsa --enable-sha --enable-debug C_EXTRA_FLAGS=-DWOLFSSL_STATIC_PSK )
     elif [[ $sut == wolfssl* ]]; then
         # newer wolfssl versions with DTLS 1.3 support
-        ( cd "$sut_dir" || exit ; bash autogen.sh ; AM_CFLAGS='-DHAVE_AES_CBC -DWOLFSSL_AES_128' ./configure --enable-dtls --enable-dtls13 --enable-keylog-export --enable-psk --enable-rsa --enable-sha --enable-debug C_EXTRA_FLAGS=-DWOLFSSL_STATIC_PSK )
+        ( cd "$sut_dir" || exit ; bash autogen.sh ; AM_CFLAGS='-DHAVE_AES_CBC -DWOLFSSL_AES_128 -DWOLFSSL_DEBUG_TLS' ./configure --enable-dtls --enable-dtls13 --enable-keylog-export --enable-psk --enable-rsa --enable-sha --enable-debug C_EXTRA_FLAGS=-DWOLFSSL_STATIC_PSK )
     elif [[ $sut == scandium* ]]; then
         for sc_prog in "$sut_dir"/sc*; do
             ( cd "$sc_prog" || exit ; mvn install; cp target/scandium*jar "$SUTS_DIR" )
