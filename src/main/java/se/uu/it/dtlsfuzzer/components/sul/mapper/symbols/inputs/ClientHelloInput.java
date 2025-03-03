@@ -62,8 +62,8 @@ public class ClientHelloInput extends DtlsInput {
             getConfig(context).setAddEllipticCurveExtension(true);
         }
 
-        if (resetDigest) {
-//            getTlsContext(context).getDigest().reset();
+        if (resetDigest && !getConfig(context).getHighestProtocolVersion().isDTLS13()) {
+            getTlsContext(context).getDigest().reset();
         }
 
         ClientHelloMessage message = new ClientHelloMessage(getConfig(context));
