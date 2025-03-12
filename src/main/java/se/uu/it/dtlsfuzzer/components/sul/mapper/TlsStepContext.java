@@ -60,7 +60,6 @@ public class TlsStepContext extends StepContext<TlsInput, TlsOutput> {
         return receivedMessages;
     }
 
-
     public List<ProtocolMessage> getSentMessages() {
         return sentMessages;
     }
@@ -86,9 +85,10 @@ public class TlsStepContext extends StepContext<TlsInput, TlsOutput> {
         return (TlsInput) input;
     }
 
-    public  List<Pair<ProtocolMessage, Record>> getReceivedMessageRecordPairs() {
+    public List<Pair<ProtocolMessage, Record>> getReceivedMessageRecordPairs() {
         assert receivedRecords.size() == receivedMessages.size();
-        return IntStream.range(0, receivedMessages.size()).boxed().map(i ->
-        Pair.<ProtocolMessage, Record>of(receivedMessages.get(i), receivedRecords.get(i))).collect(Collectors.toList());
+        return IntStream.range(0, receivedMessages.size()).boxed()
+                .map(i -> Pair.<ProtocolMessage, Record>of(receivedMessages.get(i), receivedRecords.get(i)))
+                .collect(Collectors.toList());
     }
 }

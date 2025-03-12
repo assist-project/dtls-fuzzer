@@ -7,7 +7,8 @@ import java.util.Optional;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.KeyExchangeAlgorithm;
 
 /**
- * Provides an interface for analyzing outputs so that how the actual strings are formed is decoupled from the checking code.
+ * Provides an interface for analyzing outputs so that how the actual strings
+ * are formed is decoupled from the checking code.
  */
 public class TlsOutputChecker implements OutputChecker<TlsOutput> {
     private static String APPLICATION = "APPLICATION";
@@ -119,7 +120,7 @@ public class TlsOutputChecker implements OutputChecker<TlsOutput> {
     }
 
     public static X509PublicKeyType getClientCertificateType(TlsOutput output) {
-        assert(hasCertificate(output) && output.isAtomic());
+        assert (hasCertificate(output) && output.isAtomic());
         if (hasEmptyCertificate(output)) {
             return null;
         } else {
@@ -138,16 +139,16 @@ public class TlsOutputChecker implements OutputChecker<TlsOutput> {
     }
 
     public static X509PublicKeyType getCertificateType(TlsOutput output) {
-        Optional<X509PublicKeyType> opt = Arrays.stream(X509PublicKeyType.values()).filter(ctype -> output.getName().contains(ctype.name())).findFirst();
+        Optional<X509PublicKeyType> opt = Arrays.stream(X509PublicKeyType.values())
+                .filter(ctype -> output.getName().contains(ctype.name())).findFirst();
         return opt.orElseGet(() -> null);
     }
-
 
     public static KeyExchangeAlgorithm getKeyExchangeAlgorithm(TlsOutput output) {
         if (hasClientKeyExchange(output) || hasServerKeyExchange(output)) {
             String keyExchange = output.getName().split("_", -1)[0];
             if (keyExchange.endsWith("DHE")) {
-                keyExchange = keyExchange.substring(0, keyExchange.length()-1);
+                keyExchange = keyExchange.substring(0, keyExchange.length() - 1);
             }
             return KeyExchangeAlgorithm.valueOf(keyExchange);
         }

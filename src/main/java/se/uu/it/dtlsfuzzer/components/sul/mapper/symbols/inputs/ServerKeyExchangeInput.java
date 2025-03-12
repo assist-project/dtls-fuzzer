@@ -32,16 +32,16 @@ public class ServerKeyExchangeInput extends DtlsInput {
         }
         ProtocolMessage ske = null;
         switch (algorithm) {
-            case DH :
+            case DH:
                 ske = new DHEServerKeyExchangeMessage();
                 break;
-            case ECDH :
+            case ECDH:
                 ske = new ECDHEServerKeyExchangeMessage();
                 break;
             case PSK:
                 ske = new PskServerKeyExchangeMessage();
                 break;
-            default :
+            default:
                 throw new RuntimeException("Algorithm " + algorithm
                         + " not supported");
         }

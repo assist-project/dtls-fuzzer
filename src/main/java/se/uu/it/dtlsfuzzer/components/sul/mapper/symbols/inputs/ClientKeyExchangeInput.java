@@ -38,28 +38,28 @@ public class ClientKeyExchangeInput extends DtlsInput {
             throw new RuntimeException("Algorithm not set");
         }
         switch (algorithm) {
-            case RSA :
+            case RSA:
                 message = new RSAClientKeyExchangeMessage();
                 break;
-            case PSK :
+            case PSK:
                 message = new PskClientKeyExchangeMessage();
                 break;
-            case DH :
+            case DH:
                 message = new DHClientKeyExchangeMessage();
                 break;
-            case ECDH :
+            case ECDH:
                 message = new ECDHClientKeyExchangeMessage();
                 break;
-            case PSK_RSA :
+            case PSK_RSA:
                 message = new PskRsaClientKeyExchangeMessage();
                 break;
-            case GOST :
+            case GOST:
                 message = new GOSTClientKeyExchangeMessage();
                 break;
-            case SRP :
+            case SRP:
                 message = new SrpClientKeyExchangeMessage();
                 break;
-            default :
+            default:
                 throw new RuntimeException("Algorithm " + algorithm
                         + " not supported");
 

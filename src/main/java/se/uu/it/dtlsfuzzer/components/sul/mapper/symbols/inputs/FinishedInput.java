@@ -25,8 +25,10 @@ public class FinishedInput extends DtlsInput {
         // System.out.println(ArrayConverter.bytesToHexString(state.getTlsContext().getDigest().getRawBytes()));
         FinishedMessage message = new FinishedMessage();
         lastSequenceNumber = getTlsContext(context).getWriteSequenceNumber(getTlsContext(context).getWriteEpoch());
-//        getTlsContext(context).setWriteEpoch(getTlsContext(context).getWriteEpoch() + 1);
-//        getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0L);
+        // getTlsContext(context).setWriteEpoch(getTlsContext(context).getWriteEpoch() +
+        // 1);
+        // getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(),
+        // 0L);
         return new TlsProtocolMessage(message);
     }
 

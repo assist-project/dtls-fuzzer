@@ -8,7 +8,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class CertificateInput extends DtlsInput {
 
-    @XmlAttribute(name="empty", required=false)
+    @XmlAttribute(name = "empty", required = false)
     private boolean empty = false;
 
     public CertificateInput() {

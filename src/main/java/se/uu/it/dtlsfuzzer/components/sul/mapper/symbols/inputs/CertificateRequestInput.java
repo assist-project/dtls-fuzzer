@@ -10,7 +10,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class CertificateRequestInput extends DtlsInput {
 
-    @XmlAttribute(name="certificate", required=true)
+    @XmlAttribute(name = "certificate", required = true)
     ClientCertificateType certificateType;
 
     public CertificateRequestInput() {
@@ -27,7 +27,8 @@ public class CertificateRequestInput extends DtlsInput {
         CertificateRequestMessage message = new CertificateRequestMessage();
         if (certificateType != null) {
             ModifiableByteArray ctbyte = new ModifiableByteArray();
-            ctbyte.setModification(ByteArrayModificationFactory.explicitValue(new byte[] {certificateType.getValue()}));
+            ctbyte.setModification(
+                    ByteArrayModificationFactory.explicitValue(new byte[] { certificateType.getValue() }));
             message.setClientCertificateTypes(ctbyte);
         }
         return new TlsProtocolMessage(message);

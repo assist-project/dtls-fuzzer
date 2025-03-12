@@ -5,7 +5,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class DtlsInputWrapper extends DtlsInput{
+public class DtlsInputWrapper extends DtlsInput {
     private DtlsInput input;
 
     public DtlsInputWrapper(DtlsInput input) {

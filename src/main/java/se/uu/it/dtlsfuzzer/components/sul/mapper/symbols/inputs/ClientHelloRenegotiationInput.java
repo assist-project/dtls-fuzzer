@@ -39,17 +39,18 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     @Override
     public boolean isEnabled(TlsExecutionContext context) {
         switch (enabled) {
-            case OWN_EPOCH_CHANGE :
+            case OWN_EPOCH_CHANGE:
                 // send epoch is 1 or more
                 return getTlsContext(context).getWriteEpoch() > 0;
-            case SERVER_EPOCH_CHANGE :
+            case SERVER_EPOCH_CHANGE:
                 // receive epoch is 1 or more
                 return getTlsContext(context).getReadEpoch() > 0;
-            case ONCE :
+            case ONCE:
                 return getTlsExecutionContext(context)
                         .getTlsStepContextStream()
-                        .noneMatch(s -> this.equals(s.getInput()) && s.getIndex() != getTlsExecutionContext(context).getStepCount() - 1);
-            default :
+                        .noneMatch(s -> this.equals(s.getInput())
+                                && s.getIndex() != getTlsExecutionContext(context).getStepCount() - 1);
+            default:
                 return true;
         }
     }
@@ -68,7 +69,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
         if (!isShort) {
             ModifiableByteArray sbyte = new ModifiableByteArray();
             sbyte.setModification(new ByteArrayExplicitValueModification(
-                    new byte[]{}));
+                    new byte[] {}));
             message.setSessionId(sbyte);
         }
 
@@ -76,7 +77,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
         if (!withCookie && getTlsContext(context).getDtlsCookie() != null) {
             ModifiableByteArray sbyte = new ModifiableByteArray();
             sbyte.setModification(new ByteArrayExplicitValueModification(
-                    new byte[]{}));
+                    new byte[] {}));
             message.setCookie(sbyte);
         }
 
@@ -87,12 +88,12 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     public void postReceiveUpdate(TlsOutput output, OutputChecker<TlsOutput> abstractOutputChecker,
             TlsExecutionContext context) {
         switch (enabled) {
-            case ON_SERVER_HELLO :
+            case ON_SERVER_HELLO:
                 if (!TlsOutputChecker.hasServerHello(output)) {
                     getTlsExecutionContext(context).disableExecution();
                 }
                 break;
-            default :
+            default:
                 break;
         }
         super.postReceiveUpdate(output, abstractOutputChecker, context);
