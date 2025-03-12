@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-
-public class TlsStepContext extends StepContext {
+public class TlsStepContext extends StepContext<TlsInput, TlsOutput> {
 
     private List<ProtocolMessage> sentMessages;
     private List<DtlsHandshakeMessageFragment> sentFragments;
