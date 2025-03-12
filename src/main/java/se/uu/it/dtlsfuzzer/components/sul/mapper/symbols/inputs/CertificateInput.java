@@ -1,9 +1,9 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Collections;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class CertificateInput extends DtlsInput {
@@ -15,7 +15,7 @@ public class CertificateInput extends DtlsInput {
     }
 
     @Override
-    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         CertificateMessage message = new CertificateMessage();
         if (empty) {
             message.setCertificateEntryList(Collections.emptyList());

@@ -31,7 +31,7 @@ public abstract class DtlsInput extends TlsInput {
     }
 
     @Override
-    public final void preSendUpdate(com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
+    public final void preSendUpdate(TlsExecutionContext context) {
         TlsState state = getTlsExecutionContext(context).getState();
 
         // if different epoch than current, set the epoch in TLS context
@@ -52,7 +52,7 @@ public abstract class DtlsInput extends TlsInput {
     }
 
     @Override
-    public final void postSendUpdate(com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext context) {
+    public final void postSendUpdate(TlsExecutionContext context) {
         // reset epoch number and, if original epoch > 0, reactivate encryption
         if (contextEpoch != null) {
             getTlsExecutionContext(context).getState().getTlsContext().setWriteEpoch(contextEpoch);

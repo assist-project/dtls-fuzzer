@@ -1,14 +1,14 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModification;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
 public class ClientHelloRenegotiationInput extends TlsInput {
@@ -37,7 +37,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     }
 
     @Override
-    public boolean isEnabled(ExecutionContext context) {
+    public boolean isEnabled(TlsExecutionContext context) {
         switch (enabled) {
             case OWN_EPOCH_CHANGE :
                 // send epoch is 1 or more
@@ -55,7 +55,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     }
 
     @Override
-    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         getTlsContext(context).getDigest().reset();
         if (resetMSeq) {
             getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0);
@@ -84,8 +84,8 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     }
 
     @Override
-    public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
-            ExecutionContext context) {
+    public void postReceiveUpdate(TlsOutput output, OutputChecker<TlsOutput> abstractOutputChecker,
+            TlsExecutionContext context) {
         switch (enabled) {
             case ON_SERVER_HELLO :
                 if (!TlsOutputChecker.hasServerHello(output)) {
