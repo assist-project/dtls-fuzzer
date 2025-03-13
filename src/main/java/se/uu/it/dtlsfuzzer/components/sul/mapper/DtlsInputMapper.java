@@ -1,8 +1,6 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.InputMapper;
 import de.rub.nds.tlsattacker.core.layer.LayerConfiguration;
 import de.rub.nds.tlsattacker.core.layer.LayerStack;
@@ -17,19 +15,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
-public class DtlsInputMapper extends InputMapper {
+public class DtlsInputMapper extends InputMapper<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public DtlsInputMapper(MapperConfig mapperConfig, AbstractOutputChecker outputChecker) {
+    public DtlsInputMapper(MapperConfig mapperConfig, TlsOutputChecker outputChecker) {
         super(mapperConfig, outputChecker);
     }
 
     @Override
-    protected void sendMessage(
-            com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage message,
-            ExecutionContext context) {
+    protected void sendMessage(TlsProtocolMessage message,
+            TlsExecutionContext context) {
         ProtocolMessage protocolMessage = ((TlsProtocolMessage) message).getMessage();
         State state = ((TlsState) context.getState()).getState();
 
