@@ -43,7 +43,7 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
 
         // resetting protocol stack layers and creating configurations for each layer
         List<LayerConfiguration<?>> layerConfigs = new ArrayList<>(tlsContext.getLayerStack().getLayerList().size());
-        for (ProtocolLayer<?,?> layer : tlsContext.getLayerStack().getLayerList()) {
+        for (ProtocolLayer<?, ?> layer : tlsContext.getLayerStack().getLayerList()) {
             layer.clear();
             GenericReceiveLayerConfiguration receiveConfig = new GenericReceiveLayerConfiguration(layer.getLayerType());
             layerConfigs.add(receiveConfig);
@@ -55,9 +55,11 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
         List<ProtocolMessage> messages = new ArrayList<>(messageLayer.getLayerResult().getUsedContainers().size());
         messageLayer.getLayerResult().getUsedContainers().stream().forEach(m -> messages.add(m));
 
-        // updating the execution context with the 'containers' that were produced at each layer
-        ((TlsExecutionContext) context).getStepContext().updateReceive(((TlsExecutionContext) context).getState().getState());
         TlsOutput output = extractOutput(messages);
+        // updating the execution context with the 'containers' that were produced at
+        // each layer
+        ((TlsExecutionContext) context).getStepContext()
+                .updateReceive(((TlsExecutionContext) context).getState().getState());
         return output;
     }
 
@@ -71,8 +73,8 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
             List<ProtocolMessage> tlsMessages = receivedMessages.stream().collect(Collectors.toList());
             List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
             String abstractOutput = toAbstractOutputString(abstractMessageStrings);
-            List<com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage> tlsProtocolMessages =
-            tlsMessages.stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
+            List<TlsProtocolMessage> tlsProtocolMessages = tlsMessages
+                    .stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
 
             return new TlsOutput(abstractOutput, tlsProtocolMessages);
         }
@@ -171,7 +173,8 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
             case ECDSA:
                 return "ECDSA";
             default:
-                throw new NotImplementedException("Signature algorithm mapping not implemented for: " + certType.name());
+                throw new NotImplementedException(
+                        "Signature algorithm mapping not implemented for: " + certType.name());
         }
     }
 
