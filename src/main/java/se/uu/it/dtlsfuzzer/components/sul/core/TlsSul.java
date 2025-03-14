@@ -92,9 +92,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
      */
     private final TlsSulConfig sulConfig;
 
-    private CleanupTasks cleanupTasks;  /**
-    * Clea
-    */
+    private CleanupTasks cleanupTasks;
 
     private SulAdapter sulAdapter;
 
@@ -145,7 +143,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
         config.getDefaultClientConnection().setUseIpv6(false); // fix NullPointerException
         config.getDefaultServerConnection().setUseIpv6(false); // fix NullPointerException
         State state = new State(config, new WorkflowTrace());
-        context = new TlsExecutionContext((TlsSulConfig) sulConfig, new TlsState(state));
+        context = new TlsExecutionContext(sulConfig, new TlsState(state));
         TransportHandler transportHandler = null;
 
         if (configDelegate.getProtocolVersion().isDTLS()) {
@@ -258,6 +256,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
         }
     }
 
+    @Override
     public TlsOutput step(TlsInput in) {
         context.addStepContext();
 
