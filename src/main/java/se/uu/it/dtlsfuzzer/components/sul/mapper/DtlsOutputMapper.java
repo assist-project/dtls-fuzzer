@@ -31,7 +31,7 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
 
     @Override
     public TlsOutput receiveOutput(TlsExecutionContext context) {
-        TlsContext tlsContext = ((TlsExecutionContext) context).getState().getTlsContext();
+        TlsContext tlsContext = context.getState().getTlsContext();
         try {
             if (tlsContext.getTransportHandler().isClosed()) {
                 return socketClosed();
@@ -58,8 +58,8 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
         TlsOutput output = extractOutput(messages);
         // updating the execution context with the 'containers' that were produced at
         // each layer
-        ((TlsExecutionContext) context).getStepContext()
-                .updateReceive(((TlsExecutionContext) context).getState().getState());
+        context.getStepContext()
+                .updateReceive(context.getState().getState());
         return output;
     }
 

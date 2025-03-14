@@ -27,11 +27,11 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
 
     @Override
     public TlsState getState() {
-        return (TlsState) state;
+        return state;
     }
 
     public TlsContext getTlsContext() {
-        return ((TlsState) state).getTlsContext();
+        return state.getTlsContext();
     }
 
     public TlsSulConfig getTlsSulConfig() {
@@ -55,7 +55,7 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
      */
     @Override
     public TlsStepContext getStepContext() {
-        return (TlsStepContext) super.getStepContext();
+        return super.getStepContext();
     }
 
     /**
@@ -63,7 +63,7 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
      */
     @Override
     public TlsStepContext getStepContext(int index) {
-        return (TlsStepContext) super.getStepContext(index);
+        return super.getStepContext(index);
     }
 
     /**

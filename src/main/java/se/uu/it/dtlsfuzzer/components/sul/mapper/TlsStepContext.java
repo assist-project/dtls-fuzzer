@@ -82,7 +82,7 @@ public class TlsStepContext extends StepContext<TlsInput, TlsOutput> {
 
     @Override
     public TlsInput getInput() {
-        return (TlsInput) input;
+        return input;
     }
 
     public List<Pair<ProtocolMessage, Record>> getReceivedMessageRecordPairs() {

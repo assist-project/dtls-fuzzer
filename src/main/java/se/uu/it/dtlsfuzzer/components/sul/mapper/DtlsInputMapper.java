@@ -28,10 +28,9 @@ public class DtlsInputMapper extends InputMapper<TlsInput, TlsOutput, TlsProtoco
     }
 
     @Override
-    protected void sendMessage(TlsProtocolMessage message,
-            TlsExecutionContext context) {
-        ProtocolMessage protocolMessage = ((TlsProtocolMessage) message).getMessage();
-        State state = ((TlsState) context.getState()).getState();
+    protected void sendMessage(TlsProtocolMessage message, TlsExecutionContext context) {
+        ProtocolMessage protocolMessage = message.getMessage();
+        State state = context.getState().getState();
 
         // resetting protocol layers and creating a new configuration at each layer
         LayerStack stack = state.getTlsContext().getLayerStack();
@@ -57,7 +56,7 @@ public class DtlsInputMapper extends InputMapper<TlsInput, TlsOutput, TlsProtoco
 
         // updating the execution context with the 'containers' that were produced at
         // each layer
-        ((TlsExecutionContext) context).getStepContext().updateSend(state);
+        context.getStepContext().updateSend(state);
     }
 
     // TODO: Is this code that should be kept or can this be removed?

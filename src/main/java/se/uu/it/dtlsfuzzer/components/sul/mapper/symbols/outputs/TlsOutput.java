@@ -29,6 +29,6 @@ public class TlsOutput extends AbstractOutput<TlsOutput, TlsProtocolMessage> {
 
     @Override
     protected TlsOutput convertOutput() {
-        return (TlsOutput) this;
+        return this;
     }
 }
