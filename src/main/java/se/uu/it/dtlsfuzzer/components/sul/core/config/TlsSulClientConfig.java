@@ -4,7 +4,6 @@ import com.beust.jcommander.ParametersDelegate;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulAdapterConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulClientConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfigStandard;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConnectionConfig;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.ServerDelegate;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
@@ -16,10 +15,6 @@ public class TlsSulClientConfig extends SulClientConfigStandard implements TlsSu
 
     public TlsSulClientConfig() {
         super(new MapperConfigStandard(), new SulAdapterConfigStandard());
-    }
-
-    @Override
-    public void applyDelegate(MapperConnectionConfig config) {
     }
 
     @Override
