@@ -14,7 +14,7 @@ ${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/server/server  -i -x -p $
 -processDir
 ${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
 -sulConfig
-experiments/configs/wolfssl_rsa_cert_nreq_DTLS13.config
+experiments/configs/wolfssl_rsa_cert_DTLS13.config
 
 # learning config
 -alphabet
