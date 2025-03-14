@@ -43,7 +43,7 @@ public abstract class TlsInput extends AbstractInputXml<TlsOutput, TlsProtocolMe
     }
 
     // TODO: Consider whether these should still be in the API now that casts are
-    // largely unneccesary.
+    // largely unnecesisary.
     protected final TlsExecutionContext getTlsExecutionContext(TlsExecutionContext context) {
         return context;
     }
