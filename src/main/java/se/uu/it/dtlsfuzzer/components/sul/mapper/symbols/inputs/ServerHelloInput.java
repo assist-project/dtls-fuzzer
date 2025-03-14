@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
@@ -13,7 +14,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
 public class ServerHelloInput extends DtlsInput {
 
@@ -67,7 +67,7 @@ public class ServerHelloInput extends DtlsInput {
     }
 
     @Override
-    public void postReceiveUpdate(TlsOutput output, TlsOutputChecker abstractOutputChecker,
+    public void postReceiveUpdate(TlsOutput output, OutputChecker<TlsOutput> abstractOutputChecker,
             TlsExecutionContext context) {
         TlsExecutionContext ctx = getTlsExecutionContext(context);
         if (shortHs && context.isExecutionEnabled()) {

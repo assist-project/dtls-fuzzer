@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.tlsattacker.core.protocol.message.HelloRequestMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class HelloRequestInput extends DtlsInput {
     }
 
     @Override
-    public void postReceiveUpdate(TlsOutput output, TlsOutputChecker abstractOutputChecker,
+    public void postReceiveUpdate(TlsOutput output, OutputChecker<TlsOutput> abstractOutputChecker,
             TlsExecutionContext context) {
         if (!TlsOutputChecker.hasClientHello(output)) {
             if (disableOnRefusal) {
