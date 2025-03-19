@@ -12,6 +12,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwra
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposer;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
@@ -38,7 +39,6 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputBuilder;
 
 /**
  * Implementation of {@link AbstractSul} that works for both clients and
@@ -103,14 +103,14 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
      */
     private MapperComposer<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext, TlsState> mapperComposer;
 
-    private TlsOutputBuilder outputBuilder;
+    private OutputMapper<TlsOutput, TlsProtocolMessage, TlsExecutionContext> outputMapper;
 
     public TlsSul(TlsSulConfig sulConfig, MapperConfig mapperConfig, MapperComposer<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext, TlsState> mapperComposer,
             CleanupTasks cleanupTasks) {
         this.sulConfig = sulConfig;
         this.mapperComposer = mapperComposer;
         this.cleanupTasks = cleanupTasks;
-        this.outputBuilder = (TlsOutputBuilder) mapperComposer.getOutputBuilder();
+        this.outputMapper = mapperComposer.getOutputMapper();
 
         configDelegate = sulConfig.getConfigDelegate();
 
@@ -265,7 +265,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
         }
 
         if (!context.isExecutionEnabled()) {
-            return outputBuilder.buildDisabled();
+            return outputMapper.disabled();
         }
 
         TlsOutput output = null;
@@ -273,7 +273,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
             TransportHandler transportHandler = context.getTlsContext().getTransportHandler();
             if (transportHandler == null || transportHandler.isClosed() || closed) {
                 closed = true;
-                return outputBuilder.buildSocketClosed();
+                return outputMapper.socketClosed();
             }
 
             output = executeInput(in);
@@ -290,7 +290,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
         } catch (IOException e) {
             e.printStackTrace();
             closed = true;
-            return outputBuilder.buildSocketClosed();
+            return outputMapper.socketClosed();
         }
     }
 
