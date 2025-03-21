@@ -70,7 +70,7 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
      * Provides a fresh ordered Stream of TlsStepContext elements.
      */
     public Stream<TlsStepContext> getTlsStepContextStream() {
-        return stepContexts.stream().map(step -> (TlsStepContext) step);
+        return stepContexts.stream().map(step -> step);  // XXX: Is map needed here?
     }
 
     public List<Record> getAllRecords() {
