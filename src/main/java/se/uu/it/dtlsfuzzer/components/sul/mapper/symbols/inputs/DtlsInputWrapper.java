@@ -1,12 +1,11 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class DtlsInputWrapper extends DtlsInput{
+public class DtlsInputWrapper extends DtlsInput {
     private DtlsInput input;
 
     public DtlsInputWrapper(DtlsInput input) {
@@ -43,7 +42,7 @@ public class DtlsInputWrapper extends DtlsInput{
     }
 
     @Override
-    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         return input.generateProtocolMessage(context);
     }
 
@@ -58,8 +57,8 @@ public class DtlsInputWrapper extends DtlsInput{
     }
 
     @Override
-    public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
-            ExecutionContext context) {
+    public void postReceiveUpdate(TlsOutput output, OutputChecker<TlsOutput> abstractOutputChecker,
+            TlsExecutionContext context) {
         input.postReceiveUpdate(output, abstractOutputChecker, context);
     }
 }

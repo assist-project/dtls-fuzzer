@@ -11,8 +11,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class TlsExecutionContext extends ExecutionContextStepped {
+public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOutput, TlsState, TlsStepContext> {
 
     private Integer renegotiationIndex = 0;
     private Long writeRecordNumberEpoch0 = null;
@@ -25,11 +27,11 @@ public class TlsExecutionContext extends ExecutionContextStepped {
 
     @Override
     public TlsState getState() {
-        return (TlsState) state;
+        return state;
     }
 
     public TlsContext getTlsContext() {
-        return ((TlsState) state).getTlsContext();
+        return state.getTlsContext();
     }
 
     public TlsSulConfig getTlsSulConfig() {
@@ -53,7 +55,7 @@ public class TlsExecutionContext extends ExecutionContextStepped {
      */
     @Override
     public TlsStepContext getStepContext() {
-        return (TlsStepContext) super.getStepContext();
+        return super.getStepContext();
     }
 
     /**
@@ -61,14 +63,14 @@ public class TlsExecutionContext extends ExecutionContextStepped {
      */
     @Override
     public TlsStepContext getStepContext(int index) {
-        return (TlsStepContext) super.getStepContext(index);
+        return super.getStepContext(index);
     }
 
     /**
      * Provides a fresh ordered Stream of TlsStepContext elements.
      */
     public Stream<TlsStepContext> getTlsStepContextStream() {
-        return stepContexts.stream().map(step -> (TlsStepContext) step);
+        return stepContexts.stream().map(step -> step);  // XXX: Is map needed here?
     }
 
     public List<Record> getAllRecords() {
@@ -124,11 +126,17 @@ public class TlsExecutionContext extends ExecutionContextStepped {
         return writeRecordNumberEpoch0;
     }
 
+    @Override
+    protected TlsStepContext buildStepContext() {
+        // FIXME: Write implementation
+        throw new UnsupportedOperationException("Unimplemented method 'buildStepContext'");
+    }
+
     /*
-      public Long incrementWriteRecordNumberEpoch0() {
-        Long old = writeRecordNumberEpoch0;
-        writeRecordNumberEpoch0++;
-        return old;
-      }
-    */
+     * public Long incrementWriteRecordNumberEpoch0() {
+     * Long old = writeRecordNumberEpoch0;
+     * writeRecordNumberEpoch0++;
+     * return old;
+     * }
+     */
 }
