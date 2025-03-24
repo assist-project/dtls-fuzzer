@@ -84,6 +84,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-api</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.protocolfuzzing</groupId>
             <artifactId>protocolstatefuzzer</artifactId>
             <version>1.0.0</version>
