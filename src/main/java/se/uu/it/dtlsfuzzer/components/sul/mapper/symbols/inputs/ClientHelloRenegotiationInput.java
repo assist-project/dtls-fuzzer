@@ -37,22 +37,21 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     }
 
     @Override
-    public boolean isEnabled(TlsExecutionContext context) {
-        switch (enabled) {
-            case OWN_EPOCH_CHANGE:
+    public boolean isEnabled(ExecutionContext context) {
+        return switch (enabled) {
+            case OWN_EPOCH_CHANGE ->
                 // send epoch is 1 or more
-                return getTlsContext(context).getWriteEpoch() > 0;
-            case SERVER_EPOCH_CHANGE:
+                getTlsContext(context).getWriteEpoch() > 0;
+            case SERVER_EPOCH_CHANGE ->
                 // receive epoch is 1 or more
-                return getTlsContext(context).getReadEpoch() > 0;
-            case ONCE:
-                return getTlsExecutionContext(context)
+                getTlsContext(context).getReadEpoch() > 0;
+            case ONCE ->
+                getTlsExecutionContext(context)
                         .getTlsStepContextStream()
-                        .noneMatch(s -> this.equals(s.getInput())
-                                && s.getIndex() != getTlsExecutionContext(context).getStepCount() - 1);
-            default:
-                return true;
-        }
+                        .noneMatch(s -> this.equals(s.getInput()) && s.getIndex() != getTlsExecutionContext(context).getStepCount() - 1);
+            default ->
+                true;
+        };
     }
 
     @Override

@@ -30,21 +30,13 @@ public class ServerKeyExchangeInput extends DtlsInput {
         if (algorithm == null) {
             throw new RuntimeException("Algorithm not set");
         }
-        ProtocolMessage ske = null;
-        switch (algorithm) {
-            case DH:
-                ske = new DHEServerKeyExchangeMessage();
-                break;
-            case ECDH:
-                ske = new ECDHEServerKeyExchangeMessage();
-                break;
-            case PSK:
-                ske = new PskServerKeyExchangeMessage();
-                break;
-            default:
-                throw new RuntimeException("Algorithm " + algorithm
-                        + " not supported");
-        }
+        ProtocolMessage ske = switch (algorithm) {
+            case DH -> new DHEServerKeyExchangeMessage();
+            case ECDH -> new ECDHEServerKeyExchangeMessage();
+            case PSK -> new PskServerKeyExchangeMessage();
+            default ->
+                throw new RuntimeException("Algorithm " + algorithm + " not supported");
+        };
         return new TlsProtocolMessage(ske);
     }
 

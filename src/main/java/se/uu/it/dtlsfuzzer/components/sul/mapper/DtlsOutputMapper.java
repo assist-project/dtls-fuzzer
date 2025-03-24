@@ -139,8 +139,7 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
     }
 
     private String toOutputString(ProtocolMessage message) {
-        if (message instanceof CertificateMessage) {
-            CertificateMessage cert = (CertificateMessage) message;
+        if (message instanceof CertificateMessage cert) {
             if (cert.getCertificatesListLength().getValue() > 0) {
                 String certTypeString = getCertSignatureTypeString(cert);
                 return certTypeString + "_" + message.toCompactString();
@@ -163,16 +162,12 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
             X509Certificate x509Cert = message.getX509CertificateListFromEntries().get(0);
             certType = x509Cert.getX509SignatureAlgorithm().getSignatureAlgorithm();
         }
-        switch (certType) {
-            case RSA_PKCS1:
-            case RSA_PSS_RSAE:
-            case RSA_SSA_PSS:
-                return "RSA";
-            case ECDSA:
-                return "ECDSA";
-            default:
+        return switch (certType) {
+            case RSA_PKCS1, RSA_PSS_RSAE, RSA_SSA_PSS -> "RSA";
+            case ECDSA -> "ECDSA";
+            default ->
                 throw new NotImplementedException("Signature algorithm mapping not implemented for: " + certType.name());
-        }
+        };
     }
 
     @Override
