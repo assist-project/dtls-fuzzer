@@ -6,22 +6,17 @@ public enum TlsInputType {
     CCS, HANDSHAKE, ALERT, APPLICATION, UNKNOWN, HEARTBEAT, EMPTY;
 
     public static TlsInputType fromTlsMessageType(ProtocolMessageType type) {
-        switch (type) {
-            case ALERT :
-                return TlsInputType.ALERT;
-            case APPLICATION_DATA :
-                return TlsInputType.APPLICATION;
-            case CHANGE_CIPHER_SPEC :
-                return TlsInputType.CCS;
-            case HANDSHAKE :
-                return TlsInputType.HANDSHAKE;
-            case HEARTBEAT :
-                return TlsInputType.HEARTBEAT;
-            case UNKNOWN :
-                return TlsInputType.UNKNOWN;
-            default :
+        return switch (type) {
+            case ALERT -> TlsInputType.ALERT;
+            case APPLICATION_DATA -> TlsInputType.APPLICATION;
+            case CHANGE_CIPHER_SPEC -> TlsInputType.CCS;
+            case HANDSHAKE -> TlsInputType.HANDSHAKE;
+            case HEARTBEAT -> TlsInputType.HEARTBEAT;
+            case UNKNOWN -> TlsInputType.UNKNOWN;
+            default -> {
                 throw new RuntimeException("Type not supported: " + type);
-        }
+            }
+        };
     }
 
 }

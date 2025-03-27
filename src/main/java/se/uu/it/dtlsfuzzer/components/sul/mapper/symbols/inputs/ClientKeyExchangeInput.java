@@ -33,38 +33,20 @@ public class ClientKeyExchangeInput extends DtlsInput {
     @Override
     public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         getTlsContext(context).setPreMasterSecret(null);
-        ProtocolMessage message = null;
         if (algorithm == null) {
             throw new RuntimeException("Algorithm not set");
         }
-        switch (algorithm) {
-            case RSA:
-                message = new RSAClientKeyExchangeMessage();
-                break;
-            case PSK:
-                message = new PskClientKeyExchangeMessage();
-                break;
-            case DH:
-                message = new DHClientKeyExchangeMessage();
-                break;
-            case ECDH:
-                message = new ECDHClientKeyExchangeMessage();
-                break;
-            case PSK_RSA:
-                message = new PskRsaClientKeyExchangeMessage();
-                break;
-            case GOST:
-                message = new GOSTClientKeyExchangeMessage();
-                break;
-            case SRP:
-                message = new SrpClientKeyExchangeMessage();
-                break;
-            default:
-                throw new RuntimeException("Algorithm " + algorithm
-                        + " not supported");
-
-        }
-
+        ProtocolMessage message = switch (algorithm) {
+            case RSA -> new RSAClientKeyExchangeMessage();
+            case PSK -> new PskClientKeyExchangeMessage();
+            case DH -> new DHClientKeyExchangeMessage();
+            case ECDH -> new ECDHClientKeyExchangeMessage();
+            case PSK_RSA -> new PskRsaClientKeyExchangeMessage();
+            case GOST -> new GOSTClientKeyExchangeMessage();
+            case SRP -> new SrpClientKeyExchangeMessage();
+            default ->
+                throw new RuntimeException("Algorithm " + algorithm + " not supported");
+        };
         return new TlsProtocolMessage(message);
     }
 
