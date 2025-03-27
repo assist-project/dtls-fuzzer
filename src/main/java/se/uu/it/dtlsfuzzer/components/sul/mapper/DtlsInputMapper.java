@@ -36,15 +36,12 @@ public class DtlsInputMapper extends InputMapper<TlsInput, TlsOutput, TlsProtoco
         LayerStack stack = state.getTlsContext().getLayerStack();
         for (ProtocolLayer<?, ?> layer : stack.getLayerList()) {
             layer.clear();
-            layer.setLayerConfiguration(
-                    new SpecificSendLayerConfiguration<>(layer.getLayerType(), Collections.emptyList()));
+            layer.setLayerConfiguration(new SpecificSendLayerConfiguration<>(layer.getLayerType(), Collections.emptyList()));
         }
 
-        // setting a new send configuration at the Message Layer for the message we wish
-        // to send
+        // setting a new send configuration at the Message Layer for the message we wish to send
         MessageLayer messageLayer = (MessageLayer) state.getTlsContext().getLayerStack().getLayer(MessageLayer.class);
-        LayerConfiguration<ProtocolMessage> configuration = new SpecificSendLayerConfiguration<>(
-                ImplementedLayers.MESSAGE, Arrays.asList(protocolMessage));
+        LayerConfiguration<ProtocolMessage> configuration = new SpecificSendLayerConfiguration<>(ImplementedLayers.MESSAGE, Arrays.asList(protocolMessage));
         messageLayer.setLayerConfiguration(configuration);
 
         // performing the actual send of the message
@@ -54,77 +51,7 @@ public class DtlsInputMapper extends InputMapper<TlsInput, TlsOutput, TlsProtoco
             LOGGER.error("Failed to send message {}", protocolMessage.toCompactString());
         }
 
-        // updating the execution context with the 'containers' that were produced at
-        // each layer
+        // updating the execution context with the 'containers' that were produced at each layer
         context.getStepContext().updateSend(state);
     }
-
-    // TODO: Is this code that should be kept or can this be removed?
-    // @Override
-    // protected void sendMessage(
-    // com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage
-    // message,
-    // ExecutionContext context) {
-    // ProtocolMessage<? extends ProtocolMessage<?>> protocolMessage =
-    // ((TlsProtocolMessage) message).getMessage();
-    // State state = ((TlsState) context.getState()).getState();
-    // byte[] bytes;
-    // try {
-    // bytes = generateMessageBytesAdjustContext(protocolMessage, state);
-    // sendMessageBytes(bytes, state, protocolMessage.getProtocolMessageType());
-    // } catch (IOException e) {
-    // context.disableExecution();
-    // LOGGER.info("Error sending message to SUT");
-    // }
-    // }
-    //
-    // public <PM extends ProtocolMessage<PM>> void sendMessage(ProtocolMessage<PM>
-    // message, State state)
-    // throws IOException {
-    // byte[] bytes = generateMessageBytesAdjustContext(message, state);
-    // sendMessageBytes(bytes, state, message.getProtocolMessageType());
-    // if (message.getAdjustContext()) {
-    // ((ProtocolMessageHandler)
-    // message.getHandler(state.getTlsContext())).adjustContextAfterSerialize(message);
-    // }
-    // }
-    //
-    // private void sendMessageBytes(byte[] bytes, State state, ProtocolMessageType
-    // type) throws IOException {
-    // DtlsFragmentLayer dtlsLayer = (DtlsFragmentLayer)
-    // state.getTlsContext().getLayerStack()
-    // .getLayer(DtlsFragmentLayer.class);
-    // SpecificSendLayerConfiguration<DataContainer<DtlsHandshakeMessageFragment,
-    // TlsContext>> fragmentLayerConfig = new SpecificSendLayerConfiguration<>(
-    // ImplementedLayers.DTLS_FRAGMENT, Collections.emptyList());
-    // dtlsLayer.setLayerConfiguration(fragmentLayerConfig);
-    // RecordLayer recordLayer = (RecordLayer)
-    // state.getTlsContext().getLayerStack().getLayer(RecordLayer.class);
-    // SpecificSendLayerConfiguration<DataContainer<Record, TlsContext>>
-    // recordLayerConfig = new SpecificSendLayerConfiguration<>(
-    // ImplementedLayers.RECORD, Collections.emptyList());
-    // RecordLayerHint recordLayerHint = new RecordLayerHint(type);
-    // recordLayer.setLayerConfiguration(recordLayerConfig);
-    // dtlsLayer.sendData(recordLayerHint, bytes);
-    // }
-    //
-    // private final <T extends ProtocolMessage<?>> byte[]
-    // generateMessageBytesAdjustContext(ProtocolMessage<T> message,
-    // State state) throws IOException {
-    // ProtocolMessagePreparator<? extends ProtocolMessage<?>> preparator = message
-    // .getPreparator(state.getTlsContext());
-    // preparator.prepare();
-    // preparator.afterPrepare();
-    // ProtocolMessageSerializer<? extends ProtocolMessage<?>> serializer = message
-    // .getSerializer(state.getTlsContext());
-    // byte[] completeMessage = serializer.serialize();
-    // message.setCompleteResultingMessage(completeMessage);
-    // ProtocolMessageHandler handler = message.getHandler(state.getTlsContext());
-    // handler.updateDigest(message, true);
-    // if (message.getAdjustContext()) {
-    // handler.adjustContext(message);
-    // }
-    // message.setCompleteResultingMessage(completeMessage);
-    // return completeMessage;
-    // }
 }
