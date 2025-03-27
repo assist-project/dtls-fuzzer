@@ -27,8 +27,7 @@ public class CertificateRequestInput extends DtlsInput {
         CertificateRequestMessage message = new CertificateRequestMessage();
         if (certificateType != null) {
             ModifiableByteArray ctbyte = new ModifiableByteArray();
-            ctbyte.setModification(
-                    ByteArrayModificationFactory.explicitValue(new byte[] { certificateType.getValue() }));
+            ctbyte.setModification(ByteArrayModificationFactory.explicitValue(new byte[] { certificateType.getValue() }));
             message.setClientCertificateTypes(ctbyte);
         }
         return new TlsProtocolMessage(message);

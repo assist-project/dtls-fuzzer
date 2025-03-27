@@ -56,10 +56,8 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
         messageLayer.getLayerResult().getUsedContainers().stream().forEach(m -> messages.add(m));
 
         TlsOutput output = extractOutput(messages);
-        // updating the execution context with the 'containers' that were produced at
-        // each layer
-        context.getStepContext()
-                .updateReceive(context.getState().getState());
+        // updating the execution context with the 'containers' that were produced at each layer
+        context.getStepContext().updateReceive(context.getState().getState());
         return output;
     }
 
@@ -73,8 +71,8 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
             List<ProtocolMessage> tlsMessages = receivedMessages.stream().collect(Collectors.toList());
             List<String> abstractMessageStrings = extractAbstractMessageStrings(tlsMessages);
             String abstractOutput = toAbstractOutputString(abstractMessageStrings);
-            List<TlsProtocolMessage> tlsProtocolMessages = tlsMessages
-                    .stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
+            List<TlsProtocolMessage> tlsProtocolMessages =
+                tlsMessages.stream().map(m -> new TlsProtocolMessage(m)).collect(Collectors.toList());
 
             return new TlsOutput(abstractOutput, tlsProtocolMessages);
         }
@@ -173,8 +171,7 @@ public class DtlsOutputMapper extends OutputMapper<TlsOutput, TlsProtocolMessage
             case ECDSA:
                 return "ECDSA";
             default:
-                throw new NotImplementedException(
-                        "Signature algorithm mapping not implemented for: " + certType.name());
+                throw new NotImplementedException("Signature algorithm mapping not implemented for: " + certType.name());
         }
     }
 

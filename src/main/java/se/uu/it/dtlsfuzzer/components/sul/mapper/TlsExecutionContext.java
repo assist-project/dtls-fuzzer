@@ -133,10 +133,10 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
     }
 
     /*
-     * public Long incrementWriteRecordNumberEpoch0() {
-     * Long old = writeRecordNumberEpoch0;
-     * writeRecordNumberEpoch0++;
-     * return old;
-     * }
-     */
+      public Long incrementWriteRecordNumberEpoch0() {
+        Long old = writeRecordNumberEpoch0;
+        writeRecordNumberEpoch0++;
+        return old;
+      }
+    */
 }

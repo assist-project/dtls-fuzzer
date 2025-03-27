@@ -32,11 +32,9 @@ public class ChangeCipherSpecInput extends DtlsInput {
 
     @Override
     public void postSendDtlsUpdate(TlsExecutionContext context) {
-        // TLS-Attacker instantiates non-null ciphers even when the pre-master secret
-        // has not been yet negotiated.
+        // TLS-Attacker instantiates non-null ciphers even when the pre-master secret has not been yet negotiated.
         // Here, we replace the ciphers instantiated in such cases by null ciphers.
-        // This ensures that encrypted messages are more likely to make sense to the
-        // SUT.
+        // This ensures that encrypted messages are more likely to make sense to the SUT.
         if (getTlsContext(context).getPreMasterSecret() == null) {
             makeNullCipherAsMostRecent(getTlsContext(context).getRecordLayer().getEncryptor(), getTlsContext(context));
             makeNullCipherAsMostRecent(getTlsContext(context).getRecordLayer().getDecryptor(), getTlsContext(context));

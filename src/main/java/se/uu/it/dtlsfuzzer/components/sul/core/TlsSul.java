@@ -41,8 +41,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 /**
- * Implementation of {@link AbstractSul} that works for both clients and
- * servers.
+ * Implementation of {@link AbstractSul} that works for both clients and servers.
  *
  * @author robert, paul
  */
@@ -67,8 +66,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
     private TlsExecutionContext context = null;
 
     /**
-     * Set if the SUL is observed to have terminated the connection (e.g., following
-     * a crash).
+     * Set if the SUL is observed to have terminated the connection (e.g., following a crash).
      */
     private boolean closed = false;
 
@@ -200,8 +198,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
                     try {
                         var firstClientHello = transportHandler.fetchData();
                         receivedClientHello = true;
-                        FirstCachedUdpLayer udpLayer = (FirstCachedUdpLayer) context.getState().getTlsContext()
-                                .getLayerStack().getLowestLayer();
+                        FirstCachedUdpLayer udpLayer = (FirstCachedUdpLayer) context.getState().getTlsContext().getLayerStack().getLowestLayer();
                         udpLayer.setFirstClientHelo(firstClientHello);
                         udpLayer.isFuzzingClient = true;
                     } catch (SocketTimeoutException e) {
@@ -296,16 +293,13 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
 
     private TlsOutput executeInput(TlsInput in) {
         LOGGER.debug("sent: {}", in.toString());
-        context.getTlsContext()
-                .setTalkingConnectionEndType(context.getTlsContext().getChooser().getConnectionEndType());
+        context.getTlsContext().setTalkingConnectionEndType(context.getTlsContext().getChooser().getConnectionEndType());
         long originalTimeout = context.getTlsContext().getTransportHandler().getTimeout();
         if (in.getExtendedWait() != null) {
             context.getTlsContext().getTransportHandler().setTimeout(originalTimeout + in.getExtendedWait());
         }
-        if (sulConfig.getInputResponseTimeout() != null
-                && sulConfig.getInputResponseTimeout().containsKey(in.getName())) {
-            context.getTlsContext().getTransportHandler()
-                    .setTimeout(sulConfig.getInputResponseTimeout().get(in.getName()));
+        if (sulConfig.getInputResponseTimeout() != null && sulConfig.getInputResponseTimeout().containsKey(in.getName())) {
+            context.getTlsContext().getTransportHandler().setTimeout(sulConfig.getInputResponseTimeout().get(in.getName()));
         }
 
         TlsOutput output = mapperComposer.execute(in, context);
@@ -327,13 +321,11 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
                 throw new RuntimeException("Could not load configuration file");
             }
         }
-
         return config.createCopy();
     }
 
     /*
-     * Exports the TLS-Attacker configuration file after relevant parameters have
-     * been parsed.
+     * Exports the TLS-Attacker configuration after relevant parameters have been parsed.
      */
     private void exportEffectiveSulConfig(Config config, String path) {
         try {

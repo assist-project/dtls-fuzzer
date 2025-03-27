@@ -84,8 +84,7 @@ public class ClientHelloInput extends DtlsInput {
         // to work also with 1-CH DTLS handshakes.
         // (in which case, the clienthello is digested)
         if (forceDigest && state.getTlsContext().getDigest().getRawBytes().length == 0) {
-            DtlsHandshakeMessageFragment fragment = state.getTlsContext().getDtlsFragmentLayer()
-                    .wrapInSingleFragment(state.getTlsContext().getContext(), message, true);
+            DtlsHandshakeMessageFragment fragment = state.getTlsContext().getDtlsFragmentLayer().wrapInSingleFragment(state.getTlsContext().getContext(), message, true);
             state.getTlsContext().getDigest().append(fragment.getCompleteResultingMessage().getValue());
         }
     }
