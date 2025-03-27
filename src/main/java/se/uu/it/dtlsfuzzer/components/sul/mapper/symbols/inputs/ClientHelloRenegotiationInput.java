@@ -37,7 +37,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     }
 
     @Override
-    public boolean isEnabled(ExecutionContext context) {
+    public boolean isEnabled(TlsExecutionContext context) {
         return switch (enabled) {
             case OWN_EPOCH_CHANGE ->
                 // send epoch is 1 or more
