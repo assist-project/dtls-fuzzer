@@ -1,0 +1,78 @@
+=== RUN DESCRIPTION ===
+Alphabet: [PSK_CLIENT_HELLO, FINISHED, APPLICATION, Alert(WARNING,CLOSE_NOTIFY), Alert(FATAL,UNEXPECTED_MESSAGE)]
+
+StateFuzzerConfigStandard Parameters
+Help: false
+Debug: false
+Quiet: false
+Output Directory: output/wolfssl-5.7.6_server_psk_DTLS13
+Fuzzing Client: false
+
+LearnerConfigStandard Parameters
+Alphabet: examples/alphabets/servers/psk_DTLS13.xml
+Learning Algorithm: TTT
+Equivalence Algorithms: [RANDOM_WP_METHOD, WP_METHOD]
+Max Depth: 1
+Min Length: 5
+Max Length: 15
+Max Equivalence Queries: 1000
+Runs Per Membership Query: 1
+Random Length: 10
+Membership Query Retries: 3
+Log Queries: false
+Prob Reset: 0.0
+Test File: null
+Seed: 0
+Cache Tests: false
+Ce Sanitization: true
+Skip Non Det Tests: false
+Ce Reruns: 3
+Probabilistic Sanitization: true
+Time Limit: null
+Test Limit: null
+Round Limit: null
+
+SulConfigStandard Parameters
+Response Wait: 200
+Input Response Timeout: null
+Command: /home/west/dtls-fuzzer/suts/wolfssl-5.7.6/examples/server/server  -i -x -p 34325 -s -u -v 4 -l TLS13-AES128-GCM-SHA256
+Terminate Command: null
+Process Dir: /home/west/dtls-fuzzer/suts/wolfssl-5.7.6/
+Redirect Output Streams: false
+Process Trigger: NEW_TEST
+Start Wait: 200
+
+SulServerConfigStandard Parameters
+Connect to: localhost:34325
+
+MapperConfigStandard Parameters
+Mapper Connection Config: null
+Repeating Outputs: null
+Socket Closed as Timeout: false
+Disabled as Timeout: false
+Merge Repeating: true
+
+SulAdapterConfigStandard Parameters
+Adapter Port: null
+Adapter Address: localhost
+
+=== STATISTICS ===
+Learning finished: true
+Size of the input alphabet: 5
+Number of states: 6
+Number of hypotheses: 2
+Number of inputs: 18193
+Number of tests: 1185
+Number of learning inputs: 203
+Number of learning tests: 57
+Number of inputs up to last hypothesis: 251
+Number of tests up to last hypothesis: 61
+Time (ms) to learn model: 3132186
+Counterexamples:
+CE 1:Query[ε|Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) APPLICATION PSK_CLIENT_HELLO Alert(WARNING,CLOSE_NOTIFY) Alert(FATAL,UNEXPECTED_MESSAGE) APPLICATION PSK_CLIENT_HELLO PSK_CLIENT_HELLO Alert(WARNING,CLOSE_NOTIFY) APPLICATION Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT TIMEOUT TIMEOUT SERVER_HELLO(HRR) TIMEOUT TIMEOUT TIMEOUT SERVER_HELLO|ENCRYPTED_EXTENSIONS|FINISHED Alert(FATAL,UNEXPECTED_MESSAGE) SOCKET_CLOSED SOCKET_CLOSED SOCKET_CLOSED]
+Number of inputs when hypothesis was generated: [5, 251]
+Number of tests when hypothesis was generated: [5, 61]
+Time (ms) when hypothesis was generated: [4100, 72182]
+Number of inputs when counterexample was found: [53]
+Number of tests when counterexample was found: [9]
+Time (ms) when counterexample was found: [13140]
