@@ -46,14 +46,6 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
      * {@inheritDoc}
      */
     @Override
-    public void addStepContext() {
-        stepContexts.add(new TlsStepContext(stepContexts.size()));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public TlsStepContext getStepContext() {
         return super.getStepContext();
     }
@@ -70,7 +62,7 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
      * Provides a fresh ordered Stream of TlsStepContext elements.
      */
     public Stream<TlsStepContext> getTlsStepContextStream() {
-        return stepContexts.stream().map(step -> step);  // XXX: Is map needed here?
+        return stepContexts.stream();
     }
 
     public List<Record> getAllRecords() {
@@ -126,10 +118,13 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
         return writeRecordNumberEpoch0;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected TlsStepContext buildStepContext() {
-        // FIXME: Write implementation
-        throw new UnsupportedOperationException("Unimplemented method 'buildStepContext'");
+        return new TlsStepContext(stepContexts.size());
     }
 
     /*

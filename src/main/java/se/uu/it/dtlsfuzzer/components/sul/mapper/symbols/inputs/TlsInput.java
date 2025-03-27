@@ -60,6 +60,5 @@ public abstract class TlsInput extends AbstractInputXml<TlsOutput, TlsProtocolMe
         return getTlsExecutionContext(context).getState().getState().getConfig();
     }
 
-    // TODO: why did this have an override?
     public abstract TlsInputType getInputType();
 }
