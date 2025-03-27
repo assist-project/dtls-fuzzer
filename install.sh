@@ -7,7 +7,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
 readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="398c9bc"
+
+readonly PROTOCOLSTATEFUZZER_COMMIT="469ced8"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 
@@ -76,7 +77,7 @@ function install_protocolstatefuzzer() {
         (
             cd $PROTOCOLSTATEFUZZER_FOLDER || exit
             echo "Installing ProtocolState-Fuzzer"
-            mvn install -DskipTests
+            ./install.sh
         )
     fi
 }

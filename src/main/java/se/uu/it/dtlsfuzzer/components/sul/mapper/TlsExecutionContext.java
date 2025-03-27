@@ -11,8 +11,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class TlsExecutionContext extends ExecutionContextStepped {
+public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOutput, TlsState, TlsStepContext> {
 
     private Integer renegotiationIndex = 0;
     private Long writeRecordNumberEpoch0 = null;
@@ -25,11 +27,11 @@ public class TlsExecutionContext extends ExecutionContextStepped {
 
     @Override
     public TlsState getState() {
-        return (TlsState) state;
+        return state;
     }
 
     public TlsContext getTlsContext() {
-        return ((TlsState) state).getTlsContext();
+        return state.getTlsContext();
     }
 
     public TlsSulConfig getTlsSulConfig() {
@@ -44,16 +46,8 @@ public class TlsExecutionContext extends ExecutionContextStepped {
      * {@inheritDoc}
      */
     @Override
-    public void addStepContext() {
-        stepContexts.add(new TlsStepContext(stepContexts.size()));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public TlsStepContext getStepContext() {
-        return (TlsStepContext) super.getStepContext();
+        return super.getStepContext();
     }
 
     /**
@@ -61,14 +55,14 @@ public class TlsExecutionContext extends ExecutionContextStepped {
      */
     @Override
     public TlsStepContext getStepContext(int index) {
-        return (TlsStepContext) super.getStepContext(index);
+        return super.getStepContext(index);
     }
 
     /**
      * Provides a fresh ordered Stream of TlsStepContext elements.
      */
     public Stream<TlsStepContext> getTlsStepContextStream() {
-        return stepContexts.stream().map(step -> (TlsStepContext) step);
+        return stepContexts.stream();
     }
 
     public List<Record> getAllRecords() {
@@ -122,6 +116,15 @@ public class TlsExecutionContext extends ExecutionContextStepped {
 
     public Long getWriteRecordNumberEpoch0() {
         return writeRecordNumberEpoch0;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected TlsStepContext buildStepContext() {
+        return new TlsStepContext(stepContexts.size());
     }
 
     /*

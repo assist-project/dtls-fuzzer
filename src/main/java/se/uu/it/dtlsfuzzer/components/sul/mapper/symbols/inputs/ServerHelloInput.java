@@ -1,8 +1,6 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
@@ -15,6 +13,7 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 public class ServerHelloInput extends DtlsInput {
 
@@ -37,7 +36,7 @@ public class ServerHelloInput extends DtlsInput {
     }
 
     @Override
-    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         Config config = getConfig(context);
 
         config.setDefaultServerSupportedCipherSuites(Arrays.asList(suite));
@@ -68,14 +67,14 @@ public class ServerHelloInput extends DtlsInput {
     }
 
     @Override
-    public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
-            ExecutionContext context) {
+    public void postReceiveUpdate(TlsOutput output, OutputChecker<TlsOutput> abstractOutputChecker,
+            TlsExecutionContext context) {
         TlsExecutionContext ctx = getTlsExecutionContext(context);
         if (shortHs && context.isExecutionEnabled()) {
             Pair<ProtocolMessage, Record> lastChPair = null;
             int lastChStepIndex = -1;
             List<Pair<ProtocolMessage, Record>> msgRecPairs = ctx.getReceivedMessagesAndRecords();
-            for (int i=0; i<msgRecPairs.size(); i++) {
+            for (int i = 0; i < msgRecPairs.size(); i++) {
                 if (msgRecPairs.get(i).getKey() instanceof ClientHelloMessage) {
                     lastChStepIndex = i;
                     lastChPair = msgRecPairs.get(i);
@@ -84,15 +83,16 @@ public class ServerHelloInput extends DtlsInput {
 
             assert lastChPair != null;
 
-            // we reset the digest and append to it, in reverse order SH, the last CH before the SH and optionally the HR which prompted the CH (if such a HR was sent)
+            // We reset the digest and append to it, in reverse order SH, the last CH before
+            // the SH and optionally the HR which prompted the CH (if such a HR was sent).
             getTlsContext(ctx).getDigest().reset();
 
             if (digestHR && ctx.getStepContext(lastChStepIndex).getInput() instanceof HelloRequestInput) {
-                byte [] hrBytes = ctx.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
+                byte[] hrBytes = ctx.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
                 getTlsContext(context).getDigest().append(hrBytes);
             }
-            byte [] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
-            byte [] shBytes = ctx.getStepContext().getSentRecords().get(0).getCleanProtocolMessageBytes().getValue();
+            byte[] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
+            byte[] shBytes = ctx.getStepContext().getSentRecords().get(0).getCleanProtocolMessageBytes().getValue();
             getTlsContext(context).getDigest().append(chBytes);
             getTlsContext(context).getDigest().append(shBytes);
         }

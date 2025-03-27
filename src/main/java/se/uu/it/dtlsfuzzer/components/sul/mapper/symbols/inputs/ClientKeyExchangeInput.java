@@ -1,6 +1,5 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.DHClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ECDHClientKeyExchangeMessage;
@@ -10,6 +9,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.PskRsaClientKeyExchangeMessa
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.SrpClientKeyExchangeMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 /**
@@ -31,35 +31,35 @@ public class ClientKeyExchangeInput extends DtlsInput {
     }
 
     @Override
-    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         getTlsContext(context).setPreMasterSecret(null);
         ProtocolMessage message = null;
         if (algorithm == null) {
             throw new RuntimeException("Algorithm not set");
         }
         switch (algorithm) {
-            case RSA :
+            case RSA:
                 message = new RSAClientKeyExchangeMessage();
                 break;
-            case PSK :
+            case PSK:
                 message = new PskClientKeyExchangeMessage();
                 break;
-            case DH :
+            case DH:
                 message = new DHClientKeyExchangeMessage();
                 break;
-            case ECDH :
+            case ECDH:
                 message = new ECDHClientKeyExchangeMessage();
                 break;
-            case PSK_RSA :
+            case PSK_RSA:
                 message = new PskRsaClientKeyExchangeMessage();
                 break;
-            case GOST :
+            case GOST:
                 message = new GOSTClientKeyExchangeMessage();
                 break;
-            case SRP :
+            case SRP:
                 message = new SrpClientKeyExchangeMessage();
                 break;
-            default :
+            default:
                 throw new RuntimeException("Algorithm " + algorithm
                         + " not supported");
 

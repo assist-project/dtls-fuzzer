@@ -1,12 +1,11 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutputChecker;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.tlsattacker.core.protocol.message.FinishedMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
 public class FinishedInput extends DtlsInput {
@@ -21,13 +20,13 @@ public class FinishedInput extends DtlsInput {
     }
 
     @Override
-    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         // Uncomment line to print digest, TODO remove this when polishing things up
         // System.out.println(ArrayConverter.bytesToHexString(state.getTlsContext().getDigest().getRawBytes()));
         FinishedMessage message = new FinishedMessage();
         lastSequenceNumber = getTlsContext(context).getWriteSequenceNumber(getTlsContext(context).getWriteEpoch());
-//        getTlsContext(context).setWriteEpoch(getTlsContext(context).getWriteEpoch() + 1);
-//        getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0L);
+        // getTlsContext(context).setWriteEpoch(getTlsContext(context).getWriteEpoch() + 1);
+        // getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0L);
         return new TlsProtocolMessage(message);
     }
 
@@ -39,8 +38,8 @@ public class FinishedInput extends DtlsInput {
     }
 
     @Override
-    public void postReceiveUpdate(AbstractOutput output, AbstractOutputChecker abstractOutputChecker,
-            ExecutionContext context) {
+    public void postReceiveUpdate(TlsOutput output, OutputChecker<TlsOutput> abstractOutputChecker,
+            TlsExecutionContext context) {
         if (resetMSeq) {
             if (TlsOutputChecker.hasChangeCipherSpec(output)) {
                 getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0);

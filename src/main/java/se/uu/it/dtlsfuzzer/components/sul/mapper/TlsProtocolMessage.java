@@ -5,7 +5,7 @@ import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 /**
  * The ProtocolMessage is a wrapper around a TLS-Attacker ProtocolMessage.
  */
-public class TlsProtocolMessage implements com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.protocol.ProtocolMessage {
+public class TlsProtocolMessage {
 
     private final ProtocolMessage message;
 

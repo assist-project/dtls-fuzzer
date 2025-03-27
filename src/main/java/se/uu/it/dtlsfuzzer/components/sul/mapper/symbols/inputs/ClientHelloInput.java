@@ -1,6 +1,5 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContext;
 import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModification;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
@@ -9,6 +8,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.state.State;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Arrays;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 
 public class ClientHelloInput extends DtlsInput {
@@ -47,7 +47,7 @@ public class ClientHelloInput extends DtlsInput {
     }
 
     @Override
-    public TlsProtocolMessage generateProtocolMessage(ExecutionContext context) {
+    public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         getConfig(context).setDefaultClientSupportedCipherSuites(Arrays.asList(suite));
         if (suite.name().contains("EC")) {
             getConfig(context).setAddECPointFormatExtension(true);
@@ -79,7 +79,7 @@ public class ClientHelloInput extends DtlsInput {
         return TlsInputType.HANDSHAKE;
     }
 
-    public void postSendDtlsUpdate(State state, ExecutionContext context) {
+    public void postSendDtlsUpdate(State state, TlsExecutionContext context) {
         // the second conjunction is used in case TLS-Attacker is updated
         // to work also with 1-CH DTLS handshakes.
         // (in which case, the clienthello is digested)

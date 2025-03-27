@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.tuple.Pair;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-
-public class TlsStepContext extends StepContext {
+public class TlsStepContext extends StepContext<TlsInput, TlsOutput> {
 
     private List<ProtocolMessage> sentMessages;
     private List<DtlsHandshakeMessageFragment> sentFragments;
@@ -60,7 +60,6 @@ public class TlsStepContext extends StepContext {
         return receivedMessages;
     }
 
-
     public List<ProtocolMessage> getSentMessages() {
         return sentMessages;
     }
@@ -83,12 +82,13 @@ public class TlsStepContext extends StepContext {
 
     @Override
     public TlsInput getInput() {
-        return (TlsInput) input;
+        return input;
     }
 
-    public  List<Pair<ProtocolMessage, Record>> getReceivedMessageRecordPairs() {
+    public List<Pair<ProtocolMessage, Record>> getReceivedMessageRecordPairs() {
         assert receivedRecords.size() == receivedMessages.size();
-        return IntStream.range(0, receivedMessages.size()).boxed().map(i ->
-        Pair.<ProtocolMessage, Record>of(receivedMessages.get(i), receivedRecords.get(i))).collect(Collectors.toList());
+        return IntStream.range(0, receivedMessages.size()).boxed()
+                .map(i -> Pair.<ProtocolMessage, Record>of(receivedMessages.get(i), receivedRecords.get(i)))
+                .collect(Collectors.toList());
     }
 }
