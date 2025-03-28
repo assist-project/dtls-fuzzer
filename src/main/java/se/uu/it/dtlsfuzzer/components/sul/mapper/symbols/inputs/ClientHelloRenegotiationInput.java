@@ -41,14 +41,14 @@ public class ClientHelloRenegotiationInput extends TlsInput {
         return switch (enabled) {
             case OWN_EPOCH_CHANGE ->
                 // send epoch is 1 or more
-                getTlsContext(context).getWriteEpoch() > 0;
+                context.getTlsContext().getWriteEpoch() > 0;
             case SERVER_EPOCH_CHANGE ->
                 // receive epoch is 1 or more
-                getTlsContext(context).getReadEpoch() > 0;
+                context.getTlsContext().getReadEpoch() > 0;
             case ONCE ->
-                getTlsExecutionContext(context)
+                context
                         .getTlsStepContextStream()
-                        .noneMatch(s -> this.equals(s.getInput()) && s.getIndex() != getTlsExecutionContext(context).getStepCount() - 1);
+                        .noneMatch(s -> this.equals(s.getInput()) && s.getIndex() != context.getStepCount() - 1);
             default ->
                 true;
         };
@@ -56,15 +56,15 @@ public class ClientHelloRenegotiationInput extends TlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
-        getTlsContext(context).getDigest().reset();
+        context.getTlsContext().getDigest().reset();
         if (resetMSeq) {
-            getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0);
+            context.getTlsContext().setWriteSequenceNumber(context.getTlsContext().getWriteEpoch(), 0);
         }
-        getTlsContext(context).setReadSequenceNumber(getTlsContext(context).getReadEpoch(), 0);
+        context.getTlsContext().setReadSequenceNumber(context.getTlsContext().getReadEpoch(), 0);
         if (suite != null) {
-            getConfig(context).setDefaultClientSupportedCipherSuites(suite);
+            context.getConfig().setDefaultClientSupportedCipherSuites(suite);
         }
-        ClientHelloMessage message = new ClientHelloMessage(getConfig(context));
+        ClientHelloMessage message = new ClientHelloMessage(context.getConfig());
         if (!isShort) {
             ModifiableByteArray sbyte = new ModifiableByteArray();
             sbyte.setModification(new ByteArrayExplicitValueModification(
@@ -73,7 +73,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
         }
 
         // mbedtls will only engage in renegotiation if the cookie is empty
-        if (!withCookie && getTlsContext(context).getDtlsCookie() != null) {
+        if (!withCookie && context.getTlsContext().getDtlsCookie() != null) {
             ModifiableByteArray sbyte = new ModifiableByteArray();
             sbyte.setModification(new ByteArrayExplicitValueModification(
                     new byte[] {}));
@@ -89,7 +89,7 @@ public class ClientHelloRenegotiationInput extends TlsInput {
         switch (enabled) {
             case ON_SERVER_HELLO:
                 if (!TlsOutputChecker.hasServerHello(output)) {
-                    getTlsExecutionContext(context).disableExecution();
+                    context.disableExecution();
                 }
                 break;
             default:

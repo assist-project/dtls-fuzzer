@@ -198,7 +198,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
                     try {
                         var firstClientHello = transportHandler.fetchData();
                         receivedClientHello = true;
-                        FirstCachedUdpLayer udpLayer = (FirstCachedUdpLayer) context.getState().getTlsContext().getLayerStack().getLowestLayer();
+                        FirstCachedUdpLayer udpLayer = (FirstCachedUdpLayer) context.getTlsContext().getLayerStack().getLowestLayer();
                         udpLayer.setFirstClientHelo(firstClientHello);
                         udpLayer.isFuzzingClient = true;
                     } catch (SocketTimeoutException e) {

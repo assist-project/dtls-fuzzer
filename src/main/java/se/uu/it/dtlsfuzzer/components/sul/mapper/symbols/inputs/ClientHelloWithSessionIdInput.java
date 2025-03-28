@@ -42,12 +42,12 @@ public class ClientHelloWithSessionIdInput extends DtlsInput {
     @Override
     public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         // reset and resume the connection
-        resetTransportHandler(getState(context));
+        resetTransportHandler(context.getState().getState());
         if (suite != null) {
-            getConfig(context).setDefaultClientSupportedCipherSuites(suite);
+            context.getConfig().setDefaultClientSupportedCipherSuites(suite);
         }
-        ClientHelloMessage message = new ClientHelloMessage(getConfig(context));
-        message.setSessionId(getTlsContext(context).getChooser()
+        ClientHelloMessage message = new ClientHelloMessage(context.getConfig());
+        message.setSessionId(context.getTlsContext().getChooser()
                 .getServerSessionId());
 
         return new TlsProtocolMessage(message);

@@ -18,8 +18,8 @@ public class ChangeCipherSpecInput extends DtlsInput {
 
     @Override
     public void preSendDtlsUpdate(TlsExecutionContext context) {
-        Encryptor encryptor = getState(context).getTlsContext().getRecordLayer().getEncryptor();
-        int writeEpoch = getState(context).getTlsContext().getWriteEpoch();
+        Encryptor encryptor = context.getTlsContext().getRecordLayer().getEncryptor();
+        int writeEpoch = context.getTlsContext().getWriteEpoch();
         Long writeSeqNumForCurrentEpoch = encryptor.getRecordCipher(writeEpoch).getState().getWriteSequenceNumber();
         context.setWriteRecordNumberEpoch0(writeSeqNumForCurrentEpoch + 1);
     }
@@ -35,9 +35,9 @@ public class ChangeCipherSpecInput extends DtlsInput {
         // TLS-Attacker instantiates non-null ciphers even when the pre-master secret has not been yet negotiated.
         // Here, we replace the ciphers instantiated in such cases by null ciphers.
         // This ensures that encrypted messages are more likely to make sense to the SUT.
-        if (getTlsContext(context).getPreMasterSecret() == null) {
-            makeNullCipherAsMostRecent(getTlsContext(context).getRecordLayer().getEncryptor(), getTlsContext(context));
-            makeNullCipherAsMostRecent(getTlsContext(context).getRecordLayer().getDecryptor(), getTlsContext(context));
+        if (context.getTlsContext().getPreMasterSecret() == null) {
+            makeNullCipherAsMostRecent(context.getTlsContext().getRecordLayer().getEncryptor(), context.getTlsContext());
+            makeNullCipherAsMostRecent(context.getTlsContext().getRecordLayer().getDecryptor(), context.getTlsContext());
         }
     }
 

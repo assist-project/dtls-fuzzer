@@ -126,12 +126,4 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
     protected TlsStepContext buildStepContext() {
         return new TlsStepContext(stepContexts.size());
     }
-
-    /*
-      public Long incrementWriteRecordNumberEpoch0() {
-        Long old = writeRecordNumberEpoch0;
-        writeRecordNumberEpoch0++;
-        return old;
-      }
-    */
 }

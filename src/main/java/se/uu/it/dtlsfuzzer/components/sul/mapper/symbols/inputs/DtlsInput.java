@@ -3,7 +3,6 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang3.NotImplementedException;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
-import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
 
 public abstract class DtlsInput extends TlsInput {
 
@@ -32,12 +31,10 @@ public abstract class DtlsInput extends TlsInput {
 
     @Override
     public final void preSendUpdate(TlsExecutionContext context) {
-        TlsState state = getTlsExecutionContext(context).getState();
-
         // if different epoch than current, set the epoch in TLS context
-        if (epoch != null && epoch != state.getTlsContext().getWriteEpoch()) {
-            state.getTlsContext().setWriteEpoch(epoch);
-            contextEpoch = state.getTlsContext().getWriteEpoch();
+        if (epoch != null && epoch != context.getTlsContext().getWriteEpoch()) {
+            context.getTlsContext().setWriteEpoch(epoch);
+            contextEpoch = context.getTlsContext().getWriteEpoch();
         }
 
         // if epoch > 0, deactivate encryption
@@ -45,7 +42,7 @@ public abstract class DtlsInput extends TlsInput {
             throw new NotImplementedException("Disabling encryption is not currently supported.");
         }
 
-        preSendDtlsUpdate(getTlsExecutionContext(context));
+        preSendDtlsUpdate(context);
     }
 
     public void preSendDtlsUpdate(TlsExecutionContext context) {
@@ -55,7 +52,7 @@ public abstract class DtlsInput extends TlsInput {
     public final void postSendUpdate(TlsExecutionContext context) {
         // reset epoch number and, if original epoch > 0, reactivate encryption
         if (contextEpoch != null) {
-            getTlsExecutionContext(context).getState().getTlsContext().setWriteEpoch(contextEpoch);
+            context.getTlsContext().setWriteEpoch(contextEpoch);
             contextEpoch = null;
         }
 
@@ -63,7 +60,7 @@ public abstract class DtlsInput extends TlsInput {
             throw new NotImplementedException("Re-enabling encryption is not currently supported.");
         }
 
-        postSendDtlsUpdate(getTlsExecutionContext(context));
+        postSendDtlsUpdate(context);
     }
 
     public void postSendDtlsUpdate(TlsExecutionContext context) {
