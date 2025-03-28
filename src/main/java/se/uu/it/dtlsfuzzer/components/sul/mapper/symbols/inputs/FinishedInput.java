@@ -24,17 +24,17 @@ public class FinishedInput extends DtlsInput {
         // Uncomment line to print digest, TODO remove this when polishing things up
         // System.out.println(ArrayConverter.bytesToHexString(state.getTlsContext().getDigest().getRawBytes()));
         FinishedMessage message = new FinishedMessage();
-        lastSequenceNumber = getTlsContext(context).getWriteSequenceNumber(getTlsContext(context).getWriteEpoch());
-        // getTlsContext(context).setWriteEpoch(getTlsContext(context).getWriteEpoch() + 1);
-        // getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0L);
+        lastSequenceNumber = context.getTlsContext().getWriteSequenceNumber(context.getTlsContext().getWriteEpoch());
+        // context.getTlsContext().setWriteEpoch(context.getTlsContext().getWriteEpoch() + 1);
+        // context.getTlsContext().setWriteSequenceNumber(context.getTlsContext().getWriteEpoch(), 0L);
         return new TlsProtocolMessage(message);
     }
 
     @Override
     public void postSendDtlsUpdate(TlsExecutionContext context) {
-        getTlsContext(context).getDigest().reset();
+        context.getTlsContext().getDigest().reset();
         // we have to make this change for learning to scale
-        getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), lastSequenceNumber + 1);
+        context.getTlsContext().setWriteSequenceNumber(context.getTlsContext().getWriteEpoch(), lastSequenceNumber + 1);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class FinishedInput extends DtlsInput {
             TlsExecutionContext context) {
         if (resetMSeq) {
             if (TlsOutputChecker.hasChangeCipherSpec(output)) {
-                getTlsContext(context).setWriteSequenceNumber(getTlsContext(context).getWriteEpoch(), 0);
+                context.getTlsContext().setWriteSequenceNumber(context.getTlsContext().getWriteEpoch(), 0);
             }
         }
         super.postReceiveUpdate(output, abstractOutputChecker, context);

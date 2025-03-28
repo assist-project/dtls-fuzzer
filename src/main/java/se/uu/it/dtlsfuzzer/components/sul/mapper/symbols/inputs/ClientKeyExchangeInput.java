@@ -32,7 +32,7 @@ public class ClientKeyExchangeInput extends DtlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
-        getTlsContext(context).setPreMasterSecret(null);
+        context.getTlsContext().setPreMasterSecret(null);
         if (algorithm == null) {
             throw new RuntimeException("Algorithm not set");
         }
