@@ -6,12 +6,12 @@
   },
     {
     "color": "deepskyblue",
-    "path": [ "RSA_CLIENT_HELLO", "RSA_CLIENT_HELLO", "CERTIFICATE", "CERTIFICATE_VERIFY", "FINISHED" ],
+    "path": [ "DHE_CLIENT_HELLO", "DHE_CLIENT_HELLO", "CERTIFICATE", "CERTIFICATE_VERIFY", "FINISHED" ],
     "anyOutput": ".*Acknowledgement.*"
   },
   {
     "color": "deepskyblue",
-    "path": [ "RSA_CLIENT_HELLO", "RSA_CLIENT_HELLO", "FINISHED" ],
+    "path": [ "DHE_CLIENT_HELLO", "DHE_CLIENT_HELLO", "FINISHED" ],
     "anyOutput": ".*Acknowledgement.*"
   },
   {
