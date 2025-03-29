@@ -22,7 +22,7 @@ ${alphabets.servers}/psk_DTLS13.xml
 -randLength
 10
 -equivalenceQueryBound
-1000
+20000
 -output
 output/wolfssl-${wolfssl.version}_server_psk_DTLS13
 -equivalenceAlgorithms
