@@ -2,13 +2,20 @@
 #
 # Installs some necessary packages and then installs DTLS-Fuzzer.
 
+# SCRIPT_DIR should correspond to DTLS-Fuzzer's root directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+readonly SCRIPT_DIR
+readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
+
+
 readonly PROTOCOLSTATEFUZZER_COMMIT="469ced8"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 
-readonly TLSATTACKER_BRANCH="add-DTLS-13-Support"
-readonly TLSATTACKER_REP_URL="https://github.com/c-southwest/TLS-Attacker.git"
+readonly TLSATTACKER_VERSION="v6.3.4"
+readonly TLSATTACKER_REP_URL="https://github.com/tls-attacker/TLS-Attacker.git"
 readonly TLSATTACKER_FOLDER="TLS-Attacker"
+readonly TLSATTACKER_PATCH="$PATCHES_DIR/TLS-Attacker-$TLSATTACKER_VERSION.patch"
 
 function check_java() {
     if ! command -v java &> /dev/null
@@ -81,9 +88,11 @@ function install_tlsattacker() {
         echo "$TLSATTACKER_FOLDER folder already exists"
         echo "Skipping TLS-Attacker setup"
     else
-        clone_rep "$TLSATTACKER_FOLDER" "$TLSATTACKER_REP_URL" "$TLSATTACKER_BRANCH"
+        clone_rep "$TLSATTACKER_FOLDER" "$TLSATTACKER_REP_URL" "$TLSATTACKER_VERSION"
         (
             cd $TLSATTACKER_FOLDER || exit
+            echo "Patching TLS-Attacker to remove deplicate discard and fragment reordering."
+            git apply "$TLSATTACKER_PATCH"
             echo "Installing TLS-Attacker"
             mvn install -DskipTests
         )

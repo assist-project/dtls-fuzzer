@@ -1,7 +1,212 @@
-diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-20 15:19:04.898118063 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java	2025-02-20 15:38:12.424092502 +0100
-@@ -23,7 +23,6 @@
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/config/Config.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/config/Config.java
+index a9cdf1743..a4809f18d 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/config/Config.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/config/Config.java
+@@ -1437,7 +1437,7 @@ public class Config implements Serializable {
+                         ArrayConverter.hexStringToByteArray(
+                                 "2A981DB6CDD02A06C1763102C9E741365AC4E6F72B3176A6BD6A3523D3EC0F4C")));
+         defaultClientKeyShareNamedGroups = new LinkedList<>();
+-        defaultClientKeyShareNamedGroups.add(NamedGroup.ECDH_X25519);
++        defaultClientKeyShareNamedGroups.add(NamedGroup.SECP256R1);
+         defaultServerKeyShareEntry =
+                 new KeyShareStoreEntry(
+                         NamedGroup.ECDH_X25519,
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java
+index 1fc630460..cdd6c661b 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java
+@@ -18,7 +18,8 @@ public enum ProtocolMessageType {
+     HANDSHAKE((byte) 22),
+     APPLICATION_DATA((byte) 23),
+     HEARTBEAT((byte) 24),
+-    TLS12_CID((byte) 25);
++    TLS12_CID((byte) 25),
++    Acknowledgement((byte) 26);
+ 
+     private byte value;
+ 
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolVersion.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolVersion.java
+index 0accb652d..40eb45693 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolVersion.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolVersion.java
+@@ -37,6 +37,7 @@ public enum ProtocolVersion {
+     DTLS10_DRAFT(new byte[] {(byte) 0x01, (byte) 0x00}),
+     DTLS10(new byte[] {(byte) 0xFE, (byte) 0xFF}),
+     DTLS12(new byte[] {(byte) 0xFE, (byte) 0xFD}),
++    DTLS13(new byte[] {(byte) 0xFE, (byte) 0xFC}),
+ 
+     // GREASE constants
+     GREASE_00(new byte[] {(byte) 0x0A, (byte) 0x0A}),
+@@ -80,6 +81,18 @@ public enum ProtocolVersion {
+     }
+ 
+     public boolean isDTLS() {
++        return this == DTLS10 || this == DTLS12 || this == DTLS10_DRAFT || this == DTLS13;
++    }
++
++    public boolean isDTLS13() {
++        return this == DTLS13;
++    }
++
++    public boolean isDTLS12() {
++        return this == DTLS12;
++    }
++
++    public boolean isDTLS12_OrLower() {
+         return this == DTLS10 || this == DTLS12 || this == DTLS10_DRAFT;
+     }
+ 
+@@ -307,6 +320,8 @@ public enum ProtocolVersion {
+                 return "DTLS 1.0";
+             case DTLS12:
+                 return "DTLS 1.2";
++            case DTLS13:
++                return "DTLS 1.3";
+             case SSL2:
+                 return "SSL 2.0";
+             case SSL3:
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/crypto/HKDFunction.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/crypto/HKDFunction.java
+index be42bb13c..3bfb0ad35 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/crypto/HKDFunction.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/crypto/HKDFunction.java
+@@ -8,9 +8,12 @@
+  */
+ package de.rub.nds.tlsattacker.core.crypto;
+ 
++import static de.rub.nds.tlsattacker.core.util.LoggerPrintConverter.bytesToHexWithSpaces;
++
+ import de.rub.nds.modifiablevariable.util.ArrayConverter;
+ import de.rub.nds.tlsattacker.core.constants.HKDFAlgorithm;
+ import de.rub.nds.tlsattacker.core.exceptions.CryptoException;
++import de.rub.nds.tlsattacker.core.state.Context;
+ import java.io.ByteArrayOutputStream;
+ import java.io.IOException;
+ import java.nio.charset.StandardCharsets;
+@@ -18,6 +21,8 @@ import java.security.*;
+ import java.util.Arrays;
+ import javax.crypto.Mac;
+ import javax.crypto.spec.SecretKeySpec;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
+ import org.bouncycastle.crypto.digests.SM3Digest;
+ import org.bouncycastle.crypto.macs.HMac;
+ import org.bouncycastle.crypto.params.KeyParameter;
+@@ -25,6 +30,8 @@ import org.bouncycastle.crypto.params.KeyParameter;
+ /** HKDF functions computation for TLS 1.3 */
+ public class HKDFunction {
+ 
++    public static Context context;
++
+     public static final String KEY = "key";
+ 
+     public static final String IV = "iv";
+@@ -65,6 +72,12 @@ public class HKDFunction {
+ 
+     public static final String SERVER_IN = "server in";
+ 
++    public static final String TLS13_LABEL_PREFIX = "tls13 ";
++
++    public static final String DTLS13_LABEL_PREFIX = "dtls13";
++
++    private static final Logger LOGGER = LogManager.getLogger();
++
+     /**
+      * Computes HKDF-Extract output as defined in RFC 5869
+      *
+@@ -183,8 +196,11 @@ public class HKDFunction {
+     }
+ 
+     /** Computes the HKDF-Label as defined in TLS 1.3 */
+-    private static byte[] labelEncoder(byte[] hashValue, String labelIn, int outLen) {
+-        String label = "tls13 " + labelIn;
++    private static byte[] labelEncoder(
++            byte[] hashValue, String labelIn, int outLen, boolean isDtls13) {
++        String labelPrefix = isDtls13 ? DTLS13_LABEL_PREFIX : TLS13_LABEL_PREFIX;
++        String label = labelPrefix + labelIn;
++        LOGGER.debug("[DEBUG] inside labelEncoder() label: {}", label);
+         int labelLength = label.getBytes(StandardCharsets.US_ASCII).length;
+         int hashValueLength = hashValue.length;
+         byte[] result =
+@@ -205,6 +221,7 @@ public class HKDFunction {
+      * @param prk The prk
+      * @param labelIn The label input
+      * @param toHash The data to hash
++     * @param isDtls13 Whether to use DTLS 1.3 format, otherwise TLS 1.3
+      * @return The derivedSecret
+      * @throws de.rub.nds.tlsattacker.core.exceptions.CryptoException
+      */
+@@ -213,7 +230,8 @@ public class HKDFunction {
+             String hashAlgorithm,
+             byte[] prk,
+             String labelIn,
+-            byte[] toHash)
++            byte[] toHash,
++            boolean isDtls13)
+             throws CryptoException {
+         try {
+             MessageDigest hashFunction = MessageDigest.getInstance(hashAlgorithm);
+@@ -227,12 +245,23 @@ public class HKDFunction {
+                         Mac.getInstance(hkdfAlgorithm.getMacAlgorithm().getJavaName())
+                                 .getMacLength();
+             }
+-            return expandLabel(hkdfAlgorithm, prk, labelIn, hashValue, outLen);
++            return expandLabel(hkdfAlgorithm, prk, labelIn, hashValue, outLen, isDtls13);
+         } catch (NoSuchAlgorithmException ex) {
+             throw new CryptoException("Could not initialize HKDF", ex);
+         }
+     }
+ 
++    public static byte[] deriveSecret(
++            HKDFAlgorithm hkdfAlgorithm,
++            String hashAlgorithm,
++            byte[] prk,
++            String labelIn,
++            byte[] toHash)
++            throws CryptoException {
++        boolean isDtls13 = context.getConfig().getHighestProtocolVersion().isDTLS13();
++        return deriveSecret(hkdfAlgorithm, hashAlgorithm, prk, labelIn, toHash, isDtls13);
++    }
++
+     static byte[] deriveSecret(
+             HKDFAlgorithm hkdfAlgorithm,
+             byte[] hexStringToByteArray,
+@@ -258,15 +287,29 @@ public class HKDFunction {
+      * @param labelIn The InputLabel
+      * @param hashValue The hash value
+      * @param outLen The output length
++     * @param isDtls13 Whether to use DTLS 1.3 format, otherwise TLS 1.3
+      * @return The expanded Label bytes
+      * @throws de.rub.nds.tlsattacker.core.exceptions.CryptoException
+      */
+     public static byte[] expandLabel(
+-            HKDFAlgorithm hkdfAlgorithm, byte[] prk, String labelIn, byte[] hashValue, int outLen)
++            HKDFAlgorithm hkdfAlgorithm,
++            byte[] prk,
++            String labelIn,
++            byte[] hashValue,
++            int outLen,
++            boolean isDtls13)
+             throws CryptoException {
+-        byte[] info = labelEncoder(hashValue, labelIn, outLen);
++        byte[] info = labelEncoder(hashValue, labelIn, outLen, isDtls13);
++        LOGGER.debug("[DEBUG] inside expandLabel() info: {}", bytesToHexWithSpaces(info));
+         return expand(hkdfAlgorithm, prk, info, outLen);
+     }
+ 
++    public static byte[] expandLabel(
++            HKDFAlgorithm hkdfAlgorithm, byte[] prk, String labelIn, byte[] hashValue, int outLen)
++            throws CryptoException {
++        boolean isDtls13 = context.getConfig().getHighestProtocolVersion().isDTLS13();
++        return expandLabel(hkdfAlgorithm, prk, labelIn, hashValue, outLen, isDtls13);
++    }
++
+     private HKDFunction() {}
+ }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java
+index 2d06c9baa..d3fce4883 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/FragmentManager.java
+@@ -23,7 +23,6 @@ public class FragmentManager {
  
      private Map<FragmentKey, FragmentCollector> fragments;
      private Config config;
@@ -9,7 +214,7 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/F
  
      public FragmentManager(Config config) {
          fragments = new HashMap<>();
-@@ -69,21 +68,6 @@
+@@ -69,21 +68,6 @@ public class FragmentManager {
              boolean onlyIfComplete, boolean skipMessageSequences) {
          List<DtlsHandshakeMessageFragment> handshakeFragmentList = new LinkedList<>();
          List<FragmentKey> orderedFragmentKeys = new ArrayList<>(fragments.keySet());
@@ -31,7 +236,7 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/F
  
          for (FragmentKey key : orderedFragmentKeys) {
              FragmentCollector fragmentCollector = fragments.get(key);
-@@ -100,11 +84,6 @@
+@@ -100,11 +84,6 @@ public class FragmentManager {
                  }
              }
              if (!fragmentCollector.isInterpreted()) {
@@ -43,7 +248,7 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/F
                  if (onlyIfComplete && !fragmentCollector.isMessageComplete()) {
                      LOGGER.debug(
                              "Incomplete message. Not processing: msg_sqn: "
-@@ -114,7 +93,7 @@
+@@ -114,7 +93,7 @@ public class FragmentManager {
                  } else {
                      handshakeFragmentList.add(fragmentCollector.buildCombinedFragment());
                      fragmentCollector.setInterpreted(true);
@@ -52,10 +257,11 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/dtls/F
                  }
              }
          }
-diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-20 15:19:04.907853961 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java	2025-02-20 15:38:28.834162918 +0100
-@@ -32,7 +32,7 @@
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java
+index 7a74620ce..b6c9112f9 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/LayerStackFactory.java
+@@ -32,7 +32,7 @@ public class LayerStackFactory {
                          new MessageLayer(context),
                          new DtlsFragmentLayer(context),
                          new RecordLayer(context),
@@ -64,9 +270,24 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
              case QUIC:
                  return new LayerStack(
                          context,
-diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java	1970-01-01 01:00:00.000000000 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java	2025-02-20 15:40:32.718070889 +0100
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
+index 135a9e80f..e39722f31 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
+@@ -80,6 +80,8 @@ import java.util.Set;
+ @XmlAccessorType(XmlAccessType.FIELD)
+ public class TlsContext extends LayerContext {
+ 
++    public boolean shouldSendFinished = false;
++
+     private List<Session> sessionList;
+ 
+     private Keylogfile keylogfile;
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java
+new file mode 100644
+index 000000000..f2a7ff48e
+--- /dev/null
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java
 @@ -0,0 +1,64 @@
 +/*
 + * TLS-Attacker - A Modular Penetration Testing Framework for TLS
@@ -132,10 +353,54 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
 +        }
 +    }
 +}
-diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-20 15:19:04.907853961 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java	2025-02-20 15:42:08.984094197 +0100
-@@ -26,7 +26,7 @@
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java
+index e6496b3a5..a8f52c469 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java
+@@ -32,15 +32,7 @@ import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
+ import de.rub.nds.tlsattacker.core.protocol.ProtocolMessageHandler;
+ import de.rub.nds.tlsattacker.core.protocol.ProtocolMessageSerializer;
+ import de.rub.nds.tlsattacker.core.protocol.handler.HandshakeMessageHandler;
+-import de.rub.nds.tlsattacker.core.protocol.message.AlertMessage;
+-import de.rub.nds.tlsattacker.core.protocol.message.ApplicationMessage;
+-import de.rub.nds.tlsattacker.core.protocol.message.ChangeCipherSpecMessage;
+-import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
+-import de.rub.nds.tlsattacker.core.protocol.message.HandshakeMessage;
+-import de.rub.nds.tlsattacker.core.protocol.message.HeartbeatMessage;
+-import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloMessage;
+-import de.rub.nds.tlsattacker.core.protocol.message.UnknownHandshakeMessage;
+-import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
++import de.rub.nds.tlsattacker.core.protocol.message.*;
+ import de.rub.nds.tlsattacker.core.protocol.parser.HandshakeMessageParser;
+ import de.rub.nds.tlsattacker.core.state.Context;
+ import de.rub.nds.tlsattacker.transport.ConnectionEndType;
+@@ -296,6 +288,9 @@ public class MessageLayer extends ProtocolLayer<LayerProcessingHint, ProtocolMes
+             case HEARTBEAT:
+                 readHeartbeatProtocolData();
+                 break;
++            case Acknowledgement:
++                readAcknowledgementProtocolData();
++                break;
+             case UNKNOWN:
+                 readUnknownProtocolData();
+                 break;
+@@ -308,6 +303,11 @@ public class MessageLayer extends ProtocolLayer<LayerProcessingHint, ProtocolMes
+         }
+     }
+ 
++    private void readAcknowledgementProtocolData() {
++        AcknowledgementMessage message = new AcknowledgementMessage();
++        readDataContainer(message, context);
++    }
++
+     private void readAlertProtocolData() {
+         AlertMessage message = new AlertMessage();
+         readDataContainer(message, context);
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java
+index 952ee12fb..2c52ad691 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/UdpLayer.java
+@@ -26,7 +26,7 @@ import java.io.IOException;
   */
  public class UdpLayer extends ProtocolLayer<LayerProcessingHint, UdpDataPacket> {
  
@@ -144,7 +409,7 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
  
      public UdpLayer(Context context) {
          super(ImplementedLayers.UDP);
-@@ -88,7 +88,7 @@
+@@ -88,7 +88,7 @@ public class UdpLayer extends ProtocolLayer<LayerProcessingHint, UdpDataPacket>
          return new LayerProcessingResult<UdpDataPacket>(null, getLayerType(), true);
      }
  
@@ -153,10 +418,799 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/
          if (context.getTransportHandler() == null) {
              throw new RuntimeException("TransportHandler is not set in context!");
          }
-diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-20 15:19:04.917589863 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java	2025-02-24 17:22:35.965169130 +0100
-@@ -147,13 +147,20 @@
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java
+index 182fb42e9..d35775800 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java
+@@ -8,6 +8,7 @@
+  */
+ package de.rub.nds.tlsattacker.core.protocol;
+ 
++import de.rub.nds.tlsattacker.core.constants.HandshakeMessageType;
+ import de.rub.nds.tlsattacker.core.dtls.DtlsHandshakeMessageFragment;
+ import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
+ import de.rub.nds.tlsattacker.core.layer.data.Handler;
+@@ -31,12 +32,31 @@ public abstract class ProtocolMessageHandler<MessageT extends ProtocolMessage>
+             return;
+         }
+         HandshakeMessage handshakeMessage = (HandshakeMessage) message;
+-
++        // TODO we should also consider sending early Finished as a server
++        if (handshakeMessage.getHandshakeMessageType() == HandshakeMessageType.FINISHED
++                && goingToBeSent
++                && !tlsContext.shouldSendFinished) {
++            // invalid Finished, we should not add it into digest
++            return;
++        }
++        // Similarly, we should prevent early Certificate/CertificateVerify being added into digest
++        if ((handshakeMessage.getHandshakeMessageType() == HandshakeMessageType.CERTIFICATE
++                        || handshakeMessage.getHandshakeMessageType()
++                                == HandshakeMessageType.CERTIFICATE_VERIFY)
++                && tlsContext.getConfig().getHighestProtocolVersion().isDTLS13()
++                && goingToBeSent
++                && !tlsContext.shouldSendFinished) {
++            // invalid Certificate, we should send Certificate/CertificateVerify only after we
++            // receive server's Finished
++            return;
++        }
+         if (!handshakeMessage.getIncludeInDigest()) {
+             return;
+         }
+ 
+-        if (tlsContext.getChooser().getSelectedProtocolVersion().isDTLS()) {
++        if (tlsContext.getChooser().getSelectedProtocolVersion().isDTLS13()) {
++            tlsContext.getDigest().append(message.getCompleteResultingMessage().getValue());
++        } else if (tlsContext.getChooser().getSelectedProtocolVersion().isDTLS()) {
+             DtlsHandshakeMessageFragment fragment =
+                     tlsContext
+                             .getDtlsFragmentLayer()
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/CertificateMessageHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/CertificateMessageHandler.java
+index 000fbe70f..8ac410db7 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/CertificateMessageHandler.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/CertificateMessageHandler.java
+@@ -108,7 +108,8 @@ public class CertificateMessageHandler extends HandshakeMessageHandler<Certifica
+                     LOGGER.debug("Setting ServerCertificateChain in Context");
+                     tlsContext.setServerCertificateChain(certificateChain);
+                 }
+-                if (tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()) {
++                if (tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()
++                        || tlsContext.getChooser().getSelectedProtocolVersion().isDTLS13()) {
+                     adjustCertExtensions(message);
+                 }
+                 break;
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
+index 06907c1e6..12ba1b3b7 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
+@@ -42,12 +42,15 @@ public class FinishedHandler extends HandshakeMessageHandler<FinishedMessage> {
+ 
+     @Override
+     public void adjustContext(FinishedMessage message) {
+-        if (tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()) {
++        if (tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()
++                || tlsContext.getChooser().getHighestProtocolVersion().isDTLS13()) {
+             if (tlsContext.getTalkingConnectionEndType()
+                     != tlsContext.getChooser().getConnectionEndType()) {
+                 if (tlsContext.getTalkingConnectionEndType() == ConnectionEndType.SERVER) {
+                     adjustApplicationTrafficSecrets();
+                     setServerRecordCipher(Tls13KeySetType.APPLICATION_TRAFFIC_SECRETS);
++                    // Received server's Finished, so now I should send Finished
++                    tlsContext.shouldSendFinished = true;
+                     if (tlsContext.getConfig().getDefaultLayerConfiguration()
+                             == StackConfiguration.QUIC) {
+                         try {
+@@ -60,6 +63,11 @@ public class FinishedHandler extends HandshakeMessageHandler<FinishedMessage> {
+                         }
+                     }
+                     if (!tlsContext.isExtensionNegotiated(ExtensionType.EARLY_DATA)) {
++                        if (tlsContext.getChooser().getHighestProtocolVersion().isDTLS13()) {
++                            // DTLS 1.3 without early data, then we need placeholder cipher for
++                            // epoch=1
++                            setClientRecordCipher(Tls13KeySetType.HANDSHAKE_TRAFFIC_SECRETS);
++                        }
+                         setClientRecordCipher(Tls13KeySetType.HANDSHAKE_TRAFFIC_SECRETS);
+                     }
+                     // in case of EARLY_DATA we stick to the EARLY_TRAFFIC_SECRETS
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/NewSessionTicketHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/NewSessionTicketHandler.java
+index aa86de050..c0b38413a 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/NewSessionTicketHandler.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/NewSessionTicketHandler.java
+@@ -78,6 +78,7 @@ public class NewSessionTicketHandler extends HandshakeMessageHandler<NewSessionT
+         // required
+         if (tlsContext.getActiveClientKeySetType() == Tls13KeySetType.APPLICATION_TRAFFIC_SECRETS) {
+             pskSet.setPreSharedKey(derivePsk(pskSet));
++            pskSet.setIsFromResumption(true);
+         }
+ 
+         LOGGER.debug("Adding PSK Set");
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/ServerHelloHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/ServerHelloHandler.java
+index b06e0bd7a..feefc839d 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/ServerHelloHandler.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/ServerHelloHandler.java
+@@ -8,6 +8,8 @@
+  */
+ package de.rub.nds.tlsattacker.core.protocol.handler;
+ 
++import static de.rub.nds.tlsattacker.core.util.LoggerPrintConverter.bytesToHexWithSpaces;
++
+ import de.rub.nds.modifiablevariable.util.ArrayConverter;
+ import de.rub.nds.protocol.crypto.CyclicGroup;
+ import de.rub.nds.protocol.crypto.ec.EllipticCurve;
+@@ -88,7 +90,8 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+         adjustExtensions(message);
+         warnOnConflictingExtensions();
+         if (!message.isTls13HelloRetryRequest()) {
+-            if (tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()) {
++            if (tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()
++                    || tlsContext.getChooser().getSelectedProtocolVersion().isDTLS13()) {
+                 KeyShareStoreEntry keyShareStoreEntry = adjustKeyShareStoreEntry();
+                 adjustHandshakeTrafficSecrets(keyShareStoreEntry);
+                 if (tlsContext.getTalkingConnectionEndType()
+@@ -196,6 +199,14 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+         KeySet serverKeySet = getTls13KeySet(tlsContext, tlsContext.getActiveServerKeySetType());
+         if (tlsContext.getRecordLayer() != null) {
+             if (tlsContext.getChooser().getConnectionEndType() == ConnectionEndType.CLIENT) {
++                if (!tlsContext.isExtensionNegotiated(ExtensionType.EARLY_DATA)) {
++                    // DTLS 1.3 without early data, then we need placeholder cipher for epoch=1
++                    tlsContext
++                            .getRecordLayer()
++                            .updateDecryptionCipher(
++                                    RecordCipherFactory.getRecordCipher(
++                                            tlsContext, serverKeySet, false));
++                }
+                 tlsContext
+                         .getRecordLayer()
+                         .updateDecryptionCipher(
+@@ -277,6 +288,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+                             ? tlsContext.getChooser().getPsk()
+                             : new byte[macLength]; // use PSK if available
+             byte[] earlySecret = HKDFunction.extract(hkdfAlgorithm, new byte[0], psk);
++            LOGGER.debug(
++                    "[DEBUG] adjustHandshakeTrafficSecrets() earlySecret: {}",
++                    bytesToHexWithSpaces(earlySecret));
+             byte[] saltHandshakeSecret =
+                     HKDFunction.deriveSecret(
+                             hkdfAlgorithm,
+@@ -284,6 +298,10 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+                             earlySecret,
+                             HKDFunction.DERIVED,
+                             new byte[0]);
++            LOGGER.debug(
++                    "[DEBUG] adjustHandshakeTrafficSecrets() saltHandshakeSecret: {}",
++                    bytesToHexWithSpaces(saltHandshakeSecret));
++
+             byte[] sharedSecret;
+             BigInteger privateKey =
+                     tlsContext
+@@ -303,8 +321,14 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+                     sharedSecret = tlsContext.getConfig().getDefaultPreMasterSecret();
+                 }
+             }
++            LOGGER.debug(
++                    "[DEBUG] adjustHandshakeTrafficSecrets() sharedSecret: {}",
++                    bytesToHexWithSpaces(sharedSecret));
+             byte[] handshakeSecret =
+                     HKDFunction.extract(hkdfAlgorithm, saltHandshakeSecret, sharedSecret);
++            LOGGER.debug(
++                    "[DEBUG] adjustHandshakeTrafficSecrets() handshakeSecret: {}",
++                    bytesToHexWithSpaces(handshakeSecret));
+             tlsContext.setHandshakeSecret(handshakeSecret);
+             LOGGER.debug("Set handshakeSecret in Context to {}", handshakeSecret);
+             byte[] clientHandshakeTrafficSecret =
+@@ -314,6 +338,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+                             handshakeSecret,
+                             HKDFunction.CLIENT_HANDSHAKE_TRAFFIC_SECRET,
+                             tlsContext.getDigest().getRawBytes());
++            LOGGER.debug(
++                    "[DEBUG] adjustHandshakeTrafficSecrets() clientHandshakeTrafficSecret: {}",
++                    bytesToHexWithSpaces(clientHandshakeTrafficSecret));
+             tlsContext.setClientHandshakeTrafficSecret(clientHandshakeTrafficSecret);
+             LOGGER.debug(
+                     "Set clientHandshakeTrafficSecret in Context to {}",
+@@ -325,6 +352,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+                             handshakeSecret,
+                             HKDFunction.SERVER_HANDSHAKE_TRAFFIC_SECRET,
+                             tlsContext.getDigest().getRawBytes());
++            LOGGER.debug(
++                    "[DEBUG] adjustHandshakeTrafficSecrets() serverHandshakeTrafficSecret: {}",
++                    bytesToHexWithSpaces(serverHandshakeTrafficSecret));
+             tlsContext.setServerHandshakeTrafficSecret(serverHandshakeTrafficSecret);
+             LOGGER.debug(
+                     "Set serverHandshakeTrafficSecret in Context to {}",
+@@ -540,15 +570,25 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+             byte[] serverHelloBytes = message.getCompleteResultingMessage().getValue();
+ 
+             tlsContext.getDigest().setRawBytes(HandshakeMessageType.MESSAGE_HASH.getArrayValue());
+-            tlsContext
+-                    .getDigest()
+-                    .append(
+-                            ArrayConverter.intToBytes(
+-                                    clientHelloHash.length,
+-                                    HandshakeByteLength.MESSAGE_LENGTH_FIELD));
++            LOGGER.debug(
++                    "[DEBUG] getDigest() setRawBytes MESSAGE_HASH: {}",
++                    bytesToHexWithSpaces(HandshakeMessageType.MESSAGE_HASH.getArrayValue()));
++            var length =
++                    ArrayConverter.intToBytes(
++                            clientHelloHash.length, HandshakeByteLength.MESSAGE_LENGTH_FIELD);
++            tlsContext.getDigest().append(length);
++            LOGGER.debug("[DEBUG] getDigest() append length: {}", bytesToHexWithSpaces(length));
+             tlsContext.getDigest().append(clientHelloHash);
++            LOGGER.debug(
++                    "[DEBUG] getDigest() append clientHelloHash: {}",
++                    bytesToHexWithSpaces(clientHelloHash));
+             tlsContext.getDigest().append(serverHelloBytes);
+-            LOGGER.debug("Complete resulting digest: {}", tlsContext.getDigest().getRawBytes());
++            LOGGER.debug(
++                    "[DEBUG] getDigest() append serverHelloBytes: {}",
++                    bytesToHexWithSpaces(serverHelloBytes));
++            LOGGER.debug(
++                    "[DEBUG] Complete resulting digest: {}",
++                    bytesToHexWithSpaces(tlsContext.getDigest().getRawBytes()));
+         } catch (NoSuchAlgorithmException ex) {
+             LOGGER.error(ex);
+         }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementHandler.java
+new file mode 100644
+index 000000000..7895a241c
+--- /dev/null
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementHandler.java
+@@ -0,0 +1,90 @@
++/*
++ * TLS-Attacker - A Modular Penetration Testing Framework for TLS
++ *
++ * Copyright 2014-2023 Ruhr University Bochum, Paderborn University, Technology Innovation Institute, and Hackmanit GmbH
++ *
++ * Licensed under Apache License, Version 2.0
++ * http://www.apache.org/licenses/LICENSE-2.0.txt
++ */
++package de.rub.nds.tlsattacker.core.protocol.message;
++
++import de.rub.nds.tlsattacker.core.constants.Tls13KeySetType;
++import de.rub.nds.tlsattacker.core.exceptions.CryptoException;
++import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
++import de.rub.nds.tlsattacker.core.protocol.ProtocolMessageHandler;
++import de.rub.nds.tlsattacker.core.record.cipher.RecordCipherFactory;
++import de.rub.nds.tlsattacker.core.record.cipher.cryptohelper.KeyDerivator;
++import de.rub.nds.tlsattacker.core.record.cipher.cryptohelper.KeySet;
++import de.rub.nds.tlsattacker.transport.ConnectionEndType;
++import java.security.NoSuchAlgorithmException;
++
++public class AcknowledgementHandler extends ProtocolMessageHandler<AcknowledgementMessage> {
++    public AcknowledgementHandler(TlsContext tlsContext) {
++        super(tlsContext);
++    }
++
++    @Override
++    public void adjustContext(AcknowledgementMessage container) {
++        if (tlsContext.getTalkingConnectionEndType() == ConnectionEndType.SERVER) {
++            if (tlsContext.getWriteEpoch() == 3) {
++                // according to section 6.1 from
++                // https://www.rfc-editor.org/rfc/inline-errata/rfc9147.html
++                // I think the maximum epoch after receive ACK should be 3, and cannot be 4, 5 , and
++                // so on
++                LOGGER.warn("We only allow epoch=3 as the maximum value right now");
++                return;
++            }
++            // Only update cipher when we receive a valid Ack
++            if (container.getRecordNumbers().getValue().length > 0) {
++                setClientRecordCipher(Tls13KeySetType.APPLICATION_TRAFFIC_SECRETS);
++            }
++        }
++    }
++
++    private void setClientRecordCipher(Tls13KeySetType keySetType) {
++        tlsContext.setActiveClientKeySetType(keySetType);
++        LOGGER.debug("Setting cipher for client to use {}", keySetType);
++
++        KeySet keySet;
++
++        switch (keySetType) {
++            case APPLICATION_TRAFFIC_SECRETS:
++                keySet = getKeySet(tlsContext, tlsContext.getActiveClientKeySetType());
++                break;
++            case HANDSHAKE_TRAFFIC_SECRETS:
++                keySet = tlsContext.getkeySetHandshake();
++                break;
++            default:
++                throw new IllegalArgumentException(
++                        "In this state, only APPLICATION_TRAFFIC_SECRETS and HANDSHAKE_TRAFFIC_SECRETS are valid.");
++        }
++
++        if (tlsContext.getRecordLayer() != null) {
++            if (tlsContext.getChooser().getConnectionEndType() == ConnectionEndType.SERVER) {
++                tlsContext
++                        .getRecordLayer()
++                        .updateDecryptionCipher(
++                                RecordCipherFactory.getRecordCipher(tlsContext, keySet, false));
++            } else {
++                tlsContext
++                        .getRecordLayer()
++                        .updateEncryptionCipher(
++                                RecordCipherFactory.getRecordCipher(tlsContext, keySet, true));
++            }
++        }
++    }
++
++    private KeySet getKeySet(TlsContext tlsContext, Tls13KeySetType keySetType) {
++        try {
++            LOGGER.debug("Generating new KeySet");
++            KeySet keySet =
++                    KeyDerivator.generateKeySet(
++                            tlsContext,
++                            tlsContext.getChooser().getSelectedProtocolVersion(),
++                            keySetType);
++            return keySet;
++        } catch (NoSuchAlgorithmException | CryptoException ex) {
++            throw new UnsupportedOperationException("The specified Algorithm is not supported", ex);
++        }
++    }
++}
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementMessage.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementMessage.java
+new file mode 100644
+index 000000000..f912a1f9c
+--- /dev/null
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementMessage.java
+@@ -0,0 +1,193 @@
++/*
++ * TLS-Attacker - A Modular Penetration Testing Framework for TLS
++ *
++ * Copyright 2014-2023 Ruhr University Bochum, Paderborn University, Technology Innovation Institute, and Hackmanit GmbH
++ *
++ * Licensed under Apache License, Version 2.0
++ * http://www.apache.org/licenses/LICENSE-2.0.txt
++ */
++package de.rub.nds.tlsattacker.core.protocol.message;
++
++import de.rub.nds.modifiablevariable.ModifiableVariableFactory;
++import de.rub.nds.modifiablevariable.ModifiableVariableProperty;
++import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
++import de.rub.nds.modifiablevariable.integer.ModifiableInteger;
++import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
++import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
++import de.rub.nds.tlsattacker.core.state.Context;
++import jakarta.xml.bind.annotation.XmlRootElement;
++import java.io.InputStream;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Objects;
++
++@XmlRootElement(name = "Acknowledgement")
++public class AcknowledgementMessage extends ProtocolMessage {
++
++    @ModifiableVariableProperty(type = ModifiableVariableProperty.Type.LENGTH)
++    private ModifiableInteger recordNumberLength;
++
++    @ModifiableVariableProperty private ModifiableByteArray recordNumbers;
++
++    private transient List<RecordNumberStruct> parsedRecordNumbers;
++
++    public AcknowledgementMessage() {
++        super();
++        this.protocolMessageType = ProtocolMessageType.Acknowledgement;
++        this.parsedRecordNumbers = new ArrayList<>();
++    }
++
++    public ModifiableInteger getRecordNumberLength() {
++        return recordNumberLength;
++    }
++
++    public void setRecordNumberLength(ModifiableInteger recordNumberLength) {
++        this.recordNumberLength = recordNumberLength;
++    }
++
++    public void setRecordNumberLength(int recordNumberLength) {
++        this.recordNumberLength =
++                ModifiableVariableFactory.safelySetValue(
++                        this.recordNumberLength, recordNumberLength);
++    }
++
++    public ModifiableByteArray getRecordNumbers() {
++        return recordNumbers;
++    }
++
++    public void setRecordNumbers(ModifiableByteArray recordNumbers) {
++        this.recordNumbers = recordNumbers;
++    }
++
++    public void setRecordNumbers(byte[] recordNumbers) {
++        this.recordNumbers =
++                ModifiableVariableFactory.safelySetValue(this.recordNumbers, recordNumbers);
++    }
++
++    public List<RecordNumberStruct> getParsedRecordNumbers() {
++        return parsedRecordNumbers;
++    }
++
++    public void setParsedRecordNumbers(List<RecordNumberStruct> parsedRecordNumbers) {
++        this.parsedRecordNumbers = parsedRecordNumbers;
++    }
++
++    public void addRecordNumber(int epoch, long sequenceNumber) {
++        this.parsedRecordNumbers.add(new RecordNumberStruct(epoch, sequenceNumber));
++    }
++
++    @Override
++    public String toString() {
++        StringBuilder sb = new StringBuilder();
++        sb.append("AckMessage:");
++        sb.append("\n  Record Number Length: ");
++        if (recordNumberLength != null && recordNumberLength.getValue() != null) {
++            sb.append(recordNumberLength.getValue());
++        } else {
++            sb.append("null");
++        }
++        sb.append("\n  Record Numbers: ");
++        if (parsedRecordNumbers != null && !parsedRecordNumbers.isEmpty()) {
++            sb.append("[");
++            for (int i = 0; i < parsedRecordNumbers.size(); i++) {
++                if (i > 0) {
++                    sb.append(", ");
++                }
++                RecordNumberStruct rn = parsedRecordNumbers.get(i);
++                sb.append("(epoch=")
++                        .append(rn.getEpoch())
++                        .append(", seq=")
++                        .append(rn.getSequenceNumber())
++                        .append(")");
++            }
++            sb.append("]");
++        } else {
++            sb.append("null");
++        }
++        return sb.toString();
++    }
++
++    @Override
++    public String toCompactString() {
++        StringBuilder sb = new StringBuilder();
++        sb.append("Acknowledgement".toUpperCase());
++        return sb.toString();
++    }
++
++    @Override
++    public String toShortString() {
++        return "ACK";
++    }
++
++    @Override
++    public boolean equals(Object obj) {
++        if (this == obj) {
++            return true;
++        }
++        if (obj == null) {
++            return false;
++        }
++        if (getClass() != obj.getClass()) {
++            return false;
++        }
++        final AcknowledgementMessage other = (AcknowledgementMessage) obj;
++        if (!Objects.equals(this.recordNumberLength, other.recordNumberLength)) {
++            return false;
++        }
++        return Objects.equals(this.recordNumbers, other.recordNumbers);
++    }
++
++    @Override
++    public int hashCode() {
++        int hash = 7;
++        hash = 97 * hash + Objects.hashCode(this.recordNumberLength);
++        hash = 97 * hash + Objects.hashCode(this.recordNumbers);
++        return hash;
++    }
++
++    @Override
++    public AcknowledgementHandler getHandler(Context context) {
++        return new AcknowledgementHandler(context.getTlsContext());
++    }
++
++    @Override
++    public AcknowledgementParser getParser(Context context, InputStream stream) {
++        return new AcknowledgementParser(stream);
++    }
++
++    @Override
++    public AcknowledgementPreparator getPreparator(Context context) {
++        return new AcknowledgementPreparator(context.getChooser(), this);
++    }
++
++    @Override
++    public AcknowledgementSerializer getSerializer(Context context) {
++        return new AcknowledgementSerializer(this);
++    }
++
++    public static class RecordNumberStruct {
++        private long epoch;
++        private long sequenceNumber;
++
++        public RecordNumberStruct(long epoch, long sequenceNumber) {
++            this.epoch = epoch;
++            this.sequenceNumber = sequenceNumber;
++        }
++
++        public long getEpoch() {
++            return epoch;
++        }
++
++        public void setEpoch(long epoch) {
++            this.epoch = epoch;
++        }
++
++        public long getSequenceNumber() {
++            return sequenceNumber;
++        }
++
++        public void setSequenceNumber(long sequenceNumber) {
++            this.sequenceNumber = sequenceNumber;
++        }
++    }
++}
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementParser.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementParser.java
+new file mode 100644
+index 000000000..a0e5be41f
+--- /dev/null
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementParser.java
+@@ -0,0 +1,82 @@
++/*
++ * TLS-Attacker - A Modular Penetration Testing Framework for TLS
++ *
++ * Copyright 2014-2023 Ruhr University Bochum, Paderborn University, Technology Innovation Institute, and Hackmanit GmbH
++ *
++ * Licensed under Apache License, Version 2.0
++ * http://www.apache.org/licenses/LICENSE-2.0.txt
++ */
++package de.rub.nds.tlsattacker.core.protocol.message;
++
++import static de.rub.nds.tlsattacker.core.util.LoggerPrintConverter.bytesToHexWithSpaces;
++
++import de.rub.nds.tlsattacker.core.protocol.ProtocolMessageParser;
++import java.io.InputStream;
++import java.util.ArrayList;
++import java.util.List;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
++public class AcknowledgementParser extends ProtocolMessageParser<AcknowledgementMessage> {
++
++    private static final Logger LOGGER = LogManager.getLogger();
++
++    public AcknowledgementParser(InputStream stream) {
++        super(stream);
++    }
++
++    @Override
++    public void parse(AcknowledgementMessage message) {
++        LOGGER.debug("[DEBUG] Parsing AcknowledgementMessage");
++        parseRecordNumberLength(message);
++        parseRecordNumbers(message);
++        message.setCompleteResultingMessage(getAlreadyParsed());
++    }
++
++    private void parseRecordNumberLength(AcknowledgementMessage message) {
++        message.setRecordNumberLength(parseIntField(2));
++        LOGGER.debug("[DEBUG] RecordNumberLength: " + message.getRecordNumberLength().getValue());
++    }
++
++    private void parseRecordNumbers(AcknowledgementMessage message) {
++        int bytesLeft = getBytesLeft();
++        byte[] recordNumbersBytes = parseByteArrayField(bytesLeft);
++        message.setRecordNumbers(recordNumbersBytes);
++        LOGGER.debug("[DEBUG] RecordNumbers (raw): {}", bytesToHexWithSpaces(recordNumbersBytes));
++
++        List<AcknowledgementMessage.RecordNumberStruct> parsedRecordNumbers = new ArrayList<>();
++
++        int recordNumberSize = 16; // 8 bytes for epoch + 8 bytes for sequence number
++
++        if (bytesLeft % recordNumberSize != 0) {
++            LOGGER.warn(
++                    "Record numbers data length ({}) is not a multiple of RecordNumber size ({})",
++                    bytesLeft,
++                    recordNumberSize);
++        }
++
++        for (int i = 0; i < bytesLeft; i += recordNumberSize) {
++            if (i + recordNumberSize <= bytesLeft) {
++                // parse epoch
++                long epoch = 0;
++                for (int j = 0; j < 8; j++) {
++                    epoch = (epoch << 8) | (recordNumbersBytes[i + j] & 0xFF);
++                }
++                // parse sequence number
++                long sequenceNumber = 0;
++                for (int j = 0; j < 8; j++) {
++                    sequenceNumber = (sequenceNumber << 8) | (recordNumbersBytes[i + 8 + j] & 0xFF);
++                }
++
++                parsedRecordNumbers.add(
++                        new AcknowledgementMessage.RecordNumberStruct(epoch, sequenceNumber));
++                LOGGER.debug(
++                        "[DEBUG] Parsed record number: epoch={}, sequenceNumber={}",
++                        epoch,
++                        sequenceNumber);
++            }
++        }
++
++        message.setParsedRecordNumbers(parsedRecordNumbers);
++    }
++}
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementPreparator.java
+new file mode 100644
+index 000000000..bd8d6f15b
+--- /dev/null
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementPreparator.java
+@@ -0,0 +1,32 @@
++/*
++ * TLS-Attacker - A Modular Penetration Testing Framework for TLS
++ *
++ * Copyright 2014-2023 Ruhr University Bochum, Paderborn University, Technology Innovation Institute, and Hackmanit GmbH
++ *
++ * Licensed under Apache License, Version 2.0
++ * http://www.apache.org/licenses/LICENSE-2.0.txt
++ */
++package de.rub.nds.tlsattacker.core.protocol.message;
++
++import de.rub.nds.tlsattacker.core.protocol.ProtocolMessagePreparator;
++import de.rub.nds.tlsattacker.core.workflow.chooser.Chooser;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
++public class AcknowledgementPreparator extends ProtocolMessagePreparator<AcknowledgementMessage> {
++
++    private static final Logger LOGGER = LogManager.getLogger();
++
++    private final AcknowledgementMessage msg;
++
++    public AcknowledgementPreparator(
++            Chooser chooser, AcknowledgementMessage acknowledgementMessage) {
++        super(chooser, acknowledgementMessage);
++        this.msg = acknowledgementMessage;
++    }
++
++    @Override
++    protected void prepareProtocolMessageContents() {
++        LOGGER.error("Not implemented yet");
++    }
++}
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementSerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementSerializer.java
+new file mode 100644
+index 000000000..7c57f9eae
+--- /dev/null
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementSerializer.java
+@@ -0,0 +1,28 @@
++/*
++ * TLS-Attacker - A Modular Penetration Testing Framework for TLS
++ *
++ * Copyright 2014-2023 Ruhr University Bochum, Paderborn University, Technology Innovation Institute, and Hackmanit GmbH
++ *
++ * Licensed under Apache License, Version 2.0
++ * http://www.apache.org/licenses/LICENSE-2.0.txt
++ */
++package de.rub.nds.tlsattacker.core.protocol.message;
++
++import de.rub.nds.tlsattacker.core.protocol.ProtocolMessageSerializer;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
++public class AcknowledgementSerializer extends ProtocolMessageSerializer<AcknowledgementMessage> {
++
++    private static final Logger LOGGER = LogManager.getLogger();
++
++    public AcknowledgementSerializer(AcknowledgementMessage message) {
++        super(message);
++    }
++
++    @Override
++    protected byte[] serializeBytes() {
++        LOGGER.error("Not implemented yet");
++        return getAlreadySerialized();
++    }
++}
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java
+index 0fb395043..ff4c7d0e2 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java
+@@ -117,6 +117,17 @@ public abstract class HandshakeMessage extends ProtocolMessage {
+         }
+     }
+ 
++    public final void addExtension(int index, ExtensionMessage extension) {
++        if (this.extensions == null) {
++            extensions = new LinkedList<>();
++        }
++        if (extension != null) {
++            this.extensions.add(index, extension);
++        } else {
++            LOGGER.error("Cannot add null Extension");
++        }
++    }
++
+     public boolean containsExtension(ExtensionType extensionType) {
+         if (extensions != null) {
+             for (ExtensionMessage e : extensions) {
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/extension/psk/PskSet.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/extension/psk/PskSet.java
+index f9440af06..e0bf28486 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/extension/psk/PskSet.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/extension/psk/PskSet.java
+@@ -42,6 +42,8 @@ public class PskSet implements Serializable {
+     @XmlJavaTypeAdapter(UnformattedByteArrayAdapter.class)
+     private byte[] ticketNonce;
+ 
++    private boolean isFromResumption = false;
++
+     private CipherSuite cipherSuite;
+ 
+     public PskSet() {}
+@@ -125,6 +127,14 @@ public class PskSet implements Serializable {
+         this.ticketNonce = ticketNonce;
+     }
+ 
++    public boolean getIsFromResumption() {
++        return isFromResumption;
++    }
++
++    public void setIsFromResumption(boolean fromResumption) {
++        isFromResumption = fromResumption;
++    }
++
+     /**
+      * @return the cipherSuite
+      */
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/CertificateMessageParser.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/CertificateMessageParser.java
+index 1771df90f..926c11030 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/CertificateMessageParser.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/CertificateMessageParser.java
+@@ -40,7 +40,7 @@ public class CertificateMessageParser extends HandshakeMessageParser<Certificate
+     @Override
+     public void parse(CertificateMessage msg) {
+         LOGGER.debug("Parsing CertificateMessage");
+-        if (getVersion().isTLS13()) {
++        if (getVersion().isTLS13() || getVersion().isDTLS13()) {
+             parseRequestContextLength(msg);
+             parseRequestContextBytes(msg);
+         }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/CertificateVerifyParser.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/CertificateVerifyParser.java
+index c86d2573c..988446215 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/CertificateVerifyParser.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/CertificateVerifyParser.java
+@@ -35,7 +35,8 @@ public class CertificateVerifyParser extends HandshakeMessageParser<CertificateV
+         LOGGER.debug("Parsing CertificateVerifyMessage");
+         if (getVersion() == ProtocolVersion.TLS12
+                 || getVersion() == ProtocolVersion.DTLS12
+-                || getVersion().isTLS13()) {
++                || getVersion().isTLS13()
++                || getVersion().isDTLS13()) {
+             parseSignatureHashAlgorithm(msg);
+         }
+         parseSignatureLength(msg);
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/cert/CertificateEntryParser.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/cert/CertificateEntryParser.java
+index 47051f3b0..c9f04ea82 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/cert/CertificateEntryParser.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/parser/cert/CertificateEntryParser.java
+@@ -41,7 +41,8 @@ public class CertificateEntryParser extends Parser<CertificateEntry> {
+         LOGGER.debug("Parsing CertificatePair");
+         parseCertificateLength(entry);
+         parseCertificateBytes(entry);
+-        if (context.getChooser().getSelectedProtocolVersion().isTLS13()) {
++        if (context.getChooser().getSelectedProtocolVersion().isTLS13()
++                || context.getChooser().getSelectedProtocolVersion().isDTLS13()) {
+             parseExtensionsLength(entry);
+             parseExtensionBytes(entry);
+             parseExtensions(entry);
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
+index 614a51a8a..66e4381ce 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateMessagePreparator.java
+@@ -56,7 +56,8 @@ public class CertificateMessagePreparator extends HandshakeMessagePreparator<Cer
+     @Override
+     public void prepareHandshakeMessageContents() {
+         LOGGER.debug("Preparing CertificateMessage");
+-        if (chooser.getSelectedProtocolVersion().isTLS13()) {
++        if (chooser.getSelectedProtocolVersion().isTLS13()
++                || chooser.getSelectedProtocolVersion().isDTLS13()) {
+             prepareRequestContext(msg);
+             prepareRequestContextLength(msg);
+         }
+@@ -147,13 +148,20 @@ public class CertificateMessagePreparator extends HandshakeMessagePreparator<Cer
                      }
                      prepareFromEntryList(msg);
                  } else {
@@ -183,7 +1237,7 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protoc
                      prepareFromEntryList(msg);
                  }
                  LOGGER.debug(
-@@ -223,7 +230,6 @@
+@@ -223,7 +231,6 @@ public class CertificateMessagePreparator extends HandshakeMessagePreparator<Cer
                  prepareCert(entryList, x509Context, certConfig, i);
              }
          }
@@ -191,23 +1245,1208 @@ diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protoc
      }
  
      private void prepareCert(
-diff -ruN TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java
---- TLS-Attacker/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java	2025-02-20 15:19:04.927325762 +0100
-+++ TLS-Attacker_patched/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java	2025-02-20 15:48:31.109280624 +0100
-@@ -8,6 +8,7 @@
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java
+index a6d649fd6..80a4f6bc7 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java
+@@ -41,7 +41,9 @@ public class CertificateVerifyPreparator
+         LOGGER.debug("Preparing CertificateVerifyMessage");
+         algorithm =
+                 SignatureAndHashAlgorithmSelector.selectSignatureAndHashAlgorithm(
+-                        chooser, chooser.getSelectedProtocolVersion() == ProtocolVersion.TLS13);
++                        chooser,
++                        chooser.getSelectedProtocolVersion() == ProtocolVersion.TLS13
++                                || chooser.getSelectedProtocolVersion().isDTLS13());
+         signature = new byte[0];
+         try {
+             signature = createSignature();
+@@ -55,7 +57,8 @@ public class CertificateVerifyPreparator
+ 
+     private byte[] createSignature() throws CryptoException {
+         byte[] toBeSigned = chooser.getContext().getTlsContext().getDigest().getRawBytes();
+-        if (chooser.getSelectedProtocolVersion().isTLS13()) {
++        if (chooser.getSelectedProtocolVersion().isTLS13()
++                || chooser.getSelectedProtocolVersion().isDTLS13()) {
+             if (chooser.getConnectionEndType() == ConnectionEndType.CLIENT) {
+                 toBeSigned =
+                         ArrayConverter.concatenate(
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CoreClientHelloPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CoreClientHelloPreparator.java
+index 50117da4c..316ad26c4 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CoreClientHelloPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CoreClientHelloPreparator.java
+@@ -15,6 +15,7 @@ import de.rub.nds.tlsattacker.core.constants.ExtensionType;
+ import de.rub.nds.tlsattacker.core.constants.HandshakeMessageType;
+ import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+ import de.rub.nds.tlsattacker.core.protocol.message.CoreClientHelloMessage;
++import de.rub.nds.tlsattacker.core.protocol.message.extension.CookieExtensionMessage;
+ import de.rub.nds.tlsattacker.core.protocol.message.extension.SessionTicketTLSExtensionMessage;
+ import de.rub.nds.tlsattacker.core.workflow.chooser.Chooser;
+ import java.io.ByteArrayOutputStream;
+@@ -48,6 +49,11 @@ public abstract class CoreClientHelloPreparator<T extends CoreClientHelloMessage
+             prepareCookie(msg);
+             prepareCookieLength(msg);
+         }
++        if (chooser.getConfig().getHighestProtocolVersion().isDTLS13()
++                && chooser.getContext().getTlsContext().getExtensionCookie() != null) {
++            chooser.getConfig().setAddCookieExtension(true);
++            msg.addExtension(0, new CookieExtensionMessage());
++        }
+         prepareExtensions();
+         prepareExtensionLength();
+         prepareSessionID();
+@@ -143,6 +149,8 @@ public abstract class CoreClientHelloPreparator<T extends CoreClientHelloMessage
+     private void prepareProtocolVersion(T msg) {
+         if (chooser.getConfig().getHighestProtocolVersion().isTLS13()) {
+             msg.setProtocolVersion(ProtocolVersion.TLS12.getValue());
++        } else if (chooser.getConfig().getHighestProtocolVersion().isDTLS13()) {
++            msg.setProtocolVersion(ProtocolVersion.DTLS12.getValue());
+         } else {
+             msg.setProtocolVersion(chooser.getConfig().getHighestProtocolVersion().getValue());
+         }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/FinishedPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/FinishedPreparator.java
+index f0c415992..f276caaba 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/FinishedPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/FinishedPreparator.java
+@@ -54,7 +54,8 @@ public class FinishedPreparator extends HandshakeMessagePreparator<FinishedMessa
+     }
+ 
+     private byte[] computeVerifyData() throws CryptoException {
+-        if (chooser.getSelectedProtocolVersion().isTLS13()) {
++        if (chooser.getSelectedProtocolVersion().isTLS13()
++                || chooser.getSelectedProtocolVersion().isDTLS13()) {
+             try {
+                 HKDFAlgorithm hkdfAlgorithm =
+                         AlgorithmResolver.getHKDFAlgorithm(chooser.getSelectedCipherSuite());
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PSKIdentityPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PSKIdentityPreparator.java
+index 3e85a3a31..359fd0d6c 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PSKIdentityPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PSKIdentityPreparator.java
+@@ -73,7 +73,7 @@ public class PSKIdentityPreparator extends Preparator<PSKIdentity> {
+                             + ticketAge
+                             + " - Using empty obfuscated ticket age instead",
+                     e);
+-            return new byte[0];
++            return new byte[] {0, 0, 0, 0};
+         }
+     }
+ }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PreSharedKeyExtensionPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PreSharedKeyExtensionPreparator.java
+index f58dde9e8..379597583 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PreSharedKeyExtensionPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PreSharedKeyExtensionPreparator.java
+@@ -8,6 +8,8 @@
+  */
+ package de.rub.nds.tlsattacker.core.protocol.preparator.extension;
+ 
++import static de.rub.nds.tlsattacker.core.util.LoggerPrintConverter.bytesToHexWithSpaces;
++
+ import de.rub.nds.modifiablevariable.util.ArrayConverter;
+ import de.rub.nds.protocol.exception.PreparationException;
+ import de.rub.nds.tlsattacker.core.constants.AlgorithmResolver;
+@@ -132,6 +134,10 @@ public class PreSharedKeyExtensionPreparator
+                 new ClientHelloSerializer(clientHello, chooser.getSelectedProtocolVersion());
+         byte[] clientHelloBytes = clientHelloSerializer.serialize();
+         byte[] relevantBytes = getRelevantBytes(clientHelloBytes);
++        LOGGER.debug("[DEBUG] clientHelloBytes: {}", bytesToHexWithSpaces(clientHelloBytes));
++        LOGGER.debug(
++                "[DEBUG] relevantBytes of clientHelloBytes: {}",
++                bytesToHexWithSpaces(relevantBytes));
+         calculateBinders(relevantBytes, msg);
+         prepareBinderListBytes(); // Re-write list using actual values
+     }
+@@ -181,35 +187,96 @@ public class PreSharedKeyExtensionPreparator
+ 
+                         byte[] psk = pskSets.get(x).getPreSharedKey();
+                         byte[] earlySecret = HKDFunction.extract(hkdfAlgorithm, new byte[0], psk);
++                        String labelIn;
++                        if (pskSets.get(x).getIsFromResumption()) {
++                            labelIn = HKDFunction.BINDER_KEY_RES;
++                        } else {
++                            labelIn = HKDFunction.BINDER_KEY_EXT;
++                        }
++                        LOGGER.debug("[DEBUG] binderKey deriveSecret parameters:");
++                        LOGGER.debug("[DEBUG]   - hkdfAlgorithm: {}", hkdfAlgorithm);
++                        LOGGER.debug("[DEBUG]   - digestAlgo: {}", digestAlgo.getJavaName());
++                        LOGGER.debug(
++                                "[DEBUG]   - earlySecret: {}", bytesToHexWithSpaces(earlySecret));
++                        LOGGER.debug("[DEBUG]   - labelIn: {}", labelIn);
++                        LOGGER.debug(
++                                "[DEBUG]   - toHash: ArrayConverter.hexStringToByteArray(\"\")");
+                         byte[] binderKey =
+                                 HKDFunction.deriveSecret(
+                                         hkdfAlgorithm,
+                                         digestAlgo.getJavaName(),
+                                         earlySecret,
+-                                        HKDFunction.BINDER_KEY_RES,
+-                                        ArrayConverter.hexStringToByteArray(""));
++                                        labelIn,
++                                        ArrayConverter.hexStringToByteArray(""),
++                                        chooser.getHighestProtocolVersion().isDTLS13());
++
++                        LOGGER.debug("[DEBUG] binderFinKey expandLabel parameters:");
++                        LOGGER.debug("[DEBUG]   - hkdfAlgorithm: {}", hkdfAlgorithm);
++                        LOGGER.debug("[DEBUG]   - binderKey: {}", bytesToHexWithSpaces(binderKey));
++                        LOGGER.debug("[DEBUG]   - labelIn: {}", HKDFunction.FINISHED);
++                        LOGGER.debug("[DEBUG]   - hashValue: new byte[0]");
++                        LOGGER.debug("[DEBUG]   - outLen: {}", mac.getMacLength());
+                         byte[] binderFinKey =
+                                 HKDFunction.expandLabel(
+                                         hkdfAlgorithm,
+                                         binderKey,
+                                         HKDFunction.FINISHED,
+                                         new byte[0],
+-                                        mac.getMacLength());
+-
+-                        tlsContext.getDigest().setRawBytes(relevantBytes);
+-                        SecretKeySpec keySpec = new SecretKeySpec(binderFinKey, mac.getAlgorithm());
+-                        mac.init(keySpec);
+-                        mac.update(
+-                                tlsContext
+-                                        .getDigest()
+-                                        .digest(
+-                                                ProtocolVersion.TLS13,
+-                                                pskSets.get(x).getCipherSuite()));
+-                        byte[] binderVal = mac.doFinal();
+-                        tlsContext.getDigest().setRawBytes(new byte[0]);
+-
+-                        LOGGER.debug("Using PSK: {}", psk);
+-                        LOGGER.debug("Calculated Binder: {}", binderVal);
++                                        mac.getMacLength(),
++                                        chooser.getHighestProtocolVersion().isDTLS13());
++                        LOGGER.debug("[DEBUG] earlySecret: {}", bytesToHexWithSpaces(earlySecret));
++                        LOGGER.debug("[DEBUG] binderKey: {}", bytesToHexWithSpaces(binderKey));
++                        LOGGER.debug(
++                                "[DEBUG] binderFinKey: {}", bytesToHexWithSpaces(binderFinKey));
++
++                        byte[] binderVal;
++                        if (tlsContext.getDigest().getRawBytes().length > 0) {
++                            LOGGER.debug(
++                                    "[DEBUG] we are in the Hello Retry Request flow, so we will append the second client hello");
++                            byte[] savedDigest = tlsContext.getDigest().getRawBytes().clone();
++                            tlsContext.getDigest().append(relevantBytes);
++                            LOGGER.debug(
++                                    "[DEBUG] append relevantBytes: {}",
++                                    bytesToHexWithSpaces(relevantBytes));
++                            SecretKeySpec keySpec =
++                                    new SecretKeySpec(binderFinKey, mac.getAlgorithm());
++                            mac.init(keySpec);
++                            var usedHash =
++                                    tlsContext
++                                            .getDigest()
++                                            .digest(
++                                                    ProtocolVersion.TLS13,
++                                                    pskSets.get(x).getCipherSuite());
++                            mac.update(usedHash);
++                            LOGGER.debug(
++                                    "[DEBUG] mac.update(usedHash) usedHash: {}",
++                                    bytesToHexWithSpaces(usedHash));
++                            binderVal = mac.doFinal();
++
++                            tlsContext.getDigest().setRawBytes(savedDigest);
++                        } else {
++                            LOGGER.debug(
++                                    "[DEBUG] we are calculating binder for the 1st client hello");
++                            tlsContext.getDigest().setRawBytes(relevantBytes);
++                            LOGGER.debug(
++                                    "[DEBUG] setRawBytes for 1st relevantBytes: {}",
++                                    bytesToHexWithSpaces(relevantBytes));
++                            SecretKeySpec keySpec =
++                                    new SecretKeySpec(binderFinKey, mac.getAlgorithm());
++                            mac.init(keySpec);
++                            mac.update(
++                                    tlsContext
++                                            .getDigest()
++                                            .digest(
++                                                    ProtocolVersion.TLS13,
++                                                    pskSets.get(x).getCipherSuite()));
++                            binderVal = mac.doFinal();
++                            tlsContext.getDigest().setRawBytes(new byte[0]);
++                        }
++
++                        LOGGER.debug("[DEBUG] Using PSK: {}", bytesToHexWithSpaces(psk));
++                        LOGGER.debug(
++                                "[DEBUG] Calculated Binder: {}", bytesToHexWithSpaces(binderVal));
+ 
+                         msg.getBinders().get(x).setBinderEntry(binderVal);
+                         // First entry = PSK for early Data
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/SupportedVersionsExtensionPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/SupportedVersionsExtensionPreparator.java
+index f1a57a9cc..0e1f2493a 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/SupportedVersionsExtensionPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/SupportedVersionsExtensionPreparator.java
+@@ -52,6 +52,9 @@ public class SupportedVersionsExtensionPreparator
+ 
+     private byte[] createProtocolVersionArray() {
+         ByteArrayOutputStream stream = new ByteArrayOutputStream();
++        if (chooser.getConfig().getHighestProtocolVersion().isDTLS13()) {
++            chooser.getConfig().setSupportedVersions(ProtocolVersion.DTLS13);
++        }
+         for (ProtocolVersion version : chooser.getConfig().getSupportedVersions()) {
+             try {
+                 stream.write(version.getValue());
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateMessageSerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateMessageSerializer.java
+index 718c5edb1..e9a79464f 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateMessageSerializer.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateMessageSerializer.java
+@@ -37,7 +37,7 @@ public class CertificateMessageSerializer extends HandshakeMessageSerializer<Cer
+     @Override
+     public byte[] serializeHandshakeMessageContent() {
+         LOGGER.debug("Serializing CertificateMessage");
+-        if (version.isTLS13()) {
++        if (version.isTLS13() || version.isDTLS13()) {
+             writeRequestContextLength(msg);
+             writeRequestContext(msg);
+         }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java
+index f039b30ec..1ad99d148 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java
+@@ -40,7 +40,8 @@ public class CertificateVerifySerializer
+         LOGGER.debug("Serializing CertificateVerifyMessage");
+         if (version == ProtocolVersion.TLS12
+                 || version == ProtocolVersion.DTLS12
+-                || version.isTLS13()) {
++                || version.isTLS13()
++                || version.isDTLS13()) {
+             writeSignatureHashAlgorithm(msg);
+         }
+         writeSignatureLength(msg);
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/cert/CertificatePairSerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/cert/CertificatePairSerializer.java
+index 3fe1fcc33..0b3596a60 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/cert/CertificatePairSerializer.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/cert/CertificatePairSerializer.java
+@@ -32,7 +32,7 @@ public class CertificatePairSerializer extends Serializer<CertificateEntry> {
+         LOGGER.debug("Serializing CertificatePair");
+         writeCertificateLength(pair);
+         writeCertificateBytes(pair);
+-        if (version.isTLS13()) {
++        if (version.isTLS13() || version.isDTLS13()) {
+             writeExtensionsLength(pair);
+             if (pair.getExtensionBytes() != null && pair.getExtensionBytes().getValue() != null) {
+                 writeExtensionBytes(pair);
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/Record.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/Record.java
+index 35447d77e..72f23e418 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/Record.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/Record.java
+@@ -41,6 +41,14 @@ import java.util.Objects;
+ @XmlAccessorType(XmlAccessType.FIELD)
+ public class Record extends ModifiableVariableHolder implements DataContainer {
+ 
++    // For DTLS 1.3
++    @ModifiableVariableProperty(type = ModifiableVariableProperty.Type.NONE)
++    private ModifiableByte unifiedHeaderBitmask;
++
++    // For DTLS 1.3
++    @ModifiableVariableProperty(type = ModifiableVariableProperty.Type.COUNT)
++    private ModifiableInteger sequenceNumberSuffix;
++
+     @XmlTransient protected boolean shouldPrepareDefault = true;
+ 
+     /** maximum length configuration for this record */
+@@ -278,6 +286,34 @@ public class Record extends ModifiableVariableHolder implements DataContainer {
+         }
+     }
+ 
++    public ModifiableByte getUnifiedHeaderBitmask() {
++        return unifiedHeaderBitmask;
++    }
++
++    public void setUnifiedHeaderBitmask(ModifiableByte unifiedHeaderBitmask) {
++        this.unifiedHeaderBitmask = unifiedHeaderBitmask;
++    }
++
++    public void setUnifiedHeaderBitmask(byte unifiedHeaderBitmask) {
++        this.unifiedHeaderBitmask =
++                ModifiableVariableFactory.safelySetValue(
++                        this.unifiedHeaderBitmask, unifiedHeaderBitmask);
++    }
++
++    public ModifiableInteger getSequenceNumberSuffix() {
++        return sequenceNumberSuffix;
++    }
++
++    public void setSequenceNumberSuffix(ModifiableInteger sequenceNumberSuffix) {
++        this.sequenceNumberSuffix = sequenceNumberSuffix;
++    }
++
++    public void setSequenceNumberSuffix(int sequenceNumberSuffix) {
++        this.sequenceNumberSuffix =
++                ModifiableVariableFactory.safelySetValue(
++                        this.sequenceNumberSuffix, sequenceNumberSuffix);
++    }
++
+     @Override
+     public String toString() {
+ 
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/RecordAEADCipher.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/RecordAEADCipher.java
+index 82d3b9f23..56d61abe1 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/RecordAEADCipher.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/RecordAEADCipher.java
+@@ -8,6 +8,8 @@
+  */
+ package de.rub.nds.tlsattacker.core.record.cipher;
+ 
++import static de.rub.nds.tlsattacker.core.util.LoggerPrintConverter.bytesToHexWithSpaces;
++
+ import de.rub.nds.modifiablevariable.util.ArrayConverter;
+ import de.rub.nds.protocol.exception.ParserException;
+ import de.rub.nds.tlsattacker.core.constants.Bits;
+@@ -76,7 +78,7 @@ public class RecordAEADCipher extends RecordCipher {
+         byte[] gcmNonce = ArrayConverter.concatenate(aeadSalt, explicitNonce);
+ 
+         // Nonce construction is different for chacha & tls1.3
+-        if (getState().getVersion().isTLS13()) {
++        if (getState().getVersion().isTLS13() || getState().getVersion().isDTLS13()) {
+             gcmNonce = preprocessIv(record.getSequenceNumber().getValue().longValue(), gcmNonce);
+         } else if (getState().getCipherAlg() == CipherAlgorithm.CHACHA20_POLY1305) {
+             if (getState().getVersion().isDTLS()) {
+@@ -135,10 +137,10 @@ public class RecordAEADCipher extends RecordCipher {
+ 
+     @Override
+     public void encrypt(Record record) throws CryptoException {
+-        LOGGER.debug("Encrypting Record");
++        LOGGER.debug("[DEBUG] Encrypting Record");
+         record.getComputations()
+                 .setCipherKey(getState().getKeySet().getWriteKey(getConnectionEndType()));
+-        if (getState().getVersion().isTLS13()) {
++        if (getState().getVersion().isTLS13() || getState().getVersion().isDTLS13()) {
+             int additionalPadding = getDefaultAdditionalPadding();
+             if (additionalPadding > 65536) {
+                 LOGGER.warn("Additional padding is too big. setting it to max possible value");
+@@ -166,17 +168,28 @@ public class RecordAEADCipher extends RecordCipher {
+         }
+ 
+         byte[] explicitNonce = prepareEncryptionExplicitNonce(record);
++        if (getState().getVersion().isDTLS13()) {
++            explicitNonce = new byte[0];
++        }
+         byte[] aeadSalt = prepareEncryptionAeadSalt(record);
+         byte[] gcmNonce = prepareEncryptionGcmNonce(aeadSalt, explicitNonce, record);
+ 
+-        LOGGER.debug("Encrypting AEAD with the following IV: {}", gcmNonce);
++        LOGGER.debug(
++                "[DEBUG] Encrypting AEAD with explicitNonce: {}",
++                bytesToHexWithSpaces(explicitNonce));
++        LOGGER.debug("[DEBUG] Encrypting AEAD with aeadSalt: {}", bytesToHexWithSpaces(aeadSalt));
++        LOGGER.debug(
++                "[DEBUG] Encrypting AEAD with the following IV/gcmNonce: {}",
++                bytesToHexWithSpaces(gcmNonce));
+         byte[] additionalAuthenticatedData =
+                 collectAdditionalAuthenticatedData(record, getState().getVersion());
+         record.getComputations().setAuthenticatedMetaData(additionalAuthenticatedData);
+         additionalAuthenticatedData =
+                 record.getComputations().getAuthenticatedMetaData().getValue();
+ 
+-        LOGGER.debug("Encrypting AEAD with the following AAD: {}", additionalAuthenticatedData);
++        LOGGER.debug(
++                "[DEBUG] Encrypting AEAD with the following AAD: {}",
++                bytesToHexWithSpaces(additionalAuthenticatedData));
+ 
+         byte[] plainBytes = record.getComputations().getPlainRecordBytes().getValue();
+         byte[] wholeCipherText =
+@@ -192,6 +205,7 @@ public class RecordAEADCipher extends RecordCipher {
+         byte[] onlyCiphertext =
+                 Arrays.copyOfRange(wholeCipherText, 0, wholeCipherText.length - aeadTagLength);
+ 
++        LOGGER.debug("[DEBUG] onlyCiphertext: {}", bytesToHexWithSpaces(onlyCiphertext));
+         record.getComputations().setAuthenticatedNonMetaData(onlyCiphertext);
+ 
+         byte[] authenticationTag =
+@@ -200,6 +214,7 @@ public class RecordAEADCipher extends RecordCipher {
+                         wholeCipherText.length - aeadTagLength,
+                         wholeCipherText.length);
+ 
++        LOGGER.debug("[DEBUG] authenticationTag: {}", bytesToHexWithSpaces(authenticationTag));
+         record.getComputations().setAuthenticationTag(authenticationTag);
+         authenticationTag = record.getComputations().getAuthenticationTag().getValue();
+ 
+@@ -208,7 +223,11 @@ public class RecordAEADCipher extends RecordCipher {
+ 
+         record.setProtocolMessageBytes(
+                 ArrayConverter.concatenate(explicitNonce, onlyCiphertext, authenticationTag));
+-        // TODO our own authentication tags are always valid
++        LOGGER.debug(
++                "[DEBUG] setProtocolMessageBytes: {}",
++                bytesToHexWithSpaces(
++                        ArrayConverter.concatenate(
++                                explicitNonce, onlyCiphertext, authenticationTag)));
+         record.getComputations().setAuthenticationTagValid(true);
+     }
+ 
+@@ -219,9 +238,15 @@ public class RecordAEADCipher extends RecordCipher {
+                 .setCipherKey(getState().getKeySet().getReadKey(getConnectionEndType()));
+ 
+         byte[] protocolBytes = record.getProtocolMessageBytes().getValue();
++        LOGGER.debug("[DEBUG] protocolBytes: {}", bytesToHexWithSpaces(protocolBytes));
+         PlaintextParser parser = new PlaintextParser(protocolBytes);
+         try {
+-            byte[] explicitNonce = parser.parseByteArrayField(aeadExplicitLength);
++            byte[] explicitNonce;
++            if (getState().getVersion().isDTLS13()) {
++                explicitNonce = new byte[0];
++            } else {
++                explicitNonce = parser.parseByteArrayField(aeadExplicitLength);
++            }
+             record.getComputations().setExplicitNonce(explicitNonce);
+             explicitNonce = record.getComputations().getExplicitNonce().getValue();
+ 
+@@ -247,7 +272,7 @@ public class RecordAEADCipher extends RecordCipher {
+             byte[] gcmNonce = ArrayConverter.concatenate(salt, explicitNonce);
+ 
+             // Nonce construction is different for chacha & tls1.3
+-            if (getState().getVersion().isTLS13()) {
++            if (getState().getVersion().isTLS13() || getState().getVersion().isDTLS13()) {
+                 gcmNonce =
+                         preprocessIv(record.getSequenceNumber().getValue().longValue(), gcmNonce);
+             } else if (getState().getCipherAlg() == CipherAlgorithm.CHACHA20_POLY1305) {
+@@ -301,6 +326,7 @@ public class RecordAEADCipher extends RecordCipher {
+                 record.getComputations().setPlainRecordBytes(plainRecordBytes);
+                 plainRecordBytes = record.getComputations().getPlainRecordBytes().getValue();
+                 if (getState().getVersion().isTLS13()
++                        || getState().getVersion().isDTLS13()
+                         || (getState().getVersion().isDTLS()
+                                 && record.getContentMessageType()
+                                         == ProtocolMessageType.TLS12_CID)) {
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/RecordCipher.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/RecordCipher.java
+index 82991976c..e04340340 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/RecordCipher.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/RecordCipher.java
+@@ -9,9 +9,7 @@
+ package de.rub.nds.tlsattacker.core.record.cipher;
+ 
+ import de.rub.nds.modifiablevariable.util.ArrayConverter;
+-import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
+-import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+-import de.rub.nds.tlsattacker.core.constants.RecordByteLength;
++import de.rub.nds.tlsattacker.core.constants.*;
+ import de.rub.nds.tlsattacker.core.crypto.cipher.DecryptionCipher;
+ import de.rub.nds.tlsattacker.core.crypto.cipher.EncryptionCipher;
+ import de.rub.nds.tlsattacker.core.exceptions.CryptoException;
+@@ -101,6 +99,33 @@ public abstract class RecordCipher {
+                                     RecordByteLength.RECORD_LENGTH));
+                 }
+                 return stream.toByteArray();
++            } else if (record.getUnifiedHeaderBitmask() != null) {
++                // DTLS 1.3 Unified Header
++                byte unifiedHeaderBitmask = record.getUnifiedHeaderBitmask().getValue();
++                stream.write(unifiedHeaderBitmask);
++                int seqNumLength = ((unifiedHeaderBitmask & 0x08) != 0) ? 2 : 1;
++
++                int decryptedSeqNum = record.getSequenceNumber().getValue().intValue();
++                LOGGER.debug(
++                        "[DEBUG] Using decrypted sequence number for AAD: {}", decryptedSeqNum);
++
++                if (seqNumLength == 2) {
++                    stream.write((decryptedSeqNum >> 8) & 0xFF);
++                    stream.write(decryptedSeqNum & 0xFF);
++                } else {
++                    stream.write(decryptedSeqNum & 0xFF);
++                }
++
++                if ((unifiedHeaderBitmask & 0x04) != 0 && record.getLength() != null) {
++                    int length = record.getLength().getValue();
++                    stream.write((length >> 8) & 0xFF);
++                    stream.write(length & 0xFF);
++                }
++
++                LOGGER.debug(
++                        "[DEBUG] DTLS 1.3 AAD constructed: {}",
++                        ArrayConverter.bytesToHexString(stream.toByteArray()));
++                return stream.toByteArray();
+             } else {
+                 if (protocolVersion.isDTLS()) {
+                     if (ProtocolMessageType.getContentType(record.getContentType().getValue())
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/cryptohelper/KeyDerivator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/cryptohelper/KeyDerivator.java
+index 6b172de03..c183bd0b3 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/cryptohelper/KeyDerivator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/cryptohelper/KeyDerivator.java
+@@ -8,6 +8,8 @@
+  */
+ package de.rub.nds.tlsattacker.core.record.cipher.cryptohelper;
+ 
++import static de.rub.nds.tlsattacker.core.util.LoggerPrintConverter.bytesToHexWithSpaces;
++
+ import de.rub.nds.modifiablevariable.util.ArrayConverter;
+ import de.rub.nds.protocol.constants.MacAlgorithm;
+ import de.rub.nds.tlsattacker.core.constants.AlgorithmResolver;
+@@ -85,7 +87,7 @@ public class KeyDerivator {
+     public static KeySet generateKeySet(
+             TlsContext tlsContext, ProtocolVersion protocolVersion, Tls13KeySetType keySetType)
+             throws NoSuchAlgorithmException, CryptoException {
+-        if (protocolVersion.isTLS13()) {
++        if (protocolVersion.isTLS13() || protocolVersion.isDTLS13()) {
+             return getTls13KeySet(tlsContext, keySetType);
+         } else {
+             return getTlsKeySet(tlsContext);
+@@ -129,7 +131,7 @@ public class KeyDerivator {
+                     throw new CryptoException("Unknown KeySetType:" + keySetType.name());
+             }
+         }
+-        LOGGER.debug("ActiveKeySetType is {}", keySetType);
++        LOGGER.debug("[DEBUG] ActiveKeySetType is {}", keySetType);
+         CipherAlgorithm cipherAlg = cipherSuite.getCipherAlgorithm();
+         KeySet keySet = new KeySet(keySetType);
+         HKDFAlgorithm hkdfAlgorithm = AlgorithmResolver.getHKDFAlgorithm(cipherSuite);
+@@ -140,7 +142,8 @@ public class KeyDerivator {
+                         HKDFunction.KEY,
+                         new byte[] {},
+                         cipherAlg.getKeySize()));
+-        LOGGER.debug("Client write key: {}", keySet.getClientWriteKey());
++        LOGGER.debug(
++                "[DEBUG] Client write key: {}", bytesToHexWithSpaces(keySet.getClientWriteKey()));
+         keySet.setServerWriteKey(
+                 HKDFunction.expandLabel(
+                         hkdfAlgorithm,
+@@ -148,7 +151,8 @@ public class KeyDerivator {
+                         HKDFunction.KEY,
+                         new byte[] {},
+                         cipherAlg.getKeySize()));
+-        LOGGER.debug("Server write key: {}", keySet.getServerWriteKey());
++        LOGGER.debug(
++                "[DEBUG] Server write key: {}", bytesToHexWithSpaces(keySet.getServerWriteKey()));
+         keySet.setClientWriteIv(
+                 HKDFunction.expandLabel(
+                         hkdfAlgorithm,
+@@ -156,7 +160,8 @@ public class KeyDerivator {
+                         HKDFunction.IV,
+                         new byte[] {},
+                         AEAD_IV_LENGTH));
+-        LOGGER.debug("Client write IV: {}", keySet.getClientWriteIv());
++        LOGGER.debug(
++                "[DEBUG] Client write IV: {}", bytesToHexWithSpaces(keySet.getClientWriteIv()));
+         keySet.setServerWriteIv(
+                 HKDFunction.expandLabel(
+                         hkdfAlgorithm,
+@@ -164,9 +169,32 @@ public class KeyDerivator {
+                         HKDFunction.IV,
+                         new byte[] {},
+                         AEAD_IV_LENGTH));
+-        LOGGER.debug("Server write IV: {}", keySet.getServerWriteIv());
++        LOGGER.debug(
++                "[DEBUG] Server write IV: {}", bytesToHexWithSpaces(keySet.getServerWriteIv()));
+         keySet.setServerWriteMacSecret(new byte[0]);
+         keySet.setClientWriteMacSecret(new byte[0]);
++
++        if (tlsContext.getChooser().getSelectedProtocolVersion().isDTLS13()) {
++            try {
++                byte[] clientSnKey =
++                        HKDFunction.expandLabel(hkdfAlgorithm, clientSecret, "sn", new byte[0], 16);
++                keySet.setClientWriteSnKey(clientSnKey);
++                LOGGER.debug("[DEBUG] Set clientWriteSnKey with length: {}", clientSnKey.length);
++                LOGGER.debug(
++                        "[DEBUG] Set clientWriteSnKey : {}", bytesToHexWithSpaces(clientSnKey));
++
++                byte[] serverSnKey =
++                        HKDFunction.expandLabel(hkdfAlgorithm, serverSecret, "sn", new byte[0], 16);
++                keySet.setServerWriteSnKey(serverSnKey);
++                LOGGER.debug("[DEBUG] Set serverWriteSnKey with length: {}", serverSnKey.length);
++                LOGGER.debug(
++                        "[DEBUG] Set serverWriteSnKey : {}", bytesToHexWithSpaces(serverSnKey));
++
++            } catch (Exception ex) {
++                LOGGER.error("Failed to derive sequence number keys", ex);
++            }
++        }
++
+         return keySet;
+     }
+ 
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/cryptohelper/KeySet.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/cryptohelper/KeySet.java
+index 27bca938b..257618797 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/cryptohelper/KeySet.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/cipher/cryptohelper/KeySet.java
+@@ -24,6 +24,41 @@ public class KeySet {
+     private byte[] clientWriteIv;
+     private byte[] serverWriteIv;
+ 
++    private byte[] clientWriteSnKey;
++    private byte[] serverWriteSnKey;
++
++    public byte[] getClientWriteSnKey() {
++        return clientWriteSnKey;
++    }
++
++    public void setClientWriteSnKey(byte[] clientWriteSnKey) {
++        this.clientWriteSnKey = clientWriteSnKey;
++    }
++
++    public byte[] getServerWriteSnKey() {
++        return serverWriteSnKey;
++    }
++
++    public void setServerWriteSnKey(byte[] serverWriteSnKey) {
++        this.serverWriteSnKey = serverWriteSnKey;
++    }
++
++    public byte[] getWriteSnKey(ConnectionEndType connectionEndType) {
++        if (connectionEndType == ConnectionEndType.CLIENT) {
++            return clientWriteSnKey;
++        } else {
++            return serverWriteSnKey;
++        }
++    }
++
++    public byte[] getReadSnKey(ConnectionEndType connectionEndType) {
++        if (connectionEndType == ConnectionEndType.SERVER) {
++            return clientWriteSnKey;
++        } else {
++            return serverWriteSnKey;
++        }
++    }
++
+     private Tls13KeySetType keySetType = Tls13KeySetType.NONE;
+ 
+     public KeySet() {}
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java
+index 6d53c7f32..b6160654e 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordDecryptor.java
+@@ -8,7 +8,11 @@
   */
  package de.rub.nds.tlsattacker.core.record.crypto;
  
++import static de.rub.nds.tlsattacker.core.util.LoggerPrintConverter.bytesToHexWithSpaces;
++
 +import de.rub.nds.protocol.exception.EndOfStreamException;
  import de.rub.nds.protocol.exception.ParserException;
++import de.rub.nds.tlsattacker.core.constants.CipherSuite;
  import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
  import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
-@@ -55,7 +56,7 @@
-                     || record.getContentMessageType() != ProtocolMessageType.CHANGE_CIPHER_SPEC) {
-                 try {
-                     recordCipher.decrypt(record);
+ import de.rub.nds.tlsattacker.core.exceptions.CryptoException;
+@@ -16,7 +20,12 @@ import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
+ import de.rub.nds.tlsattacker.core.record.Record;
+ import de.rub.nds.tlsattacker.core.record.cipher.RecordCipher;
+ import de.rub.nds.tlsattacker.core.record.cipher.RecordNullCipher;
++import de.rub.nds.tlsattacker.core.record.cipher.cryptohelper.KeySet;
++import de.rub.nds.tlsattacker.transport.ConnectionEndType;
+ import java.math.BigInteger;
++import java.util.Arrays;
++import javax.crypto.Cipher;
++import javax.crypto.spec.SecretKeySpec;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -43,34 +52,123 @@ public class RecordDecryptor extends Decryptor {
+             recordCipher = getRecordMostRecentCipher();
+         }
+         record.prepareComputations();
+-        ProtocolVersion version =
+-                ProtocolVersion.getProtocolVersion(record.getProtocolVersion().getValue());
+-        if (version == null || !version.isDTLS()) {
++        if (tlsContext.getChooser().getHighestProtocolVersion().isDTLS13()
++                && record.getUnifiedHeaderBitmask() != null) {
++            try {
++                decryptSequenceNumber(record, record.getProtocolMessageBytes().getValue());
++                recordCipher.decrypt(record);
++                recordCipher.getState().increaseReadSequenceNumber();
++            } catch (CryptoException ex) {
++                throw new ParserException(ex);
++            }
++        } else {
++            ProtocolVersion version =
++                    ProtocolVersion.getProtocolVersion(record.getProtocolVersion().getValue());
++            if (version == null || !version.isDTLS()) {
++                record.setSequenceNumber(
++                        BigInteger.valueOf(recordCipher.getState().getReadSequenceNumber()));
++            }
++
++            try {
++                if (!tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()
++                        || record.getContentMessageType()
++                                != ProtocolMessageType.CHANGE_CIPHER_SPEC) {
++                    try {
++                        recordCipher.decrypt(record);
++                    } catch (ParserException | CryptoException | EndOfStreamException ex) {
++                        if (recordCipherList.indexOf(recordCipher) > 0) {
++                            LOGGER.warn(
++                                    "Failed to decrypt record, will try to process with previous cipher");
++                            recordCipherList
++                                    .get(recordCipherList.indexOf(recordCipher) - 1)
++                                    .decrypt(record);
++                        }
++                    }
++                    recordCipher.getState().increaseReadSequenceNumber();
++                } else {
++                    LOGGER.debug("Skipping decryption for legacy CCS");
++                    new RecordNullCipher(tlsContext, recordCipher.getState()).decrypt(record);
++                }
++            } catch (CryptoException ex) {
++                throw new ParserException(ex);
++            }
++        }
++    }
++
++    private void decryptSequenceNumber(Record record, byte[] ciphertext) throws CryptoException {
++        if (ciphertext.length < 16) {
++            throw new CryptoException("Ciphertext too short for sequence number decryption");
++        }
++
++        RecordCipher recordCipher = getRecordCipher(record.getEpoch().getValue());
++        CipherSuite cipherSuite = recordCipher.getState().getCipherSuite();
++        LOGGER.debug(
++                "[DEBUG] Decrypting sequence number for record with epoch: {}",
++                record.getEpoch().getValue());
++        LOGGER.debug("[DEBUG] Using cipher suite: {}", cipherSuite.name());
++
++        byte[] mask;
++        KeySet keySet = recordCipher.getState().getKeySet();
++        ConnectionEndType localEndType = tlsContext.getConnection().getLocalConnectionEndType();
++        LOGGER.debug("[DEBUG] Local connection end type: {}", localEndType);
++
++        byte[] snKey = keySet.getReadSnKey(localEndType);
++        if (snKey == null) {
++            LOGGER.warn("[DEBUG] snKey is null! Sequence number key not set.");
++            return;
++        }
++
++        LOGGER.debug("[DEBUG] snKey length: {}", snKey.length);
++        LOGGER.debug("[DEBUG] snKey : {}", bytesToHexWithSpaces(snKey));
++
++        if (cipherSuite.isAEAD()) {
++            if (cipherSuite.getCipherAlgorithm().name().contains("CHACHA")) {
++                byte[] counter = Arrays.copyOfRange(ciphertext, 0, 4);
++                byte[] nonce = Arrays.copyOfRange(ciphertext, 4, 16);
++                mask = generateChaCha20Mask(snKey, counter, nonce);
++            } else {
++                try {
++                    mask = generateAESMask(snKey, Arrays.copyOfRange(ciphertext, 0, 16));
++                } catch (Exception e) {
++                    LOGGER.error("[DEBUG] Failed to generate AES mask: ", e);
++                    return;
++                }
++            }
++            LOGGER.debug("[DEBUG] mask: {}", bytesToHexWithSpaces(mask));
++
++            int encryptedSeqNum = record.getSequenceNumberSuffix().getValue();
++            LOGGER.debug("[DEBUG] encryptedSeqNum: {}", encryptedSeqNum);
++            int decryptedSeqNum = encryptedSeqNum ^ (((mask[0] & 0xFF) << 8) | (mask[1] & 0xFF));
++            LOGGER.debug("[DEBUG] decryptedSeqNum: {}", decryptedSeqNum);
++            record.setSequenceNumberSuffix(decryptedSeqNum);
+             record.setSequenceNumber(
+                     BigInteger.valueOf(recordCipher.getState().getReadSequenceNumber()));
++            if (decryptedSeqNum != recordCipher.getState().getReadSequenceNumber()) {
++                LOGGER.warn("[DEBUG] Decrypted sequence number mismatch");
++            }
+         }
++    }
+ 
++    private byte[] generateAESMask(byte[] key, byte[] data) throws CryptoException {
+         try {
+-            if (!tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()
+-                    || record.getContentMessageType() != ProtocolMessageType.CHANGE_CIPHER_SPEC) {
+-                try {
+-                    recordCipher.decrypt(record);
 -                } catch (ParserException | CryptoException ex) {
-+                } catch (ParserException | CryptoException | EndOfStreamException ex) {
-                     if (recordCipherList.indexOf(recordCipher) > 0) {
-                         LOGGER.warn(
-                                 "Failed to decrypt record, will try to process with previous cipher");
+-                    if (recordCipherList.indexOf(recordCipher) > 0) {
+-                        LOGGER.warn(
+-                                "Failed to decrypt record, will try to process with previous cipher");
+-                        recordCipherList
+-                                .get(recordCipherList.indexOf(recordCipher) - 1)
+-                                .decrypt(record);
+-                    }
+-                }
+-                recordCipher.getState().increaseReadSequenceNumber();
+-            } else {
+-                LOGGER.debug("Skipping decryption for legacy CCS");
+-                new RecordNullCipher(tlsContext, recordCipher.getState()).decrypt(record);
++            LOGGER.debug("[DEBUG] Generating AES mask with key length: {}", key.length);
++            LOGGER.debug("[DEBUG] Data length: {}", data.length);
++            if (key.length != 16 && key.length != 24 && key.length != 32) {
++                LOGGER.warn("Invalid AES key length: {}", key.length);
++                byte[] adjustedKey = new byte[16];
++                System.arraycopy(key, 0, adjustedKey, 0, Math.min(key.length, 16));
++                key = adjustedKey;
+             }
+-        } catch (CryptoException ex) {
+-            throw new ParserException(ex);
++            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
++            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
++            return cipher.doFinal(data);
++        } catch (Exception e) {
++            throw new CryptoException("Failed to generate AES mask", e);
+         }
+     }
++
++    private byte[] generateChaCha20Mask(byte[] key, byte[] counter, byte[] nonce)
++            throws CryptoException {
++        throw new UnsupportedOperationException("ChaCha20 mask generation not implemented yet");
++    }
+ }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordEncryptor.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordEncryptor.java
+index 116b6c0bb..f1ff35bdf 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordEncryptor.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/crypto/RecordEncryptor.java
+@@ -8,13 +8,21 @@
+  */
+ package de.rub.nds.tlsattacker.core.record.crypto;
+ 
++import static de.rub.nds.tlsattacker.core.util.LoggerPrintConverter.bytesToHexWithSpaces;
++
++import de.rub.nds.tlsattacker.core.constants.CipherSuite;
+ import de.rub.nds.tlsattacker.core.exceptions.CryptoException;
+ import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
+ import de.rub.nds.tlsattacker.core.record.Record;
+ import de.rub.nds.tlsattacker.core.record.cipher.RecordCipher;
+ import de.rub.nds.tlsattacker.core.record.cipher.RecordCipherFactory;
+ import de.rub.nds.tlsattacker.core.record.cipher.RecordNullCipher;
++import de.rub.nds.tlsattacker.core.record.cipher.cryptohelper.KeySet;
++import de.rub.nds.tlsattacker.transport.ConnectionEndType;
+ import java.math.BigInteger;
++import java.util.Arrays;
++import javax.crypto.Cipher;
++import javax.crypto.spec.SecretKeySpec;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -45,6 +53,10 @@ public class RecordEncryptor extends Encryptor {
+             record.setSequenceNumber(
+                     BigInteger.valueOf(recordCipher.getState().getWriteSequenceNumber()));
+             recordCipher.encrypt(record);
++            if (record.getUnifiedHeaderBitmask() != null) {
++                // DTLS 1.3 with Unified Header
++                encryptSequenceNumber(record);
++            }
+         } catch (CryptoException ex) {
+             LOGGER.warn("Could not encrypt BlobRecord. Using NullCipher", ex);
+             try {
+@@ -58,4 +70,73 @@ public class RecordEncryptor extends Encryptor {
+             record.getComputations().setUsedTls13KeySetType(tlsContext.getActiveKeySetTypeWrite());
+         }
+     }
++
++    private void encryptSequenceNumber(Record record) throws CryptoException {
++        byte[] ciphertext = record.getProtocolMessageBytes().getValue();
++        if (ciphertext.length < 16) {
++            LOGGER.warn(
++                    "Ciphertext too short for sequence number encryption (less than 16 bytes). Skipping.");
++            return;
++        }
++
++        LOGGER.debug(
++                "[DEBUG] Encrypting sequence number for record with epoch: {}",
++                record.getEpoch().getValue());
++
++        RecordCipher recordCipher = getRecordCipher(record.getEpoch().getValue());
++        CipherSuite cipherSuite = recordCipher.getState().getCipherSuite();
++        LOGGER.debug("[DEBUG] Using cipher suite: {}", cipherSuite.name());
++
++        KeySet keySet = recordCipher.getState().getKeySet();
++        ConnectionEndType localEndType = tlsContext.getConnection().getLocalConnectionEndType();
++        byte[] snKey = keySet.getWriteSnKey(localEndType);
++
++        if (snKey == null) {
++            LOGGER.warn("[DEBUG] snKey is null! Sequence number will not be encrypted.");
++            return;
++        }
++
++        LOGGER.debug("[DEBUG] snKey length: {}", snKey.length);
++        LOGGER.debug("[DEBUG] snKey: {}", bytesToHexWithSpaces(snKey));
++
++        byte[] firstBlock = Arrays.copyOfRange(ciphertext, 0, 16);
++        LOGGER.debug("[DEBUG] First 16 bytes of ciphertext: {}", bytesToHexWithSpaces(firstBlock));
++
++        byte[] mask;
++        try {
++            mask = generateAESMask(snKey, firstBlock);
++            LOGGER.debug("[DEBUG] Generated mask: {}", bytesToHexWithSpaces(mask));
++
++            BigInteger plainSeqNum = record.getSequenceNumber().getValue();
++            LOGGER.debug("[DEBUG] Plain sequence number: {}", plainSeqNum);
++
++            BigInteger maskValue = BigInteger.valueOf(((mask[0] & 0xFF) << 8) | (mask[1] & 0xFF));
++            int encryptedSeqNum = plainSeqNum.xor(maskValue).intValue();
++            LOGGER.debug("[DEBUG] Encrypted sequence number: {}", encryptedSeqNum);
++
++            record.setSequenceNumberSuffix(encryptedSeqNum);
++        } catch (Exception e) {
++            LOGGER.error("[DEBUG] Failed to encrypt sequence number: ", e);
++        }
++    }
++
++    private byte[] generateAESMask(byte[] key, byte[] data) throws CryptoException {
++        try {
++            LOGGER.debug("[DEBUG] Generating AES mask with key length: {}", key.length);
++            LOGGER.debug("[DEBUG] Data length: {}", data.length);
++
++            if (key.length != 16 && key.length != 24 && key.length != 32) {
++                LOGGER.warn("Invalid AES key length: {}", key.length);
++                byte[] adjustedKey = new byte[16];
++                System.arraycopy(key, 0, adjustedKey, 0, Math.min(key.length, 16));
++                key = adjustedKey;
++            }
++
++            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
++            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
++            return cipher.doFinal(data);
++        } catch (Exception e) {
++            throw new CryptoException("Failed to generate AES mask", e);
++        }
++    }
+ }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/parser/RecordParser.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/parser/RecordParser.java
+index 5529876ba..1bbf098fc 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/parser/RecordParser.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/parser/RecordParser.java
+@@ -15,6 +15,7 @@ import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
+ import de.rub.nds.tlsattacker.core.layer.data.Parser;
+ import de.rub.nds.tlsattacker.core.record.Record;
+ import java.io.InputStream;
++import java.math.BigInteger;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -34,26 +35,72 @@ public class RecordParser extends Parser<Record> {
+     @Override
+     public void parse(Record record) {
+         LOGGER.debug("Parsing Record");
+-        parseContentType(record);
+-        ProtocolMessageType protocolMessageType =
+-                ProtocolMessageType.getContentType(record.getContentType().getValue());
+-        if (protocolMessageType == null) {
+-            protocolMessageType = ProtocolMessageType.UNKNOWN;
+-        }
+-        record.setContentMessageType(protocolMessageType);
+-        parseVersion(record);
+-        if (version.isDTLS()) {
+-            parseEpoch(record);
+-            parseSequenceNumber(record);
+-            if (protocolMessageType == ProtocolMessageType.TLS12_CID) {
+-                parseConnectionId(record);
++        byte firstByte = parseByteField(1);
++        if ((firstByte & 0xE0) == 0x20) {
++            // DTLS 1.3 unified header
++            LOGGER.debug("Parsing DTLS 1.3 Record with Unified Header");
++            record.setUnifiedHeaderBitmask(firstByte);
++            parseUnifiedHeader(record, firstByte);
++        } else {
++            record.setContentType(firstByte);
++            LOGGER.debug("ContentType: {}", record.getContentType().getValue());
++            ProtocolMessageType protocolMessageType =
++                    ProtocolMessageType.getContentType(record.getContentType().getValue());
++            if (protocolMessageType == null) {
++                protocolMessageType = ProtocolMessageType.UNKNOWN;
++            }
++            record.setContentMessageType(protocolMessageType);
++            parseVersion(record);
++            if (version.isDTLS()) {
++                parseEpoch(record);
++                parseSequenceNumber(record);
++                if (protocolMessageType == ProtocolMessageType.TLS12_CID) {
++                    parseConnectionId(record);
++                }
+             }
++            parseLength(record);
++            parseProtocolMessageBytes(record);
+         }
+-        parseLength(record);
+-        parseProtocolMessageBytes(record);
+         record.setCompleteRecordBytes(getAlreadyParsed());
+     }
+ 
++    private void parseUnifiedHeader(Record record, byte bitmask) {
++        // Connection ID
++        if ((bitmask & 0x10) != 0) {
++            LOGGER.error("Don't support Connection ID yet.");
++        }
++
++        // sequence number
++        int seqNumLength = ((bitmask & 0x08) != 0) ? 2 : 1;
++        int seqNumValue = parseIntField(seqNumLength);
++        record.setSequenceNumberSuffix(seqNumValue);
++
++        // TODO: seqNumLength is only 2 bytes, but the real sequence number is 6 bytes
++        record.setSequenceNumber(BigInteger.valueOf(seqNumValue));
++        LOGGER.debug("SequenceNumber: {}", record.getSequenceNumber().getValue());
++
++        // epoch
++        int epochValue = bitmask & 0x03;
++        record.setEpoch(epochValue);
++        LOGGER.debug("Epoch: {}", record.getEpoch().getValue());
++
++        // length
++        if ((bitmask & 0x04) != 0) {
++            record.setLength(parseIntField(2));
++            LOGGER.debug("Length: {}", record.getLength().getValue());
++        } else {
++            record.setLength(getBytesLeft());
++        }
++
++        parseProtocolMessageBytes(record);
++
++        // We don't know type yet, we need to decrypt first, so just placeholder
++        record.setContentType((byte) 22);
++        record.setContentMessageType(ProtocolMessageType.HANDSHAKE);
++
++        record.setProtocolVersion(ProtocolVersion.DTLS12.getValue());
++    }
++
+     private void parseEpoch(Record record) {
+         record.setEpoch(parseIntField(RecordByteLength.DTLS_EPOCH));
+         LOGGER.debug("Epoch: {}", record.getEpoch().getValue());
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/preparator/RecordPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/preparator/RecordPreparator.java
+index 3e4bf63d4..1831a3cd4 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/preparator/RecordPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/preparator/RecordPreparator.java
+@@ -51,12 +51,35 @@ public class RecordPreparator extends Preparator<Record> {
+         LOGGER.debug("Preparing Record");
+         prepareConnectionId(record);
+         record.prepareComputations();
++
++        if (chooser.getHighestProtocolVersion().isDTLS13() && record.getEpoch().getValue() > 0) {
++            // prepare DTLS 1.3 Unified Header
++            prepareForDtls13();
++        }
+         prepareContentType(record);
+         prepareProtocolVersion(record);
+         compressor.compress(record);
+         encrypt();
+     }
+ 
++    private void prepareForDtls13() {
++        byte bitmask = 0x20; // 001x xxxx
++
++        if (record.getConnectionId() != null
++                && record.getConnectionId().getValue() != null
++                && record.getConnectionId().getValue().length > 0) {
++            bitmask |= 0x10;
++        }
++        bitmask |= 0x08; // S: 16 bits sequence
++        bitmask |= 0x04; // L: length field present
++
++        // epoch
++        bitmask |= (record.getEpoch().getValue() & 0x03);
++
++        record.setUnifiedHeaderBitmask(bitmask);
++        LOGGER.debug("[DEBUG] setUnifiedHeaderBitmask: {}", String.format("0x%02X", bitmask));
++    }
++
+     public void encrypt() {
+         LOGGER.debug("Encrypting Record");
+         if (chooser.getSelectedProtocolVersion().isTLS13()
+@@ -98,6 +121,8 @@ public class RecordPreparator extends Preparator<Record> {
+         if (chooser.getSelectedProtocolVersion().isTLS13()
+                 || tlsContext.getActiveKeySetTypeWrite() == Tls13KeySetType.EARLY_TRAFFIC_SECRETS) {
+             record.setProtocolVersion(ProtocolVersion.TLS12.getValue());
++        } else if (chooser.getSelectedProtocolVersion().isDTLS13()) {
++            record.setProtocolVersion(ProtocolVersion.DTLS12.getValue());
+         } else {
+             record.setProtocolVersion(chooser.getSelectedProtocolVersion().getValue());
+         }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/serializer/RecordSerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/serializer/RecordSerializer.java
+index cb9bdbf3c..0f4a16324 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/serializer/RecordSerializer.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/record/serializer/RecordSerializer.java
+@@ -27,18 +27,45 @@ public class RecordSerializer extends Serializer<Record> {
+     @Override
+     protected byte[] serializeBytes() {
+         LOGGER.debug("Serializing Record");
+-        writeContentType(record);
+-        writeProtocolVersion(record);
+-        if (record.getEpoch() != null) {
+-            writeEpoch(record);
+-            writeSequenceNumber(record);
++        if (record.getUnifiedHeaderBitmask() != null) {
++            // this record is version DTLS 1.3
++            writeUnifiedHeader();
++            writeProtocolMessageBytes(record);
++        } else {
++            writeContentType(record);
++            writeProtocolVersion(record);
++            if (record.getEpoch() != null) {
++                writeEpoch(record);
++                writeSequenceNumber(record);
++            }
++            if (record.getConnectionId() != null) {
++                writeConnectionId(record);
++            }
++            writeLength(record);
++            writeProtocolMessageBytes(record);
+         }
+-        if (record.getConnectionId() != null) {
++
++        return getAlreadySerialized();
++    }
++
++    private void writeUnifiedHeader() {
++        byte bitmask = record.getUnifiedHeaderBitmask().getValue();
++        appendByte(bitmask);
++        LOGGER.debug("[DEBUG] write Unified Header Bitmask: {}", bitmask);
++
++        if ((bitmask & 0x10) != 0 && record.getConnectionId() != null) {
+             writeConnectionId(record);
+         }
+-        writeLength(record);
+-        writeProtocolMessageBytes(record);
+-        return getAlreadySerialized();
++
++        int seqNumLength = ((bitmask & 0x08) != 0) ? 2 : 1;
++        appendInt(record.getSequenceNumberSuffix().getValue(), seqNumLength);
++        LOGGER.debug(
++                "[DEBUG] write Sequence Number Suffix: {}",
++                record.getSequenceNumberSuffix().getValue());
++
++        if ((bitmask & 0x04) != 0) {
++            writeLength(record);
++        }
+     }
+ 
+     private void writeContentType(Record record) {
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java
+index 6a06c3c89..88b72c99b 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/state/Context.java
+@@ -11,6 +11,7 @@ package de.rub.nds.tlsattacker.core.state;
+ import de.rub.nds.tlsattacker.core.config.Config;
+ import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
+ import de.rub.nds.tlsattacker.core.constants.ChooserType;
++import de.rub.nds.tlsattacker.core.crypto.HKDFunction;
+ import de.rub.nds.tlsattacker.core.layer.LayerStack;
+ import de.rub.nds.tlsattacker.core.layer.LayerStackFactory;
+ import de.rub.nds.tlsattacker.core.layer.constant.StackConfiguration;
+@@ -64,6 +65,7 @@ public class Context {
+         this.config = state.getConfig();
+         this.chooser = ChooserFactory.getChooser(ChooserType.DEFAULT, this, config);
+         this.connection = connection;
++        HKDFunction.context = this;
+         prepareWithLayers(config.getDefaultLayerConfiguration());
+     }
+ 
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/util/LoggerPrintConverter.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/util/LoggerPrintConverter.java
+new file mode 100644
+index 000000000..c5f338e1b
+--- /dev/null
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/util/LoggerPrintConverter.java
+@@ -0,0 +1,22 @@
++/*
++ * TLS-Attacker - A Modular Penetration Testing Framework for TLS
++ *
++ * Copyright 2014-2023 Ruhr University Bochum, Paderborn University, Technology Innovation Institute, and Hackmanit GmbH
++ *
++ * Licensed under Apache License, Version 2.0
++ * http://www.apache.org/licenses/LICENSE-2.0.txt
++ */
++package de.rub.nds.tlsattacker.core.util;
++
++public class LoggerPrintConverter {
++    public static String bytesToHexWithSpaces(byte[] bytes) {
++        StringBuilder sb = new StringBuilder();
++        for (int i = 0; i < bytes.length; i++) {
++            sb.append(String.format("%02X", bytes[i] & 0xFF));
++            if (i < bytes.length - 1) {
++                sb.append(" ");
++            }
++        }
++        return sb.toString();
++    }
++}
+diff --git a/pom.xml b/pom.xml
+index a46876708..8e5e5f3c9 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -5,6 +5,7 @@
+         <groupId>de.rub.nds</groupId>
+         <artifactId>protocol-toolkit-bom</artifactId>
+         <version>4.3.0</version>
++        <relativePath>protocol-toolkit-bom</relativePath>
+     </parent>
+ 
+     <groupId>de.rub.nds.tls.attacker</groupId>
