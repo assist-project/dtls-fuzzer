@@ -12,11 +12,6 @@
                 <RegexFilter regex=".*Could not parse ticketAge.*"
                              onMatch="DENY"
                              onMismatch="NEUTRAL"/>
-                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
-
-                <RegexFilter regex=".*DEBUG.*"
-                             onMatch="ACCEPT"
-                             onMismatch="DENY"/>
             </Filters>
             <PatternLayout pattern="%highlight{%d{HH:mm:ss} [%t] %-5level : %logger{3}} - %msg%n%throwable"/>
         </Console>
