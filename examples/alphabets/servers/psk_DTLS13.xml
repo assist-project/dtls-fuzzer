@@ -1,6 +1,6 @@
 <!-- DTLS alphabet comprising the messages necessary to perform PSK handshakes. -->
 <alphabet>
-    <ClientHelloInput suite="TLS_AES_128_GCM_SHA256" name="PSK_CLIENT_HELLO"/>
+    <ClientHelloInput suite="TLS_AES_128_GCM_SHA256" resetDigest="false" name="PSK_CLIENT_HELLO"/>
     <FinishedInput name="FINISHED"/>
     <GenericTlsInput name="APPLICATION">
         <Application>
