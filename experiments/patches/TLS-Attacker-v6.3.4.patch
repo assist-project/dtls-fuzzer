@@ -271,14 +271,18 @@ index 7a74620ce..b6c9112f9 100644
                  return new LayerStack(
                          context,
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
-index 135a9e80f..e39722f31 100644
+index 135a9e80f..0f61a5987 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
-@@ -80,6 +80,8 @@ import java.util.Set;
+@@ -80,6 +80,12 @@ import java.util.Set;
  @XmlAccessorType(XmlAccessType.FIELD)
  public class TlsContext extends LayerContext {
  
-+    public boolean shouldSendFinished = false;
++    /**
++     * If we send Finished at wrong time, we don't want to adjust context. With this flag, we can
++     * skip adjust context when shouldn't.
++     */
++    public boolean dtls13ShouldSendFinished = false;
 +
      private List<Session> sessionList;
  
@@ -419,7 +423,7 @@ index 952ee12fb..2c52ad691 100644
              throw new RuntimeException("TransportHandler is not set in context!");
          }
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java
-index 182fb42e9..d35775800 100644
+index 182fb42e9..ebd48dbf2 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java
 @@ -8,6 +8,7 @@
@@ -438,7 +442,7 @@ index 182fb42e9..d35775800 100644
 +        // TODO we should also consider sending early Finished as a server
 +        if (handshakeMessage.getHandshakeMessageType() == HandshakeMessageType.FINISHED
 +                && goingToBeSent
-+                && !tlsContext.shouldSendFinished) {
++                && !tlsContext.dtls13ShouldSendFinished) {
 +            // invalid Finished, we should not add it into digest
 +            return;
 +        }
@@ -448,7 +452,7 @@ index 182fb42e9..d35775800 100644
 +                                == HandshakeMessageType.CERTIFICATE_VERIFY)
 +                && tlsContext.getConfig().getHighestProtocolVersion().isDTLS13()
 +                && goingToBeSent
-+                && !tlsContext.shouldSendFinished) {
++                && !tlsContext.dtls13ShouldSendFinished) {
 +            // invalid Certificate, we should send Certificate/CertificateVerify only after we
 +            // receive server's Finished
 +            return;
@@ -479,7 +483,7 @@ index 000fbe70f..8ac410db7 100644
                  }
                  break;
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
-index 06907c1e6..12ba1b3b7 100644
+index 06907c1e6..6c5246a23 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
 @@ -42,12 +42,15 @@ public class FinishedHandler extends HandshakeMessageHandler<FinishedMessage> {
@@ -495,7 +499,7 @@ index 06907c1e6..12ba1b3b7 100644
                      adjustApplicationTrafficSecrets();
                      setServerRecordCipher(Tls13KeySetType.APPLICATION_TRAFFIC_SECRETS);
 +                    // Received server's Finished, so now I should send Finished
-+                    tlsContext.shouldSendFinished = true;
++                    tlsContext.dtls13ShouldSendFinished = true;
                      if (tlsContext.getConfig().getDefaultLayerConfiguration()
                              == StackConfiguration.QUIC) {
                          try {
@@ -2438,15 +2442,3 @@ index 000000000..c5f338e1b
 +        return sb.toString();
 +    }
 +}
-diff --git a/pom.xml b/pom.xml
-index a46876708..8e5e5f3c9 100644
---- a/pom.xml
-+++ b/pom.xml
-@@ -5,6 +5,7 @@
-         <groupId>de.rub.nds</groupId>
-         <artifactId>protocol-toolkit-bom</artifactId>
-         <version>4.3.0</version>
-+        <relativePath>protocol-toolkit-bom</relativePath>
-     </parent>
- 
-     <groupId>de.rub.nds.tls.attacker</groupId>
