@@ -4,6 +4,16 @@
     "path": [ "PSK_CLIENT_HELLO", "PSK_CLIENT_HELLO", "FINISHED" ],
     "anyOutput": ".*FINISHED.*"
   },
+  {
+    "color": "deepskyblue",
+    "path": [ "PSK_SERVER_HELLO", "ENCRYPTED_EXTENSIONS", "FINISHED" ],
+    "anyOutput": ".*FINISHED.*"
+  },
+  {
+    "color": "red",
+    "path": [ "HELLO_RETRY_REQUEST", "PSK_SERVER_HELLO", "ENCRYPTED_EXTENSIONS", "FINISHED" ],
+    "anyOutput": ".*FINISHED.*"
+  },
     {
     "color": "deepskyblue",
     "path": [ "DHE_CLIENT_HELLO", "DHE_CLIENT_HELLO", "CERTIFICATE", "CERTIFICATE_VERIFY", "FINISHED" ],
