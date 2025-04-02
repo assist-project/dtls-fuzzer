@@ -377,7 +377,7 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_client_ecdhe_cert -Dscandium.version=2.0.0-M16 -roundLimit 2
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/scandium-2.0.0-M16_client_ecdhe_cert output/scandium-2.0.0-M16_client_ecdhe_cert 2
 
-  WolfSSL-4-7-1r_DTLS-1.2_Server_psk:
+  WolfSSL-4-7-1r_DTLS-1-2_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
@@ -403,7 +403,7 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -roundLimit 5
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-4.7.1r_server_psk output/wolfssl-4.7.1r_server_psk 5
 
-  WolfSSL-4-7-1r_DTLS-1.2_Client_psk:
+  WolfSSL-4-7-1r_DTLS-1-2_Client_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
@@ -429,7 +429,7 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -roundLimit 6
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-4.7.1r_client_psk output/wolfssl-4.7.1r_client_psk 6
 
-  WolfSSL-5-7-6_DTLS-1.2_Server_psk:
+  WolfSSL-5-7-6_DTLS-1-2_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
@@ -455,7 +455,7 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=5.7.6 -roundLimit 4
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_psk output/wolfssl-5.7.6_server_psk 4
 
-  WolfSSL-5-7-6_DTLS-1.2_Client_psk:
+  WolfSSL-5-7-6_DTLS-1-2_Client_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
@@ -481,7 +481,7 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=5.7.6 -roundLimit 6
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-5.7.6_client_psk output/wolfssl-5.7.6_client_psk 6
 
-  WolfSSL-5-7-6_DTLS-1.3_Server_psk:
+  WolfSSL-5-7-6_DTLS-1-3_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
@@ -507,7 +507,7 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 3
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_psk_DTLS13 output/wolfssl-5.7.6_server_psk_DTLS13 3
 
-  WolfSSL-5-7-6_DTLS-1.3_Server_dhe_cert_nreq:
+  WolfSSL-5-7-6_DTLS-1-3_Server_dhe_cert_nreq:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
@@ -533,7 +533,7 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_dhe_cert_nreq_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 3
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_dhe_cert_nreq_DTLS13 output/wolfssl-5.7.6_server_dhe_cert_nreq_DTLS13 3
 
-  WolfSSL-5-7-6_DTLS-1.3_Server_dhe_cert_req:
+  WolfSSL-5-7-6_DTLS-1-3_Server_dhe_cert_req:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-latest
     strategy:
