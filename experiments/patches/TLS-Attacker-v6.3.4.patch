@@ -271,7 +271,7 @@ index 7a74620ce..b6c9112f9 100644
                  return new LayerStack(
                          context,
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
-index 135a9e80f..0f61a5987 100644
+index 135a9e80f..1b76c0e35 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 @@ -80,6 +80,12 @@ import java.util.Set;
@@ -282,11 +282,24 @@ index 135a9e80f..0f61a5987 100644
 +     * If we send Finished at wrong time, we don't want to adjust context. With this flag, we can
 +     * skip adjust context when shouldn't.
 +     */
-+    public boolean dtls13ShouldSendFinished = false;
++    private boolean dtls13ShouldSendFinished = false;
 +
      private List<Session> sessionList;
  
      private Keylogfile keylogfile;
+@@ -2278,4 +2284,12 @@ public class TlsContext extends LayerContext {
+     public void setPeerReceiveLimit(Integer peerReceiveLimit) {
+         this.peerReceiveLimit = peerReceiveLimit;
+     }
++
++    public boolean isDtls13ShouldSendFinished() {
++        return dtls13ShouldSendFinished;
++    }
++
++    public void setDtls13ShouldSendFinished(boolean dtls13ShouldSendFinished) {
++        this.dtls13ShouldSendFinished = dtls13ShouldSendFinished;
++    }
+ }
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java
 new file mode 100644
 index 000000000..f2a7ff48e
@@ -423,7 +436,7 @@ index 952ee12fb..2c52ad691 100644
              throw new RuntimeException("TransportHandler is not set in context!");
          }
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java
-index 182fb42e9..ebd48dbf2 100644
+index 182fb42e9..831865c64 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/ProtocolMessageHandler.java
 @@ -8,6 +8,7 @@
@@ -442,7 +455,7 @@ index 182fb42e9..ebd48dbf2 100644
 +        // TODO we should also consider sending early Finished as a server
 +        if (handshakeMessage.getHandshakeMessageType() == HandshakeMessageType.FINISHED
 +                && goingToBeSent
-+                && !tlsContext.dtls13ShouldSendFinished) {
++                && !tlsContext.isDtls13ShouldSendFinished()) {
 +            // invalid Finished, we should not add it into digest
 +            return;
 +        }
@@ -452,7 +465,7 @@ index 182fb42e9..ebd48dbf2 100644
 +                                == HandshakeMessageType.CERTIFICATE_VERIFY)
 +                && tlsContext.getConfig().getHighestProtocolVersion().isDTLS13()
 +                && goingToBeSent
-+                && !tlsContext.dtls13ShouldSendFinished) {
++                && !tlsContext.isDtls13ShouldSendFinished()) {
 +            // invalid Certificate, we should send Certificate/CertificateVerify only after we
 +            // receive server's Finished
 +            return;
@@ -483,7 +496,7 @@ index 000fbe70f..8ac410db7 100644
                  }
                  break;
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
-index 06907c1e6..6c5246a23 100644
+index 06907c1e6..dbc2b5e57 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
 @@ -42,12 +42,15 @@ public class FinishedHandler extends HandshakeMessageHandler<FinishedMessage> {
@@ -499,7 +512,7 @@ index 06907c1e6..6c5246a23 100644
                      adjustApplicationTrafficSecrets();
                      setServerRecordCipher(Tls13KeySetType.APPLICATION_TRAFFIC_SECRETS);
 +                    // Received server's Finished, so now I should send Finished
-+                    tlsContext.dtls13ShouldSendFinished = true;
++                    tlsContext.setDtls13ShouldSendFinished(true);
                      if (tlsContext.getConfig().getDefaultLayerConfiguration()
                              == StackConfiguration.QUIC) {
                          try {

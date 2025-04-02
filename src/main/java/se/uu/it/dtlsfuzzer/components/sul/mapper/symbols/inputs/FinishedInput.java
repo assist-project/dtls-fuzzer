@@ -32,7 +32,7 @@ public class FinishedInput extends DtlsInput {
 
     @Override
     public void postSendDtlsUpdate(TlsExecutionContext context) {
-        if (getTlsContext(context).getConfig().getHighestProtocolVersion().isDTLS13() && !getTlsContext(context).dtls13ShouldSendFinished){
+        if (getTlsContext(context).getConfig().getHighestProtocolVersion().isDTLS13() && !getTlsContext(context).isDtls13ShouldSendFinished()){
             // invalid Finished message, we shouldn't care
             return;
         }
