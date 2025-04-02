@@ -504,8 +504,8 @@ jobs:
 
       - name: Test wolfssl-5.7.6 Server (psk) DTLS 1.3
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 3
-          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_psk_DTLS13 output/wolfssl-5.7.6_server_psk_DTLS13 3
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk_DTLS13 -Dwolfssl.version=5.7.6    # -roundLimit 4
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_psk_DTLS13 output/wolfssl-5.7.6_server_psk_DTLS13 4
 
   WolfSSL-5-7-6_Server_dhe_cert_nreq_DTLS13:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -530,8 +530,8 @@ jobs:
 
       - name: Test wolfssl-5.7.6 Server (dhe_cert_nreq) DTLS 1.3
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_dhe_cert_nreq_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 3
-          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_dhe_cert_nreq_DTLS13 output/wolfssl-5.7.6_server_dhe_cert_nreq_DTLS13 3
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_dhe_cert_nreq_DTLS13 -Dwolfssl.version=5.7.6    # -roundLimit 4
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_dhe_cert_nreq_DTLS13 output/wolfssl-5.7.6_server_dhe_cert_nreq_DTLS13 4
 
   WolfSSL-5-7-6_Server_dhe_cert_req_DTLS13:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -556,5 +556,5 @@ jobs:
 
       - name: Test wolfssl-5.7.6 Server (dhe_cert_req) DTLS 1.3
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_dhe_cert_req_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 4
-          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_dhe_cert_req_DTLS13 output/wolfssl-5.7.6_server_dhe_cert_req_DTLS13 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_dhe_cert_req_DTLS13 -Dwolfssl.version=5.7.6      # -roundLimit 5
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_dhe_cert_req_DTLS13 output/wolfssl-5.7.6_server_dhe_cert_req_DTLS13 5
