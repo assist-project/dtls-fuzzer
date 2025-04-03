@@ -48,25 +48,25 @@ public class ClientHelloInput extends DtlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
-        getConfig(context).setDefaultClientSupportedCipherSuites(Arrays.asList(suite));
+        context.getConfig().setDefaultClientSupportedCipherSuites(Arrays.asList(suite));
         if (suite.name().contains("EC")) {
-            getConfig(context).setAddECPointFormatExtension(true);
-            getConfig(context).setAddEllipticCurveExtension(true);
+            context.getConfig().setAddECPointFormatExtension(true);
+            context.getConfig().setAddEllipticCurveExtension(true);
         } else {
-            getConfig(context).setAddECPointFormatExtension(false);
-            getConfig(context).setAddEllipticCurveExtension(false);
+            context.getConfig().setAddECPointFormatExtension(false);
+            context.getConfig().setAddEllipticCurveExtension(false);
         }
 
-        if(getConfig(context).getHighestProtocolVersion().isDTLS13()) {
+        if (context.getConfig().getHighestProtocolVersion().isDTLS13()) {
             // aka supported_groups
-            getConfig(context).setAddEllipticCurveExtension(true);
+            context.getConfig().setAddEllipticCurveExtension(true);
         }
 
         if (resetDigest) {
-            getTlsContext(context).getDigest().reset();
+            context.getTlsContext().getDigest().reset();
         }
 
-        ClientHelloMessage message = new ClientHelloMessage(getConfig(context));
+        ClientHelloMessage message = new ClientHelloMessage(context.getConfig());
 
         // we exclude the sessionId
         if (!withSessionId) {

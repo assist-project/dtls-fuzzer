@@ -37,7 +37,7 @@ public class ServerHelloInput extends DtlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
-        Config config = getConfig(context);
+        Config config = context.getConfig();
 
         config.setDefaultServerSupportedCipherSuites(Arrays.asList(suite));
         config.setDefaultClientSupportedCipherSuites(suite);
@@ -46,7 +46,7 @@ public class ServerHelloInput extends DtlsInput {
             config.setAddEllipticCurveExtension(true);
         } else {
             config.setAddECPointFormatExtension(false);
-            getConfig(context).setAddEllipticCurveExtension(false);
+            config.setAddEllipticCurveExtension(false);
         }
         if (suite.isPsk()) {
             config.setAddClientCertificateTypeExtension(false);
@@ -69,11 +69,10 @@ public class ServerHelloInput extends DtlsInput {
     @Override
     public void postReceiveUpdate(TlsOutput output, OutputChecker<TlsOutput> abstractOutputChecker,
             TlsExecutionContext context) {
-        TlsExecutionContext ctx = getTlsExecutionContext(context);
         if (shortHs && context.isExecutionEnabled()) {
             Pair<ProtocolMessage, Record> lastChPair = null;
             int lastChStepIndex = -1;
-            List<Pair<ProtocolMessage, Record>> msgRecPairs = ctx.getReceivedMessagesAndRecords();
+            List<Pair<ProtocolMessage, Record>> msgRecPairs = context.getReceivedMessagesAndRecords();
             for (int i = 0; i < msgRecPairs.size(); i++) {
                 if (msgRecPairs.get(i).getKey() instanceof ClientHelloMessage) {
                     lastChStepIndex = i;
@@ -85,16 +84,16 @@ public class ServerHelloInput extends DtlsInput {
 
             // We reset the digest and append to it, in reverse order SH, the last CH before
             // the SH and optionally the HR which prompted the CH (if such a HR was sent).
-            getTlsContext(ctx).getDigest().reset();
+            context.getTlsContext().getDigest().reset();
 
-            if (digestHR && ctx.getStepContext(lastChStepIndex).getInput() instanceof HelloRequestInput) {
-                byte[] hrBytes = ctx.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
-                getTlsContext(context).getDigest().append(hrBytes);
+            if (digestHR && context.getStepContext(lastChStepIndex).getInput() instanceof HelloRequestInput) {
+                byte[] hrBytes = context.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
+                context.getTlsContext().getDigest().append(hrBytes);
             }
             byte[] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
-            byte[] shBytes = ctx.getStepContext().getSentRecords().get(0).getCleanProtocolMessageBytes().getValue();
-            getTlsContext(context).getDigest().append(chBytes);
-            getTlsContext(context).getDigest().append(shBytes);
+            byte[] shBytes = context.getStepContext().getSentRecords().get(0).getCleanProtocolMessageBytes().getValue();
+            context.getTlsContext().getDigest().append(chBytes);
+            context.getTlsContext().getDigest().append(shBytes);
         }
         super.postReceiveUpdate(output, abstractOutputChecker, context);
     }
