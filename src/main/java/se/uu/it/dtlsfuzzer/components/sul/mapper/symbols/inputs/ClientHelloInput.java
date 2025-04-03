@@ -57,9 +57,9 @@ public class ClientHelloInput extends DtlsInput {
             context.getConfig().setAddEllipticCurveExtension(false);
         }
 
-        if(getConfig(context).getHighestProtocolVersion().isDTLS13()) {
+        if (context.getConfig().getHighestProtocolVersion().isDTLS13()) {
             // aka supported_groups
-            getConfig(context).setAddEllipticCurveExtension(true);
+            context.getConfig().setAddEllipticCurveExtension(true);
         }
 
         if (resetDigest) {

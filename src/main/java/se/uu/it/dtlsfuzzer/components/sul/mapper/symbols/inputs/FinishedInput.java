@@ -36,7 +36,7 @@ public class FinishedInput extends DtlsInput {
             // invalid Finished message, we shouldn't care
             return;
         }
-        contest.getTlsContext().getDigest().reset();
+        context.getTlsContext().getDigest().reset();
         // we have to make this change for learning to scale
         context.getTlsContext().setWriteSequenceNumber(context.getTlsContext().getWriteEpoch(), lastSequenceNumber + 1);
     }
