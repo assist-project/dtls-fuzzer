@@ -12,8 +12,8 @@ public class EncryptedExtensionsInput extends DtlsInput {
 
     @Override
     public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
-        getConfig(context).setAddEllipticCurveExtension(true);
-        EncryptedExtensionsMessage eeMessage = new EncryptedExtensionsMessage(getConfig(context));
+        context.getConfig().setAddEllipticCurveExtension(true);
+        EncryptedExtensionsMessage eeMessage = new EncryptedExtensionsMessage(context.getConfig());
 
         return new TlsProtocolMessage(eeMessage);
     }
