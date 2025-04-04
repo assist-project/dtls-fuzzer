@@ -55,13 +55,13 @@ public class ServerHelloInput extends DtlsInput {
             config.setAddClientCertificateTypeExtension(false);
             config.setAddServerCertificateTypeExtension(false);
         }
+        // record isAddPreSharedKeyExtension(), we need PSK extension when sending ServerHello
+        boolean addPSK = config.isAddPreSharedKeyExtension();
         if (helloRetryRequest && config.getHighestProtocolVersion().isDTLS13()) {
             config.setAddPreSharedKeyExtension(false);
             config.setAddKeyShareExtension(false);
             config.setAddCookieExtension(true);
         }else if (config.getHighestProtocolVersion().isDTLS13()){
-            boolean addPSK = config.isAddPreSharedKeyExtension();
-            config.setAddPreSharedKeyExtension(addPSK);
             config.setAddKeyShareExtension(true);
             config.setAddCookieExtension(false);
         }
@@ -69,6 +69,8 @@ public class ServerHelloInput extends DtlsInput {
         ServerHelloMessage sh = new ServerHelloMessage(config);
         if (helloRetryRequest && config.getHighestProtocolVersion().isDTLS13()){
             sh.setRandom(ServerHelloMessage.getHelloRetryRequestRandom());
+            // recover isAddPreSharedKeyExtension()
+            config.setAddPreSharedKeyExtension(addPSK);
         }
         return new TlsProtocolMessage(sh);
     }
