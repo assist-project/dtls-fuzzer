@@ -1,0 +1,25 @@
+<!-- DTLS alphabet comprising the messages necessary to perform client-side PSK handshakes. -->
+<alphabet>
+	<ServerHelloInput suite="TLS_AES_128_GCM_SHA256" helloRetryRequest="true" name="HELLO_RETRY_REQUEST"/>
+    <ServerHelloInput suite="TLS_AES_128_GCM_SHA256" name="PSK_SERVER_HELLO"/>
+    <EncryptedExtensionsInput name="ENCRYPTED_EXTENSIONS"/>
+    <AcknowledgementInput name="Acknowledgement"/>
+    <FinishedInput name="FINISHED"/>
+    <GenericTlsInput name="APPLICATION">
+        <Application>
+            <data>
+                <byteArrayExplicitValueModification>
+                        <!--HEX(This is a hello message!)-->
+                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                </byteArrayExplicitValueModification>
+            </data>
+        </Application>
+    </GenericTlsInput>
+    <CertificateInput name="CERTIFICATE"/>
+    <CertificateInput name="EMPTY_CERTIFICATE" empty ="true"/>
+    <GenericTlsInput name="CERTIFICATE_VERIFY">
+        <CertificateVerify/>
+    </GenericTlsInput>
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY"/>
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE"/>
+</alphabet>

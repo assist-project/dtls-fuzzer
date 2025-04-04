@@ -60,7 +60,8 @@ public class ServerHelloInput extends DtlsInput {
             config.setAddKeyShareExtension(false);
             config.setAddCookieExtension(true);
         }else if (config.getHighestProtocolVersion().isDTLS13()){
-            config.setAddPreSharedKeyExtension(true);
+            boolean addPSK = config.isAddPreSharedKeyExtension();
+            config.setAddPreSharedKeyExtension(addPSK);
             config.setAddKeyShareExtension(true);
             config.setAddCookieExtension(false);
         }
