@@ -186,6 +186,21 @@
         {
             replacee:"Application",
 			replacement:"App"
-		}
+		},
+
+        {
+          replacee:"EncryptedExtensions",
+          replacement:"EE"
+        },
+
+        {
+          replacee:"Acknowledgement",
+          replacement:"Ack"
+        },
+
+        {
+          replacee:"HelloRetryRequest",
+          replacement:"HRR"
+        }
 	]
 }
