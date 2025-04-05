@@ -1,7 +1,7 @@
 <!-- DTLS alphabet comprising the messages necessary to perform client-side PSK handshakes. -->
 <alphabet>
-	<ServerHelloInput suite="TLS_AES_128_GCM_SHA256" helloRetryRequest="true" name="HELLO_RETRY_REQUEST"/>
-    <ServerHelloInput suite="TLS_AES_128_GCM_SHA256" name="DHE_SERVER_HELLO"/>
+	<ServerHelloInput suite="TLS_AES_128_GCM_SHA256" shortHs="false" helloRetryRequest="true" name="HELLO_RETRY_REQUEST"/>
+    <ServerHelloInput suite="TLS_AES_128_GCM_SHA256" shortHs="false" name="DHE_SERVER_HELLO"/>
     <EncryptedExtensionsInput name="ENCRYPTED_EXTENSIONS"/>
     <AcknowledgementInput name="Acknowledgement"/>
     <FinishedInput name="FINISHED"/>
