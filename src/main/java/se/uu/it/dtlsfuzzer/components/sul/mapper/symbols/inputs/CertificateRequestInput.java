@@ -2,7 +2,6 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
 import de.rub.nds.modifiablevariable.bytearray.ByteArrayModificationFactory;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
-import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ClientCertificateType;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateRequestMessage;
 import jakarta.xml.bind.annotation.XmlAttribute;
