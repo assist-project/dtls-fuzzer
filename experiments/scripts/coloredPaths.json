@@ -20,6 +20,11 @@
     "anyOutput": ".*FINISHED.*"
   },
   {
+    "color": "chartreuse3",
+    "path": [ "HELLO_RETRY_REQUEST", "DHE_SERVER_HELLO", "ENCRYPTED_EXTENSIONS", "RSA_SIGN_CERTIFICATE_REQUEST", "CERTIFICATE", "CERTIFICATE_VERIFY", "FINISHED" ],
+    "anyOutput": ".*FINISHED.*"
+  },
+  {
     "color": "red",
     "path": [ "HELLO_RETRY_REQUEST", "DHE_SERVER_HELLO", "ENCRYPTED_EXTENSIONS", "CERTIFICATE", "CERTIFICATE_VERIFY", "FINISHED" ],
     "anyOutput": ".*FINISHED.*"
