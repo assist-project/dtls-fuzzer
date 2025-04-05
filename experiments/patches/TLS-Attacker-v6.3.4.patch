@@ -1249,6 +1249,20 @@ index 000000000..e06f7e943
 +        }
 +    }
 +}
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/CertificateRequestMessage.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/CertificateRequestMessage.java
+index e952a7062..3dd9b4408 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/CertificateRequestMessage.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/CertificateRequestMessage.java
+@@ -71,7 +71,8 @@ public class CertificateRequestMessage extends HandshakeMessage {
+ 
+     public CertificateRequestMessage(Config tlsConfig) {
+         super(HandshakeMessageType.CERTIFICATE_REQUEST);
+-        if (tlsConfig.getHighestProtocolVersion().isTLS13()) {
++        if (tlsConfig.getHighestProtocolVersion().isTLS13()
++                || tlsConfig.getHighestProtocolVersion().isDTLS13()) {
+             this.setExtensions(new LinkedList<ExtensionMessage>());
+             this.addExtension(new SignatureAndHashAlgorithmsExtensionMessage());
+         }
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java
 index 0fb395043..ff4c7d0e2 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java
@@ -1389,6 +1403,20 @@ index 614a51a8a..66e4381ce 100644
      }
  
      private void prepareCert(
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateRequestPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateRequestPreparator.java
+index 982ffa82b..149e8a03e 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateRequestPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateRequestPreparator.java
+@@ -36,7 +36,8 @@ public class CertificateRequestPreparator
+     @Override
+     public void prepareHandshakeMessageContents() {
+         LOGGER.debug("Preparing CertificateRequestMessage");
+-        if (chooser.getSelectedProtocolVersion().isTLS13()) {
++        if (chooser.getSelectedProtocolVersion().isTLS13()
++                || chooser.getSelectedProtocolVersion().isDTLS13()) {
+             prepareCertificateRequestContext(msg);
+             prepareCertificateRequestContextLength(msg);
+             prepareExtensions();
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java
 index a6d649fd6..80a4f6bc7 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java
@@ -1669,6 +1697,19 @@ index 718c5edb1..e9a79464f 100644
              writeRequestContextLength(msg);
              writeRequestContext(msg);
          }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateRequestSerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateRequestSerializer.java
+index ac551698b..bdd09b406 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateRequestSerializer.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateRequestSerializer.java
+@@ -39,7 +39,7 @@ public class CertificateRequestSerializer
+     @Override
+     public byte[] serializeHandshakeMessageContent() {
+         LOGGER.debug("Serializing CertificateRequestMessage");
+-        if (version.isTLS13()) {
++        if (version.isTLS13() || version.isDTLS13()) {
+             writeCertificateRequestContextLength(msg);
+             writeCertificateRequestContext(msg);
+             writeExtensionLength();
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java
 index f039b30ec..1ad99d148 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java
