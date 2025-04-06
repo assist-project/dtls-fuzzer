@@ -3,7 +3,7 @@
     <ServerHelloInput suite="TLS_AES_128_GCM_SHA256" shortHs="false" helloRetryRequest="true" name="HELLO_RETRY_REQUEST"/>
     <ServerHelloInput suite="TLS_AES_128_GCM_SHA256" shortHs="false" name="DHE_SERVER_HELLO"/>
     <EncryptedExtensionsInput name="ENCRYPTED_EXTENSIONS"/>
-    <AcknowledgementInput name="Acknowledgement"/>
+    <AcknowledgementInput name="ACKNOWLEDGEMENT"/>
     <FinishedInput name="FINISHED"/>
     <GenericTlsInput name="APPLICATION">
         <Application>
