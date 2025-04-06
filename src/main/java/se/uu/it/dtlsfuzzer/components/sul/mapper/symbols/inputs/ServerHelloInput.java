@@ -61,13 +61,13 @@ public class ServerHelloInput extends DtlsInput {
             config.setAddPreSharedKeyExtension(false);
             config.setAddKeyShareExtension(false);
             config.setAddCookieExtension(true);
-        }else if (config.getHighestProtocolVersion().isDTLS13()){
+        } else if (config.getHighestProtocolVersion().isDTLS13()) {
             config.setAddKeyShareExtension(true);
             config.setAddCookieExtension(false);
         }
 
         ServerHelloMessage sh = new ServerHelloMessage(config);
-        if (helloRetryRequest && config.getHighestProtocolVersion().isDTLS13()){
+        if (helloRetryRequest && config.getHighestProtocolVersion().isDTLS13()) {
             sh.setRandom(ServerHelloMessage.getHelloRetryRequestRandom());
             // recover isAddPreSharedKeyExtension()
             config.setAddPreSharedKeyExtension(addPSK);
