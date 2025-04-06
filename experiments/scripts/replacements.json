@@ -36,8 +36,6 @@
             replacee:"alert\\(\\_",
             replacement: "A("
         },
-
-        
         
         {
             replacee:"([A-Z][a-z]*)ClientHello",
