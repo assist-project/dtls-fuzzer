@@ -25,9 +25,9 @@ public class CertificateRequestInput extends DtlsInput {
     @Override
     public TlsProtocolMessage generateProtocolMessage(TlsExecutionContext context) {
         CertificateRequestMessage message;
-        if (context.getConfig().getHighestProtocolVersion().isDTLS13()){
+        if (context.getConfig().getHighestProtocolVersion().isDTLS13()) {
             message = new CertificateRequestMessage(context.getConfig());
-        }else{
+        } else {
             message = new CertificateRequestMessage();
         }
         if (certificateType != null) {
