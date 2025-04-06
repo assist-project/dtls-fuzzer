@@ -9,7 +9,7 @@ digraph g {
 	s0 -> s3 [label="HELLO_RETRY_REQUEST / CLIENT_HELLO"];
 	s0 -> s2 [label="PSK_SERVER_HELLO / TIMEOUT"];
 	s0 -> s1 [label="ENCRYPTED_EXTENSIONS / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s0 -> s0 [label="Acknowledgement / TIMEOUT"];
+	s0 -> s0 [label="ACKNOWLEDGEMENT / TIMEOUT"];
 	s0 -> s1 [label="FINISHED / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s0 -> s0 [label="APPLICATION / ACKNOWLEDGEMENT"];
 	s0 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
@@ -17,7 +17,7 @@ digraph g {
 	s1 -> s1 [label="HELLO_RETRY_REQUEST / SOCKET_CLOSED"];
 	s1 -> s1 [label="PSK_SERVER_HELLO / SOCKET_CLOSED"];
 	s1 -> s1 [label="ENCRYPTED_EXTENSIONS / SOCKET_CLOSED"];
-	s1 -> s1 [label="Acknowledgement / SOCKET_CLOSED"];
+	s1 -> s1 [label="ACKNOWLEDGEMENT / SOCKET_CLOSED"];
 	s1 -> s1 [label="FINISHED / SOCKET_CLOSED"];
 	s1 -> s1 [label="APPLICATION / SOCKET_CLOSED"];
 	s1 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / SOCKET_CLOSED"];
@@ -25,7 +25,7 @@ digraph g {
 	s2 -> s1 [label="HELLO_RETRY_REQUEST / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s2 -> s1 [label="PSK_SERVER_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s2 -> s4 [label="ENCRYPTED_EXTENSIONS / TIMEOUT"];
-	s2 -> s2 [label="Acknowledgement / TIMEOUT"];
+	s2 -> s2 [label="ACKNOWLEDGEMENT / TIMEOUT"];
 	s2 -> s1 [label="FINISHED / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s2 -> s2 [label="APPLICATION / ACKNOWLEDGEMENT"];
 	s2 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
@@ -33,7 +33,7 @@ digraph g {
 	s3 -> s1 [label="HELLO_RETRY_REQUEST / TIMEOUT"];
 	s3 -> s2 [label="PSK_SERVER_HELLO / TIMEOUT"];
 	s3 -> s1 [label="ENCRYPTED_EXTENSIONS / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s3 -> s3 [label="Acknowledgement / TIMEOUT"];
+	s3 -> s3 [label="ACKNOWLEDGEMENT / TIMEOUT"];
 	s3 -> s1 [label="FINISHED / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s3 -> s3 [label="APPLICATION / ACKNOWLEDGEMENT"];
 	s3 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
@@ -41,7 +41,7 @@ digraph g {
 	s4 -> s1 [label="HELLO_RETRY_REQUEST / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s4 -> s1 [label="PSK_SERVER_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s4 -> s1 [label="ENCRYPTED_EXTENSIONS / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s4 -> s4 [label="Acknowledgement / TIMEOUT"];
+	s4 -> s4 [label="ACKNOWLEDGEMENT / TIMEOUT"];
 	s4 -> s5 [label="FINISHED / FINISHED"];
 	s4 -> s4 [label="APPLICATION / ACKNOWLEDGEMENT"];
 	s4 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
@@ -49,7 +49,7 @@ digraph g {
 	s5 -> s1 [label="HELLO_RETRY_REQUEST / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s5 -> s1 [label="PSK_SERVER_HELLO / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s5 -> s1 [label="ENCRYPTED_EXTENSIONS / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s5 -> s4 [label="Acknowledgement / APPLICATION"];
+	s5 -> s4 [label="ACKNOWLEDGEMENT / APPLICATION"];
 	s5 -> s1 [label="FINISHED / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s5 -> s1 [label="APPLICATION / TIMEOUT"];
 	s5 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
