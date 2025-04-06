@@ -4,7 +4,7 @@ digraph g {
 	s0 -> s0 [label="HELLO_RETRY_REQUEST / CLIENT_HELLO"];
 	s0 -> s0 [label="DHE_SERVER_HELLO / TIMEOUT"];
 	s0 -> s0 [label="ENCRYPTED_EXTENSIONS / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s0 -> s0 [label="Acknowledgement / TIMEOUT"];
+	s0 -> s0 [label="ACKNOWLEDGEMENT / TIMEOUT"];
 	s0 -> s0 [label="FINISHED / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s0 -> s0 [label="APPLICATION / TIMEOUT"];
 	s0 -> s0 [label="CERTIFICATE / Alert(FATAL,UNEXPECTED_MESSAGE)"];
