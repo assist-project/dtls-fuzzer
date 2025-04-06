@@ -19,7 +19,7 @@ public class AcknowledgementInput extends DtlsInput {
 
     @Override
     public TlsInputType getInputType() {
-        return TlsInputType.Acknowledgement;
+        return TlsInputType.ACKNOWLEDGEMENT;
     }
 
 }

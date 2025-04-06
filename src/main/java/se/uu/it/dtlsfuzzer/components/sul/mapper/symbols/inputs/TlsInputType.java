@@ -3,7 +3,7 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 
 public enum TlsInputType {
-    CCS, HANDSHAKE, ALERT, APPLICATION, UNKNOWN, HEARTBEAT, EMPTY, Acknowledgement;
+    CCS, HANDSHAKE, ALERT, APPLICATION, UNKNOWN, HEARTBEAT, EMPTY, ACKNOWLEDGEMENT;
 
     public static TlsInputType fromTlsMessageType(ProtocolMessageType type) {
         return switch (type) {
@@ -13,7 +13,7 @@ public enum TlsInputType {
             case HANDSHAKE -> TlsInputType.HANDSHAKE;
             case HEARTBEAT -> TlsInputType.HEARTBEAT;
             case UNKNOWN -> TlsInputType.UNKNOWN;
-            case Acknowledgement -> TlsInputType.Acknowledgement;
+            case ACKNOWLEDGEMENT -> TlsInputType.ACKNOWLEDGEMENT;
             default -> {
                 throw new RuntimeException("Type not supported: " + type);
             }

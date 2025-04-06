@@ -12,7 +12,7 @@ index a9cdf1743..a4809f18d 100644
                  new KeyShareStoreEntry(
                          NamedGroup.ECDH_X25519,
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java
-index 1fc630460..cdd6c661b 100644
+index 1fc630460..8e815de8b 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java
 @@ -18,7 +18,8 @@ public enum ProtocolMessageType {
@@ -21,7 +21,7 @@ index 1fc630460..cdd6c661b 100644
      HEARTBEAT((byte) 24),
 -    TLS12_CID((byte) 25);
 +    TLS12_CID((byte) 25),
-+    Acknowledgement((byte) 26);
++    ACKNOWLEDGEMENT((byte) 26);
  
      private byte value;
  
@@ -391,7 +391,7 @@ index 000000000..f2a7ff48e
 +    }
 +}
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java
-index e6496b3a5..a8f52c469 100644
+index e6496b3a5..55ddfb08a 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java
 @@ -32,15 +32,7 @@ import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
@@ -415,7 +415,7 @@ index e6496b3a5..a8f52c469 100644
              case HEARTBEAT:
                  readHeartbeatProtocolData();
                  break;
-+            case Acknowledgement:
++            case ACKNOWLEDGEMENT:
 +                readAcknowledgementProtocolData();
 +                break;
              case UNKNOWN:
@@ -863,7 +863,7 @@ index 000000000..29cb651a1
 +}
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementMessage.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementMessage.java
 new file mode 100644
-index 000000000..7660e6457
+index 000000000..07877f1c9
 --- /dev/null
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementMessage.java
 @@ -0,0 +1,185 @@
@@ -894,7 +894,7 @@ index 000000000..7660e6457
 +
 +    public AcknowledgementMessage() {
 +        super();
-+        this.protocolMessageType = ProtocolMessageType.Acknowledgement;
++        this.protocolMessageType = ProtocolMessageType.ACKNOWLEDGEMENT;
 +        this.parsedRecordNumbers = new ArrayList<>();
 +    }
 +
