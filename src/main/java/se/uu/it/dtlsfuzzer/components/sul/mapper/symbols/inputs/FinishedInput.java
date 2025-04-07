@@ -13,6 +13,8 @@ public class FinishedInput extends DtlsInput {
     @XmlAttribute(name = "resetMSeq", required = true)
     private boolean resetMSeq = false;
 
+    private long lastSequenceNumber;
+
     public FinishedInput() {
         super("FINISHED");
     }
@@ -22,6 +24,7 @@ public class FinishedInput extends DtlsInput {
         // Uncomment line to print digest, TODO remove this when polishing things up
         // System.out.println(ArrayConverter.bytesToHexString(state.getTlsContext().getDigest().getRawBytes()));
         FinishedMessage message = new FinishedMessage();
+        lastSequenceNumber = context.getTlsContext().getWriteSequenceNumber(context.getTlsContext().getWriteEpoch());
         // context.getTlsContext().setWriteEpoch(context.getTlsContext().getWriteEpoch() + 1);
         // context.getTlsContext().setWriteSequenceNumber(context.getTlsContext().getWriteEpoch(), 0L);
         return new TlsProtocolMessage(message);
@@ -34,6 +37,14 @@ public class FinishedInput extends DtlsInput {
             return;
         }
         context.getTlsContext().getDigest().reset();
+
+        // in DTLS 1.3, we need to skip the bottom code, otherwise we will start sending message with Epoch=3 and Seq=2
+        // Without skip we can also complete handshake, but I prefer to make Seq number more correct.
+        if (context.getTlsContext().getConfig().getHighestProtocolVersion().isDTLS13()){
+            return;
+        }
+        // we have to make this change for learning to scale
+        context.getTlsContext().setWriteSequenceNumber(context.getTlsContext().getWriteEpoch(), lastSequenceNumber + 1);
     }
 
     @Override
