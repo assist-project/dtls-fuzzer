@@ -205,7 +205,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
                         // try again
                     }
                 }
-                // in DTLS 1.3, we want to prevent cached CH bug
+                // in DTLS 1.3, we want to consume the cached first ClientHello during initialization
                 // and also, we need the 1st CH to calculate Transcript Hash
                 if (configDelegate.getProtocolVersion().isDTLS13()){
                     var firstClientHello = outputMapper.receiveOutput(context);
