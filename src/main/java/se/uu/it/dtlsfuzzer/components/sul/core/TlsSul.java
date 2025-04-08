@@ -210,7 +210,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
                 if (configDelegate.getProtocolVersion().isDTLS13()){
                     var firstClientHello = outputMapper.receiveOutput(context);
                     if (!firstClientHello.getName().equals("CLIENT_HELLO")) {
-                        LOGGER.fatal("THe first Client Hello should have been received");
+                        LOGGER.fatal("The first Client Hello should have been received");
                     }
                 }
             }
