@@ -240,9 +240,11 @@
                                 <include>**/*.xml</include>
                             </includes>
                             <excludes>
+                                <exclude>experiments/sources/**</exclude>
                                 <exclude>modules/**</exclude>
                                 <exclude>suts/**</exclude>
                                 <exclude>target/**</exclude>
+                                <exclude>ProtocolState-Fuzzer/**</exclude>
                                 <exclude>TLS-Attacker/**</exclude>
                             </excludes>
                             <endWithNewline />
