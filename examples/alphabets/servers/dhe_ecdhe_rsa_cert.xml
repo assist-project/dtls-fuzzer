@@ -5,21 +5,21 @@
     <ClientHelloInput suite="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" name="DH_CLIENT_HELLO"/>
     <ClientKeyExchangeInput name="DH_CLIENT_KEY_EXCHANGE" algorithm="DH"/>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
-    <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>  
+    <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED"/>
     <GenericTlsInput name="APPLICATION">
         <Application>
             <data>
                 <byteArrayExplicitValueModification>
-                        <!--HEX(This is a hello message!)-->
-                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                    <!--HEX(This is a hello message!)-->
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
                 </byteArrayExplicitValueModification>
             </data>
         </Application>
     </GenericTlsInput>
     <GenericTlsInput name="CERTIFICATE">
-        <Certificate/>
+    <Certificate/>
     </GenericTlsInput>
     <CertificateInput name="CERTIFICATE"/>
     <CertificateInput name="EMPTY_CERTIFICATE" empty ="true"/>
