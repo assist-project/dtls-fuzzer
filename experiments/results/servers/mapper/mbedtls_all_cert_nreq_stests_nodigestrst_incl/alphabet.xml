@@ -1,23 +1,23 @@
 <!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes, short and long renegotiation, and session resumption-->
 <alphabet>
-	<ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" name="ECDH_CLIENT_HELLO" resetDigest="false"/>
-	<!-- in a renegotiation input, enabled dictates the trigger which enables the input, 
-	suite is the cipher suite (if not set, the last agreed upon suite is used) -->
+    <ClientHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" name="ECDH_CLIENT_HELLO" resetDigest="false"/>
+    <!-- in a renegotiation input, enabled dictates the trigger which enables the input,
+         suite is the cipher suite (if not set, the last agreed upon suite is used) -->
     <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDH"/>
     <ClientHelloInput suite="TLS_DHE_RSA_WITH_AES_128_GCM_SHA256" name="DH_CLIENT_HELLO"  resetDigest="false"/>
     <ClientKeyExchangeInput name="DH_CLIENT_KEY_EXCHANGE" algorithm="DH"/>
     <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO"  resetDigest="false"/>
     <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"  resetDigest="false"/>
-    <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>  
+    <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA"/>
     <ChangeCipherSpecInput/>
     <FinishedInput name="FINISHED"/>
     <GenericTlsInput name="APPLICATION">
         <Application>
             <data>
                 <byteArrayExplicitValueModification>
-                        <!--HEX(This is a hello message!)-->
-                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                    <!--HEX(This is a hello message!)-->
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
                 </byteArrayExplicitValueModification>
             </data>
         </Application>
@@ -39,12 +39,12 @@
         <Alert>
             <level>
                 <byteExplicitValueModification>
-                        <explicitValue>1</explicitValue>
+                    <explicitValue>1</explicitValue>
                 </byteExplicitValueModification>
             </level>
             <description>
                 <byteExplicitValueModification>
-                        <explicitValue>0</explicitValue>
+                    <explicitValue>0</explicitValue>
                 </byteExplicitValueModification>
             </description>
         </Alert>
@@ -54,12 +54,12 @@
         <Alert>
             <level>
                 <byteExplicitValueModification>
-                        <explicitValue>2</explicitValue>
+                    <explicitValue>2</explicitValue>
                 </byteExplicitValueModification>
             </level>
             <description>
                 <byteExplicitValueModification>
-                        <explicitValue>10</explicitValue>
+                    <explicitValue>10</explicitValue>
                 </byteExplicitValueModification>
             </description>
         </Alert>
