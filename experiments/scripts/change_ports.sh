@@ -1,5 +1,5 @@
 #!/bin/bash
-# updates the port numbers in argument files such that they don't overlap 
+# updates the port numbers in argument files such that they don't overlap
 
 # options
 opt_dry=0

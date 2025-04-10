@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ $# != 2 ]; then 
+if [ $# != 2 ]; then
    echo "bash create_args.sh results_folder args_folder"
    exit
 fi
