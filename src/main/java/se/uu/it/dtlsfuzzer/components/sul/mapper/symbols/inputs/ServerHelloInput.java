@@ -20,6 +20,9 @@ public class ServerHelloInput extends DtlsInput {
     @XmlAttribute(name = "suite", required = true)
     private CipherSuite suite;
 
+    @XmlAttribute(name = "helloRetryRequest", required = false)
+    private boolean helloRetryRequest = false;
+
     @XmlAttribute(name = "shortHs", required = false)
     private boolean shortHs = true;
 
@@ -52,8 +55,23 @@ public class ServerHelloInput extends DtlsInput {
             config.setAddClientCertificateTypeExtension(false);
             config.setAddServerCertificateTypeExtension(false);
         }
+        // record isAddPreSharedKeyExtension(), we need PSK extension when sending ServerHello
+        boolean addPSK = config.isAddPreSharedKeyExtension();
+        if (helloRetryRequest && config.getHighestProtocolVersion().isDTLS13()) {
+            config.setAddPreSharedKeyExtension(false);
+            config.setAddKeyShareExtension(false);
+            config.setAddCookieExtension(true);
+        } else if (config.getHighestProtocolVersion().isDTLS13()) {
+            config.setAddKeyShareExtension(true);
+            config.setAddCookieExtension(false);
+        }
 
         ServerHelloMessage sh = new ServerHelloMessage(config);
+        if (helloRetryRequest && config.getHighestProtocolVersion().isDTLS13()) {
+            sh.setRandom(ServerHelloMessage.getHelloRetryRequestRandom());
+            // recover isAddPreSharedKeyExtension()
+            config.setAddPreSharedKeyExtension(addPSK);
+        }
         return new TlsProtocolMessage(sh);
     }
 
