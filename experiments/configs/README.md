@@ -24,4 +24,3 @@ Hence, a few more extensions were disabled.
 
 ## Scandium
 Scandium supports only EC Certificates.
-

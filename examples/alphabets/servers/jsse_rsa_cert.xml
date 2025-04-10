@@ -1,4 +1,4 @@
-<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes. 
+<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes.
 client authentication.-->
 <alphabet>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO" extendedWait="200"/>
@@ -14,8 +14,8 @@ client authentication.-->
         <Application>
             <data>
                 <byteArrayExplicitValueModification>
-                        <!--HEX(This is a hello message!)-->
-                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                    <!--HEX(This is a hello message!)-->
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
                 </byteArrayExplicitValueModification>
             </data>
         </Application>

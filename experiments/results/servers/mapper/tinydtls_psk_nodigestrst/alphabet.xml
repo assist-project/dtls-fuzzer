@@ -1,5 +1,5 @@
-<!-- DTLS alphabet comprising the messages necessary to perform PSK handshakes 
-using CCM_8 ciphersuites. -->
+<!-- DTLS alphabet comprising the messages necessary to perform
+     PSK handshakes using CCM_8 ciphersuites. -->
 <alphabet>
     <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_CLIENT_HELLO" resetDigest="false"/>
     <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
@@ -9,8 +9,8 @@ using CCM_8 ciphersuites. -->
         <Application>
             <data>
                 <byteArrayExplicitValueModification>
-                        <!--HEX(This is a hello message!)-->
-                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                    <!--HEX(This is a hello message!)-->
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
                 </byteArrayExplicitValueModification>
             </data>
         </Application>
@@ -20,12 +20,12 @@ using CCM_8 ciphersuites. -->
         <Alert>
             <level>
                 <byteExplicitValueModification>
-                        <explicitValue>1</explicitValue>
+                    <explicitValue>1</explicitValue>
                 </byteExplicitValueModification>
             </level>
             <description>
                 <byteExplicitValueModification>
-                        <explicitValue>0</explicitValue>
+                    <explicitValue>0</explicitValue>
                 </byteExplicitValueModification>
             </description>
         </Alert>
@@ -35,12 +35,12 @@ using CCM_8 ciphersuites. -->
         <Alert>
             <level>
                 <byteExplicitValueModification>
-                        <explicitValue>2</explicitValue>
+                    <explicitValue>2</explicitValue>
                 </byteExplicitValueModification>
             </level>
             <description>
                 <byteExplicitValueModification>
-                        <explicitValue>10</explicitValue>
+                    <explicitValue>10</explicitValue>
                 </byteExplicitValueModification>
             </description>
         </Alert>

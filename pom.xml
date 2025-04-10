@@ -235,11 +235,18 @@
                     <formats>
                         <format>
                             <includes>
-                                <include>*.md</include>
-                                <include>*.sh</include>
-                                <include>*.xml</include>
-                                <include>.spotbugs/*.xml</include>
+                                <include>**/*.md</include>
+                                <include>**/*.sh</include>
+                                <include>**/*.xml</include>
                             </includes>
+                            <excludes>
+                                <exclude>experiments/sources/**</exclude>
+                                <exclude>modules/**</exclude>
+                                <exclude>suts/**</exclude>
+                                <exclude>target/**</exclude>
+                                <exclude>ProtocolState-Fuzzer/**</exclude>
+                                <exclude>TLS-Attacker/**</exclude>
+                            </excludes>
                             <endWithNewline />
                             <trimTrailingWhitespace />
                             <indent>
