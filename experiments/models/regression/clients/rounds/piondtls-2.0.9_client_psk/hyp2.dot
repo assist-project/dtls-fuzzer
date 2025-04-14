@@ -3,15 +3,14 @@ digraph g {
 	s0 [shape="circle" label="s0"];
 	s1 [shape="circle" label="s1"];
 	s2 [shape="circle" label="s2"];
-	s3 [shape="circle" label="s3"];
-	s0 -> s3 [label="HELLO_VERIFY_REQUEST / CLIENT_HELLO+"];
-	s0 -> s2 [label="PSK_SERVER_HELLO / CLIENT_HELLO"];
-	s0 -> s2 [label="SERVER_HELLO_DONE / CLIENT_HELLO|Alert(FATAL,INTERNAL_ERROR)"];
-	s0 -> s2 [label="CHANGE_CIPHER_SPEC / CLIENT_HELLO"];
-	s0 -> s2 [label="FINISHED / CLIENT_HELLO|Alert(FATAL,INTERNAL_ERROR)"];
-	s0 -> s1 [label="APPLICATION / CLIENT_HELLO|Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s0 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / CLIENT_HELLO|Alert(WARNING,CLOSE_NOTIFY)"];
-	s0 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / CLIENT_HELLO"];
+	s0 -> s0 [label="HELLO_VERIFY_REQUEST / CLIENT_HELLO"];
+	s0 -> s2 [label="PSK_SERVER_HELLO / TIMEOUT"];
+	s0 -> s2 [label="SERVER_HELLO_DONE / Alert(FATAL,INTERNAL_ERROR)"];
+	s0 -> s2 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s0 -> s2 [label="FINISHED / Alert(FATAL,INTERNAL_ERROR)"];
+	s0 -> s1 [label="APPLICATION / Alert(FATAL,UNEXPECTED_MESSAGE)"];
+	s0 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(WARNING,CLOSE_NOTIFY)"];
+	s0 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
 	s1 -> s1 [label="HELLO_VERIFY_REQUEST / SOCKET_CLOSED"];
 	s1 -> s1 [label="PSK_SERVER_HELLO / SOCKET_CLOSED"];
 	s1 -> s1 [label="SERVER_HELLO_DONE / SOCKET_CLOSED"];
@@ -28,14 +27,6 @@ digraph g {
 	s2 -> s1 [label="APPLICATION / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s2 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(WARNING,CLOSE_NOTIFY)"];
 	s2 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
-	s3 -> s3 [label="HELLO_VERIFY_REQUEST / CLIENT_HELLO"];
-	s3 -> s2 [label="PSK_SERVER_HELLO / TIMEOUT"];
-	s3 -> s2 [label="SERVER_HELLO_DONE / TIMEOUT"];
-	s3 -> s2 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
-	s3 -> s2 [label="FINISHED / TIMEOUT"];
-	s3 -> s1 [label="APPLICATION / Alert(FATAL,UNEXPECTED_MESSAGE)"];
-	s3 -> s1 [label="Alert(WARNING,CLOSE_NOTIFY) / Alert(WARNING,CLOSE_NOTIFY)"];
-	s3 -> s1 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
 
 __start0 [label="" shape="none" width="0" height="0"];
 __start0 -> s0;
