@@ -271,7 +271,7 @@ index 7a74620ce..b6c9112f9 100644
                  return new LayerStack(
                          context,
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
-index 135a9e80f..f3c3a7456 100644
+index 135a9e80f..1b76c0e35 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 @@ -80,6 +80,12 @@ import java.util.Set;
@@ -287,15 +287,7 @@ index 135a9e80f..f3c3a7456 100644
      private List<Session> sessionList;
  
      private Keylogfile keylogfile;
-@@ -412,6 +418,7 @@ public class TlsContext extends LayerContext {
-     private byte[] lastServerVerifyData;
- 
-     private byte[] lastClientHello;
-+    private byte[] lastClientHelloCleanProtocolMessageBytes;
- 
-     private Random random;
- 
-@@ -2278,4 +2285,21 @@ public class TlsContext extends LayerContext {
+@@ -2278,4 +2284,12 @@ public class TlsContext extends LayerContext {
      public void setPeerReceiveLimit(Integer peerReceiveLimit) {
          this.peerReceiveLimit = peerReceiveLimit;
      }
@@ -307,33 +299,7 @@ index 135a9e80f..f3c3a7456 100644
 +    public void setDtls13ShouldSendFinished(boolean dtls13ShouldSendFinished) {
 +        this.dtls13ShouldSendFinished = dtls13ShouldSendFinished;
 +    }
-+
-+    public byte[] getLastClientHelloCleanProtocolMessageBytes() {
-+        return lastClientHelloCleanProtocolMessageBytes;
-+    }
-+
-+    public void setLastClientHelloCleanProtocolMessageBytes(
-+            byte[] lastClientHelloCleanProtocolMessageBytes) {
-+        this.lastClientHelloCleanProtocolMessageBytes = lastClientHelloCleanProtocolMessageBytes;
-+    }
  }
-diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/DtlsFragmentLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/DtlsFragmentLayer.java
-index 19802504f..20f9570d9 100644
---- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/DtlsFragmentLayer.java
-+++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/DtlsFragmentLayer.java
-@@ -207,6 +207,12 @@ public class DtlsFragmentLayer
-                     parser.parse(fragment);
-                     fragment.setCompleteResultingMessage(
-                             fragment.getSerializer(context).serialize());
-+                    if (fragment.getType().getValue()
-+                            == HandshakeMessageType.CLIENT_HELLO.getValue()) {
-+                        context.getTlsContext()
-+                                .setLastClientHelloCleanProtocolMessageBytes(
-+                                        fragment.getCompleteResultingMessage().getValue());
-+                    }
-                     fragmentManager.addMessageFragment(fragment);
-                     List<DtlsHandshakeMessageFragment> uninterpretedMessageFragments =
-                             fragmentManager.getOrderedCombinedUninterpretedMessageFragments(
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java
 new file mode 100644
 index 000000000..f2a7ff48e
