@@ -1,5 +1,5 @@
-<!-- DTLS alphabet comprising the messages necessary to perform PSK handshakes 
-using CCM_8 ciphersuites. -->
+<!-- DTLS alphabet comprising the messages necessary to perform
+     PSK handshakes using CCM_8 ciphersuites. -->
 <alphabet>
     <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_CLIENT_HELLO"/>
     <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK"/>
@@ -9,8 +9,8 @@ using CCM_8 ciphersuites. -->
         <Application>
             <data>
                 <byteArrayExplicitValueModification>
-                        <!--HEX(This is a hello message!)-->
-                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                    <!--HEX(This is a hello message!)-->
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
                 </byteArrayExplicitValueModification>
             </data>
         </Application>

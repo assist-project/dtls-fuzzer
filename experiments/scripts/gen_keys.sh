@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # This script updates the certificates used by DTLS-Fuzzer.
-# It is based on the 'keygen.sh' script of TLS-Attacker, see https://github.com/tls-attacker/TLS-Attacker/tree/main/TLS-Core/src/main/resources .
-# For PEM to JKS conversion, read see: https://www.baeldung.com/convert-pem-to-jks
+# It is based on the 'keygen.sh' script of TLS-Attacker;
+# see https://github.com/tls-attacker/TLS-Attacker/tree/main/TLS-Core/src/main/resources
+# For PEM to JKS conversion, read: https://www.baeldung.com/convert-pem-to-jks
 
-readonly DAYS_VALIDITY=5000 
+readonly DAYS_VALIDITY=5000
 readonly PASSWORD="password"
 output_folder=$1
 
@@ -22,7 +23,6 @@ function build_jks() {
 }
 
 
-
 if [ "$#" != 1 ]; then
     echo "Usage: ${0##*/} output_folder"
     echo "Creates key and cert files in PEM and JKS format, and stores them in the specified directory"
@@ -33,7 +33,6 @@ if [[ ! -d "$output_folder" ]]; then
     mkdir "$output_folder"
 fi
 
-# 
 for len in 2048 4096
 do
     openssl genpkey -algorithm RSA -out "$output_folder/rsa${len}_key.pem" -pkeyopt rsa_keygen_bits:"${len}"

@@ -5,7 +5,7 @@
     <ServerKeyExchangeInput name="ECDH_SERVER_KEY_EXCHANGE" algorithm="ECDH"/>
     <ServerHelloInput suite="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" name="DH_SERVER_HELLO"/>
     <ServerKeyExchangeInput name="DH_SERVER_KEY_EXCHANGE" algorithm="DH"/>
-    <ServerHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_SERVER_HELLO"/>  
+    <ServerHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_SERVER_HELLO"/>
     <HelloRequestInput name="HELLO_REQUEST"/>
     <CertificateRequestInput certificate="RSA_SIGN" name="RSA_SIGN_CERTIFICATE_REQUEST"/>
     <CertificateRequestInput certificate="RSA_FIXED_ECDH" name="RSA_FIXED_ECDH_CERTIFICATE_REQUEST"/>

@@ -1,8 +1,8 @@
 <!-- DTLS alphabet comprising the messages necessary to perform an ECDHE handshakes ciphersuite. -->
 <alphabet>
-	<HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
+    <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
     <ServerHelloInput suite="TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" name="ECDH_SERVER_HELLO"/>
-    <ServerKeyExchangeInput name="ECDH_SERVER_KEY_EXCHANGE" algorithm="ECDH"/>  
+    <ServerKeyExchangeInput name="ECDH_SERVER_KEY_EXCHANGE" algorithm="ECDH"/>
     <CertificateRequestInput certificate="RSA_SIGN" name="RSA_SIGN_CERTIFICATE_REQUEST"/>
     <CertificateRequestInput certificate="RSA_FIXED_ECDH" name="RSA_FIXED_ECDH_CERTIFICATE_REQUEST"/>
     <CertificateRequestInput certificate="RSA_FIXED_DH" name="RSA_FIXED_DH_CERTIFICATE_REQUEST"/>
@@ -16,8 +16,8 @@
         <Application>
             <data>
                 <byteArrayExplicitValueModification>
-                        <!--HEX(This is a hello message!)-->
-                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                    <!--HEX(This is a hello message!)-->
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
                 </byteArrayExplicitValueModification>
             </data>
         </Application>

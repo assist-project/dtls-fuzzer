@@ -5,7 +5,7 @@
     <ServerKeyExchangeInput name="ECDH_SERVER_KEY_EXCHANGE" algorithm="ECDH"/>
     <ServerHelloInput suite="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" name="DH_SERVER_HELLO"/>
     <ServerKeyExchangeInput name="DH_SERVER_KEY_EXCHANGE" algorithm="DH"/>
-    <ServerHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_SERVER_HELLO"/>  
+    <ServerHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_SERVER_HELLO"/>
     <CertificateRequestInput certificate="RSA_SIGN" name="RSA_SIGN_CERTIFICATE_REQUEST"/>
     <CertificateRequestInput certificate="RSA_FIXED_ECDH" name="RSA_FIXED_ECDH_CERTIFICATE_REQUEST"/>
     <CertificateRequestInput certificate="RSA_FIXED_DH" name="RSA_FIXED_DH_CERTIFICATE_REQUEST"/>
@@ -19,8 +19,8 @@
         <Application>
             <data>
                 <byteArrayExplicitValueModification>
-                        <!--HEX(This is a hello message!)-->
-                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                    <!--HEX(This is a hello message!)-->
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
                 </byteArrayExplicitValueModification>
             </data>
         </Application>
@@ -30,4 +30,3 @@
     <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY"/>
     <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE"/>
 </alphabet>
-
