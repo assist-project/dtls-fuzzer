@@ -1,7 +1,7 @@
 <!-- DTLS alphabet comprising the messages necessary to perform RSA, DH and ECDH handshakes -->
 <alphabet>
     <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST"/>
-    <ServerHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_SERVER_HELLO" experiment="true"/>  
+    <ServerHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_SERVER_HELLO" experiment="true"/>
     <HelloRequestInput name="HELLO_REQUEST"/>
     <CertificateRequestInput certificate="RSA_SIGN" name="RSA_SIGN_CERTIFICATE_REQUEST"/>
     <CertificateRequestInput certificate="RSA_FIXED_ECDH" name="RSA_FIXED_ECDH_CERTIFICATE_REQUEST"/>
@@ -15,8 +15,8 @@
         <Application>
             <data>
                 <byteArrayExplicitValueModification>
-                        <!--HEX(This is a hello message!)-->
-                        <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                    <!--HEX(This is a hello message!)-->
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
                 </byteArrayExplicitValueModification>
             </data>
         </Application>

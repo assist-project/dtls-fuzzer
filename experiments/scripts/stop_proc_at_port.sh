@@ -14,11 +14,11 @@ if [ $# = 1 ]; then
     ss --udp -p | grep "$port"
 else
     if [ "$2" = "server" ] || [ "$2" = "both" ]; then
-	echo "killing server"
-    	ss --udp --listening -p | grep "$port" | grep -o "pid=[0-9]*" | grep -o "[0-9]*" | xargs -I{} kill {}
+        echo "killing server"
+        ss --udp --listening -p | grep "$port" | grep -o "pid=[0-9]*" | grep -o "[0-9]*" | xargs -I{} kill {}
     fi
     if [ "$2" = "learner" ] || [ "$2" = "both" ]; then
-	echo "killing learner"
-    	ss --udp -p | grep "$port" | grep -o "pid=[0-9]*" | grep -o "[0-9]*" | xargs -I{} kill {}
+        echo "killing learner"
+        ss --udp -p | grep "$port" | grep -o "pid=[0-9]*" | grep -o "[0-9]*" | xargs -I{} kill {}
     fi
 fi

@@ -25,7 +25,7 @@ function shortenStateLabels() {
 
 function fullTrim() {
     extra=''
-    if [ "$3" ]; then 
+    if [ "$3" ]; then
         extra='-ego "\s*App"'
     else
         extra=''
@@ -53,7 +53,7 @@ function simplify() {
     #stmodel=${model%dot}strimmed.dot $2
     #selectiveTrim $smodel $stmodel
     #format $stmodel $stmodel
-    if [ "$2" ]; then 
+    if [ "$2" ]; then
         tmodel=${model%dot}reduced.dot
     else
         tmodel=${model%dot}trimmed.dot
@@ -64,7 +64,7 @@ function simplify() {
     rm "$smodel"
 }
 
-if [ $# = 0 ]; then 
+if [ $# = 0 ]; then
     echo "Removing existing simplified .dot files in models directory"
     rm $MODELS_DIR/*simplified*dot
     rm $MODELS_DIR/*formatted*dot
@@ -77,7 +77,4 @@ if [ $# = 0 ]; then
 else
     echo "Simplifying supplied .dot model"
     simplify "$1" "$2"
-fi 
-
-
-
+fi

@@ -16,7 +16,7 @@ fi
 start_time=$(stat --format %W "$learning_folder"/alphabet.xml)
 hour_index=0
 
-for hyp in "$learning_folder"/hyp* 
+for hyp in "$learning_folder"/hyp*
 do
     hyp_gen_time=$(stat --format %W "$hyp")
     hours_passed=$((hyp_gen_time/3600-start_time/3600))

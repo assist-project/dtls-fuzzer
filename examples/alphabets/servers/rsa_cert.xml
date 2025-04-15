@@ -1,4 +1,4 @@
-<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes. 
+<!-- DTLS alphabet comprising the messages necessary to perform RSA handshakes.
 client authentication.-->
 <alphabet>
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO"/>
