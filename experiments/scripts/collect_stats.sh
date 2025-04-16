@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# XXX: Take me out
+# shellcheck disable=SC2011
+
 STATS_FILENAME="statistics.txt"
 if [[ $# = 0 ]]; then
     echo "Usage: collect_stats.sh dir"
