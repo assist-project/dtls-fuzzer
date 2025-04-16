@@ -12,7 +12,7 @@ index a9cdf1743..a4809f18d 100644
                  new KeyShareStoreEntry(
                          NamedGroup.ECDH_X25519,
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java
-index 1fc630460..cdd6c661b 100644
+index 1fc630460..8e815de8b 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/constants/ProtocolMessageType.java
 @@ -18,7 +18,8 @@ public enum ProtocolMessageType {
@@ -21,7 +21,7 @@ index 1fc630460..cdd6c661b 100644
      HEARTBEAT((byte) 24),
 -    TLS12_CID((byte) 25);
 +    TLS12_CID((byte) 25),
-+    Acknowledgement((byte) 26);
++    ACKNOWLEDGEMENT((byte) 26);
  
      private byte value;
  
@@ -271,10 +271,10 @@ index 7a74620ce..b6c9112f9 100644
                  return new LayerStack(
                          context,
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
-index 135a9e80f..1b76c0e35 100644
+index 135a9e80f..09c55c01e 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
-@@ -80,6 +80,12 @@ import java.util.Set;
+@@ -80,6 +80,15 @@ import java.util.Set;
  @XmlAccessorType(XmlAccessType.FIELD)
  public class TlsContext extends LayerContext {
  
@@ -284,10 +284,13 @@ index 135a9e80f..1b76c0e35 100644
 +     */
 +    private boolean dtls13ShouldSendFinished = false;
 +
++    public List<Long> trackedAckEpoch = new ArrayList<>();
++    public List<Long> trackedAckSeqNumber = new ArrayList<>();
++
      private List<Session> sessionList;
  
      private Keylogfile keylogfile;
-@@ -2278,4 +2284,12 @@ public class TlsContext extends LayerContext {
+@@ -2278,4 +2287,12 @@ public class TlsContext extends LayerContext {
      public void setPeerReceiveLimit(Integer peerReceiveLimit) {
          this.peerReceiveLimit = peerReceiveLimit;
      }
@@ -300,6 +303,23 @@ index 135a9e80f..1b76c0e35 100644
 +        this.dtls13ShouldSendFinished = dtls13ShouldSendFinished;
 +    }
  }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/DtlsFragmentLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/DtlsFragmentLayer.java
+index 19802504f..b5315904c 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/DtlsFragmentLayer.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/DtlsFragmentLayer.java
+@@ -197,6 +197,12 @@ public class DtlsFragmentLayer
+             } else if (dataStream.getHint() instanceof RecordLayerHint) {
+                 RecordLayerHint tempHint = (RecordLayerHint) dataStream.getHint();
+                 if (tempHint.getType() == ProtocolMessageType.HANDSHAKE) {
++                    // We save these for sending Acknowledgment message in DTLS 1.3
++                    context.getTlsContext().trackedAckEpoch.add(tempHint.getEpoch().longValue());
++                    context.getTlsContext()
++                            .trackedAckSeqNumber
++                            .add(tempHint.getSequenceNumber().longValue());
++
+                     DtlsHandshakeMessageFragment fragment = new DtlsHandshakeMessageFragment();
+                     fragment.setEpoch(tempHint.getEpoch());
+                     DtlsHandshakeMessageFragmentParser parser =
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/FirstCachedUdpLayer.java
 new file mode 100644
 index 000000000..f2a7ff48e
@@ -371,7 +391,7 @@ index 000000000..f2a7ff48e
 +    }
 +}
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java
-index e6496b3a5..a8f52c469 100644
+index e6496b3a5..55ddfb08a 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/impl/MessageLayer.java
 @@ -32,15 +32,7 @@ import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
@@ -395,7 +415,7 @@ index e6496b3a5..a8f52c469 100644
              case HEARTBEAT:
                  readHeartbeatProtocolData();
                  break;
-+            case Acknowledgement:
++            case ACKNOWLEDGEMENT:
 +                readAcknowledgementProtocolData();
 +                break;
              case UNKNOWN:
@@ -495,8 +515,44 @@ index 000fbe70f..8ac410db7 100644
                      adjustCertExtensions(message);
                  }
                  break;
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/CoreClientHelloHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/CoreClientHelloHandler.java
+index 803747979..be4bbcd44 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/CoreClientHelloHandler.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/CoreClientHelloHandler.java
+@@ -49,6 +49,14 @@ public abstract class CoreClientHelloHandler<Message extends CoreClientHelloMess
+         if (isCookieFieldSet(message)) {
+             adjustDTLSCookie(message);
+         }
++        if (tlsContext.getConfig().getHighestProtocolVersion().isDTLS13()
++                && tlsContext.getConnection().getLocalConnectionEndType()
++                        == ConnectionEndType.SERVER
++                && tlsContext.getTalkingConnectionEndType() == ConnectionEndType.CLIENT) {
++            // We are server, we want to send HelloRetryRequest to client, we need Cookie
++            // We recorded the lastClientHello, so we don't need to store hash in Cookie
++            tlsContext.setExtensionCookie(new byte[30]);
++        }
+         adjustExtensions(message);
+         warnOnConflictingExtensions();
+         adjustRandomContext(message);
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/EncryptedExtensionsHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/EncryptedExtensionsHandler.java
+index b2a3a847c..07c66f065 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/EncryptedExtensionsHandler.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/EncryptedExtensionsHandler.java
+@@ -43,6 +43,12 @@ public class EncryptedExtensionsHandler
+         }
+     }
+ 
++    @Override
++    public void adjustContextAfterSerialize(EncryptedExtensionsMessage message) {
++        super.adjustContextAfterSerialize(message);
++        tlsContext.setDtls13ShouldSendFinished(true);
++    }
++
+     private void warnOnConflictingExtensions() {
+         if (tlsContext.getTalkingConnectionEndType()
+                 == tlsContext.getChooser().getMyConnectionPeer()) {
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
-index 06907c1e6..dbc2b5e57 100644
+index 06907c1e6..a225d23f7 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/FinishedHandler.java
 @@ -42,12 +42,15 @@ public class FinishedHandler extends HandshakeMessageHandler<FinishedMessage> {
@@ -528,6 +584,19 @@ index 06907c1e6..dbc2b5e57 100644
                          setClientRecordCipher(Tls13KeySetType.HANDSHAKE_TRAFFIC_SECRETS);
                      }
                      // in case of EARLY_DATA we stick to the EARLY_TRAFFIC_SECRETS
+@@ -146,7 +154,11 @@ public class FinishedHandler extends HandshakeMessageHandler<FinishedMessage> {
+ 
+     @Override
+     public void adjustContextAfterSerialize(FinishedMessage message) {
+-        if (tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()) {
++        if (!tlsContext.isDtls13ShouldSendFinished() || tlsContext.getWriteEpoch() >= 3) {
++            return;
++        }
++        if (tlsContext.getChooser().getSelectedProtocolVersion().isTLS13()
++                || tlsContext.getChooser().getSelectedProtocolVersion().isDTLS13()) {
+             if (tlsContext.getChooser().getConnectionEndType() == ConnectionEndType.CLIENT) {
+                 setClientRecordCipher(Tls13KeySetType.APPLICATION_TRAFFIC_SECRETS);
+             } else {
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/NewSessionTicketHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/NewSessionTicketHandler.java
 index aa86de050..c0b38413a 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/NewSessionTicketHandler.java
@@ -541,7 +610,7 @@ index aa86de050..c0b38413a 100644
  
          LOGGER.debug("Adding PSK Set");
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/ServerHelloHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/ServerHelloHandler.java
-index b06e0bd7a..feefc839d 100644
+index b06e0bd7a..8412c13ea 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/ServerHelloHandler.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/ServerHelloHandler.java
 @@ -8,6 +8,8 @@
@@ -563,7 +632,17 @@ index b06e0bd7a..feefc839d 100644
                  KeyShareStoreEntry keyShareStoreEntry = adjustKeyShareStoreEntry();
                  adjustHandshakeTrafficSecrets(keyShareStoreEntry);
                  if (tlsContext.getTalkingConnectionEndType()
-@@ -196,6 +199,14 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+@@ -136,6 +139,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+     }
+ 
+     private void adjustServerRandom(ServerHelloMessage message) {
++        if (message.isTls13HelloRetryRequest()) {
++            return;
++        }
+         tlsContext.setServerRandom(message.getRandom().getValue());
+         LOGGER.debug("Set ServerRandom in Context to {}", tlsContext.getServerRandom());
+     }
+@@ -196,6 +202,14 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
          KeySet serverKeySet = getTls13KeySet(tlsContext, tlsContext.getActiveServerKeySetType());
          if (tlsContext.getRecordLayer() != null) {
              if (tlsContext.getChooser().getConnectionEndType() == ConnectionEndType.CLIENT) {
@@ -578,7 +657,23 @@ index b06e0bd7a..feefc839d 100644
                  tlsContext
                          .getRecordLayer()
                          .updateDecryptionCipher(
-@@ -277,6 +288,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+@@ -252,6 +266,15 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+             setServerRecordCipher();
+             setClientRecordCipher();
+         }
++        if (tlsContext.getChooser().getSelectedProtocolVersion().isDTLS13()
++                && !message.isTls13HelloRetryRequest()) {
++            if (!tlsContext.isExtensionNegotiated(ExtensionType.EARLY_DATA)) {
++                setServerRecordCipher();
++                setServerRecordCipher();
++            }
++            setClientRecordCipher();
++            setClientRecordCipher();
++        }
+     }
+ 
+     private void adjustHandshakeTrafficSecrets(KeyShareStoreEntry keyShareStoreEntry) {
+@@ -277,6 +300,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
                              ? tlsContext.getChooser().getPsk()
                              : new byte[macLength]; // use PSK if available
              byte[] earlySecret = HKDFunction.extract(hkdfAlgorithm, new byte[0], psk);
@@ -588,7 +683,7 @@ index b06e0bd7a..feefc839d 100644
              byte[] saltHandshakeSecret =
                      HKDFunction.deriveSecret(
                              hkdfAlgorithm,
-@@ -284,6 +298,10 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+@@ -284,6 +310,10 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
                              earlySecret,
                              HKDFunction.DERIVED,
                              new byte[0]);
@@ -599,7 +694,7 @@ index b06e0bd7a..feefc839d 100644
              byte[] sharedSecret;
              BigInteger privateKey =
                      tlsContext
-@@ -303,8 +321,14 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+@@ -303,8 +333,14 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
                      sharedSecret = tlsContext.getConfig().getDefaultPreMasterSecret();
                  }
              }
@@ -614,7 +709,7 @@ index b06e0bd7a..feefc839d 100644
              tlsContext.setHandshakeSecret(handshakeSecret);
              LOGGER.debug("Set handshakeSecret in Context to {}", handshakeSecret);
              byte[] clientHandshakeTrafficSecret =
-@@ -314,6 +338,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+@@ -314,6 +350,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
                              handshakeSecret,
                              HKDFunction.CLIENT_HANDSHAKE_TRAFFIC_SECRET,
                              tlsContext.getDigest().getRawBytes());
@@ -624,7 +719,7 @@ index b06e0bd7a..feefc839d 100644
              tlsContext.setClientHandshakeTrafficSecret(clientHandshakeTrafficSecret);
              LOGGER.debug(
                      "Set clientHandshakeTrafficSecret in Context to {}",
-@@ -325,6 +352,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+@@ -325,6 +364,9 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
                              handshakeSecret,
                              HKDFunction.SERVER_HANDSHAKE_TRAFFIC_SECRET,
                              tlsContext.getDigest().getRawBytes());
@@ -634,7 +729,7 @@ index b06e0bd7a..feefc839d 100644
              tlsContext.setServerHandshakeTrafficSecret(serverHandshakeTrafficSecret);
              LOGGER.debug(
                      "Set serverHandshakeTrafficSecret in Context to {}",
-@@ -540,15 +570,25 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
+@@ -540,15 +582,25 @@ public class ServerHelloHandler extends HandshakeMessageHandler<ServerHelloMessa
              byte[] serverHelloBytes = message.getCompleteResultingMessage().getValue();
  
              tlsContext.getDigest().setRawBytes(HandshakeMessageType.MESSAGE_HASH.getArrayValue());
@@ -667,12 +762,31 @@ index b06e0bd7a..feefc839d 100644
          } catch (NoSuchAlgorithmException ex) {
              LOGGER.error(ex);
          }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/extension/PreSharedKeyExtensionHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/extension/PreSharedKeyExtensionHandler.java
+index cc0ed4063..1fcdcdaf9 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/extension/PreSharedKeyExtensionHandler.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/handler/extension/PreSharedKeyExtensionHandler.java
+@@ -76,6 +76,14 @@ public class PreSharedKeyExtensionHandler extends ExtensionHandler<PreSharedKeyE
+     private void selectPsk(PreSharedKeyExtensionMessage message) {
+         int pskIdentityIndex = 0;
+         List<PskSet> pskSets = tlsContext.getChooser().getPskSets();
++        if (tlsContext.getConfig().getHighestProtocolVersion().isDTLS13()
++                && message.getSelectedIdentity() != null) {
++            int index = message.getSelectedIdentity().getValue();
++            tlsContext.setPsk(pskSets.get(index).getPreSharedKey());
++            tlsContext.setEarlyDataCipherSuite(pskSets.get(index).getCipherSuite());
++            tlsContext.setSelectedIdentityIndex(index);
++            return;
++        }
+         if (message.getIdentities() != null) {
+             for (PSKIdentity pskIdentity : message.getIdentities()) {
+                 for (int x = 0; x < pskSets.size(); x++) {
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementHandler.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementHandler.java
 new file mode 100644
-index 000000000..93ab571dd
+index 000000000..29cb651a1
 --- /dev/null
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementHandler.java
-@@ -0,0 +1,82 @@
+@@ -0,0 +1,74 @@
 +package de.rub.nds.tlsattacker.core.protocol.message;
 +
 +import de.rub.nds.tlsattacker.core.constants.Tls13KeySetType;
@@ -691,22 +805,7 @@ index 000000000..93ab571dd
 +    }
 +
 +    @Override
-+    public void adjustContext(AcknowledgementMessage container) {
-+        if (tlsContext.getTalkingConnectionEndType() == ConnectionEndType.SERVER) {
-+            if (tlsContext.getWriteEpoch() == 3) {
-+                // according to section 6.1 from
-+                // https://www.rfc-editor.org/rfc/inline-errata/rfc9147.html
-+                // I think the maximum epoch after receive ACK should be 3, and cannot be 4, 5 , and
-+                // so on
-+                LOGGER.warn("We only allow epoch=3 as the maximum value right now");
-+                return;
-+            }
-+            // Only update cipher when we receive a valid Ack
-+            if (container.getRecordNumbers().getValue().length > 0) {
-+                setClientRecordCipher(Tls13KeySetType.APPLICATION_TRAFFIC_SECRETS);
-+            }
-+        }
-+    }
++    public void adjustContext(AcknowledgementMessage container) {}
 +
 +    private void setClientRecordCipher(Tls13KeySetType keySetType) {
 +        tlsContext.setActiveClientKeySetType(keySetType);
@@ -741,6 +840,13 @@ index 000000000..93ab571dd
 +        }
 +    }
 +
++    @Override
++    public void adjustContextAfterSerialize(AcknowledgementMessage message) {
++        super.adjustContextAfterSerialize(message);
++        tlsContext.trackedAckEpoch.clear();
++        tlsContext.trackedAckSeqNumber.clear();
++    }
++
 +    private KeySet getKeySet(TlsContext tlsContext, Tls13KeySetType keySetType) {
 +        try {
 +            LOGGER.debug("Generating new KeySet");
@@ -757,7 +863,7 @@ index 000000000..93ab571dd
 +}
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementMessage.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementMessage.java
 new file mode 100644
-index 000000000..17eb8b63d
+index 000000000..07877f1c9
 --- /dev/null
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementMessage.java
 @@ -0,0 +1,185 @@
@@ -788,7 +894,7 @@ index 000000000..17eb8b63d
 +
 +    public AcknowledgementMessage() {
 +        super();
-+        this.protocolMessageType = ProtocolMessageType.Acknowledgement;
++        this.protocolMessageType = ProtocolMessageType.ACKNOWLEDGEMENT;
 +        this.parsedRecordNumbers = new ArrayList<>();
 +    }
 +
@@ -827,7 +933,7 @@ index 000000000..17eb8b63d
 +        this.parsedRecordNumbers = parsedRecordNumbers;
 +    }
 +
-+    public void addRecordNumber(int epoch, long sequenceNumber) {
++    public void addRecordNumber(long epoch, long sequenceNumber) {
 +        this.parsedRecordNumbers.add(new RecordNumberStruct(epoch, sequenceNumber));
 +    }
 +
@@ -1028,10 +1134,10 @@ index 000000000..b2115f130
 +}
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementPreparator.java
 new file mode 100644
-index 000000000..0c77f1384
+index 000000000..d050f63b6
 --- /dev/null
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementPreparator.java
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,30 @@
 +package de.rub.nds.tlsattacker.core.protocol.message;
 +
 +import de.rub.nds.tlsattacker.core.protocol.ProtocolMessagePreparator;
@@ -1053,18 +1159,29 @@ index 000000000..0c77f1384
 +
 +    @Override
 +    protected void prepareProtocolMessageContents() {
-+        LOGGER.error("Not implemented yet");
++        var tlsContext = chooser.getContext().getTlsContext();
++        int size = tlsContext.trackedAckSeqNumber.size();
++        for (int i = 0; i < size; i++) {
++            msg.addRecordNumber(
++                    tlsContext.trackedAckEpoch.get(i), tlsContext.trackedAckSeqNumber.get(i));
++        }
++        msg.setRecordNumberLength(16 * size); // 8 for epoch & 8 for seq number
 +    }
 +}
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementSerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementSerializer.java
 new file mode 100644
-index 000000000..64f523f5d
+index 000000000..e06f7e943
 --- /dev/null
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/AcknowledgementSerializer.java
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,75 @@
 +package de.rub.nds.tlsattacker.core.protocol.message;
 +
++import de.rub.nds.modifiablevariable.util.ArrayConverter;
++import de.rub.nds.protocol.exception.PreparationException;
 +import de.rub.nds.tlsattacker.core.protocol.ProtocolMessageSerializer;
++import java.io.ByteArrayOutputStream;
++import java.io.IOException;
++import java.util.List;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
 +
@@ -1078,10 +1195,74 @@ index 000000000..64f523f5d
 +
 +    @Override
 +    protected byte[] serializeBytes() {
-+        LOGGER.error("Not implemented yet");
++        writeRecordNumberLength();
++        writeRecordNumbers();
 +        return getAlreadySerialized();
 +    }
++
++    private void writeRecordNumberLength() {
++        appendInt(message.getRecordNumberLength().getValue(), 2);
++        LOGGER.debug("RecordNumberLength: {}", message.getRecordNumberLength().getValue());
++    }
++
++    private void writeRecordNumbers() {
++        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
++        List<AcknowledgementMessage.RecordNumberStruct> records = message.getParsedRecordNumbers();
++
++        if (records != null && !records.isEmpty()) {
++            try {
++                for (AcknowledgementMessage.RecordNumberStruct record : records) {
++                    // Write epoch (8 bytes)
++                    byte[] epochBytes = new byte[8];
++                    long epoch = record.getEpoch();
++                    for (int i = 7; i >= 0; i--) {
++                        epochBytes[i] = (byte) (epoch & 0xFF);
++                        epoch >>= 8;
++                    }
++                    outputStream.write(epochBytes);
++
++                    // Write sequence number (8 bytes)
++                    byte[] seqBytes = new byte[8];
++                    long seq = record.getSequenceNumber();
++                    for (int i = 7; i >= 0; i--) {
++                        seqBytes[i] = (byte) (seq & 0xFF);
++                        seq >>= 8;
++                    }
++                    outputStream.write(seqBytes);
++
++                    LOGGER.debug(
++                            "Serialized record number: epoch={}, sequenceNumber={}",
++                            record.getEpoch(),
++                            record.getSequenceNumber());
++                }
++
++                byte[] recordNumbersBytes = outputStream.toByteArray();
++                appendBytes(recordNumbersBytes);
++                LOGGER.debug(
++                        "RecordNumbers: {}", ArrayConverter.bytesToHexString(recordNumbersBytes));
++
++            } catch (IOException ex) {
++                throw new PreparationException("Could not write RecordNumbers", ex);
++            }
++        } else {
++            LOGGER.debug("No RecordNumbers to serialize");
++        }
++    }
 +}
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/CertificateRequestMessage.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/CertificateRequestMessage.java
+index e952a7062..3dd9b4408 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/CertificateRequestMessage.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/CertificateRequestMessage.java
+@@ -71,7 +71,8 @@ public class CertificateRequestMessage extends HandshakeMessage {
+ 
+     public CertificateRequestMessage(Config tlsConfig) {
+         super(HandshakeMessageType.CERTIFICATE_REQUEST);
+-        if (tlsConfig.getHighestProtocolVersion().isTLS13()) {
++        if (tlsConfig.getHighestProtocolVersion().isTLS13()
++                || tlsConfig.getHighestProtocolVersion().isDTLS13()) {
+             this.setExtensions(new LinkedList<ExtensionMessage>());
+             this.addExtension(new SignatureAndHashAlgorithmsExtensionMessage());
+         }
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java
 index 0fb395043..ff4c7d0e2 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/message/HandshakeMessage.java
@@ -1222,6 +1403,20 @@ index 614a51a8a..66e4381ce 100644
      }
  
      private void prepareCert(
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateRequestPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateRequestPreparator.java
+index 982ffa82b..149e8a03e 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateRequestPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateRequestPreparator.java
+@@ -36,7 +36,8 @@ public class CertificateRequestPreparator
+     @Override
+     public void prepareHandshakeMessageContents() {
+         LOGGER.debug("Preparing CertificateRequestMessage");
+-        if (chooser.getSelectedProtocolVersion().isTLS13()) {
++        if (chooser.getSelectedProtocolVersion().isTLS13()
++                || chooser.getSelectedProtocolVersion().isDTLS13()) {
+             prepareCertificateRequestContext(msg);
+             prepareCertificateRequestContextLength(msg);
+             prepareExtensions();
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java
 index a6d649fd6..80a4f6bc7 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/CertificateVerifyPreparator.java
@@ -1294,6 +1489,35 @@ index f0c415992..f276caaba 100644
              try {
                  HKDFAlgorithm hkdfAlgorithm =
                          AlgorithmResolver.getHKDFAlgorithm(chooser.getSelectedCipherSuite());
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/HelloMessagePreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/HelloMessagePreparator.java
+index 19d50873c..177492c31 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/HelloMessagePreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/HelloMessagePreparator.java
+@@ -53,7 +53,9 @@ public abstract class HelloMessagePreparator<T extends HelloMessage>
+                 random = chooser.getServerRandom();
+             }
+         }
+-        msg.setRandom(random);
++        if (msg.getRandom() == null) {
++            msg.setRandom(random);
++        }
+         LOGGER.debug("Random: {}", msg.getRandom().getValue());
+     }
+ 
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/ServerHelloPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/ServerHelloPreparator.java
+index 1be14196d..5b46149ac 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/ServerHelloPreparator.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/ServerHelloPreparator.java
+@@ -183,6 +183,9 @@ public class ServerHelloPreparator extends HelloMessagePreparator<ServerHelloMes
+                 msg.setProtocolVersion(chooser.getSelectedProtocolVersion().getValue());
+             }
+         }
++        if (chooser.getConfig().getHighestProtocolVersion().isDTLS13()) {
++            msg.setProtocolVersion(ProtocolVersion.DTLS12.getValue());
++        }
+         LOGGER.debug("ProtocolVersion: {}", msg.getProtocolVersion().getValue());
+     }
+ 
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PSKIdentityPreparator.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PSKIdentityPreparator.java
 index 3e85a3a31..359fd0d6c 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/preparator/extension/PSKIdentityPreparator.java
@@ -1473,6 +1697,19 @@ index 718c5edb1..e9a79464f 100644
              writeRequestContextLength(msg);
              writeRequestContext(msg);
          }
+diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateRequestSerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateRequestSerializer.java
+index ac551698b..bdd09b406 100644
+--- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateRequestSerializer.java
++++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateRequestSerializer.java
+@@ -39,7 +39,7 @@ public class CertificateRequestSerializer
+     @Override
+     public byte[] serializeHandshakeMessageContent() {
+         LOGGER.debug("Serializing CertificateRequestMessage");
+-        if (version.isTLS13()) {
++        if (version.isTLS13() || version.isDTLS13()) {
+             writeCertificateRequestContextLength(msg);
+             writeCertificateRequestContext(msg);
+             writeExtensionLength();
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java
 index f039b30ec..1ad99d148 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/protocol/serializer/CertificateVerifySerializer.java

@@ -30,7 +30,9 @@ public class TlsAlphabetPojoXml extends AlphabetPojoXml<TlsInput> {
             @XmlElement(type = ClientKeyExchangeInput.class, name = "ClientKeyExchangeInput"),
             @XmlElement(type = CertificateInput.class, name = "CertificateInput"),
             @XmlElement(type = ApplicationInput.class, name = "ApplicationInput"),
-            @XmlElement(type = HelloRequestInput.class, name = "HelloRequestInput") })
+            @XmlElement(type = HelloRequestInput.class, name = "HelloRequestInput"),
+            @XmlElement(type = EncryptedExtensionsInput.class, name = "EncryptedExtensionsInput"),
+            @XmlElement(type = AcknowledgementInput.class, name = "AcknowledgementInput")})
     private List<TlsInput> inputs;
 
     public TlsAlphabetPojoXml() {

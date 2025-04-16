@@ -36,8 +36,6 @@
             replacee:"alert\\(\\_",
             replacement: "A("
         },
-
-        
         
         {
             replacee:"([A-Z][a-z]*)ClientHello",
@@ -186,6 +184,21 @@
         {
             replacee:"Application",
 			replacement:"App"
-		}
+		},
+
+        {
+          replacee:"EncryptedExtensions",
+          replacement:"EE"
+        },
+
+        {
+          replacee:"Acknowledgement",
+          replacement:"Ack"
+        },
+
+        {
+          replacee:"HelloRetryRequest",
+          replacement:"HRR"
+        }
 	]
 }
