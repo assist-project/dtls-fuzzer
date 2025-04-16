@@ -15,79 +15,79 @@ opt_incl_error=0 # if not 0, includes experiments which ended in error (their di
 
 function num_states() {
     model=$1
-    num=$( (grep -c circle "$model"))
-    echo "$num"
+    num=$( (grep -c circle "${model}"))
+    echo "${num}"
 }
 
 function copy_models() {
     experiments_dir=$1
     models_dir=$2
-    mkdir -p "$models_dir"
-    for exp_dir in "$experiments_dir"/*; do
-        exp_dirname=$(basename "$exp_dir")
-        learned_model="$exp_dir/learnedModel.dot"
-        selected_model="$exp_dir/selectedModel.dot"
-        learned_model_alphabet="$exp_dir/alphabet.xml"
-        exp_sulconfig="$exp_dir/sul.config"
+    mkdir -p "${models_dir}"
+    for exp_dir in "${experiments_dir}"/*; do
+        exp_dirname=$(basename "${exp_dir}")
+        learned_model="${exp_dir}/learnedModel.dot"
+        selected_model="${exp_dir}/selectedModel.dot"
+        learned_model_alphabet="${exp_dir}/alphabet.xml"
+        exp_sulconfig="${exp_dir}/sul.config"
 
-        incorrect="$exp_dir/incorrect_model"
-        if [[ -f $incorrect ]]; then
-            echo "Ignoring $exp_dirname because of the presence of $incorrect"
+        incorrect="${exp_dir}/incorrect_model"
+        if [[ -f ${incorrect} ]]; then
+            echo "Ignoring ${exp_dirname} because of the presence of ${incorrect}"
             continue
         fi
 
-        error="$exp_dir/error.msg"
-        if [[ $opt_incl_error -eq 0 && -f $error ]]; then
-            echo "Ignoring $exp_dirname because of the presence of $error"
+        error="${exp_dir}/error.msg"
+        if [[ ${opt_incl_error} -eq 0 && -f ${error} ]]; then
+            echo "Ignoring ${exp_dirname} because of the presence of ${error}"
             continue
         fi
 
-        if [[ $opt_excl -eq 1 && $exp_dirname =~ $opt_excl ]]; then
-            echo "Ignoring $exp_dirname due to the exclude option"
+        if [[ ${opt_excl} -eq 1 && ${exp_dirname} =~ ${opt_excl} ]]; then
+            echo "Ignoring ${exp_dirname} due to the exclude option"
             continue
         fi
 
-        if [[ $opt_incl -eq 1 && ! $exp_dirname =~ $opt_incl ]]; then
-            echo "Ignoring $exp_dirname due to the include (only) option"
+        if [[ ${opt_incl} -eq 1 && ! ${exp_dirname} =~ ${opt_incl} ]]; then
+            echo "Ignoring ${exp_dirname} due to the include (only) option"
             continue
         fi
 
-        if [[ ! -f $learned_model ]]; then
-            if [[ -f $selected_model ]]; then
-                learned_model=$selected_model
+        if [[ ! -f ${learned_model} ]]; then
+            if [[ -f ${selected_model} ]]; then
+                learned_model=${selected_model}
             else
-                last_hyp_num=$( (find "$exp_dir" -name "hyp*.dot" | wc -l) )
-                if [[ $last_hyp_num  -gt $MAX_HYP_NUM ]]; then
-                    last_hyp_num=$MAX_HYP_NUM
+                last_hyp_num=$( (find "${exp_dir}" -name "hyp*.dot" | wc -l) )
+                if [[ ${last_hyp_num}  -gt ${MAX_HYP_NUM} ]]; then
+                    last_hyp_num=${MAX_HYP_NUM}
                 fi
-                learned_model="$exp_dir/hyp$last_hyp_num.dot"
+                learned_model="${exp_dir}/hyp${last_hyp_num}.dot"
             fi
         fi
-        if [[ -f $learned_model ]]; then
-            sutconfig_name="$exp_dirname"
+        if [[ -f ${learned_model} ]]; then
+            sutconfig_name="${exp_dirname}"
             sutconfig_name=${sutconfig_name//_rwalk/}
             sutconfig_name=${sutconfig_name//_stests/}
             sutconfig_name=${sutconfig_name//_incl/}
-            model_dir="$models_dir/$sutconfig_name"
-            mkdir -p "$model_dir"
+            model_dir="${models_dir}/${sutconfig_name}"
+            mkdir -p "${model_dir}"
 
-            cp "$learned_model_alphabet" "$model_dir/alphabet.xml"
-            cp "$exp_sulconfig" "$model_dir/sul.config"
+            cp "${learned_model_alphabet}" "${model_dir}/alphabet.xml"
+            cp "${exp_sulconfig}" "${model_dir}/sul.config"
 
-            model="$model_dir/model.dot"
-            cp "$learned_model" "$model"
+            model="${model_dir}/model.dot"
+            cp "${learned_model}" "${model}"
 
             if [[ opt_build_trimmed -eq 1 ]]; then
-                trimmed_model="$model_dir/trimmed.dot"
-                n_states=$(num_states "$learned_model")
-                if [[ $n_states -le 100 ]]; then
-                    timeout 5s bash "$SCRIPT_DIR"/trim_model.sh -mt -e -o "$trimmed_model" "$model"
+                trimmed_model="${model_dir}/trimmed.dot"
+                n_states=$(num_states "${learned_model}")
+                if [[ ${n_states} -le 100 ]]; then
+                    timeout 5s bash "${SCRIPT_DIR}"/trim_model.sh -mt -e -o "${trimmed_model}" "${model}"
                 fi
             fi
 
             if [[ opt_build_reduced -eq 1 ]]; then
-                reduced_model="$model_dir/reduced.dot"
-                bash "$SCRIPT_DIR"/trim_model.sh -ps -mt -e -o "$reduced_model" "$model"
+                reduced_model="${model_dir}/reduced.dot"
+                bash "${SCRIPT_DIR}"/trim_model.sh -ps -mt -e -o "${reduced_model}" "${model}"
             fi
         fi
     done
