@@ -59,31 +59,31 @@ echo "Using port matching strings: " "${match_strings[@]}"
 
 for ((i = 1 ; i <= $# ; i++)); do
     folder="${!i}"
-    echo "Folder: $folder"
-    for args_file in "$folder"/learn*; do
-        echo "File: $args_file"
+    echo "Folder: ${folder}"
+    for args_file in "${folder}"/learn*; do
+        echo "File: ${args_file}"
         for match_string in "${match_strings[@]}"; do
-            port=$(grep -A1 "$match_string" "$args_file" | grep -o "[0-9][0-9][0-9][0-9]*" | head -n 1)
-            #echo "Matching string: $match_string"
-            if [[ -n $port ]]; then
-                echo "Port: $port; Matching string: $match_string;"
-                num_occur=$(grep --count "$port" "$args_file")
-                if [[ ! $num_occur -eq 2 ]]; then
-                    echo "Expecting two occurrences, found $num_occur. Skipping"
+            port=$(grep -A1 "${match_string}" "${args_file}" | grep -o "[0-9][0-9][0-9][0-9]*" | head -n 1)
+            #echo "Matching string: ${match_string}"
+            if [[ -n ${port} ]]; then
+                echo "Port: ${port}; Matching string: ${match_string};"
+                num_occur=$(grep --count "${port}" "${args_file}")
+                if [[ ! ${num_occur} -eq 2 ]]; then
+                    echo "Expecting two occurrences, found ${num_occur}. Skipping"
                 else
-                    echo "Changing port from $port to $base_port"
+                    echo "Changing port from ${port} to ${base_port}"
                     base_port=$((base_port+match_increase))
-                    cmd="sed -i 's/$port/$base_port/g' $args_file"
-                    echo "$cmd"
-                    if [[ ! $opt_dry -eq 1 ]]; then
-                        eval "$cmd"
+                    cmd="sed -i 's/${port}/${base_port}/g' ${args_file}"
+                    echo "${cmd}"
+                    if [[ ! ${opt_dry} -eq 1 ]]; then
+                        eval "${cmd}"
                     fi
                 fi
             fi
         done
         base_port=$((base_port+file_increase))
     done
-    if [[ ! $folder_step -eq 0 ]]; then
+    if [[ ! ${folder_step} -eq 0 ]]; then
         base_port=$(((base_port/folder_step)*folder_step+folder_step))
     fi
 done
