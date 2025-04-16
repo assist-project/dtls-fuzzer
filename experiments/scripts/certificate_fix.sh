@@ -7,4 +7,4 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
 
-sed -i 's/SERVER_HELLO\,CERTIFICATE/SERVER_HELLO\,RSA_CERTIFICATE/g' "$SCRIPT_DIR"/models/servers/*/model.dot
+sed -i 's/SERVER_HELLO\,CERTIFICATE/SERVER_HELLO\,RSA_CERTIFICATE/g' "${SCRIPT_DIR}"/models/servers/*/model.dot

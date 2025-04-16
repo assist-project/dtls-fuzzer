@@ -5,7 +5,7 @@
 # SCRIPT_DIR should correspond to DTLS-Fuzzer's root directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 readonly SCRIPT_DIR
-readonly PATCHES_DIR="$SCRIPT_DIR/experiments/patches"
+readonly PATCHES_DIR="${SCRIPT_DIR}/experiments/patches"
 
 
 readonly PROTOCOLSTATEFUZZER_COMMIT="e679d1e"
@@ -15,7 +15,7 @@ readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 readonly TLSATTACKER_VERSION="v6.3.4"
 readonly TLSATTACKER_REP_URL="https://github.com/tls-attacker/TLS-Attacker.git"
 readonly TLSATTACKER_FOLDER="TLS-Attacker"
-readonly TLSATTACKER_PATCH="$PATCHES_DIR/TLS-Attacker-$TLSATTACKER_VERSION.patch"
+readonly TLSATTACKER_PATCH="${PATCHES_DIR}/TLS-Attacker-${TLSATTACKER_VERSION}.patch"
 
 function check_java() {
     if ! command -v java &> /dev/null
@@ -31,9 +31,9 @@ function check_java() {
         fi
     else
         java_vm=$(java -version 2>&1 >/dev/null | grep -o "Server VM\|Client VM")
-        if [[ ! $java_vm == "Server VM" ]]
+        if [[ ! ${java_vm} == "Server VM" ]]
         then
-            echo "Required Java Server VM (a JDK instead of JRE), found $java_vm"
+            echo "Required Java Server VM (a JDK instead of JRE), found ${java_vm}"
             echo "Install JDK >= 17, add it to PATH and re-run"
             exit
         fi
@@ -59,23 +59,23 @@ function clone_rep() {
     sut_dir=$1
     rep_url=$2
     rep_com=$3
-    echo "Cloning repository $rep_url commit $rep_com to $sut_dir"
-    echo     git clone "$rep_url" "$sut_dir"
-    git clone "$rep_url" "$sut_dir"
-    if [[ -n "$rep_com" ]]; then
-        ( cd "$sut_dir" || exit ; git checkout "$rep_com" )
+    echo "Cloning repository ${rep_url} commit ${rep_com} to ${sut_dir}"
+    echo     git clone "${rep_url}" "${sut_dir}"
+    git clone "${rep_url}" "${sut_dir}"
+    if [[ -n "${rep_com}" ]]; then
+        ( cd "${sut_dir}" || exit ; git checkout "${rep_com}" )
     fi
 }
 
 function install_protocolstatefuzzer() {
-    echo $PROTOCOLSTATEFUZZER_FOLDER
-    if [[ -d $PROTOCOLSTATEFUZZER_FOLDER ]]; then
-        echo "$PROTOCOLSTATEFUZZER_FOLDER folder already exists"
+    echo "${PROTOCOLSTATEFUZZER_FOLDER}"
+    if [[ -d ${PROTOCOLSTATEFUZZER_FOLDER} ]]; then
+        echo "${PROTOCOLSTATEFUZZER_FOLDER} folder already exists"
         echo "Skipping ProtocolState-Fuzzer setup"
     else
-        clone_rep $PROTOCOLSTATEFUZZER_FOLDER $PROTOCOLSTATEFUZZER_REP_URL $PROTOCOLSTATEFUZZER_COMMIT
+        clone_rep "${PROTOCOLSTATEFUZZER_FOLDER}" "${PROTOCOLSTATEFUZZER_REP_URL}" "${PROTOCOLSTATEFUZZER_COMMIT}"
         (
-            cd $PROTOCOLSTATEFUZZER_FOLDER || exit
+            cd "${PROTOCOLSTATEFUZZER_FOLDER}" || exit
             echo "Installing ProtocolState-Fuzzer"
             ./install.sh
         )
@@ -83,16 +83,16 @@ function install_protocolstatefuzzer() {
 }
 
 function install_tlsattacker() {
-    echo $TLSATTACKER_FOLDER
-    if [[ -d $TLSATTACKER_FOLDER ]]; then
-        echo "$TLSATTACKER_FOLDER folder already exists"
+    echo "${TLSATTACKER_FOLDER}"
+    if [[ -d ${TLSATTACKER_FOLDER} ]]; then
+        echo "${TLSATTACKER_FOLDER} folder already exists"
         echo "Skipping TLS-Attacker setup"
     else
-        clone_rep "$TLSATTACKER_FOLDER" "$TLSATTACKER_REP_URL" "$TLSATTACKER_VERSION"
+        clone_rep "${TLSATTACKER_FOLDER}" "${TLSATTACKER_REP_URL}" "${TLSATTACKER_VERSION}"
         (
-            cd $TLSATTACKER_FOLDER || exit
+            cd "${TLSATTACKER_FOLDER}" || exit
             echo "Patching TLS-Attacker to remove deplicate discard and fragment reordering."
-            git apply "$TLSATTACKER_PATCH"
+            git apply "${TLSATTACKER_PATCH}"
             echo "Installing TLS-Attacker"
             mvn install -DskipTests
         )
