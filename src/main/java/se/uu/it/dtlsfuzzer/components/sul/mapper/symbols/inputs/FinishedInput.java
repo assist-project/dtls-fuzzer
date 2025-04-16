@@ -38,14 +38,13 @@ public class FinishedInput extends DtlsInput {
         }
         context.getTlsContext().getDigest().reset();
 
-        // in DTLS 1.3, we need to skip the bottom code, otherwise we will start sending message with Epoch=3 and Seq=2
-        // However, we prefer to send message with fresh sequence number, which is Epoch=3 and Seq=0
-        // Without skip we can also complete handshake, but I prefer to make Seq number more correct.
-        // TLS-Attacker will maintain the sequence number for us, so we don't need to manually set sequence number
+        // In DTLS 1.3, we prefer to send messages with fresh sequence number (Epoch=3 and Seq=0)
+        // and avoid sending messages with Epoch=3 and Seq=2.  Therefore, we skip the code below.
+        // TLS-Attacker maintains the sequence numbers for us, so we don't need to manually set them.
         if (context.getTlsContext().getConfig().getHighestProtocolVersion().isDTLS13()){
             return;
         }
-        // we have to make this change for learning to scale
+        // We have to make this change for learning to scale.
         context.getTlsContext().setWriteSequenceNumber(context.getTlsContext().getWriteEpoch(), lastSequenceNumber + 1);
     }
 
