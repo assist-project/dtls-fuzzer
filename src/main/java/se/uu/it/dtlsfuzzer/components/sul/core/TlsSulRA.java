@@ -9,6 +9,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.PSymbolInstance;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsInputTransformer;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
@@ -18,8 +19,11 @@ public class TlsSulRA
 
     private TlsSul wrappedSul;
 
-    public TlsSulRA(TlsSul sul) {
+    private TlsInputTransformer inputTransformer;
+
+    public TlsSulRA(TlsSul sul, TlsInputTransformer inputTransformer) {
         this.wrappedSul = sul;
+        this.inputTransformer = inputTransformer;
     }
 
     @Override
@@ -34,8 +38,10 @@ public class TlsSulRA
 
     @Override
     public PSymbolInstance step(PSymbolInstance in) {
-        //FIXME: Translation mapping from PSymbolInstance to TlsInput.
-        TlsInput input = null;
+        // TODO: Currently missing parameter logic, use the epoch setters when adding parameters.
+        TlsInput input = inputTransformer.fromTransformedInput(
+            in.getBaseSymbol()
+        );
         TlsOutput output = wrappedSul.step(input);
         OutputSymbol base = new OutputSymbol(output.getName());
         return new PSymbolInstance(base);
