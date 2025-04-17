@@ -4,10 +4,14 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabe
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderTransformer;
 import de.learnlib.ralib.words.InputSymbol;
 import de.learnlib.ralib.words.ParameterizedSymbol;
+import java.util.LinkedHashMap;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 
 public class TlsInputTransformer
     extends AlphabetBuilderTransformer<TlsInput, ParameterizedSymbol> {
+
+    private LinkedHashMap<ParameterizedSymbol, TlsInput> translationMap =
+        new LinkedHashMap<>();
 
     public TlsInputTransformer(
         AlphabetBuilderStandard<TlsInput> alphabetBuilder
@@ -20,14 +24,13 @@ public class TlsInputTransformer
         // FIXME: This will need to be updated to handle output symbols.
         // Probably by adding a TlsInput subclass that is actually a TlsOutput.
         // The alphabet files might need to be different to not break mealy learning.
-        return new InputSymbol(ri.getName());
+        ParameterizedSymbol translated = new InputSymbol(ri.getName());
+        translationMap.put(translated, ri);
+        return translated;
     }
 
     @Override
     public TlsInput fromTransformedInput(ParameterizedSymbol ti) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException(
-            "Unimplemented method 'fromTransformedInput'"
-        );
+        return translationMap.get(ti);
     }
 }
