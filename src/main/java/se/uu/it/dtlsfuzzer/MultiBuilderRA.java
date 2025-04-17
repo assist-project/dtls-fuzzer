@@ -1,6 +1,5 @@
 package se.uu.it.dtlsfuzzer;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.xml.AlphabetSerializerXml;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.config.LearnerConfigRA;
@@ -57,14 +56,15 @@ public class MultiBuilderRA
             )
         );
 
-    protected AlphabetBuilder<ParameterizedSymbol> alphabetBuilder =
-        new TlsInputTransformer(standardBuilder);
+    protected TlsInputTransformer inputTransformer = new TlsInputTransformer(
+        standardBuilder
+    );
 
     protected SulBuilder<
         PSymbolInstance,
         PSymbolInstance,
         TlsExecutionContextRA
-    > sulBuilder = new TlsSulBuilderRA();
+    > sulBuilder = new TlsSulBuilderRA(inputTransformer);
 
     protected SulWrapper<
         PSymbolInstance,
@@ -85,7 +85,7 @@ public class MultiBuilderRA
                 TlsExecutionContextRA
             >(
                 stateFuzzerEnabler,
-                alphabetBuilder,
+                inputTransformer,
                 sulBuilder,
                 sulWrapper,
                 teachers
