@@ -91,6 +91,8 @@ readonly OPENSSL_111k="openssl-1.1.1k"
 readonly OPENSSL_111k_ARCH_URL="https://www.openssl.org/source/old/1.1.1/openssl-1.1.1k.tar.gz"
 readonly OPENSSL_300="openssl-3.0.0"
 readonly OPENSSL_300_ARCH_URL="https://www.openssl.org/source/old/3.0/openssl-3.0.0.tar.gz"
+readonly OPENSSL_350="openssl-3.5.0"
+readonly OPENSSL_350_ARCH_URL="https://github.com/openssl/openssl/releases/download/openssl-3.5.0/openssl-3.5.0.tar.gz"
 
 readonly PIONDTLS_USENIX="piondtls-usenix" # the usenix version sits one commit before 1.5.2 (the commit after it fixes the application processing bug)
 readonly PIONDTLS_USENIX_REP_COMMIT="e4481fc"
@@ -158,7 +160,7 @@ sutvarnames=("CTINYDTLS" "ETINYDTLS" "ETINYDTLS_DEVELOP" \
 "JSSE_904" "JSSE_11010" "JSSE_1202" "JSSE_1302" "JSSE_1501" "JSSE_1601" \
 "MBEDTLS_2161" "MBEDTLS_2250" "MBEDTLS_2260" \
 "SCANDIUM_OLD" "SCANDIUM_230" "SCANDIUM_262" "SCANDIUM_300_M2" \
-"OPENSSL_111b" "OPENSSL_111c" "OPENSSL_111g" "OPENSSL_111k" "OPENSSL_300" \
+"OPENSSL_111b" "OPENSSL_111c" "OPENSSL_111g" "OPENSSL_111k" "OPENSSL_300" "OPENSSL_350" \
 "PIONDTLS_USENIX" "PIONDTLS_152" "PIONDTLS_202" "PIONDTLS_209" \
 "WOLFSSL_400" "WOLFSSL_440" "WOLFSSL_471r" "WOLFSSL_576")
 
@@ -167,7 +169,7 @@ sut_strings=("${CTINYDTLS}" "${ETINYDTLS}" "${ETINYDTLS_DEVELOP}" \
 "${GNUTLS_3519}" "${GNUTLS_367}" "${GNUTLS_371}" "${GNUTLS_LATEST}" \
 "${JSSE_904}" "${JSSE_11010}" "${JSSE_1202}" "${JSSE_1302}" "${JSSE_1501}" "${JSSE_1601}" \
 "${MBEDTLS_2161}" "${MBEDTLS_2250}" "${MBEDTLS_2260}" \
-"${OPENSSL_111b}" "${OPENSSL_111c}" "${OPENSSL_111g}" "${OPENSSL_111k}" "${OPENSSL_300}" \
+"${OPENSSL_111b}" "${OPENSSL_111c}" "${OPENSSL_111g}" "${OPENSSL_111k}" "${OPENSSL_300}" "${OPENSSL_350}" \
 "${PIONDTLS_USENIX}" "${PIONDTLS_152}" "${PIONDTLS_202}" "${PIONDTLS_209}" \
 "${SCANDIUM_OLD}" "${SCANDIUM_230}" "${SCANDIUM_262}" "${SCANDIUM_300_M2}" \
 "${WOLFSSL_400}" "${WOLFSSL_440}" "${WOLFSSL_471r}" "${WOLFSSL_576}")
@@ -492,7 +494,7 @@ function make_sut() {
     make_path="${sut_dir}/Makefile"
     if [[ -f "${make_path}" ]]; then
         echo "Running make inside ${sut_dir}"
-        ( cd "${sut_dir}" || exit ; make )
+        ( cd "${sut_dir}" || exit ; make -j4 )
         # tinydtls exceptions
         if [[ ${sut} == *tinydtls* ]]; then
             test_dir="${sut_dir}/tests"
