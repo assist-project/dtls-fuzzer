@@ -32,26 +32,26 @@ readonly MODULES_DIR="${SCRIPT_DIR}/modules"
 # to a version for quick modification.
 #-----------------------------------------------------------------------------
 
-readonly CTINYDTLS='ctinydtls'
-readonly CTINYDTLS_REP_URL='https://github.com/contiki-ng/tinydtls.git'
-readonly CTINYDTLS_COMMIT='53a0d97'
-#readonly CTINYDTLS_ARCH_URL='https://github.com/contiki-ng/tinydtls/archive/53a0d97da748a67093c49cb38744650c71d58c4d.tar.gz'
+readonly CTINYDTLS="ctinydtls"
+readonly CTINYDTLS_REP_URL="https://github.com/contiki-ng/tinydtls.git"
+readonly CTINYDTLS_COMMIT="53a0d97"
+#readonly CTINYDTLS_ARCH_URL="https://github.com/contiki-ng/tinydtls/archive/53a0d97da748a67093c49cb38744650c71d58c4d.tar.gz"
 
-readonly ETINYDTLS='etinydtls'
-readonly ETINYDTLS_REP_URL='https://github.com/eclipse/tinydtls.git'
-readonly ETINYDTLS_COMMIT='8414f8a'
+readonly ETINYDTLS="etinydtls"
+readonly ETINYDTLS_REP_URL="https://github.com/eclipse/tinydtls.git"
+readonly ETINYDTLS_COMMIT="8414f8a"
 readonly ETINYDTLS_DEVELOP="etinydtls-develop"
-readonly ETINYDTLS_DEVELOP_REP_URL='https://github.com/eclipse/tinydtls.git'
-readonly ETINYDTLS_DEVELOP_COMMIT='19d9fcf'
+readonly ETINYDTLS_DEVELOP_REP_URL="https://github.com/eclipse/tinydtls.git"
+readonly ETINYDTLS_DEVELOP_COMMIT="19d9fcf"
 
-readonly GNUTLS_LATEST='gnutls-latest'
-readonly GNUTLS_LATEST_REP_URL='https://gitlab.com/gnutls/gnutls.git'
+readonly GNUTLS_LATEST="gnutls-latest"
+readonly GNUTLS_LATEST_REP_URL="https://gitlab.com/gnutls/gnutls.git"
 readonly GNUTLS_371="gnutls-3.7.1"
-readonly GNUTLS_371_ARCH_URL='https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.1.tar.xz'
-readonly GNUTLS_367='gnutls-3.6.7'
-readonly GNUTLS_367_ARCH_URL='ftp://ftp.gnutls.org/gcrypt/gnutls/v3.6/gnutls-3.6.7.tar.xz'
-readonly GNUTLS_3519='gnutls-3.5.19'
-readonly GNUTLS_3519_ARCH_URL='ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/gnutls-3.5.19.tar.xz'
+readonly GNUTLS_371_ARCH_URL="https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.1.tar.xz"
+readonly GNUTLS_367="gnutls-3.6.7"
+readonly GNUTLS_367_ARCH_URL="ftp://ftp.gnutls.org/gcrypt/gnutls/v3.6/gnutls-3.6.7.tar.xz"
+readonly GNUTLS_3519="gnutls-3.5.19"
+readonly GNUTLS_3519_ARCH_URL="ftp://ftp.gnutls.org/gcrypt/gnutls/v3.5/gnutls-3.5.19.tar.xz"
 
 #readonly JSSE_ARCH_URL="https://github.com/assist-project/jsse-dtls-clientserver/archive/refs/tags/v1.0.0.tar.gz"
 readonly JSSE_LOCAL=${SOURCES_DIR}/jsse-dtls-clientserver
@@ -75,22 +75,22 @@ readonly JSSE_1601_LOCAL=${JSSE_LOCAL}
 #readonly JSSE_1601_ARCH_URL=${JSSE_ARCH_URL}
 
 readonly MBEDTLS_2161="mbedtls-2.16.1"
-readonly MBEDTLS_2161_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.16.1.tar.gz'
+readonly MBEDTLS_2161_ARCH_URL="https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.16.1.tar.gz"
 readonly MBEDTLS_2250="mbedtls-2.25.0"
-readonly MBEDTLS_2250_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.25.0.tar.gz'
+readonly MBEDTLS_2250_ARCH_URL="https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.25.0.tar.gz"
 readonly MBEDTLS_2260="mbedtls-2.26.0"
-readonly MBEDTLS_2260_ARCH_URL='https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.26.0.tar.gz'
+readonly MBEDTLS_2260_ARCH_URL="https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.26.0.tar.gz"
 
-readonly OPENSSL_111b='openssl-1.1.1b'
-readonly OPENSSL_111b_ARCH_URL='https://www.openssl.org/source/old/1.1.1/openssl-1.1.1b.tar.gz'
-readonly OPENSSL_111c='openssl-1.1.1c'
-readonly OPENSSL_111c_ARCH_URL='https://www.openssl.org/source/old/1.1.1/openssl-1.1.1c.tar.gz'
-readonly OPENSSL_111g='openssl-1.1.1g'
-readonly OPENSSL_111g_ARCH_URL='https://www.openssl.org/source/old/1.1.1/openssl-1.1.1g.tar.gz'
-readonly OPENSSL_111k='openssl-1.1.1k'
-readonly OPENSSL_111k_ARCH_URL='https://www.openssl.org/source/old/1.1.1/openssl-1.1.1k.tar.gz'
-readonly OPENSSL_300='openssl-3.0.0'
-readonly OPENSSL_300_ARCH_URL='https://www.openssl.org/source/old/3.0/openssl-3.0.0.tar.gz'
+readonly OPENSSL_111b="openssl-1.1.1b"
+readonly OPENSSL_111b_ARCH_URL="https://www.openssl.org/source/old/1.1.1/openssl-1.1.1b.tar.gz"
+readonly OPENSSL_111c="openssl-1.1.1c"
+readonly OPENSSL_111c_ARCH_URL="https://www.openssl.org/source/old/1.1.1/openssl-1.1.1c.tar.gz"
+readonly OPENSSL_111g="openssl-1.1.1g"
+readonly OPENSSL_111g_ARCH_URL="https://www.openssl.org/source/old/1.1.1/openssl-1.1.1g.tar.gz"
+readonly OPENSSL_111k="openssl-1.1.1k"
+readonly OPENSSL_111k_ARCH_URL="https://www.openssl.org/source/old/1.1.1/openssl-1.1.1k.tar.gz"
+readonly OPENSSL_300="openssl-3.0.0"
+readonly OPENSSL_300_ARCH_URL="https://www.openssl.org/source/old/3.0/openssl-3.0.0.tar.gz"
 
 readonly PIONDTLS_USENIX="piondtls-usenix" # the usenix version sits one commit before 1.5.2 (the commit after it fixes the application processing bug)
 readonly PIONDTLS_USENIX_REP_COMMIT="e4481fc"
@@ -102,31 +102,31 @@ readonly PIONDTLS_202_ARCH_URL="https://github.com/assist-project/pion-dtls-exam
 readonly PIONDTLS_209="piondtls-2.0.9" # likely works with other v2.x.x versions
 readonly PIONDTLS_209_ARCH_URL="https://github.com/assist-project/pion-dtls-examples/archive/refs/tags/v2.0.9.tar.gz"
 
-readonly SCANDIUM_OLD='scandium-2.0.0-M16'
-readonly SCANDIUM_OLD_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v2.0.0-M16.tar.gz'
+readonly SCANDIUM_OLD="scandium-2.0.0-M16"
+readonly SCANDIUM_OLD_ARCH_URL="https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v2.0.0-M16.tar.gz"
 readonly CALIFORNIUM_OLD="californium-2.0.0-M16"
-readonly CALIFORNIUM_OLD_ARCH_URL='https://github.com/eclipse/californium/archive/2.0.0-M16.tar.gz'
+readonly CALIFORNIUM_OLD_ARCH_URL="https://github.com/eclipse/californium/archive/2.0.0-M16.tar.gz"
 readonly SCANDIUM_230="scandium-2.3.0"
-readonly SCANDIUM_230_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v2.3.0.tar.gz'
+readonly SCANDIUM_230_ARCH_URL="https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v2.3.0.tar.gz"
 readonly CALIFORNIUM_230="californium-2.3.0"
-readonly CALIFORNIUM_230_ARCH_URL='https://github.com/eclipse/californium/archive/2.3.0.tar.gz'
+readonly CALIFORNIUM_230_ARCH_URL="https://github.com/eclipse/californium/archive/2.3.0.tar.gz"
 readonly SCANDIUM_262="scandium-2.6.2"
-readonly SCANDIUM_262_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v2.6.2.tar.gz'
+readonly SCANDIUM_262_ARCH_URL="https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v2.6.2.tar.gz"
 readonly CALIFORNIUM_262="californium-2.6.2"
-readonly CALIFORNIUM_262_ARCH_URL='https://github.com/eclipse/californium/archive/2.6.2.tar.gz'
+readonly CALIFORNIUM_262_ARCH_URL="https://github.com/eclipse/californium/archive/2.6.2.tar.gz"
 readonly SCANDIUM_300_M2="scandium-3.0.0-M2"
-readonly SCANDIUM_300_M2_ARCH_URL='https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v3.0.0-M2.tar.gz'
+readonly SCANDIUM_300_M2_ARCH_URL="https://github.com/assist-project/scandium-dtls-examples/archive/v2.0-v3.0.0-M2.tar.gz"
 readonly CALIFORNIUM_300_M2="californium-3.0.0-M2"
-readonly CALIFORNIUM_300_M2_ARCH_URL='https://github.com/eclipse/californium/archive/refs/tags/3.0.0-M2.tar.gz'
+readonly CALIFORNIUM_300_M2_ARCH_URL="https://github.com/eclipse/californium/archive/refs/tags/3.0.0-M2.tar.gz"
 
 readonly WOLFSSL_400="wolfssl-4.0.0"
-readonly WOLFSSL_400_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/v4.0.0-stable.tar.gz'
+readonly WOLFSSL_400_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/v4.0.0-stable.tar.gz"
 readonly WOLFSSL_440="wolfssl-4.4.0"
-readonly WOLFSSL_440_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/v4.4.0-stable.tar.gz'
+readonly WOLFSSL_440_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/v4.4.0-stable.tar.gz"
 readonly WOLFSSL_471r="wolfssl-4.7.1r"
-readonly WOLFSSL_471r_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/refs/tags/v4.7.1r.tar.gz'
+readonly WOLFSSL_471r_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/tags/v4.7.1r.tar.gz"
 readonly WOLFSSL_576="wolfssl-5.7.6"
-readonly WOLFSSL_576_ARCH_URL='https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.7.6-stable.tar.gz'
+readonly WOLFSSL_576_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.7.6-stable.tar.gz"
 
 # dependencies
 readonly JDK_904="jdk-9.0.4"
