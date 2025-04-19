@@ -86,14 +86,10 @@ public class ClientHelloRenegotiationInput extends TlsInput {
     @Override
     public void postReceiveUpdate(TlsOutput output, OutputChecker<TlsOutput> abstractOutputChecker,
             TlsExecutionContext context) {
-        switch (enabled) {
-            case ON_SERVER_HELLO:
-                if (!TlsOutputChecker.hasServerHello(output)) {
-                    context.disableExecution();
-                }
-                break;
-            default:
-                break;
+        if (enabled == Enabled.ON_SERVER_HELLO) {
+            if (!TlsOutputChecker.hasServerHello(output)) {
+                context.disableExecution();
+            }
         }
         super.postReceiveUpdate(output, abstractOutputChecker, context);
     }
