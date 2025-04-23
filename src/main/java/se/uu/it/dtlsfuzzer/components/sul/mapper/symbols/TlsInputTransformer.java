@@ -3,8 +3,10 @@ package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderTransformer;
 import de.learnlib.ralib.words.InputSymbol;
+import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.ParameterizedSymbol;
 import java.util.LinkedHashMap;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.RAOutputSymbol;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 
 public class TlsInputTransformer
@@ -21,12 +23,15 @@ public class TlsInputTransformer
 
     @Override
     public ParameterizedSymbol toTransformedInput(TlsInput ri) {
-        // FIXME: This will need to be updated to handle output symbols.
-        // Probably by adding a TlsInput subclass that is actually a TlsOutput.
-        // The alphabet files might need to be different to not break mealy learning.
-        ParameterizedSymbol translated = new InputSymbol(ri.getName());
-        translationMap.put(translated, ri);
-        return translated;
+        if (ri instanceof RAOutputSymbol) {
+            ParameterizedSymbol translated = new OutputSymbol(ri.getName());
+            // Don't put output symbols in the translation map because we don't want to feed them as inputs.
+            return translated;
+        } else {
+            ParameterizedSymbol translated = new InputSymbol(ri.getName());
+            translationMap.put(translated, ri);
+            return translated;
+        }
     }
 
     @Override
