@@ -285,8 +285,8 @@ jobs:
 
       - name: Test openssl-3.5.0 Server (all_cert_none)
         run: |
-          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_server_all_cert_none -Dopenssl.version=3.5.0 -roundLimit 4
-          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/openssl-3.5.0_server_all_cert_none output/openssl-3.5.0_server_all_cert_none 4
+          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_server_all_cert_none -Dopenssl.version=3.5.0 -roundLimit 9
+          experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/openssl-3.5.0_server_all_cert_none output/openssl-3.5.0_server_all_cert_none 9
 
   PionDTLS-2-0-9_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
