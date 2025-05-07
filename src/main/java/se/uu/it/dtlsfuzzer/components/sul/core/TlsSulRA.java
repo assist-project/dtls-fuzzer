@@ -5,10 +5,13 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulAda
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwrappers.DynamicPortProvider;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposerRA;
 import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.PSymbolInstance;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsInputTransformer;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
@@ -21,9 +24,12 @@ public class TlsSulRA
 
     private TlsInputTransformer inputTransformer;
 
-    public TlsSulRA(TlsSul sul, TlsInputTransformer inputTransformer) {
+    private MapperComposerRA<PSymbolInstance, TlsProtocolMessage, TlsExecutionContextRA, TlsState> mapperComposer;
+
+    public TlsSulRA(TlsSul sul, TlsInputTransformer inputTransformer, MapperComposerRA<PSymbolInstance, TlsProtocolMessage, TlsExecutionContextRA, TlsState> mapperComposer) {
         this.wrappedSul = sul;
         this.inputTransformer = inputTransformer;
+        this.mapperComposer = mapperComposer;
     }
 
     @Override
@@ -75,10 +81,7 @@ public class TlsSulRA
         PSymbolInstance,
         TlsExecutionContextRA
     > getMapper() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException(
-            "Unimplemented method 'getMapper'"
-        );
+        return mapperComposer;
     }
 
     @Override
