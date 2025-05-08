@@ -2,7 +2,7 @@
 -connect
 localhost:${sul.port}
 -startWait
-4000
+1000
 -responseWait
 100
 -protocol
