@@ -4,7 +4,7 @@ state-fuzzer-server
 -connect
 localhost:${sul.port}
 -startWait
-2000
+1000
 -responseWait
 200
 -protocol
