@@ -2,7 +2,7 @@ digraph g {
 
 	s0 [shape="circle" label="s0"];
 	s0 -> s0 [label="HELLO_VERIFY_REQUEST / CLIENT_HELLO"];
-	s0 -> s0 [label="ECDH_SERVER_HELLO / Alert(FATAL,HANDSHAKE_FAILURE)"];
+	s0 -> s0 [label="ECDH_SERVER_HELLO / TIMEOUT"];
 	s0 -> s0 [label="ECDH_SERVER_KEY_EXCHANGE / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s0 -> s0 [label="RSA_SIGN_CERTIFICATE_REQUEST / Alert(FATAL,UNEXPECTED_MESSAGE)"];
 	s0 -> s0 [label="RSA_FIXED_ECDH_CERTIFICATE_REQUEST / Alert(FATAL,UNEXPECTED_MESSAGE)"];

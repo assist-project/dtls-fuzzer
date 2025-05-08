@@ -311,8 +311,8 @@ jobs:
 
       - name: Test openssl-3.5.0 Client (ecdhe_cert_reneg)
         run: |
-          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_client_ecdhe_cert_reneg -Dopenssl.version=3.5.0 -roundLimit 2
-          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/openssl-3.5.0_client_ecdhe_cert_reneg output/openssl-3.5.0_client_ecdhe_cert_reneg 2
+          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_client_ecdhe_cert_reneg -Dopenssl.version=3.5.0 -roundLimit 7
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/openssl-3.5.0_client_ecdhe_cert_reneg output/openssl-3.5.0_client_ecdhe_cert_reneg 7
 
   PionDTLS-2-0-9_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
