@@ -6,7 +6,7 @@ ${sul.port}
 -protocol
 DTLS12
 -startWait
-0
+1000
 -responseWait
 100
 -cmd
