@@ -288,6 +288,32 @@ jobs:
           java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_server_all_cert_none -Dopenssl.version=3.5.0 -roundLimit 9
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/openssl-3.5.0_server_all_cert_none output/openssl-3.5.0_server_all_cert_none 9
 
+  OpenSSL-3-5-0_Client_ecdhe_cert_reneg:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install DTLS-Fuzzer
+        run: ./install.sh
+
+      - name: Setup SUT
+        run: ./setup_sut.sh openssl-3.5.0
+
+      - name: Test openssl-3.5.0 Client (ecdhe_cert_reneg)
+        run: |
+          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_client_ecdhe_cert_reneg -Dopenssl.version=3.5.0 -roundLimit 2
+          experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/openssl-3.5.0_client_ecdhe_cert_reneg output/openssl-3.5.0_client_ecdhe_cert_reneg 2
+
   PionDTLS-2-0-9_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ubuntu-24.04 # due to needing an old version of golang
