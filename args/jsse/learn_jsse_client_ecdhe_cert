@@ -4,7 +4,7 @@ state-fuzzer-client
 -port
 ${sul.port}
 -startWait
-1000
+0
 -responseWait
 200
 -protocol
