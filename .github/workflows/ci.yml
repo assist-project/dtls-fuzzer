@@ -25,7 +25,7 @@ jobs:
 
       - name: Test Contiki-NG TinyDTLS Server (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/ctinydtls/learn_ctinydtls_server_psk -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/ctinydtls/learn_ctinydtls_server_psk -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/ctinydtls_server_psk output/ctinydtls_server_psk 5
 
   CTinyDTLS_Client_psk:
@@ -51,7 +51,7 @@ jobs:
 
       - name: Test Contiki-NG TinyDTLS Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/ctinydtls/learn_ctinydtls_client_psk -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/ctinydtls/learn_ctinydtls_client_psk -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/ctinydtls_client_psk output/ctinydtls_client_psk 5
 
   ETinyDTLS_Server_psk:
@@ -77,7 +77,7 @@ jobs:
 
       - name: Test Eclipse TinyDTLS Server (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_server_psk -inputResponseTimeout CHANGE_CIPHER_SPEC:250 -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_server_psk -inputResponseTimeout CHANGE_CIPHER_SPEC:250 -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/etinydtls_server_psk output/etinydtls_server_psk 5
 
   ETinyDTLS_Client_psk:
@@ -103,7 +103,7 @@ jobs:
 
       - name: Test Eclipse TinyDTLS Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_client_psk -inputResponseTimeout CHANGE_CIPHER_SPEC:250 -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/etinydtls/learn_etinydtls_client_psk -inputResponseTimeout CHANGE_CIPHER_SPEC:250 -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/etinydtls_client_psk output/etinydtls_client_psk 5
 
   JSSE-12-0-2_Server_ecdhe_cert_req:
@@ -129,7 +129,7 @@ jobs:
 
       - name: Test jsse-12.0.2 Server (ecdhe_cert_req)
         run: |
-          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_server_ecdhe_cert_req -Djsse.version=12.0.2 -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_server_ecdhe_cert_req -Djsse.version=12.0.2 -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/jsse-12.0.2_server_ecdhe_cert_req output/jsse-12.0.2_server_ecdhe_cert_req 5
 
   JSSE-12-0-2_Client_ecdhe_cert:
@@ -155,7 +155,7 @@ jobs:
 
       - name: Test jsse-12.0.2 Client (ecdhe_cert)
         run: |
-          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_client_ecdhe_cert -Djsse.version=12.0.2 -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/jsse/learn_jsse_client_ecdhe_cert -Djsse.version=12.0.2 -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/jsse-12.0.2_client_ecdhe_cert output/jsse-12.0.2_client_ecdhe_cert 5
 
   Mbedtls-2-26-0_Server_all_cert_req:
@@ -181,7 +181,7 @@ jobs:
 
       - name: Test mbedtls-2.26.0 Server (all_cert_req)
         run: |
-          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_server_all_cert_req -Dmbedtls.version=2.26.0 -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_server_all_cert_req -Dmbedtls.version=2.26.0 -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/mbedtls-2.26.0_server_all_cert_req output/mbedtls-2.26.0_server_all_cert_req 5
 
   Mbedtls-2-26-0_Client_dhe_ecdhe_rsa_eneg:
@@ -207,7 +207,7 @@ jobs:
 
       - name: Test mbedtls-2.26.0 Client (dhe_ecdhe_rsa_cert_reneg)
         run: |
-          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg -Dmbedtls.version=2.26.0 -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/mbedtls/learn_mbedtls_client_dhe_ecdhe_rsa_cert_reneg -Dmbedtls.version=2.26.0 -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg output/mbedtls-2.26.0_client_dhe_ecdhe_rsa_cert_reneg 5
 
   OpenSSL-1-1-1k_Server_all_cert_req:
@@ -233,7 +233,7 @@ jobs:
 
       - name: Test openssl-1.1.1k Server (all_cert_req)
         run: |
-          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_server_all_cert_req -Dopenssl.version=1.1.1k -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_server_all_cert_req -Dopenssl.version=1.1.1k -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/openssl-1.1.1k_server_all_cert_req output/openssl-1.1.1k_server_all_cert_req 5
 
   OpenSSL-1-1-1k_Client_dhe_ecdhe_rsa_eneg:
@@ -259,7 +259,7 @@ jobs:
 
       - name: Test openssl-1.1.1k Client (dhe_ecdhe_rsa_reneg)
         run: |
-          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_client_dhe_ecdhe_rsa_cert_reneg -Dopenssl.version=1.1.1k -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/openssl/learn_openssl_client_dhe_ecdhe_rsa_cert_reneg -Dopenssl.version=1.1.1k -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/openssl-1.1.1k_client_dhe_ecdhe_rsa_cert_reneg output/openssl-1.1.1k_client_dhe_ecdhe_rsa_cert_reneg 5
 
   PionDTLS-2-0-9_Server_psk:
@@ -290,7 +290,7 @@ jobs:
 
       - name: Test piondtls-2.0.9 Server (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/piondtls/learn_piondtls_server_psk -Dpiondtls.version=2.0.9 -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/piondtls/learn_piondtls_server_psk -Dpiondtls.version=2.0.9 -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/piondtls-2.0.9_server_psk output/piondtls-2.0.9_server_psk 5
 
   PionDTLS-2-0-9_Client_psk:
@@ -321,7 +321,7 @@ jobs:
 
       - name: Test piondtls-2.0.9 Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/piondtls/learn_piondtls_client_psk -Dpiondtls.version=2.0.9 -roundLimit 7 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/piondtls/learn_piondtls_client_psk -Dpiondtls.version=2.0.9 -roundLimit 7 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/piondtls-2.0.9_client_psk output/piondtls-2.0.9_client_psk 7
 
   Scandium-2-0-0-M16_Server_ecdhe_cert_req:
@@ -347,7 +347,7 @@ jobs:
 
       - name: Test scandium-2.0.0-M16 Server (ecdhe_cert_req)
         run: |
-          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_server_ecdhe_cert_req -Dscandium.version=2.0.0-M16 -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_server_ecdhe_cert_req -Dscandium.version=2.0.0-M16 -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/scandium-2.0.0-M16_server_ecdhe_cert_req output/scandium-2.0.0-M16_server_ecdhe_cert_req 5
 
   Scandium-2-0-0-M16_Client_ecdhe_cert:
@@ -374,7 +374,7 @@ jobs:
       - name: Test scandium-2.0.0-M16 Client (ecdhe_cert)
         run: |
           # we are running just two rounds here because producing the third hypothesis takes too long
-          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_client_ecdhe_cert -Dscandium.version=2.0.0-M16 -roundLimit 2 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/scandium/learn_scandium_client_ecdhe_cert -Dscandium.version=2.0.0-M16 -roundLimit 2 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/scandium-2.0.0-M16_client_ecdhe_cert output/scandium-2.0.0-M16_client_ecdhe_cert 2
 
   WolfSSL-4-7-1r_DTLS-1-2_Server_psk:
@@ -400,7 +400,7 @@ jobs:
 
       - name: Test wolfssl-4.7.1r DTLS 1.2 Server (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=4.7.1r -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-4.7.1r_server_psk output/wolfssl-4.7.1r_server_psk 5
 
   WolfSSL-4-7-1r_DTLS-1-2_Client_psk:
@@ -426,7 +426,7 @@ jobs:
 
       - name: Test wolfssl-4.7.1r DTLS 1.2 Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -roundLimit 6 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=4.7.1r -roundLimit 6 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-4.7.1r_client_psk output/wolfssl-4.7.1r_client_psk 6
 
   WolfSSL-5-7-6_DTLS-1-2_Server_psk:
@@ -452,7 +452,7 @@ jobs:
 
       - name: Test wolfssl-5.7.6 DTLS 1.2 Server (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=5.7.6 -roundLimit 4 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk -Dwolfssl.version=5.7.6 -roundLimit 4 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_psk output/wolfssl-5.7.6_server_psk 4
 
   WolfSSL-5-7-6_DTLS-1-2_Client_psk:
@@ -478,7 +478,7 @@ jobs:
 
       - name: Test wolfssl-5.7.6 DTLS 1.2 Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=5.7.6 -roundLimit 6 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk -Dwolfssl.version=5.7.6 -roundLimit 6 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-5.7.6_client_psk output/wolfssl-5.7.6_client_psk 6
 
   WolfSSL-5-7-6_DTLS-1-3_Server_psk:
@@ -504,7 +504,7 @@ jobs:
 
       - name: Test wolfssl-5.7.6 DTLS 1.3 Server (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 3 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_psk_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 3 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_psk_DTLS13 output/wolfssl-5.7.6_server_psk_DTLS13 3
 
   WolfSSL-5-7-6_DTLS-1-3_Server_dhe_cert_nreq:
@@ -530,7 +530,7 @@ jobs:
 
       - name: Test wolfssl-5.7.6 DTLS 1.3 Server (dhe_cert_nreq)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_dhe_cert_nreq_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 3 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_dhe_cert_nreq_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 3 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_dhe_cert_nreq_DTLS13 output/wolfssl-5.7.6_server_dhe_cert_nreq_DTLS13 3
 
   WolfSSL-5-7-6_DTLS-1-3_Server_dhe_cert_req:
@@ -556,7 +556,7 @@ jobs:
 
       - name: Test wolfssl-5.7.6 DTLS 1.3 Server (dhe_cert_req)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_dhe_cert_req_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 4 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_server_dhe_cert_req_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 4 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/servers/rounds/wolfssl-5.7.6_server_dhe_cert_req_DTLS13 output/wolfssl-5.7.6_server_dhe_cert_req_DTLS13 4
 
   WolfSSL-5-7-6_DTLS-1-3_Client_psk:
@@ -582,7 +582,7 @@ jobs:
 
       - name: Test wolfssl-5.7.6 DTLS 1.3 Client (psk)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 5 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_psk_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 5 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-5.7.6_client_psk_DTLS13 output/wolfssl-5.7.6_client_psk_DTLS13 5
 
   WolfSSL-5-7-6_DTLS-1-3_Client_dhe_cert_nreq:
@@ -608,7 +608,7 @@ jobs:
 
       - name: Test wolfssl-5.7.6 DTLS 1.3 Client (dhe_cert_nreq)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_dhe_cert_nreq_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 7 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_dhe_cert_nreq_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 7 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-5.7.6_client_dhe_cert_nreq_DTLS13 output/wolfssl-5.7.6_client_dhe_cert_nreq_DTLS13 7
 
   WolfSSL-5-7-6_DTLS-1-3_Client_dhe_cert_req:
@@ -634,5 +634,5 @@ jobs:
 
       - name: Test wolfssl-5.7.6 DTLS 1.3 Client (dhe_cert_req)
         run: |
-          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_dhe_cert_req_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 8 -threadCount 4
+          java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_dhe_cert_req_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 8 -threadCount 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-5.7.6_client_dhe_cert_req_DTLS13 output/wolfssl-5.7.6_client_dhe_cert_req_DTLS13 8
