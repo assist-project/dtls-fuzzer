@@ -1,0 +1,12 @@
+diff -ruN suts/scandium-2.0.0-M16/scandium-dtls-clientserver/src/main/java/org/eclipse/californium/scandium/examples/ThreadStarter.java suts/scandium-2.0.0-M16_patched/scandium-dtls-clientserver/src/main/java/org/eclipse/californium/scandium/examples/ThreadStarter.java
+--- suts/scandium-2.0.0-M16/scandium-dtls-clientserver/src/main/java/org/eclipse/californium/scandium/examples/ThreadStarter.java	2023-02-01 13:44:35.000000000 +0100
++++ suts/scandium-2.0.0-M16_patched/scandium-dtls-clientserver/src/main/java/org/eclipse/californium/scandium/examples/ThreadStarter.java	2025-03-18 20:25:19.221887275 +0100
+@@ -42,7 +42,7 @@
+ 		clientServerBuilder = dtlsServerSupplier;
+ 		srvSocket = new ServerSocket();
+ 		srvSocket.setReuseAddress(true);
+-		srvSocket.setSoTimeout(20000);
++		srvSocket.setSoTimeout(200000);
+ 		srvSocket.bind(address);
+ 
+ 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
