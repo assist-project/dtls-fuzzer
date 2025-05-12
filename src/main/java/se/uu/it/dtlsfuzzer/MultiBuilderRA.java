@@ -115,13 +115,13 @@ public class MultiBuilderRA
 
     @Override
     public TimingProbe build(TimingProbeEnabler timingProbeEnabler) {
-        // FIXME: functionallity does not yet exist for RA-learning
+        // FIXME: functionality does not yet exist for RA-learning
         throw new UnsupportedOperationException("Unimplemented method 'build'");
     }
 
     @Override
     public TestRunner build(TestRunnerEnabler testRunnerEnabler) {
-        // FIXME: functionallity does not yet exist for RA-learning
+        // FIXME: functionality does not yet exist for RA-learning
         throw new UnsupportedOperationException("Unimplemented method 'build'");
     }
 }

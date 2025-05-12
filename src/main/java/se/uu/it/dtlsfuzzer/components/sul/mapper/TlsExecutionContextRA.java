@@ -14,7 +14,7 @@ public class TlsExecutionContextRA
 
     public TlsExecutionContextRA(TlsState state) {
         //FIXME: This might need to wrap the mealy context to keep them in sync, but let's test with a plain one first.
-        //It depends on wheter it is only the mapper that wants to interrogate the stepcontext or if the learner will interface with it in some way.
+        //It depends on whether it is only the mapper that wants to interrogate the stepcontext or if the learner will interface with it in some way.
         super(state);
     }
 
