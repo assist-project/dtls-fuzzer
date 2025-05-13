@@ -6,7 +6,7 @@ localhost:${sul.port}
 -startWait
 100
 -alphabet
-${alphabets.servers}/psk8.xml
+${alphabets.servers}/psk8_ra.xml
 -responseWait
 100
 -protocol
