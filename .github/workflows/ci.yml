@@ -636,3 +636,53 @@ jobs:
         run: |
           java -jar target/dtls-fuzzer.jar args/wolfssl/learn_wolfssl_client_dhe_cert_req_DTLS13 -Dwolfssl.version=5.7.6 -roundLimit 8 -eqvThreads 8
           experiments/scripts/diff_hyps.sh experiments/models/regression/clients/rounds/wolfssl-5.7.6_client_dhe_cert_req_DTLS13 output/wolfssl-5.7.6_client_dhe_cert_req_DTLS13 8
+
+  Scandium-2-6-2_Server_psk_ra:
+      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: true
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up JDK 17
+          uses: actions/setup-java@v4
+          with:
+            java-version: '17'
+            distribution: 'temurin'
+
+        - name: Install DTLS-Fuzzer
+          run: ./install.sh
+
+        - name: Setup SUT
+          run: ./setup_sut.sh scandium-2.6.2
+
+        - name: Test scandium-2.6.2 Server (server_psk_ra)
+          run: |
+            java -jar target/dtls-fuzzer-0.3-SNAPSHOT-ra-jar-with-dependencies.jar args/scandium/learn_scandium_server_psk_ra -Dscandium.version=2.6.2 -roundLimit 5
+
+  CTinyDTLS_Server_psk_ra:
+      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: true
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up JDK 17
+          uses: actions/setup-java@v4
+          with:
+            java-version: '17'
+            distribution: 'temurin'
+
+        - name: Install DTLS-Fuzzer
+          run: ./install.sh
+
+        - name: Setup SUT
+          run: ./setup_sut.sh ctinydtls
+
+        - name: Test Contiki-NG TinyDTLS Server (psk)
+          run: |
+            java -jar target/dtls-fuzzer-0.3-SNAPSHOT-ra-jar-with-dependencies.jar args/ctinydtls/learn_ctinydtls_server_psk_ra -roundLimit 5
