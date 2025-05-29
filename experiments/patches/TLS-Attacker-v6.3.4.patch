@@ -271,7 +271,7 @@ index 7a74620ce..b6c9112f9 100644
                  return new LayerStack(
                          context,
 diff --git a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
-index 135a9e80f..7f1c89625 100644
+index 135a9e80f..20a636880 100644
 --- a/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 +++ b/TLS-Core/src/main/java/de/rub/nds/tlsattacker/core/layer/context/TlsContext.java
 @@ -80,6 +80,15 @@ import java.util.Set;
@@ -298,7 +298,7 @@ index 135a9e80f..7f1c89625 100644
  
      private Random random;
  
-@@ -2278,4 +2288,20 @@ public class TlsContext extends LayerContext {
+@@ -2278,4 +2288,21 @@ public class TlsContext extends LayerContext {
      public void setPeerReceiveLimit(Integer peerReceiveLimit) {
          this.peerReceiveLimit = peerReceiveLimit;
      }
@@ -315,7 +315,8 @@ index 135a9e80f..7f1c89625 100644
 +        return lastClientHelloCleanProtocolMessageBytes;
 +    }
 +
-+    public void setLastClientHelloCleanProtocolMessageBytes(byte[] lastClientHelloCleanProtocolMessageBytes) {
++    public void setLastClientHelloCleanProtocolMessageBytes(
++            byte[] lastClientHelloCleanProtocolMessageBytes) {
 +        this.lastClientHelloCleanProtocolMessageBytes = lastClientHelloCleanProtocolMessageBytes;
 +    }
  }
