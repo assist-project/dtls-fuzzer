@@ -36,9 +36,7 @@ public class TlsSulBuilder implements SulBuilder<TlsInput, TlsOutput, TlsExecuti
         TlsSul tlsSul = new TlsSul((TlsSulConfig) sulConfig, mapperConfig, mapperComposer, cleanupTasks);
 
         if (sulConfig.getSulAdapterConfig().getAdapterPort() != null) {
-            if (sulAdapter == null) {
-                sulAdapter = new TlsSulAdapter(sulConfig.getSulAdapterConfig(), cleanupTasks, sulConfig.isFuzzingClient());
-            }
+            sulAdapter = new TlsSulAdapter(sulConfig.getSulAdapterConfig(), cleanupTasks, sulConfig.isFuzzingClient());
             tlsSul.setSulAdapter(sulAdapter);
         }
         return tlsSul;
