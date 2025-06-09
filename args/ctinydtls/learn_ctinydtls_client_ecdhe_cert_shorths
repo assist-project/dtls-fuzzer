@@ -4,7 +4,7 @@ state-fuzzer-client
 -port
 ${sul.port}
 -startWait
-100
+0
 -alphabet
 ${alphabets.clients}/tinydtls_ecdhe8_cert.xml
 -responseWait
