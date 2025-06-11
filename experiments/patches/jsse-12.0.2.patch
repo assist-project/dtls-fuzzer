@@ -1,0 +1,12 @@
+diff -ruN suts/jsse-12.0.2/src/main/java/se/uu/it/jsse/examples/dtlsclientserver/ThreadStarter.java suts/jsse-12.0.2_patched/src/main/java/se/uu/it/jsse/examples/dtlsclientserver/ThreadStarter.java
+--- suts/jsse-12.0.2/src/main/java/se/uu/it/jsse/examples/dtlsclientserver/ThreadStarter.java	2025-03-18 21:40:25.914683921 +0100
++++ suts/jsse-12.0.2_patched/src/main/java/se/uu/it/jsse/examples/dtlsclientserver/ThreadStarter.java	2025-03-18 21:46:09.535577539 +0100
+@@ -43,7 +43,7 @@
+ 		InetSocketAddress address = new InetSocketAddress(args[0], Integer.valueOf(args[1]));
+ 		srvSocket = new ServerSocket();
+ 		srvSocket.setReuseAddress(true);
+-		srvSocket.setSoTimeout(20000);
++		srvSocket.setSoTimeout(200000);
+ 		srvSocket.bind(address);
+ 		this.config = config;
+ 		
