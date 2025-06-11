@@ -8,7 +8,7 @@ readonly SCRIPT_DIR
 readonly PATCHES_DIR="${SCRIPT_DIR}/experiments/patches"
 
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="4b225b3ea6d989873839a456ee305852853265e9"
+readonly PROTOCOLSTATEFUZZER_COMMIT="80a8e0ebd68d4efc8d93eea28b1cff2442903598"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/c-southwest/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 
