@@ -57,7 +57,7 @@ public class TlsSulClientConfig extends SulClientConfigStandard implements TlsSu
         if (clone.command.contains("-starterAddress localhost:")) {
             int adapterPort = this.sulAdapterConfig.getAdapterPort();
             int newAdapterPort = adapterPort + threadId;
-            clone.command = clone.command.replace("-starterAddress localhost:"+adapterPort, "-starterAddress localhost:"+(newAdapterPort));
+            clone.command = clone.command.replace("-starterAddress localhost:"+adapterPort, "-starterAddress localhost:"+newAdapterPort);
             clone.sulAdapterConfig = new SulAdapterConfigStandard(newAdapterPort, this.sulAdapterConfig.getAdapterAddress());
         }
 
@@ -65,7 +65,7 @@ public class TlsSulClientConfig extends SulClientConfigStandard implements TlsSu
         if (clone.command.contains("-threadStarterIpPort localhost:")) {
             int adapterPort = this.sulAdapterConfig.getAdapterPort();
             int newAdapterPort = adapterPort + threadId;
-            clone.command = clone.command.replace("-threadStarterIpPort localhost:"+adapterPort, "-threadStarterIpPort localhost:"+(newAdapterPort));
+            clone.command = clone.command.replace("-threadStarterIpPort localhost:"+adapterPort, "-threadStarterIpPort localhost:"+newAdapterPort);
             clone.sulAdapterConfig = new SulAdapterConfigStandard(newAdapterPort, this.sulAdapterConfig.getAdapterAddress());
         }
 
