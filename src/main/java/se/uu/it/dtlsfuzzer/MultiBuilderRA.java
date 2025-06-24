@@ -19,6 +19,7 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.St
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunner;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerRA;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.config.TestRunnerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.config.TestRunnerEnabler;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.TimingProbe;
@@ -35,6 +36,7 @@ import se.uu.it.dtlsfuzzer.components.sul.core.TlsSulBuilderRA;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulServerConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsInputTransformer;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsAlphabetPojoXml;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
@@ -121,7 +123,6 @@ public class MultiBuilderRA
 
     @Override
     public TestRunner build(TestRunnerEnabler testRunnerEnabler) {
-        // FIXME: functionality does not yet exist for RA-learning
-        throw new UnsupportedOperationException("Unimplemented method 'build'");
+        return new TestRunnerRA<TlsInput,TlsProtocolMessage, TlsExecutionContextRA>(testRunnerEnabler, standardBuilder, inputTransformer, sulBuilder, sulWrapper);
     }
 }
