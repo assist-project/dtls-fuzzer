@@ -10,8 +10,8 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!-- Alphabetically sorted -->
-        <commons.lang3.version>3.17.0</commons.lang3.version>
-        <error-prone.version>2.39.0</error-prone.version>
+        <commons.lang3.version>3.18.0</commons.lang3.version>
+        <error-prone.version>2.40.0</error-prone.version>
         <jakarta-xml.version>4.0.2</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.18.0</learnlib.version>
