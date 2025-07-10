@@ -1,8 +1,10 @@
+state-fuzzer-server
+
 # SUT config
 -connect
 localhost:${sul.port}
 -startWait
-1000
+500
 -responseWait
 100
 -protocol
