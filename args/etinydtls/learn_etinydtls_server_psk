@@ -4,7 +4,7 @@ state-fuzzer-server
 -connect
 localhost:${sul.port}
 -startWait
-100
+50
 -alphabet
 ${alphabets.servers}/psk8.xml
 -responseWait
