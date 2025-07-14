@@ -15,7 +15,7 @@
         <jakarta-xml.version>4.0.2</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.18.0</learnlib.version>
-        <log4j.version>2.25.0</log4j.version>
+        <log4j.version>2.25.1</log4j.version>
         <modifiable-variable.version>4.2.2</modifiable-variable.version>
         <osgi.version>8.1.0</osgi.version>
         <protocol-attacker.version>1.1.5</protocol-attacker.version>
