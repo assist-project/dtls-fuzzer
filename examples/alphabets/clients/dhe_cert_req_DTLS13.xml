@@ -1,4 +1,4 @@
-<!-- DTLS alphabet comprising the messages necessary to perform client-side PSK handshakes. -->
+<!-- DTLS alphabet comprising the messages necessary to perform client-side DHE handshakes. -->
 <alphabet>
     <ServerHelloInput suite="TLS_AES_128_GCM_SHA256" shortHs="false" helloRetryRequest="true" name="HELLO_RETRY_REQUEST"/>
     <ServerHelloInput suite="TLS_AES_128_GCM_SHA256" shortHs="false" name="DHE_SERVER_HELLO"/>
