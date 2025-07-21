@@ -20,7 +20,7 @@ ${alphabets.servers}/x_cert_nreq.xml
 -randLength
 10
 -equivalenceQueryBound
-20000
+5000
 -output
 output/wolfssl-${wolfssl.version}_server_x_cert_nreq
 -equivalenceAlgorithms
