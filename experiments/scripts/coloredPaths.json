@@ -256,6 +256,11 @@
   },
   {
     "color": "deepskyblue",
+    "path": [ "HELLO_VERIFY_REQUEST", "RSA_SERVER_HELLO", "CERTIFICATE", "DH_SERVER_KEY_EXCHANGE", "RSA_SIGN_CERTIFICATE_REQUEST", "SERVER_HELLO_DONE", "CHANGE_CIPHER_SPEC", "FINISHED" ],
+    "anyOutput": ".*FINISHED.*"
+  },
+  {
+    "color": "deepskyblue",
     "path": [ "HELLO_VERIFY_REQUEST", "PSK_SERVER_HELLO", "SERVER_HELLO_DONE", "CHANGE_CIPHER_SPEC", "FINISHED" ],
     "anyOutput": ".*FINISHED.*"
   }
