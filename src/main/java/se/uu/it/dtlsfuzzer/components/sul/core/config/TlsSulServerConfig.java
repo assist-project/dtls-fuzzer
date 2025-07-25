@@ -45,7 +45,7 @@ public class TlsSulServerConfig extends SulServerConfigStandard implements TlsSu
         clone.processDir = getProcessDir();
         // host
         String originalHost = this.getHost();
-        String[] hostParts = originalHost.split(":");
+        String[] hostParts = originalHost.split(":", -1);
         String hostname = hostParts[0];
         int originalPort = Integer.parseInt(hostParts[1]);
         int newPort = originalPort + threadId;

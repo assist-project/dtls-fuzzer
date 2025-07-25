@@ -148,7 +148,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
             config.getDefaultServerConnection().setPort(port);
         } else {
             String realHost = ((TlsSulServerConfig) sulConfig).getHost();
-            var split = realHost.split(":");
+            var split = realHost.split(":", -1);
             int port = Integer.parseInt(split[1]);
             config.getDefaultClientConnection().setPort(port);
         }
