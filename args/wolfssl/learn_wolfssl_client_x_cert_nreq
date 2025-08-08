@@ -1,0 +1,31 @@
+state-fuzzer-client
+
+# SUT config
+-port
+${sul.port}
+-startWait
+0
+-responseWait
+200
+-protocol
+DTLS12
+-cmd
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/client/client -p ${sul.port} -u -l TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 -c ${fuzzer.dir}/${keystore}/rsa2048_cert.pem -k ${fuzzer.dir}/${keystore}/rsa2048_key.pem -A ${fuzzer.dir}/${keystore}/rsa2048_cert.pem
+-processDir
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
+
+# learning config
+-alphabet
+${alphabets.clients}/x_cert_nreq.xml
+-randLength
+10
+-equivalenceQueryBound
+5000
+-output
+output/wolfssl-${wolfssl.version}_client_x_cert_nreq
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-depth
+1
+-ceReruns
+3
