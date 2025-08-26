@@ -40,9 +40,6 @@ readonly CTINYDTLS_COMMIT="53a0d97"
 readonly ETINYDTLS="etinydtls"
 readonly ETINYDTLS_REP_URL="https://github.com/eclipse/tinydtls.git"
 readonly ETINYDTLS_COMMIT="8414f8a"
-readonly ETINYDTLS_DEVELOP="etinydtls-develop"
-readonly ETINYDTLS_DEVELOP_REP_URL="https://github.com/eclipse/tinydtls.git"
-readonly ETINYDTLS_DEVELOP_COMMIT="19d9fcf"
 
 readonly GNUTLS_LATEST="gnutls-latest"
 readonly GNUTLS_LATEST_REP_URL="https://gitlab.com/gnutls/gnutls.git"
@@ -425,9 +422,6 @@ function install_sut_dep() {
         nettle=$(get_nettle "${sut}")
         nettle_url=$(get_arch_url "${nettle}")
         install_dep "${nettle}" "${nettle_url}"
-    elif [[ ${sut} == etinydtls* ]]; then
-        install_dep "${M4}" "${M4_ARCH_URL}"
-        install_dep "${AUTOCONF}" "${AUTOCONF_ARCH_URL}"
     elif [[ ${sut} == wolfssl* ]]; then
         install_dep "${M4}" "${M4_ARCH_URL}"
         install_dep "${AUTOCONF}" "${AUTOCONF_ARCH_URL}"

@@ -229,9 +229,6 @@ Those in italics are dependencies which `setup_sut.sh` tries to install using `s
     - *m4*
     - *pkg-config*
     - *nettle*
-- Eclipse's TinyDTLS
-    - *m4*
-    - *autoconf*
 - WolfSSL
     - *m4*
     - *autoconf*
