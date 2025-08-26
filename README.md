@@ -222,24 +222,20 @@ Also, in case of building failure, the source code of the implementation should 
 A workaround is to build the implementation manually.
 As long as the implementation is built, our setup should work.
 
-We hereby give an incomplete tree of dependencies the various SUTs have.
+We hereby give an incomplete list of dependencies the various SUTs have.
+
+- Eclipse TinyDLS: m4 autoconf
+- WolfSSL: m4 autoconf libtool
+
 Those in italics are dependencies which `setup_sut.sh` tries to install using `sudo` access.
 
 - GnuTLS:
     - *m4*
     - *pkg-config*
     - *nettle*
-- WolfSSL
-    - *m4*
-    - *autoconf*
-    - libtool
  - nettle
     - *m4*
     - *pkg-config*
- - autoconf
-    - aclocal
-        - automake
-        - autotools-dev
 
 ## Learning an SUT configuration
 We are now ready to learn an SUT configuration.
