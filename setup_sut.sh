@@ -422,10 +422,6 @@ function install_sut_dep() {
         nettle=$(get_nettle "${sut}")
         nettle_url=$(get_arch_url "${nettle}")
         install_dep "${nettle}" "${nettle_url}"
-    elif [[ ${sut} == wolfssl* ]]; then
-        install_dep "${M4}" "${M4_ARCH_URL}"
-        install_dep "${AUTOCONF}" "${AUTOCONF_ARCH_URL}"
-        install_dep "${LIBTOOL}" "${LIBTOOL_ARCH_URL}"
     elif [[ ${sut} == scandium* ]]; then
         if [[ ${sut} == "${SCANDIUM_OLD}" ]]; then
             install_dep "${CALIFORNIUM_OLD}" "${CALIFORNIUM_OLD_ARCH_URL}"
