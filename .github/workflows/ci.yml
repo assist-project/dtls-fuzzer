@@ -281,7 +281,7 @@ jobs:
         run: ./install.sh
 
       - name: Setup Golang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: '1.22.2'
 
@@ -312,7 +312,7 @@ jobs:
         run: ./install.sh
 
       - name: Setup Golang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: '1.22.2'
 
