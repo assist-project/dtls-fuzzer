@@ -12,7 +12,7 @@
         <!-- Alphabetically sorted -->
         <commons.lang3.version>3.18.0</commons.lang3.version>
         <error-prone.version>2.41.0</error-prone.version>
-        <jakarta-xml.version>4.0.2</jakarta-xml.version>
+        <jakarta-xml.version>4.0.4</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.18.0</learnlib.version>
         <log4j.version>2.25.1</log4j.version>
