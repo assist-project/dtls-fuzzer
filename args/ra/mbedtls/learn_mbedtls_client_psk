@@ -1,0 +1,28 @@
+state-fuzzer-client
+
+# SUT config
+-protocol
+DTLS12
+-port
+${sul.port}
+-startWait
+0
+-responseWait
+100
+-cmd
+${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_client2 dtls=1 psk=1234 mtu=5000 key_file=${keystore}/rsa2048_key.pem crt_file=${keystore}/rsa2048_cert.pem server_port=${sul.port} exchanges=100 hs_timeout=20000-120000 ca_file=${keystore}/rsa2048_cert.pem auth_mode=optional renegotiation=1 allow_legacy=1
+
+# learning config
+-alphabet
+examples/alphabets/ra/clients/mbedtls/psk.xml
+-randLength
+10
+-maxRuns
+20000
+-learningAlgorithm
+RaStar
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-seedTransitions
+-output
+{output.ra}/mbedtls_client_psk

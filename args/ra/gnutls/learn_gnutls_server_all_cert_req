@@ -1,0 +1,30 @@
+state-fuzzer-server
+
+# SUT config
+-protocol
+DTLS12
+-connect
+localhost:${sul.port}
+-startWait
+100
+-responseWait
+100
+-cmd
+${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-serv  --udp --x509keyfile ${keystore}/rsa2048_key.pem --x509certfile ${keystore}/rsa2048_cert.pem --x509cafile ${keystore}/rsa2048_cert.pem --pskpasswd ${keystore}/keys.psk --require-client-cert --priority NORMAL:+PSK:+SRP --mtu 1500 -p ${sul.port}
+
+# learning config
+-alphabet
+examples/alphabets/ra/servers/gnutls/all_cert_req.xml
+-randLength
+10
+-maxRuns
+20000
+-learningAlgorithm
+RaStar
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-seedTransitions
+-output
+{output.ra}/gnutls_server_all_cert_req
+-ceReruns
+3

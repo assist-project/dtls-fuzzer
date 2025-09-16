@@ -1,0 +1,40 @@
+state-fuzzer-server
+
+# SUT config
+-connect
+localhost:${sul.port}
+-startWait
+100
+-responseWait
+100
+-protocol
+DTLS12
+-cmd
+${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role server -port ${sul.port} -cipherSuite TLS_PSK_WITH_AES_128_CCM_8
+-termCmd
+/bin/bash ${fuzzer.dir}/experiments/scripts/stop_proc_at_port.sh ${sul.port} server
+
+# output mapper config
+-repeatingOutputs
+HELLO_VERIFY_REQUEST
+
+# learner config
+-learningAlgorithm
+RaStar
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-seedTransitions
+-output
+{output.ra}/piondtls_server_psk
+-alphabet
+examples/alphabets/ra/servers/piondtls/psk.xml
+-randLength
+10
+-maxRuns
+20000
+-maxDepthRA
+10
+-probNewDataValue
+0.5
+-seed
+7
