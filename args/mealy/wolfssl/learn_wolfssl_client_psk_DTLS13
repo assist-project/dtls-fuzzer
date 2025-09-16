@@ -1,0 +1,33 @@
+state-fuzzer-client
+
+# SUT config
+-port
+${sul.port}
+-startWait
+0
+-responseWait
+200
+-protocol
+DTLS13
+-cmd
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/client/client  -i -x -p ${sul.port} -s -u -v 4 -l TLS13-AES128-GCM-SHA256
+-processDir
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
+-sulConfig
+experiments/configs/wolfssl_DTLS13.config
+
+# learning config
+-alphabet
+${alphabets.mealy.clients}/psk_DTLS13.xml
+-randLength
+10
+-equivalenceQueryBound
+20000
+-output
+output/wolfssl-${wolfssl.version}_client_psk_DTLS13
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-depth
+1
+-ceReruns
+3
