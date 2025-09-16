@@ -1,0 +1,41 @@
+state-fuzzer-client
+
+# SUT config
+-port
+${sul.port}
+-startWait
+1000
+-responseWait
+100
+-protocol
+DTLS12
+-cmd
+java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-clientserver.jar -client -port ${sul.port} -timeout 20000000 -trustLocation ${keystore}/ec_secp256r1.jks -trustPassword password -trustAlias dtls-fuzzer -keyLocation ${keystore}/ec_secp256r1.jks -keyPassword password -keyAlias dtls-fuzzer -clientAuth NEEDED -starterAddress localhost:${fuzzer.port}
+-sulConfig
+experiments/configs/scandium.config
+-adapterPort
+${fuzzer.port}
+-processTrigger
+START
+
+# learning config
+-alphabet
+examples/alphabets/ra/clients/scandium/ecdhe_cert.xml
+-learningAlgorithm
+RaStar
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-seedTransitions
+-output
+{output.ra}/scandium_client_ecdhe_cert
+-randLength
+10
+-maxRuns
+20000
+-maxDepthRA
+10
+-probNewDataValue
+0.5
+-seed
+7
+-skipNonDetTests

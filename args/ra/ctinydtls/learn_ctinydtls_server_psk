@@ -1,0 +1,34 @@
+state-fuzzer-server
+
+# SUT config
+-connect
+localhost:${sul.port}
+-startWait
+100
+-alphabet
+examples/alphabets/ra/servers/ctinydtls/psk.xml
+-responseWait
+100
+-protocol
+DTLS12
+
+# learning config
+-learningAlgorithm
+RaStar
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-seedTransitions
+-randLength
+10
+-maxRuns
+20000
+-output
+{output.ra}/ctinydtls_server_psk
+-cmd
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sul.port}
+-maxDepthRA
+10
+-probNewDataValue
+0.5
+-seed
+7
