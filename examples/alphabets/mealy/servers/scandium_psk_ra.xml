@@ -15,8 +15,8 @@ using CCM_8 ciphersuites. -->
             </data>
         </Application>
     </GenericTlsInput>
-    <!--AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY"/>
-    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE"/-->
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY"/>
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE"/>
     <!-- Output symbols -->
     <!-- Messages -->
     <RAOutputSymbol name="HELLO_VERIFY_REQUEST"/>
