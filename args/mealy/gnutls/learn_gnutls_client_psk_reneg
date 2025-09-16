@@ -1,0 +1,33 @@
+state-fuzzer-client
+
+# SUT config
+-protocol
+DTLS12
+-port
+${sul.port}
+-startWait
+0
+-responseWait
+100
+-cmd
+${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-cli  --udp --heartbeat --pskusername Client_identity --pskkey 12345678  --priority NORMAL:-KX-ALL:+ECDHE-PSK:+DHE-PSK:+PSK localhost:${sul.port}
+-psk
+12345678
+-identity
+Client_identity
+
+# learning config
+-alphabet
+${alphabets.mealy.clients}/gnutls_psk_reneg.xml
+-randLength
+10
+-equivalenceQueryBound
+20000
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-output
+output/gnutls-${gnutls.version}_client_psk_reneg
+-depth
+1
+-ceReruns
+3
