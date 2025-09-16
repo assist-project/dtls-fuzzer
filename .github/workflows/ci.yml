@@ -660,7 +660,7 @@ jobs:
 
         - name: Test scandium-2.6.2 Server (server_psk_ra)
           run: |
-            java -jar target/dtls-fuzzer-0.3-SNAPSHOT-ra-jar-with-dependencies.jar args/scandium/learn_scandium_server_psk_ra -Dscandium.version=2.6.2 -roundLimit 5
+            java -jar target/dtls-fuzzer-0.3-SNAPSHOT-ra-jar-with-dependencies.jar args/ra/scandium/learn_scandium_server_psk -Dscandium.version=2.6.2 -roundLimit 5
 
   CTinyDTLS_Server_psk_ra:
       if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -685,4 +685,4 @@ jobs:
 
         - name: Test Contiki-NG TinyDTLS Server (psk)
           run: |
-            java -jar target/dtls-fuzzer-0.3-SNAPSHOT-ra-jar-with-dependencies.jar args/ctinydtls/learn_ctinydtls_server_psk_ra -roundLimit 5
+            java -jar target/dtls-fuzzer-0.3-SNAPSHOT-ra-jar-with-dependencies.jar args/ra/ctinydtls/learn_ctinydtls_server_psk -roundLimit 5
