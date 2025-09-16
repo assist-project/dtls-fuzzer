@@ -1,0 +1,32 @@
+<alphabet>
+    <ClientHelloInput suite="TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" name="ECDH_CLIENT_HELLO" extendedWait="300" />
+    <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDH" />
+    <ChangeCipherSpecInput />
+    <FinishedInput name="FINISHED" extendedWait="300" />
+    <GenericTlsInput name="APPLICATION">
+        <Application>
+            <data>
+                <byteArrayExplicitValueModification>
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                </byteArrayExplicitValueModification>
+            </data>
+        </Application>
+    </GenericTlsInput>
+    <CertificateInput name="CERTIFICATE" />
+    <CertificateInput name="EMPTY_CERTIFICATE" empty="true" />
+    <GenericTlsInput name="CERTIFICATE_VERIFY">
+        <CertificateVerify />
+    </GenericTlsInput>
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY" />
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE" />
+    <RAOutputSymbol name="TIMEOUT" />
+    <RAOutputSymbol name="HELLO_VERIFY_REQUEST" />
+    <RAOutputSymbol name="APPLICATION" />
+    <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
+    <RAOutputSymbol name="CHANGE_CIPHER_SPEC|FINISHED" />
+    <RAOutputSymbol name="CHANGE_CIPHER_SPEC|FINISHED|APPLICATION" />
+    <RAOutputSymbol name="Alert(FATAL,HANDSHAKE_FAILURE)" />
+    <RAOutputSymbol name="Alert(WARNING,NO_RENEGOTIATION)" />
+    <RAOutputSymbol name="Alert(FATAL,INTERNAL_ERROR)" />
+    <RAOutputSymbol name="SERVER_HELLO|ECDSA_CERTIFICATE|ECDHE_SERVER_KEY_EXCHANGE|CERTIFICATE_REQUEST|SERVER_HELLO_DONE" />
+</alphabet>

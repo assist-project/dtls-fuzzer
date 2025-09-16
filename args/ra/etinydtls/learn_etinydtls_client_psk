@@ -1,0 +1,39 @@
+state-fuzzer-client
+
+# SUT config
+-port
+${sul.port}
+-startWait
+0
+-alphabet
+examples/alphabets/ra/clients/etinydtls/psk.xml
+-responseWait
+100
+-protocol
+DTLS12
+-cmd
+${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sul.port} localhost
+-sulConfig
+experiments/configs/tinydtls_client.config
+# increased response wait for CCS, which can crash the SUT
+-inputResponseTimeout
+CHANGE_CIPHER_SPEC:400
+
+# learning config
+-randLength
+10
+-maxRuns
+20000
+-learningAlgorithm
+RaStar
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-seedTransitions
+-output
+{output.ra}/etinydtls_client_psk
+-maxDepthRA
+10
+-probNewDataValue
+0.5
+-seed
+7
