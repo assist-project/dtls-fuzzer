@@ -33,4 +33,4 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/mbedtls_server_all_cert_req
+${output.ra}/mbedtls_server_all_cert_req

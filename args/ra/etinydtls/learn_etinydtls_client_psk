@@ -30,7 +30,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/etinydtls_client_psk
+${output.ra}/etinydtls_client_psk
 -maxDepthRA
 10
 -probNewDataValue

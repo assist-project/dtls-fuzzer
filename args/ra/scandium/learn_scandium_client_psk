@@ -32,7 +32,7 @@ examples/alphabets/ra/clients/scandium/psk.xml
 -seed
 7
 -output
-{output.ra}/scandium_client_psk
+${output.ra}/scandium_client_psk
 -learningAlgorithm
 RaStar
 -equivalenceAlgorithms

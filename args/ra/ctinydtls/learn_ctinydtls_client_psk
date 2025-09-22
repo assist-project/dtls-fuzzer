@@ -23,7 +23,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/ctinydtls_client_psk
+${output.ra}/ctinydtls_client_psk
 -cmd
 ${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sul.port} localhost
 -maxDepthRA

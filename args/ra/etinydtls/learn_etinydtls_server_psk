@@ -23,7 +23,7 @@ IO_RANDOM_WALK
 -maxRuns
 20000
 -output
-{output.ra}/etinydtls_server_psk
+${output.ra}/etinydtls_server_psk
 -cmd
 ${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sul.port}
 -maxDepthRA
