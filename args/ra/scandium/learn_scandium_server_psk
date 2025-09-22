@@ -32,7 +32,7 @@ examples/alphabets/ra/servers/scandium/psk.xml
 -maxRuns
 20000
 -output
-{output.ra}/scandium_server_psk
+${output.ra}/scandium_server_psk
 -learningAlgorithm
 RaStar
 -equivalenceAlgorithms

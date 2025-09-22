@@ -25,7 +25,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/ctinydtls_server_ecdhe_cert_none
+${output.ra}/ctinydtls_server_ecdhe_cert_none
 -cmd
 ${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sul.port} -d
 -maxDepthRA

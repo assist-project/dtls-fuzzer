@@ -27,7 +27,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/ctinydtls_client_ecdhe_cert
+${output.ra}/ctinydtls_client_ecdhe_cert
 -maxDepthRA
 10
 -probNewDataValue

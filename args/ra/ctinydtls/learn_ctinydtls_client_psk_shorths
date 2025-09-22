@@ -25,7 +25,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/ctinydtls_client_psk_shorths
+${output.ra}/ctinydtls_client_psk_shorths
 -maxDepthRA
 10
 -probNewDataValue

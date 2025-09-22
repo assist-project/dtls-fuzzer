@@ -25,7 +25,7 @@ IO_RANDOM_WALK
 -alphabet
 examples/alphabets/ra/clients/openssl/psk.xml
 -output
-{output.ra}/openssl_client_psk
+${output.ra}/openssl_client_psk
 
 # mapper config
 -socketClosedAsTimeout
