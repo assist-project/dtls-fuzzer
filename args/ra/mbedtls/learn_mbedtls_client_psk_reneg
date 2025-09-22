@@ -25,4 +25,4 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/mbedtls_client_psk_reneg
+${output.ra}/mbedtls_client_psk_reneg

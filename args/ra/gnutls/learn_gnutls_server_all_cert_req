@@ -25,6 +25,6 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/gnutls_server_all_cert_req
+${output.ra}/gnutls_server_all_cert_req
 -ceReruns
 3

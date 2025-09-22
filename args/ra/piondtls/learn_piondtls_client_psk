@@ -20,7 +20,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/piondtls_client_psk
+${output.ra}/piondtls_client_psk
 -cmd
 ${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role client -port ${sul.port} -cipherSuite TLS_PSK_WITH_AES_128_CCM_8
 -maxDepthRA

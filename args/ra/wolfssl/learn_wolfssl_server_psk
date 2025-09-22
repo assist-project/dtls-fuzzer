@@ -22,7 +22,7 @@ examples/alphabets/ra/servers/wolfssl/psk.xml
 -maxRuns
 20000
 -output
-{output.ra}/wolfssl_server_psk
+${output.ra}/wolfssl_server_psk
 -learningAlgorithm
 RaStar
 -equivalenceAlgorithms

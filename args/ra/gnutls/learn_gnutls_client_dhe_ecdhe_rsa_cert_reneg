@@ -29,7 +29,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/gnutls_client_dhe_ecdhe_rsa_cert_reneg
+${output.ra}/gnutls_client_dhe_ecdhe_rsa_cert_reneg
 -maxDepthRA
 10
 -probNewDataValue

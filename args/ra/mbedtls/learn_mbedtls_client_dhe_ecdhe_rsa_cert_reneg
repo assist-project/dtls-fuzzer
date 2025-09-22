@@ -25,6 +25,6 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/mbedtls_client_dhe_ecdhe_rsa_cert_reneg
+${output.ra}/mbedtls_client_dhe_ecdhe_rsa_cert_reneg
 -timeLimit
 P2D

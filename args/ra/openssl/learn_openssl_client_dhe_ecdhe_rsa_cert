@@ -29,4 +29,4 @@ IO_RANDOM_WALK
 -alphabet
 examples/alphabets/ra/clients/openssl/dhe_ecdhe_rsa_cert.xml
 -output
-{output.ra}/openssl_client_dhe_ecdhe_rsa_cert
+${output.ra}/openssl_client_dhe_ecdhe_rsa_cert

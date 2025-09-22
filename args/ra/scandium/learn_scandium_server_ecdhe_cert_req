@@ -27,7 +27,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-{output.ra}/scandium_server_ecdhe_cert_req
+${output.ra}/scandium_server_ecdhe_cert_req
 -randLength
 10
 -maxRuns

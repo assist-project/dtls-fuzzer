@@ -20,7 +20,7 @@ Client_identity
 -alphabet
 examples/alphabets/ra/clients/gnutls/psk.xml
 -output
-{output.ra}/gnutls_client_psk
+${output.ra}/gnutls_client_psk
 -randLength
 10
 -maxRuns
