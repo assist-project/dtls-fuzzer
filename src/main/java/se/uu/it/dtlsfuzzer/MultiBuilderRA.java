@@ -5,8 +5,6 @@ import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabe
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.config.LearnerConfigRA;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.statistics.RegisterAutomatonWrapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapper;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapperStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzer;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzerComposerRA;
@@ -68,12 +66,6 @@ public class MultiBuilderRA
         TlsExecutionContextRA
     > sulBuilder = new TlsSulBuilderRA(inputTransformer);
 
-    protected SulWrapper<
-        PSymbolInstance,
-        PSymbolInstance,
-        TlsExecutionContextRA
-    > sulWrapper = new SulWrapperStandard<>();
-
     @Override
     public StateFuzzer<
         RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>
@@ -89,7 +81,6 @@ public class MultiBuilderRA
                 stateFuzzerEnabler,
                 inputTransformer,
                 sulBuilder,
-                sulWrapper,
                 teachers
             ).initialize()
         );
@@ -123,6 +114,6 @@ public class MultiBuilderRA
 
     @Override
     public TestRunner build(TestRunnerEnabler testRunnerEnabler) {
-        return new TestRunnerRA<TlsInput,TlsProtocolMessage, TlsExecutionContextRA>(testRunnerEnabler, standardBuilder, inputTransformer, sulBuilder, sulWrapper);
+        return new TestRunnerRA<TlsInput,TlsProtocolMessage, TlsExecutionContextRA>(testRunnerEnabler, standardBuilder, inputTransformer, sulBuilder);
     }
 }
