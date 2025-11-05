@@ -104,7 +104,8 @@ public class GenericTlsInput extends DtlsInput {
             @XmlElement(type = SrpServerKeyExchangeMessage.class, name = "SrpServerKeyExchange"),
             @XmlElement(type = SrpClientKeyExchangeMessage.class, name = "SrpClientKeyExchange"),
             @XmlElement(type = EndOfEarlyDataMessage.class, name = "EndOfEarlyData"),
-            @XmlElement(type = EncryptedExtensionsMessage.class, name = "EncryptedExtensions")})
+            @XmlElement(type = EncryptedExtensionsMessage.class, name = "EncryptedExtensions"),
+            @XmlElement(type = RAOutputSymbol.class, name = "RAOutputSymbol")})
     private ProtocolMessage message;
 
     public GenericTlsInput() {

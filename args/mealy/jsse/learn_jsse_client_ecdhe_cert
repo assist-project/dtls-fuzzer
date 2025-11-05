@@ -1,0 +1,34 @@
+state-fuzzer-client
+
+# SUT config
+-port
+${sul.port}
+-startWait
+500
+-responseWait
+200
+-protocol
+DTLS12
+-cmd
+${fuzzer.dir}/modules/jdk-${jsse.version}/bin/java -jar ${suts.dir}/jsse-${jsse.version}-dtls-clientserver.jar -client -port ${sul.port} -hostname localhost -keyLocation ${keystore}/rsa2048.jks -keyPassword password -trustLocation ${keystore}/rsa2048.jks -trustPassword password -threadStarterIpPort localhost:${fuzzer.port} -operation FULL
+-adapterPort
+${fuzzer.port}
+-processTrigger
+START
+
+# learning config
+-alphabet
+${alphabets.mealy.clients}/jsse_ecdhe_cert.xml
+-randLength
+10
+-equivalenceQueryBound
+20000
+-output
+output/jsse-${jsse.version}_client_ecdhe_cert
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-ceReruns
+3
+-skipNonDetTests
+-timeLimit
+P2D
