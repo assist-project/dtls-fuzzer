@@ -108,7 +108,10 @@ public class ServerHelloInput extends DtlsInput {
                 byte[] hrBytes = context.getStepContext(lastChStepIndex).getReceivedRecords().get(0).getCleanProtocolMessageBytes().getValue();
                 context.getTlsContext().getDigest().append(hrBytes);
             }
-            byte[] chBytes = lastChPair.getRight().getCleanProtocolMessageBytes().getValue();
+            byte[] chBytes = context.getTlsContext().getLastClientHelloCleanProtocolMessageBytes();
+            if(chBytes.length==0){
+                System.out.println("No ClientHello clean protocol message found");
+            }
             byte[] shBytes = context.getStepContext().getSentRecords().get(0).getCleanProtocolMessageBytes().getValue();
             context.getTlsContext().getDigest().append(chBytes);
             context.getTlsContext().getDigest().append(shBytes);
