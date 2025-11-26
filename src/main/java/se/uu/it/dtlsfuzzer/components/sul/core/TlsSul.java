@@ -219,7 +219,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
                 if (!firstClientHello.getName().equals("CLIENT_HELLO")) {
                     LOGGER.fatal("The first Client Hello should have been received");
                 }
-                context.addStepContext();
+//                context.addStepContext();
             }
         } catch (IOException e) {
             LOGGER.error("Could not initialize transport handler");
