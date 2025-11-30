@@ -124,6 +124,9 @@ readonly WOLFSSL_471r="wolfssl-4.7.1r"
 readonly WOLFSSL_471r_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/tags/v4.7.1r.tar.gz"
 readonly WOLFSSL_576="wolfssl-5.7.6"
 readonly WOLFSSL_576_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.7.6-stable.tar.gz"
+readonly WOLFSSL_582="wolfssl-5.8.2"
+readonly WOLFSSL_582_ARCH_URL="https://www.wolfssl.com/wolfssl-5.8.2.zip"
+
 
 # dependencies
 readonly JDK_904="jdk-9.0.4"
@@ -157,7 +160,7 @@ sutvarnames=("CTINYDTLS" "ETINYDTLS" "ETINYDTLS_DEVELOP" \
 "SCANDIUM_OLD" "SCANDIUM_230" "SCANDIUM_262" "SCANDIUM_300_M2" \
 "OPENSSL_111b" "OPENSSL_111c" "OPENSSL_111g" "OPENSSL_111k" "OPENSSL_300" \
 "PIONDTLS_USENIX" "PIONDTLS_152" "PIONDTLS_202" "PIONDTLS_209" \
-"WOLFSSL_400" "WOLFSSL_440" "WOLFSSL_471r" "WOLFSSL_576")
+"WOLFSSL_400" "WOLFSSL_440" "WOLFSSL_471r" "WOLFSSL_576" "WOLFSSL_582")
 
 # Alphabetically
 sut_strings=("${CTINYDTLS}" "${ETINYDTLS}" "${ETINYDTLS_DEVELOP}" \
@@ -167,7 +170,7 @@ sut_strings=("${CTINYDTLS}" "${ETINYDTLS}" "${ETINYDTLS_DEVELOP}" \
 "${OPENSSL_111b}" "${OPENSSL_111c}" "${OPENSSL_111g}" "${OPENSSL_111k}" "${OPENSSL_300}" \
 "${PIONDTLS_USENIX}" "${PIONDTLS_152}" "${PIONDTLS_202}" "${PIONDTLS_209}" \
 "${SCANDIUM_OLD}" "${SCANDIUM_230}" "${SCANDIUM_262}" "${SCANDIUM_300_M2}" \
-"${WOLFSSL_400}" "${WOLFSSL_440}" "${WOLFSSL_471r}" "${WOLFSSL_576}")
+"${WOLFSSL_400}" "${WOLFSSL_440}" "${WOLFSSL_471r}" "${WOLFSSL_576}" "${WOLFSSL_582}")
 
 # Options for when setting up SUT
 opt_no_patch=0
@@ -241,19 +244,20 @@ function solve_arch() {
     fi
 
     mkdir "${target_dir}"
-    # ${arch_file##*.} retrieves the substring between the last index of . and the end of $arch_file
     arch=${arch_file##*.}
-    if [[ ${arch} == "xz" ]]
-    then
-        tar_param="-xJf"
-    else
-        tar_param="zxvf"
-    fi
 
-    if [[ -n "${target_dir}" ]] ; then
-        tar "${tar_param}" "${arch_file}" -C "${target_dir}" --strip-components=1
+    if [[ ${arch} == "zip" ]]
+    then
+        if ! command -v bsdtar &> /dev/null; then
+            sudo apt-get install -y libarchive-tools
+        fi
+        # Use bsdtar which supports --strip-components for ZIP
+        bsdtar -xf "${arch_file}" -C "${target_dir}" --strip-components=1
+    elif [[ ${arch} == "xz" ]]
+    then
+        tar -xJf "${arch_file}" -C "${target_dir}" --strip-components=1
     else
-        tar "${tar_param}" "${arch_file}"
+        tar zxvf "${arch_file}" -C "${target_dir}" --strip-components=1
     fi
 }
 
