@@ -1,0 +1,41 @@
+state-fuzzer-client
+
+# SUT config
+-port
+${sul.port}
+-startWait
+500
+-responseWait
+200
+-protocol
+DTLS12
+-cmd
+${fuzzer.dir}/modules/jdk-${jsse.version}/bin/java -jar ${suts.dir}/jsse-${jsse.version}-dtls-clientserver.jar -client -port ${sul.port} -hostname localhost -keyLocation ${keystore}/rsa2048.jks -keyPassword password -trustLocation ${keystore}/rsa2048.jks -trustPassword password -threadStarterIpPort localhost:${fuzzer.port} -operation FULL
+-adapterPort
+${fuzzer.port}
+-processTrigger
+START
+
+# learning config
+-alphabet
+${alphabets.ra.clients}/jsse/ecdhe_cert.xml
+-maxRuns
+20000
+-randLength
+10
+-learningAlgorithm
+RaStar
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-maxDepthRA
+10
+-probNewDataValue
+0.5
+-seed
+7
+-seedTransitions
+-output
+${output.ra}/jsse-${jsse.version}_client_ecdhe_cert
+-ceReruns
+3
+-skipNonDetTests
