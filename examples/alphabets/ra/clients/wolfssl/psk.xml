@@ -23,4 +23,5 @@
     <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
     <RAOutputSymbol name="PSK_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
     <RAOutputSymbol name="CLIENT_HELLO" />
+    <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
 </alphabet>
