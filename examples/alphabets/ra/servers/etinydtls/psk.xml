@@ -1,0 +1,26 @@
+<alphabet>
+    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_CLIENT_HELLO" />
+    <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK" />
+    <ChangeCipherSpecInput />
+    <FinishedInput name="FINISHED" />
+    <GenericTlsInput name="APPLICATION">
+        <Application>
+            <data>
+                <byteArrayExplicitValueModification>
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                </byteArrayExplicitValueModification>
+            </data>
+        </Application>
+    </GenericTlsInput>
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY" />
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE" />
+    <RAOutputSymbol name="TIMEOUT" />
+    <RAOutputSymbol name="HELLO_VERIFY_REQUEST" />
+    <RAOutputSymbol name="APPLICATION" />
+    <RAOutputSymbol name="CHANGE_CIPHER_SPEC|FINISHED" />
+    <RAOutputSymbol name="Alert(FATAL,DECRYPT_ERROR)" />
+    <RAOutputSymbol name="SOCKET_CLOSED" />
+    <RAOutputSymbol name="SERVER_HELLO|SERVER_HELLO_DONE" />
+    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="Alert(FATAL,CLOSE_NOTIFY)" />
+</alphabet>

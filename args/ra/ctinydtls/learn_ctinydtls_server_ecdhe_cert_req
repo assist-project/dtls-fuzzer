@@ -1,0 +1,36 @@
+state-fuzzer-server
+
+# SUT config
+-connect
+localhost:${sul.port}
+-startWait
+100
+-responseWait
+100
+-cmd
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sul.port}
+-sulConfig
+experiments/configs/tinydtls_server.config
+-protocol
+DTLS12
+
+# learning config
+-alphabet
+examples/alphabets/ra/servers/ctinydtls/ecdhe_cert_req.xml
+-randLength
+10
+-maxRuns
+20000
+-learningAlgorithm
+RaStar
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-seedTransitions
+-output
+${output.ra}/ctinydtls_server_ecdhe_cert_req
+-maxDepthRA
+10
+-probNewDataValue
+0.5
+-seed
+7

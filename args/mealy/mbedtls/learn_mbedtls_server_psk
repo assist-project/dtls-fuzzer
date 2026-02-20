@@ -1,0 +1,25 @@
+state-fuzzer-server
+
+# SUT config
+-protocol
+DTLS12
+-connect
+localhost:${sul.port}
+-startWait
+100
+-responseWait
+100
+-cmd
+${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_server2 dtls=1 psk=1234 mtu=5000 key_file=${keystore}/rsa2048_key.pem crt_file=${keystore}/rsa2048_cert.pem server_port=${sul.port} exchanges=100 hs_timeout=20000-120000 ca_file=${keystore}/rsa2048_cert.pem auth_mode=required renegotiation=1
+
+# learner config
+-alphabet
+${alphabets.mealy.servers}/psk.xml
+-randLength
+10
+-equivalenceQueryBound
+20000
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-output
+output/mbedtls-${mbedtls.version}_server_psk

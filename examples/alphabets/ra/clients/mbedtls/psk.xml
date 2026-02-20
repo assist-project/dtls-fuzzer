@@ -1,0 +1,27 @@
+<alphabet>
+    <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST" />
+    <ServerHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA256" name="PSK_SERVER_HELLO" />
+    <ServerHelloDoneInput name="SERVER_HELLO_DONE" />
+    <ChangeCipherSpecInput />
+    <FinishedInput name="FINISHED" />
+    <GenericTlsInput name="APPLICATION">
+        <Application>
+            <data>
+                <byteArrayExplicitValueModification>
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                </byteArrayExplicitValueModification>
+            </data>
+        </Application>
+    </GenericTlsInput>
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY" />
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE" />
+    <RAOutputSymbol name="TIMEOUT" />
+    <RAOutputSymbol name="APPLICATION" />
+    <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
+    <RAOutputSymbol name="SOCKET_CLOSED" />
+    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,DECODE_ERROR)" />
+    <RAOutputSymbol name="Alert(FATAL,DECODE_ERROR)" />
+    <RAOutputSymbol name="PSK_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
+    <RAOutputSymbol name="CLIENT_HELLO" />
+</alphabet>

@@ -1,0 +1,38 @@
+state-fuzzer-server
+
+# SUT config
+-connect
+localhost:${sul.port}
+-startWait
+200
+-responseWait
+200
+-protocol
+DTLS12
+-cmd
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/server/server  -i -x -p ${sul.port} -s -u -l PSK-AES128-CBC-SHA256
+-processDir
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
+
+# learning config
+-alphabet
+examples/alphabets/ra/servers/wolfssl/psk.xml
+-randLength
+10
+-maxRuns
+20000
+-output
+${output.ra}/wolfssl_server_psk
+-learningAlgorithm
+RaStar
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-seedTransitions
+-maxDepthRA
+10
+-probNewDataValue
+0.5
+-seed
+7
+-ceReruns
+3

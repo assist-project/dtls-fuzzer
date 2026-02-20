@@ -19,6 +19,7 @@
         <modifiable-variable.version>4.2.2</modifiable-variable.version>
         <osgi.version>8.1.0</osgi.version>
         <protocol-attacker.version>1.1.5</protocol-attacker.version>
+        <ralib.version>0.1-SNAPSHOT</ralib.version>
         <tlsattacker.core.version>6.3.4</tlsattacker.core.version>
         <tlsattacker.transport.version>6.3.4</tlsattacker.transport.version>
         <x509-attacker.version>3.1.7</x509-attacker.version>
@@ -33,6 +34,13 @@
                 <version>${learnlib.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- Manually installed ralib -->
+            <dependency>
+                <groupId>de.learnlib</groupId>
+                <artifactId>ralib</artifactId>
+                <version>${ralib.version}</version>
             </dependency>
 
             <!-- jcommander -->
@@ -87,6 +95,11 @@
             <groupId>com.github.protocolfuzzing</groupId>
             <artifactId>protocolstatefuzzer</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>ralib</artifactId>
+            <version>${ralib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
@@ -173,26 +186,50 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>se.uu.it.dtlsfuzzer.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <!-- uncomment in case to make a jar with dependencies on calling 'mvn install'  -->
-                <!-- <executions>
-                        <execution>
-                            <id>make-assembly</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                        </execution>
-                    </executions> -->
+                <executions>
+                    <execution>
+                        <id>build-mealy</id>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>se.uu.it.dtlsfuzzer.Main</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <Multi-Release>true</Multi-Release>
+                                </manifestEntries>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>${project.artifactId}-${project.version}-mealy</finalName>
+                        </configuration>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                    <execution>
+                        <id>build-RA</id>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>se.uu.it.dtlsfuzzer.MainRA</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <Multi-Release>true</Multi-Release>
+                                </manifestEntries>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>${project.artifactId}-${project.version}-ra</finalName>
+                        </configuration>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -275,6 +312,7 @@
                         </goals>
                         <phase>package</phase>
                     </execution>
+
                 </executions>
             </plugin>
             <!-- Static code analysis -->

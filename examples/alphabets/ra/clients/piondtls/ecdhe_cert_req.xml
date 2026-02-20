@@ -1,0 +1,40 @@
+<alphabet>
+    <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST" />
+    <ServerHelloInput suite="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" name="ECDH_SERVER_HELLO" />
+    <ServerKeyExchangeInput name="ECDH_SERVER_KEY_EXCHANGE" algorithm="ECDH" />
+    <CertificateRequestInput certificate="RSA_SIGN" name="RSA_SIGN_CERTIFICATE_REQUEST" />
+    <CertificateRequestInput certificate="RSA_FIXED_ECDH" name="RSA_FIXED_ECDH_CERTIFICATE_REQUEST" />
+    <CertificateRequestInput certificate="RSA_FIXED_DH" name="RSA_FIXED_DH_CERTIFICATE_REQUEST" />
+    <CertificateRequestInput certificate="DSS_SIGN" name="DSS_SIGN_CERTIFICATE_REQUEST" />
+    <CertificateRequestInput certificate="DSS_FIXED_DH" name="DSS_FIXED_DH_CERTIFICATE_REQUEST" />
+    <ServerHelloDoneInput name="SERVER_HELLO_DONE" />
+    <ChangeCipherSpecInput />
+    <FinishedInput name="FINISHED" />
+    <GenericTlsInput name="APPLICATION">
+        <Application>
+            <data>
+                <byteArrayExplicitValueModification>
+                    <explicitValue>0x5468697320697320612068656c6c6f206d65737361676521</explicitValue>
+                </byteArrayExplicitValueModification>
+            </data>
+        </Application>
+    </GenericTlsInput>
+    <CertificateInput name="CERTIFICATE" />
+    <CertificateInput name="EMPTY_CERTIFICATE" empty="true" />
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY" />
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE" />
+    <RAOutputSymbol name="ECDSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|FINISHED" />
+    <RAOutputSymbol name="TIMEOUT" />
+    <RAOutputSymbol name="APPLICATION" />
+    <RAOutputSymbol name="ECDSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE" />
+    <RAOutputSymbol name="Alert(FATAL,HANDSHAKE_FAILURE)" />
+    <RAOutputSymbol name="ECDH_CLIENT_KEY_EXCHANGE" />
+    <RAOutputSymbol name="SOCKET_CLOSED" />
+    <RAOutputSymbol name="Alert(FATAL,DECODE_ERROR)" />
+    <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,CLOSE_NOTIFY)" />
+    <RAOutputSymbol name="ECDH_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
+    <RAOutputSymbol name="Alert(FATAL,CLOSE_NOTIFY)" />
+    <RAOutputSymbol name="CLIENT_HELLO" />
+</alphabet>
