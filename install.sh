@@ -24,7 +24,7 @@ function check_java() {
         if command -v apt-get &> /dev/null
         then
             echo "Installing java using apt-get"
-            sudo apt-get install openjdk-17-jdk
+            sudo apt-get install openjdk-21-jdk
         else
             echo "Install JDK >= 17, add it to PATH and re-run"
             exit
@@ -34,7 +34,7 @@ function check_java() {
         if [[ ! ${java_vm} == "Server VM" ]]
         then
             echo "Required Java Server VM (a JDK instead of JRE), found ${java_vm}"
-            echo "Install JDK >= 17, add it to PATH and re-run"
+            echo "Install JDK >= 21, add it to PATH and re-run"
             exit
         fi
     fi
