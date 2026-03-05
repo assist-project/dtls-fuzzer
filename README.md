@@ -477,7 +477,7 @@ These modifications are encoded in patches which allows them to be applied autom
 - when DTLS-Fuzzer is installed via the `install.sh` script;
 - when a SUT of choice is installed via the `setup_sut.sh` script.
 
-*Patch storage.* 
+*Patch storage.*
 Patches are stored in the `experiments/patches` directory.
 They are named in a way that indicates the library/SUT and its version.
 For example, the patch for TLS-Attacker version 6.3.4 is named `TLS-Attacker-v6.3.4.patch`.
