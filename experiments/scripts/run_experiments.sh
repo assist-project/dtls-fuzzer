@@ -64,11 +64,11 @@ function run_experiments() {
     local no_parallell="$2"
     local jarfile="$3"
 
-    for i in "${!experiments[@]}"; do
-        if [[ $((i%no_parallell)) -eq 0 ]]; then
-            wait
+    for experiment in "${experiments[@]}"; do
+        if [[ $(jobs -r | wc -l) -ge ${no_parallell} ]]; then
+            wait -n
         fi
-        (java -jar "${jarfile}" "${experiments[$i]}") & # Actually run experiments
+        (java -jar "${jarfile}" "${experiment}") & # Actually run experiments
     done
     wait
 }
