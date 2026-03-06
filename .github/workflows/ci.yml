@@ -11,10 +11,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -37,10 +37,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -63,10 +63,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -89,10 +89,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -115,10 +115,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -141,10 +141,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -167,10 +167,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -193,10 +193,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -219,10 +219,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -245,10 +245,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -271,10 +271,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -302,10 +302,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -333,10 +333,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -359,10 +359,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -386,10 +386,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -412,10 +412,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -438,10 +438,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -464,10 +464,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -490,10 +490,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -516,10 +516,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -542,10 +542,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -568,10 +568,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -594,10 +594,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
@@ -620,10 +620,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install DTLS-Fuzzer
