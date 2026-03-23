@@ -1,9 +1,9 @@
 package se.uu.it.dtlsfuzzer.components.sul.core;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapper;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapperStandard;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULWrapper;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULWrapperStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposer;
 import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
@@ -18,12 +18,12 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputBuilder;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
-public class TlsSulBuilder implements SulBuilder<TlsInput, TlsOutput, TlsExecutionContext> {
+public class TlsSulBuilder implements SULBuilder<TlsInput, TlsOutput, TlsExecutionContext> {
 
     private TlsSulAdapter sulAdapter = null;
 
     @Override
-    public TlsSul buildSul(SulConfig sulConfig, CleanupTasks cleanupTasks) {
+    public TlsSul buildSUL(SULConfig sulConfig, CleanupTasks cleanupTasks) {
         MapperConfig mapperConfig = sulConfig.getMapperConfig();
         TlsOutputChecker outputChecker = new TlsOutputChecker();
         TlsOutputBuilder outputBuilder = new TlsOutputBuilder();
@@ -34,8 +34,8 @@ public class TlsSulBuilder implements SulBuilder<TlsInput, TlsOutput, TlsExecuti
 
         TlsSul tlsSul = new TlsSul((TlsSulConfig) sulConfig, mapperConfig, mapperComposer, cleanupTasks);
 
-        if (sulConfig.getSulAdapterConfig().getAdapterPort() != null) {
-            sulAdapter = new TlsSulAdapter(sulConfig.getSulAdapterConfig(), cleanupTasks, sulConfig.isFuzzingClient());
+        if (sulConfig.getSULAdapterConfig().getAdapterPort() != null) {
+            sulAdapter = new TlsSulAdapter(sulConfig.getSULAdapterConfig(), cleanupTasks, sulConfig.isFuzzingClient());
             tlsSul.setSulAdapter(sulAdapter);
         }
         return tlsSul;
@@ -43,7 +43,7 @@ public class TlsSulBuilder implements SulBuilder<TlsInput, TlsOutput, TlsExecuti
 
 
     @Override
-    public SulWrapper<TlsInput, TlsOutput, TlsExecutionContext> buildWrapper() {
-        return new SulWrapperStandard<>();
+    public SULWrapper<TlsInput, TlsOutput, TlsExecutionContext> buildWrapper() {
+        return new SULWrapperStandard<>();
     }
 }

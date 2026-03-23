@@ -5,9 +5,9 @@
  */
 package se.uu.it.dtlsfuzzer.components.sul.core;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSul;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulAdapter;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSUL;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULAdapter;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwrappers.DynamicPortProvider;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
@@ -42,11 +42,11 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 /**
- * Implementation of {@link AbstractSul} that works for both clients and servers.
+ * Implementation of {@link AbstractSUL} that works for both clients and servers.
  *
  * @author robert, paul
  */
-public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionContext> {
+public class TlsSul implements AbstractSUL<TlsInput, TlsOutput, TlsExecutionContext> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -93,7 +93,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
 
     private CleanupTasks cleanupTasks;
 
-    private SulAdapter sulAdapter;
+    private SULAdapter sulAdapter;
 
     private DynamicPortProvider dynamicPortProvider;
 
@@ -132,7 +132,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
         }
     }
 
-    void setSulAdapter(SulAdapter sulAdapter) {
+    void setSulAdapter(SULAdapter sulAdapter) {
         this.sulAdapter = sulAdapter;
     }
 
@@ -159,7 +159,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
             if (!sulConfig.isFuzzingClient()) {
                 OutboundConnection connection = state.getConfig().getDefaultClientConnection();
                 if (dynamicPortProvider != null) {
-                    connection.setPort(dynamicPortProvider.getSulPort());
+                    connection.setPort(dynamicPortProvider.getSULPort());
                 }
                 transportHandler = new ClientUdpTransportHandler(connection);
             } else {
@@ -355,7 +355,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
     }
 
     @Override
-    public SulConfig getSulConfig() {
+    public SULConfig getSULConfig() {
         return sulConfig;
     }
 
@@ -380,7 +380,7 @@ public class TlsSul implements AbstractSul<TlsInput, TlsOutput, TlsExecutionCont
         }
 
     @Override
-    public SulAdapter getSulAdapter() {
+    public SULAdapter getSULAdapter() {
         return sulAdapter;
     }
 }
