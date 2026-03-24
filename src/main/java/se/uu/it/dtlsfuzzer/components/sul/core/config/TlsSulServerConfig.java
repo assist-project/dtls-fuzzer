@@ -1,21 +1,21 @@
 package se.uu.it.dtlsfuzzer.components.sul.core.config;
 
 import com.beust.jcommander.ParametersDelegate;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulAdapterConfigStandard;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulServerConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULAdapterConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULServerConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfigStandard;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.ClientDelegate;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
 
-public class TlsSulServerConfig extends SulServerConfigStandard implements TlsSulConfig {
+public class TlsSulServerConfig extends SULServerConfigStandard implements TlsSulConfig {
 
     @ParametersDelegate
     private ServerConfigDelegate configDelegate = new ServerConfigDelegate();
 
     public TlsSulServerConfig() {
-        super(new MapperConfigStandard(), new SulAdapterConfigStandard());
+        super(new MapperConfigStandard(), new SULAdapterConfigStandard());
     }
 
     @Override
@@ -38,7 +38,7 @@ public class TlsSulServerConfig extends SulServerConfigStandard implements TlsSu
     }
 
     @Override
-    public SulConfig cloneWithThreadId(int threadId) {
+    public SULConfig cloneWithThreadId(int threadId) {
         TlsSulServerConfig clone = new TlsSulServerConfig();
         clone.setResponseWait(getResponseWait());
         clone.setStartWait(getStartWait());
@@ -68,7 +68,7 @@ public class TlsSulServerConfig extends SulServerConfigStandard implements TlsSu
             int adapterPort = this.sulAdapterConfig.getAdapterPort();
             int newAdapterPort = adapterPort + threadId;
             clone.command = clone.command.replace("-starterAddress localhost:"+adapterPort, "-starterAddress localhost:"+newAdapterPort);
-            clone.sulAdapterConfig = new SulAdapterConfigStandard(newAdapterPort, this.sulAdapterConfig.getAdapterAddress());
+            clone.sulAdapterConfig = new SULAdapterConfigStandard(newAdapterPort, this.sulAdapterConfig.getAdapterAddress());
         }
 
         // JSSE-12-0-2 related
@@ -76,7 +76,7 @@ public class TlsSulServerConfig extends SulServerConfigStandard implements TlsSu
             int adapterPort = this.sulAdapterConfig.getAdapterPort();
             int newAdapterPort = adapterPort + threadId;
             clone.command = clone.command.replace("-threadStarterIpPort localhost:"+adapterPort, "-threadStarterIpPort localhost:"+newAdapterPort);
-            clone.sulAdapterConfig = new SulAdapterConfigStandard(newAdapterPort, this.sulAdapterConfig.getAdapterAddress());
+            clone.sulAdapterConfig = new SULAdapterConfigStandard(newAdapterPort, this.sulAdapterConfig.getAdapterAddress());
         }
 
         return clone;
