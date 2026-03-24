@@ -243,19 +243,20 @@ function solve_arch() {
     fi
 
     mkdir "${target_dir}"
-    # ${arch_file##*.} retrieves the substring between the last index of . and the end of $arch_file
     arch=${arch_file##*.}
-    if [[ ${arch} == "xz" ]]
-    then
-        tar_param="-xJf"
-    else
-        tar_param="zxvf"
-    fi
 
-    if [[ -n "${target_dir}" ]] ; then
-        tar "${tar_param}" "${arch_file}" -C "${target_dir}" --strip-components=1
+    if [[ ${arch} == "zip" ]]
+    then
+        if ! command -v bsdtar &> /dev/null; then
+            sudo apt-get install -y libarchive-tools
+        fi
+        # Use bsdtar which supports --strip-components for ZIP
+        bsdtar -xf "${arch_file}" -C "${target_dir}" --strip-components=1
+    elif [[ ${arch} == "xz" ]]
+    then
+        tar -xJf "${arch_file}" -C "${target_dir}" --strip-components=1
     else
-        tar "${tar_param}" "${arch_file}"
+        tar zxvf "${arch_file}" -C "${target_dir}" --strip-components=1
     fi
 }
 
