@@ -1,7 +1,7 @@
 package se.uu.it.dtlsfuzzer.components.sul.core;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulAdapter;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulAdapterConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULAdapter;
+import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULAdapterConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
  * "stop" - prompts the launch server to stop the current SUL process.
  * The server generates "stopped" to signal that the SUL process has terminated.
  */
-public final class TlsSulAdapter implements SulAdapter {
+public final class TlsSulAdapter implements SULAdapter {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String CMD_STOP = "stop";
@@ -42,7 +42,7 @@ public final class TlsSulAdapter implements SulAdapter {
     private boolean stopped;
     private boolean isClientLauncher;
 
-    public TlsSulAdapter(SulAdapterConfig adapterConfig, CleanupTasks tasks, boolean isClientLauncher) {
+    public TlsSulAdapter(SULAdapterConfig adapterConfig, CleanupTasks tasks, boolean isClientLauncher) {
         resetAddress = new InetSocketAddress(adapterConfig.getAdapterAddress(), adapterConfig.getAdapterPort());
         try {
             adapterSocket = new Socket();
@@ -162,7 +162,7 @@ public final class TlsSulAdapter implements SulAdapter {
      * {@inheritDoc}
      */
     @Override
-    public Integer getSulPort() {
+    public Integer getSULPort() {
         return sulPort;
     }
 

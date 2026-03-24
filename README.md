@@ -469,6 +469,31 @@ Finally, if you have the arguments file for a learning experiment, you can use t
 
     java -jar target/dtls-fuzzer.jar @learning_arg_file -test test_file
 
+# Developer notes
+
+## Patches
+DTLS-Fuzzer may require modifications to the libraries it depends on (e.g., to add features such as support for DTLS 1.3 in TLS-Attacker), and to the SUTs it is applied to (e.g., for removing timing behavior).
+These modifications are encoded in patches which allows them to be applied automatically:
+- when DTLS-Fuzzer is installed via the `install.sh` script;
+- when a SUT of choice is installed via the `setup_sut.sh` script.
+
+*Patch storage.*
+Patches are stored in the `experiments/patches` directory.
+They are named in a way that indicates the library/SUT and its version.
+For example, the patch for TLS-Attacker version 6.3.4 is named `TLS-Attacker-v6.3.4.patch`.
+This naming allows the install scripts to identify the patch corresponding to a library/SUT.
+
+*Updating patches.* To create/update a patch requires some form of `diff`.
+For libraries/SUTs deployed via `git`, the process is simplified.
+From the library/SUT directory with the necessary modifications, first run a cleaning command that removes binaries, then run:
+
+    git add -N .
+    git diff --path > ${path_to_path_to_update}
+
+The first command is necessary in case your patch also adds new files.
+The second command creates the patch and replaces by it the existing patch.
+
+
 
 
 [tlsattacker]:https://github.com/RUB-NDS/TLS-Attacker

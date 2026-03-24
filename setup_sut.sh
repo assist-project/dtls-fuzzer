@@ -125,8 +125,7 @@ readonly WOLFSSL_471r_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/
 readonly WOLFSSL_576="wolfssl-5.7.6"
 readonly WOLFSSL_576_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.7.6-stable.tar.gz"
 readonly WOLFSSL_582="wolfssl-5.8.2"
-readonly WOLFSSL_582_ARCH_URL="https://www.wolfssl.com/wolfssl-5.8.2.zip"
-
+readonly WOLFSSL_582_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.8.2-stable.tar.gz"
 
 # dependencies
 readonly JDK_904="jdk-9.0.4"
