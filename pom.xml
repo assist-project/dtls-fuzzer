@@ -11,7 +11,7 @@
 
         <!-- Alphabetically sorted -->
         <commons.lang3.version>3.20.0</commons.lang3.version>
-        <error-prone.version>2.42.0</error-prone.version>
+        <error-prone.version>2.49.0</error-prone.version>
         <jakarta-xml.version>4.0.5</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.18.0</learnlib.version>
@@ -159,6 +159,7 @@
                         <!--arg>-Werror</arg>-->
                         <arg>-Xlint:all</arg>
                         <arg>-XDcompilePolicy=simple</arg>
+                        <arg>-XDaddTypeAnnotationsToSymbol=true</arg>
                         <arg>--should-stop=ifError=FLOW</arg>
                         <arg>-Xplugin:ErrorProne -Xep:AddressSelection:OFF</arg>
                     </compilerArgs>
