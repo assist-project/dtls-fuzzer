@@ -86,7 +86,7 @@
         <dependency>
             <groupId>com.github.protocolfuzzing</groupId>
             <artifactId>protocolstatefuzzer</artifactId>
-            <version>1.0.0</version>
+            <version>0.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
@@ -142,6 +142,11 @@
             <groupId>de.rub.nds</groupId>
             <artifactId>protocol-attacker</artifactId>
             <version>${protocol-attacker.version}</version>
+        </dependency>
+        <dependency>
+                <groupId>net.automatalib</groupId>
+                <artifactId>automata-api</artifactId>
+                <version>0.12.0</version>
         </dependency>
     </dependencies>
 
