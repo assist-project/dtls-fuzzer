@@ -8,8 +8,8 @@ readonly SCRIPT_DIR
 readonly PATCHES_DIR="${SCRIPT_DIR}/experiments/patches"
 
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="c3f6e7ca771048e719462b415f5f54c31ce2bf42"
-readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
+readonly PROTOCOLSTATEFUZZER_COMMIT="differential-testing"
+readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/mave9159/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 
 readonly TLSATTACKER_VERSION="v6.3.4"
