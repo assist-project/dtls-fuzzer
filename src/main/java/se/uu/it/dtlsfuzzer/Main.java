@@ -27,8 +27,8 @@ public class Main {
 
         List<ProcessResult<MealyMachineWrapper<TlsInput, TlsOutput>>> processResult = commandLineParser.process(args);
         for (ProcessResult<MealyMachineWrapper<TlsInput, TlsOutput>> result : processResult) {
-            DiffTestResult diffTestResult = result.getDiffTestResult();
-            if (diffTestResult != null && !diffTestResult.isEmpty()) {
+            if (result.hasDiffTestResult() && !result.getDiffTestResult().isEmpty()) {
+                DiffTestResult diffTestResult = result.getDiffTestResult();
 
                 String outputDir = "output";
                 String filename = "diff_" + diffTestResult.getModelAName() + "_vs_" + diffTestResult.getModelBName() + ".txt";
