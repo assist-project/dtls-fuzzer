@@ -16,8 +16,13 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.St
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerEnabler;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTester;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterEnabler;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunner;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerStandard;
@@ -29,7 +34,6 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.tim
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeEnabler;
 import se.uu.it.dtlsfuzzer.components.sul.core.TlsSulBuilder;
-import se.uu.it.dtlsfuzzer.components.sul.core.config.DTLSDiffTesterConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulServerConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
@@ -38,7 +42,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigBuilder,
-        StateFuzzerBuilder<MealyMachineWrapper<TlsInput, TlsOutput>>, TestRunnerBuilder, TimingProbeBuilder {
+        StateFuzzerBuilder<MealyMachineWrapper<TlsInput, TlsOutput>>, DiffTesterBuilder, TestRunnerBuilder, TimingProbeBuilder {
 
     private AlphabetBuilder<TlsInput> alphabetBuilder = new AlphabetBuilderStandard<>(
             new AlphabetSerializerXml<>(TlsInput.class, TlsAlphabetPojoXml.class));
@@ -66,7 +70,7 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigB
 
     @Override
     public DiffTesterConfig buildConfig() {
-        return new DTLSDiffTesterConfig();
+        return new DiffTesterConfigStandard();
     }
 
     @Override
@@ -74,6 +78,12 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigB
         return new StateFuzzerStandard<>(
             new StateFuzzerComposerStandard<>(stateFuzzerEnabler, alphabetBuilder, sulBuilder).initialize()
         );
+    }
+
+    @Override
+    public DiffTester build(DiffTesterEnabler diffTesterEnabler) {
+        return new DiffTesterStandard<>(diffTesterEnabler, new TlsAlphabetBuilderTransformer(new AlphabetBuilderStandard<>(
+            new AlphabetSerializerXml<>(TlsInput.class, TlsAlphabetPojoXml.class))));
     }
 
     @Override

@@ -143,11 +143,6 @@
             <artifactId>protocol-attacker</artifactId>
             <version>${protocol-attacker.version}</version>
         </dependency>
-        <dependency>
-                <groupId>net.automatalib</groupId>
-                <artifactId>automata-api</artifactId>
-                <version>0.12.0</version>
-        </dependency>
     </dependencies>
 
     <build>
