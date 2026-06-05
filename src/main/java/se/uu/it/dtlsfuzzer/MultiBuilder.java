@@ -82,8 +82,7 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigB
 
     @Override
     public DiffTester build(DiffTesterEnabler diffTesterEnabler) {
-        return new DiffTesterStandard<>(diffTesterEnabler, new TlsAlphabetBuilderTransformer(new AlphabetBuilderStandard<>(
-            new AlphabetSerializerXml<>(TlsInput.class, TlsAlphabetPojoXml.class))));
+        return new DiffTesterStandard<>(diffTesterEnabler, alphabetBuilder);
     }
 
     @Override

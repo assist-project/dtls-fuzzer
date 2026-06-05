@@ -31,7 +31,11 @@ public class Main {
                 DiffTestResult diffTestResult = result.getDiffTestResult();
 
                 String outputDir = "output";
-                String filename = "diff_" + diffTestResult.getModelAName() + "_vs_" + diffTestResult.getModelBName() + ".txt";
+                String filename = "diff_"
+                                + toSafeFileName(diffTestResult.getModelAName())
+                                + "_vs_"
+                                + toSafeFileName(diffTestResult.getModelBName()) +
+                                ".txt";
                 Path outputPath = Paths.get(outputDir, filename);
                 Path parent = outputPath.getParent();
                 if (parent != null) {
@@ -42,5 +46,9 @@ public class Main {
                 reportGenerator.writeReport(diffTestResult.getDivergences(), diffTestResult.getModelAName() , diffTestResult.getModelBName());
             }
         }
+    }
+
+    private static String toSafeFileName(String name) {
+        return name.replaceAll("[/\\\\]", "_");
     }
 }
