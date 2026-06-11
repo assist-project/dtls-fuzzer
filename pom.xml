@@ -11,7 +11,7 @@
 
         <!-- Alphabetically sorted -->
         <commons.lang3.version>3.20.0</commons.lang3.version>
-        <error-prone.version>2.49.0</error-prone.version>
+        <error-prone.version>2.50.0</error-prone.version>
         <jakarta-xml.version>4.0.5</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
         <learnlib.version>0.18.0</learnlib.version>
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>com.github.protocolfuzzing</groupId>
             <artifactId>protocolstatefuzzer</artifactId>
-            <version>1.0.0</version>
+            <version>0.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
@@ -282,7 +282,7 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.9.8.5</version>
+                <version>4.10.2.0</version>
                 <configuration>
                     <includeFilterFile>.spotbugs/include.xml</includeFilterFile>
                 </configuration>
