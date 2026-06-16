@@ -34,8 +34,8 @@ public class Main {
                 String filename = "diff_"
                                 + toSafeFileName(diffTestResult.getModelAName())
                                 + "_vs_"
-                                + toSafeFileName(diffTestResult.getModelBName()) +
-                                ".txt";
+                                + toSafeFileName(diffTestResult.getModelBName())
+                                + ".txt";
                 Path outputPath = Paths.get(outputDir, filename);
                 Path parent = outputPath.getParent();
                 if (parent != null) {
