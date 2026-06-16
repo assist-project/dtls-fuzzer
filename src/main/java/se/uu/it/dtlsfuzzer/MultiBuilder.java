@@ -16,6 +16,13 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.St
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerEnabler;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTester;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterEnabler;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigStandard;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunner;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerStandard;
@@ -34,8 +41,8 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsAlphabetPojoX
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class MultiBuilder implements StateFuzzerConfigBuilder,
-        StateFuzzerBuilder<MealyMachineWrapper<TlsInput, TlsOutput>>, TestRunnerBuilder, TimingProbeBuilder {
+public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigBuilder,
+        StateFuzzerBuilder<MealyMachineWrapper<TlsInput, TlsOutput>>, DiffTesterBuilder, TestRunnerBuilder, TimingProbeBuilder {
 
     private AlphabetBuilder<TlsInput> alphabetBuilder = new AlphabetBuilderStandard<>(
             new AlphabetSerializerXml<>(TlsInput.class, TlsAlphabetPojoXml.class));
@@ -62,10 +69,20 @@ public class MultiBuilder implements StateFuzzerConfigBuilder,
     }
 
     @Override
+    public DiffTesterConfig buildConfig() {
+        return new DiffTesterConfigStandard();
+    }
+
+    @Override
     public StateFuzzer<MealyMachineWrapper<TlsInput, TlsOutput>> build(StateFuzzerEnabler stateFuzzerEnabler) {
         return new StateFuzzerStandard<>(
             new StateFuzzerComposerStandard<>(stateFuzzerEnabler, alphabetBuilder, sulBuilder).initialize()
         );
+    }
+
+    @Override
+    public DiffTester build(DiffTesterEnabler diffTesterEnabler) {
+        return new DiffTesterStandard<>(diffTesterEnabler, alphabetBuilder);
     }
 
     @Override
