@@ -1,0 +1,15 @@
+digraph g {
+
+	s0 [shape="circle" label="s0"];
+	s0 -> s0 [label="PSK_CLIENT_HELLO / HELLO_VERIFY_REQUEST"];
+	s0 -> s0 [label="PSK_CLIENT_KEY_EXCHANGE / TIMEOUT"];
+	s0 -> s0 [label="CHANGE_CIPHER_SPEC / TIMEOUT"];
+	s0 -> s0 [label="FINISHED / TIMEOUT"];
+	s0 -> s0 [label="APPLICATION / TIMEOUT"];
+	s0 -> s0 [label="Alert(WARNING,CLOSE_NOTIFY) / TIMEOUT"];
+	s0 -> s0 [label="Alert(FATAL,UNEXPECTED_MESSAGE) / TIMEOUT"];
+
+__start0 [label="" shape="none" width="0" height="0"];
+__start0 -> s0;
+
+}

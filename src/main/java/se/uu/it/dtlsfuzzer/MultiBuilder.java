@@ -16,6 +16,25 @@ import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.St
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerEnabler;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfig;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTester;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterEnabler;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.FingerprintBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.FingerprintExtraction;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.FingerprintStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.config.FingerprintConfig;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.config.FingerprintConfigBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.config.FingerprintConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.config.FingerprintEnabler;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.IdentifierBuilder;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.IdentifierStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.SulIdentifier;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.config.IdentifierConfigStandard;
+import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.config.IdentifierEnabler;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunner;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBuilder;
 import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerStandard;
@@ -34,8 +53,8 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsAlphabetPojoX
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class MultiBuilder implements StateFuzzerConfigBuilder,
-        StateFuzzerBuilder<MealyMachineWrapper<TlsInput, TlsOutput>>, TestRunnerBuilder, TimingProbeBuilder {
+public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigBuilder, FingerprintConfigBuilder,
+        StateFuzzerBuilder<MealyMachineWrapper<TlsInput, TlsOutput>>, DiffTesterBuilder, FingerprintBuilder, TestRunnerBuilder, TimingProbeBuilder, IdentifierBuilder<MealyMachineWrapper<TlsInput, TlsOutput>> {
 
     private AlphabetBuilder<TlsInput> alphabetBuilder = new AlphabetBuilderStandard<>(
             new AlphabetSerializerXml<>(TlsInput.class, TlsAlphabetPojoXml.class));
@@ -48,7 +67,8 @@ public class MultiBuilder implements StateFuzzerConfigBuilder,
                 new LearnerConfigStandard(),
                 new TlsSulClientConfig(),
                 new TestRunnerConfigStandard(),
-                new TimingProbeConfigStandard());
+                new TimingProbeConfigStandard(),
+                new IdentifierConfigStandard());
     }
 
     @Override
@@ -57,8 +77,19 @@ public class MultiBuilder implements StateFuzzerConfigBuilder,
                 new LearnerConfigStandard(),
                 new TlsSulServerConfig(),
                 new TestRunnerConfigStandard(),
-                new TimingProbeConfigStandard()
+                new TimingProbeConfigStandard(),
+                new IdentifierConfigStandard()
         );
+    }
+
+    @Override
+    public DiffTesterConfig buildConfig() {
+        return new DiffTesterConfigStandard();
+    }
+
+    @Override
+    public FingerprintConfig buildConfigFing() {
+        return new FingerprintConfigStandard();
     }
 
     @Override
@@ -69,6 +100,16 @@ public class MultiBuilder implements StateFuzzerConfigBuilder,
     }
 
     @Override
+    public DiffTester build(DiffTesterEnabler diffTesterEnabler) {
+        return new DiffTesterStandard<>(diffTesterEnabler, alphabetBuilder);
+    }
+
+    @Override
+    public FingerprintExtraction build(FingerprintEnabler fingerprintEnabler) {
+        return new FingerprintStandard<>(fingerprintEnabler, alphabetBuilder);
+    }
+
+    @Override
     public TestRunner build(TestRunnerEnabler testRunnerEnabler) {
         return new TestRunnerStandard<>(testRunnerEnabler, alphabetBuilder, sulBuilder).initialize();
     }
@@ -76,5 +117,10 @@ public class MultiBuilder implements StateFuzzerConfigBuilder,
     @Override
     public TimingProbe build(TimingProbeEnabler timingProbeEnabler) {
         return new TimingProbeStandard<>(timingProbeEnabler, alphabetBuilder, sulBuilder).initialize();
+    }
+
+    @Override
+    public SulIdentifier<MealyMachineWrapper<TlsInput, TlsOutput>> build(IdentifierEnabler identifierEnabler) {
+        return new IdentifierStandard<>(identifierEnabler, alphabetBuilder, sulBuilder).initialize();
     }
 }
