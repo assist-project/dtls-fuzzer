@@ -34,7 +34,7 @@ readonly MODULES_DIR="${SCRIPT_DIR}/modules"
 
 readonly CTINYDTLS="ctinydtls"
 readonly CTINYDTLS_REP_URL="https://github.com/contiki-ng/tinydtls.git"
-readonly CTINYDTLS_COMMIT="53a0d97"
+readonly CTINYDTLS_COMMIT="42356d96fdd0df58faac871678ea213a4573f477"
 #readonly CTINYDTLS_ARCH_URL="https://github.com/contiki-ng/tinydtls/archive/53a0d97da748a67093c49cb38744650c71d58c4d.tar.gz"
 
 readonly ETINYDTLS="etinydtls"
