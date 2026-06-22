@@ -1,12 +1,12 @@
 package se.uu.it.dtlsfuzzer.components.sul.core;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULBuilder;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULWrapper;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULWrapperStandard;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposer;
-import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULBuilder;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULWrapper;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULWrapperStandard;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposer;
+import io.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsInputMapper;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.DtlsOutputMapper;

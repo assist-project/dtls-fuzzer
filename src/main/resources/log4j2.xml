@@ -24,7 +24,7 @@
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <!-- Application Loggers -->
-        <Logger name="com.github.protocolfuzzing.protocolstatefuzzer" level="info" additivity="false">
+        <Logger name="io.github.protocol-fuzzing.protocol-state-fuzzer" level="info" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Root level="info">
