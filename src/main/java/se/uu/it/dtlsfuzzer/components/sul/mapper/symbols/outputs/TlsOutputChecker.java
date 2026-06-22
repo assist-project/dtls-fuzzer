@@ -1,7 +1,7 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.x509attacker.constants.X509PublicKeyType;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import java.util.Arrays;
 import java.util.Optional;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.KeyExchangeAlgorithm;

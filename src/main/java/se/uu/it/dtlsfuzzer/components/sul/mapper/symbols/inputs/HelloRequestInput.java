@@ -1,7 +1,7 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.tlsattacker.core.protocol.message.HelloRequestMessage;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Arrays;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;

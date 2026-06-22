@@ -1,10 +1,10 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.layer.context.TlsContext;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

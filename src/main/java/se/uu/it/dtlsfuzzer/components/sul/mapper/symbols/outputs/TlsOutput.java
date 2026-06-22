@@ -1,6 +1,6 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.AbstractOutput;
 import java.util.Collections;
 import java.util.List;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;

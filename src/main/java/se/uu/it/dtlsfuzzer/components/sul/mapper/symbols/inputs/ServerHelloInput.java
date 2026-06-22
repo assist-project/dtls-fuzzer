@@ -1,12 +1,12 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloMessage;
 import de.rub.nds.tlsattacker.core.record.Record;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.Arrays;
 import java.util.List;

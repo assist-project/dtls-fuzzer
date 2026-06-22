@@ -1,13 +1,13 @@
 package se.uu.it.dtlsfuzzer.components.sul.core.config;
 
 import com.beust.jcommander.ParametersDelegate;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULAdapterConfigStandard;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULClientConfigStandard;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfigStandard;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.ServerDelegate;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULAdapterConfigStandard;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULClientConfigStandard;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfigStandard;
 
 public class TlsSulClientConfig extends SULClientConfigStandard implements TlsSulConfig {
 

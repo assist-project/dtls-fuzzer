@@ -1,10 +1,10 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import de.rub.nds.modifiablevariable.bytearray.ByteArrayExplicitValueModification;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.protocol.message.ClientHelloMessage;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputChecker;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
