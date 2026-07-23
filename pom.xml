@@ -86,7 +86,7 @@
         <dependency>
             <groupId>io.github.protocol-fuzzing</groupId>
             <artifactId>protocol-state-fuzzer</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
