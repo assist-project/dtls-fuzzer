@@ -1,11 +1,11 @@
 package se.uu.it.dtlsfuzzer;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.learner.statistics.MealyMachineWrapper;
-import com.github.protocolfuzzing.protocolstatefuzzer.entrypoints.CommandLineParser;
-import com.github.protocolfuzzing.protocolstatefuzzer.entrypoints.ProcessResult;
-import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTestResult;
-import com.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DifferentialReport;
 import de.rub.nds.tlsattacker.core.util.ProviderUtil;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.learner.statistics.MealyMachineWrapper;
+import io.github.protocolfuzzing.protocolstatefuzzer.entrypoints.CommandLineParser;
+import io.github.protocolfuzzing.protocolstatefuzzer.entrypoints.ProcessResult;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTestResult;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DifferentialReport;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

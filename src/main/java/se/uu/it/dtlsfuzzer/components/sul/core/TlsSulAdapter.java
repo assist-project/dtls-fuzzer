@@ -1,8 +1,8 @@
 package se.uu.it.dtlsfuzzer.components.sul.core;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULAdapter;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULAdapterConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULAdapter;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULAdapterConfig;
+import io.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

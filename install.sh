@@ -104,7 +104,7 @@ check_java
 check_mvn
 
 # Checkout and install ProtocolState-Fuzzer
-install_protocolstatefuzzer
+#install_protocolstatefuzzer
 
 # Checkout TLS-Attacker repo, patch it and install it
 install_tlsattacker
