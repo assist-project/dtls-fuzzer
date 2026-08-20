@@ -8,7 +8,7 @@ readonly SCRIPT_DIR
 readonly PATCHES_DIR="${SCRIPT_DIR}/experiments/patches"
 
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="c991e4c7e94308698591f2f8708b7c86eed2ea00"
+readonly PROTOCOLSTATEFUZZER_COMMIT="3ac05fa1b7d80277db43641755ee7cdaae2db1e1"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/ntua-el21001/protocol-state-fuzzer-copy"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 

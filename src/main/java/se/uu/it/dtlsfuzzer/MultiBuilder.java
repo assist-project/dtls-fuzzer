@@ -23,18 +23,18 @@ import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.Diff
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfig;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigBuilder;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigStandard;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.Fingerprint;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.FingerprintBuilder;
-import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.FingerprintExtraction;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.FingerprintStandard;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.config.FingerprintConfig;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.config.FingerprintConfigBuilder;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.config.FingerprintConfigStandard;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.fingerprint.core.config.FingerprintEnabler;
-import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.IdentifierBuilder;
-import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.IdentifierStandard;
-import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.SulIdentifier;
-import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.config.IdentifierConfigStandard;
-import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.sulidentifier.core.config.IdentifierEnabler;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.identifier.core.Identifier;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.identifier.core.IdentifierBuilder;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.identifier.core.IdentifierStandard;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.identifier.core.config.IdentifierConfigStandard;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.identifier.core.config.IdentifierEnabler;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunner;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBuilder;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerStandard;
@@ -88,7 +88,7 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigB
     }
 
     @Override
-    public FingerprintConfig buildConfigFing() {
+    public FingerprintConfig buildFingerprintConfig() {
         return new FingerprintConfigStandard();
     }
 
@@ -105,7 +105,7 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigB
     }
 
     @Override
-    public FingerprintExtraction build(FingerprintEnabler fingerprintEnabler) {
+    public Fingerprint build(FingerprintEnabler fingerprintEnabler) {
         return new FingerprintStandard<>(fingerprintEnabler, alphabetBuilder);
     }
 
@@ -120,7 +120,7 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigB
     }
 
     @Override
-    public SulIdentifier<MealyMachineWrapper<TlsInput, TlsOutput>> build(IdentifierEnabler identifierEnabler) {
+    public Identifier<MealyMachineWrapper<TlsInput, TlsOutput>> build(IdentifierEnabler identifierEnabler) {
         return new IdentifierStandard<>(identifierEnabler, alphabetBuilder, sulBuilder).initialize();
     }
 }
