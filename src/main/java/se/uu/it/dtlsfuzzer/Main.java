@@ -22,8 +22,9 @@ public class Main {
         MultiBuilder mb = new MultiBuilder();
         // String[] parentLoggers = {Main.class.getPackageName()};
 
-        CommandLineParser<MealyMachineWrapper<TlsInput, TlsOutput>> commandLineParser = new CommandLineParser<MealyMachineWrapper<TlsInput, TlsOutput>>(mb, mb, mb, mb, mb, mb);
+        CommandLineParser<MealyMachineWrapper<TlsInput, TlsOutput>> commandLineParser = new CommandLineParser<MealyMachineWrapper<TlsInput, TlsOutput>>(mb, mb, mb, mb, mb, mb, mb, mb, mb);
         // commandLineParser.setExternalParentLoggers(parentLoggers);
+        //commandLineParser.parse(args);
 
         List<ProcessResult<MealyMachineWrapper<TlsInput, TlsOutput>>> processResult = commandLineParser.process(args);
         for (ProcessResult<MealyMachineWrapper<TlsInput, TlsOutput>> result : processResult) {
@@ -51,4 +52,5 @@ public class Main {
     private static String toSafeFileName(String name) {
         return name.replaceAll("[/\\\\]", "_");
     }
+
 }
