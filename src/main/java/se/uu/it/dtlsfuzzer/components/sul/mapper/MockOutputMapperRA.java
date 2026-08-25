@@ -1,9 +1,9 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputBuilder;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapperRA;
 import de.learnlib.ralib.words.PSymbolInstance;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstractsymbols.OutputBuilder;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfig;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.OutputMapperRA;
 import java.util.List;
 
 public class MockOutputMapperRA extends OutputMapperRA<PSymbolInstance, TlsProtocolMessage, TlsExecutionContextRA> {

@@ -1,14 +1,14 @@
 package se.uu.it.dtlsfuzzer.components.sul.core;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSul;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulAdapter;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwrappers.DynamicPortProvider;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposerRA;
-import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.PSymbolInstance;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSUL;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULAdapter;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.sulwrappers.DynamicPortProvider;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.Mapper;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposerRA;
+import io.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
@@ -20,7 +20,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 public class TlsSulRA
     implements
-        AbstractSul<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> {
+        AbstractSUL<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -61,8 +61,8 @@ public class TlsSulRA
     }
 
     @Override
-    public SulConfig getSulConfig() {
-        return wrappedSul.getSulConfig();
+    public SULConfig getSULConfig() {
+        return wrappedSul.getSULConfig();
     }
 
     @Override
@@ -92,7 +92,7 @@ public class TlsSulRA
     }
 
     @Override
-    public SulAdapter getSulAdapter() {
-        return wrappedSul.getSulAdapter();
+    public SULAdapter getSULAdapter() {
+        return wrappedSul.getSULAdapter();
     }
 }

@@ -1,8 +1,8 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.StepContext;
 import de.learnlib.ralib.words.PSymbolInstance;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.ExecutionContextStepped;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.context.StepContext;
 
 public class TlsExecutionContextRA
     extends ExecutionContextStepped<

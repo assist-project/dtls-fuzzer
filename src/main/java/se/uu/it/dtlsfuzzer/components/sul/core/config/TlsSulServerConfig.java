@@ -1,6 +1,7 @@
 package se.uu.it.dtlsfuzzer.components.sul.core.config;
 
 import com.beust.jcommander.ParametersDelegate;
+
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.config.delegate.ClientDelegate;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;

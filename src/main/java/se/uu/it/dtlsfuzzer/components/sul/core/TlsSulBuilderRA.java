@@ -1,13 +1,13 @@
 package se.uu.it.dtlsfuzzer.components.sul.core;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSul;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulBuilder;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapper;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SulWrapperStandard;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SulConfig;
-import com.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposerRA;
-import com.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import de.learnlib.ralib.words.PSymbolInstance;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSUL;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULBuilder;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULWrapper;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULWrapperStandard;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.mappers.MapperComposerRA;
+import io.github.protocolfuzzing.protocolstatefuzzer.utils.CleanupTasks;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.MockOutputMapperRA;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
@@ -17,7 +17,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputBuilde
 
 public class TlsSulBuilderRA
     implements
-        SulBuilder<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> {
+        SULBuilder<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> {
 
     private TlsInputTransformer inputTransformer;
 
@@ -26,22 +26,22 @@ public class TlsSulBuilderRA
     }
 
     @Override
-    public AbstractSul<
+    public AbstractSUL<
         PSymbolInstance,
         PSymbolInstance,
         TlsExecutionContextRA
-    > buildSul(SulConfig sulConfig, CleanupTasks cleanupTasks) {
+    > buildSUL(SULConfig sulConfig, CleanupTasks cleanupTasks) {
 
         TlsOutputBuilderRA outputBuilder = new TlsOutputBuilderRA();
         MockOutputMapperRA outputMapper = new MockOutputMapperRA(sulConfig.getMapperConfig(), outputBuilder);
         MapperComposerRA<PSymbolInstance, TlsProtocolMessage, TlsExecutionContextRA, TlsState> mapperComposer = new MapperComposerRA<>(null, outputMapper);
 
-        TlsSul sul = new TlsSulBuilder().buildSul(sulConfig, cleanupTasks);
+        TlsSul sul = new TlsSulBuilder().buildSUL(sulConfig, cleanupTasks);
         return new TlsSulRA(sul, inputTransformer, mapperComposer);
     }
 
     @Override
-    public SulWrapper<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> buildWrapper() {
-        return new SulWrapperStandard<>();
+    public SULWrapper<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> buildWrapper() {
+        return new SULWrapperStandard<>();
     }
 }

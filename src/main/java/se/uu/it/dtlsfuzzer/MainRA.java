@@ -1,7 +1,10 @@
 package se.uu.it.dtlsfuzzer;
 
-import com.github.protocolfuzzing.protocolstatefuzzer.entrypoints.CommandLineParser;
+import de.learnlib.ralib.words.PSymbolInstance;
+import de.learnlib.ralib.words.ParameterizedSymbol;
 import de.rub.nds.tlsattacker.core.util.ProviderUtil;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.learner.statistics.RegisterAutomatonWrapper;
+import io.github.protocolfuzzing.protocolstatefuzzer.entrypoints.CommandLineParser;
 
 public class MainRA {
 
@@ -10,14 +13,12 @@ public class MainRA {
         MultiBuilderRA mb = new MultiBuilderRA();
         String[] parentLoggers = { Main.class.getPackageName() };
 
-        CommandLineParser<?> commandLineParser = new CommandLineParser<>(
-            mb,
-            mb,
-            mb,
-            mb
-        );
+        RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance> a;
+        CommandLineParser<RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>> commandLineParser =
+                new CommandLineParser<RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>>(mb, null, mb, null, mb, mb);
+
         commandLineParser.setExternalParentLoggers(parentLoggers);
 
-        commandLineParser.parse(args, true);
+        commandLineParser.process(args, true);
     }
 }
