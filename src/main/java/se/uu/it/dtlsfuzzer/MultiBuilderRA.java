@@ -19,6 +19,12 @@ import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.Sta
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerEnabler;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfig;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.config.StateFuzzerServerConfigStandard;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTester;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterBuilder;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.DiffTesterEnabler;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfig;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigBuilder;
+import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.difftester.config.DiffTesterConfigStandard;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunner;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerBuilder;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.core.TestRunnerRA;
@@ -40,12 +46,8 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 
 public class MultiBuilderRA
     implements
-        StateFuzzerConfigBuilder,
-        StateFuzzerBuilder<
-            RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>
-        >,
-        TestRunnerBuilder,
-        TimingProbeBuilder {
+        StateFuzzerConfigBuilder, DiffTesterConfigBuilder, StateFuzzerBuilder<RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>>,
+            DiffTesterBuilder, TestRunnerBuilder, TimingProbeBuilder {
 
     protected AlphabetBuilderStandard<TlsInput> standardBuilder =
         new AlphabetBuilderStandard<>(
@@ -106,13 +108,25 @@ public class MultiBuilderRA
     }
 
     @Override
+    public DiffTester build(DiffTesterEnabler diffTesterEnabler) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Differential testing support not implemented");
+    }
+
+    @Override
+    public DiffTesterConfig buildConfig() {
+        return new DiffTesterConfigStandard();
+    }
+
+    @Override
     public TimingProbe build(TimingProbeEnabler timingProbeEnabler) {
         // FIXME: functionality does not yet exist for RA-learning
-        throw new UnsupportedOperationException("Unimplemented method 'build'");
+        throw new UnsupportedOperationException("TimingProbe support not implemented");
     }
 
     @Override
     public TestRunner build(TestRunnerEnabler testRunnerEnabler) {
         return new TestRunnerRA<TlsInput, TlsExecutionContextRA>(testRunnerEnabler, standardBuilder, inputTransformer, sulBuilder);
     }
+
 }

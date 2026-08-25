@@ -15,7 +15,7 @@ public class MainRA {
 
         RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance> a;
         CommandLineParser<RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>> commandLineParser =
-                new CommandLineParser<RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>>(mb, null, mb, null, mb, mb);
+                new CommandLineParser<RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>>(mb, mb, mb, mb, mb, mb);
 
         commandLineParser.setExternalParentLoggers(parentLoggers);
 
