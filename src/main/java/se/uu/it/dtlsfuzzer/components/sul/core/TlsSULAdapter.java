@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
  * "stop" - prompts the launch server to stop the current SUL process.
  * The server generates "stopped" to signal that the SUL process has terminated.
  */
-public final class TlsSulAdapter implements SULAdapter {
+public final class TlsSULAdapter implements SULAdapter {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String CMD_STOP = "stop";
@@ -42,7 +42,7 @@ public final class TlsSulAdapter implements SULAdapter {
     private boolean stopped;
     private boolean isClientLauncher;
 
-    public TlsSulAdapter(SULAdapterConfig adapterConfig, CleanupTasks tasks, boolean isClientLauncher) {
+    public TlsSULAdapter(SULAdapterConfig adapterConfig, CleanupTasks tasks, boolean isClientLauncher) {
         resetAddress = new InetSocketAddress(adapterConfig.getAdapterAddress(), adapterConfig.getAdapterPort());
         try {
             adapterSocket = new Socket();
@@ -81,7 +81,7 @@ public final class TlsSulAdapter implements SULAdapter {
                 writer = new PrintWriter(new OutputStreamWriter(adapterSocket.getOutputStream(), StandardCharsets.UTF_8), true);
             }
         } catch(IOException e) {
-            throw new TlsSulAdapterException(e);
+            throw new TlsSULAdapterException(e);
         }
     }
 
@@ -91,25 +91,25 @@ public final class TlsSulAdapter implements SULAdapter {
     @Override
     public void start() {
         if (!checkStopped()) {
-            throw new TlsSulAdapterException("SUL still running");
+            throw new TlsSULAdapterException("SUL still running");
         }
         writer.println(CMD_START);
         String resp = null;
         try {
             resp = reader.readLine();
             if (resp == null) {
-                throw new TlsSulAdapterException("Received no response");
+                throw new TlsSULAdapterException("Received no response");
             }
         } catch (IOException e) {
-            throw new TlsSulAdapterException(e);
+            throw new TlsSULAdapterException(e);
         }
         String[] split = resp.split("\\ ", -1);
         if (!split[0].equals(RESP_STARTED)) {
-            throw new TlsSulAdapterException(String.format("Received invalid response to %s command", CMD_START));
+            throw new TlsSULAdapterException(String.format("Received invalid response to %s command", CMD_START));
         }
         String portString = split[1];
         if (portString == null) {
-            throw new TlsSulAdapterException("Server has closed the socket");
+            throw new TlsSULAdapterException("Server has closed the socket");
         }
         stopped = false;
         sulPort = Integer.valueOf(portString);
@@ -127,11 +127,11 @@ public final class TlsSulAdapter implements SULAdapter {
             try {
                 response = reader.readLine();
                 if (response == null || !response.equals(RESP_STOPPED)) {
-                    throw new TlsSulAdapterException(String.format("Received invalid or no response to %s command", CMD_STOP));
+                    throw new TlsSULAdapterException(String.format("Received invalid or no response to %s command", CMD_STOP));
                 }
                 stopped = true;
             } catch (IOException e) {
-                throw new TlsSulAdapterException(e);
+                throw new TlsSULAdapterException(e);
             }
         }
     }
@@ -149,11 +149,11 @@ public final class TlsSulAdapter implements SULAdapter {
                     LOGGER.debug("Server stopped");
                     stopped = true;
                 } else {
-                    throw new TlsSulAdapterException("Received invalid or no response");
+                    throw new TlsSULAdapterException("Received invalid or no response");
                 }
             }
         } catch (IOException e) {
-            throw new TlsSulAdapterException(e);
+            throw new TlsSULAdapterException(e);
         }
         return stopped;
     }

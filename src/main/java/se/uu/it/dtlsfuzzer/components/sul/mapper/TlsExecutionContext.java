@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
-import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
@@ -18,9 +18,9 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
 
     private Integer renegotiationIndex = 0;
     private Long writeRecordNumberEpoch0 = null;
-    private TlsSulConfig tlsSulConfig;
+    private TlsSULConfig tlsSulConfig;
 
-    public TlsExecutionContext(TlsSulConfig tlsSulConfig, TlsState state) {
+    public TlsExecutionContext(TlsSULConfig tlsSulConfig, TlsState state) {
         super(state);
         this.tlsSulConfig = tlsSulConfig;
     }
@@ -34,7 +34,7 @@ public class TlsExecutionContext extends ExecutionContextStepped<TlsInput, TlsOu
         return state.getTlsContext();
     }
 
-    public TlsSulConfig getTlsSulConfig() {
+    public TlsSULConfig getTlsSulConfig() {
         return tlsSulConfig;
     }
 

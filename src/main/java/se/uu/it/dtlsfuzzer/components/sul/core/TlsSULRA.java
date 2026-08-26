@@ -18,19 +18,19 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsInputTransformer;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
-public class TlsSulRA
+public class TlsSULRA
     implements
         AbstractSUL<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private TlsSul wrappedSul;
+    private TlsSUL wrappedSul;
 
     private TlsInputTransformer inputTransformer;
 
     private MapperComposerRA<PSymbolInstance, TlsProtocolMessage, TlsExecutionContextRA, TlsState> mapperComposer;
 
-    public TlsSulRA(TlsSul sul, TlsInputTransformer inputTransformer, MapperComposerRA<PSymbolInstance, TlsProtocolMessage, TlsExecutionContextRA, TlsState> mapperComposer) {
+    public TlsSULRA(TlsSUL sul, TlsInputTransformer inputTransformer, MapperComposerRA<PSymbolInstance, TlsProtocolMessage, TlsExecutionContextRA, TlsState> mapperComposer) {
         this.wrappedSul = sul;
         this.inputTransformer = inputTransformer;
         this.mapperComposer = mapperComposer;

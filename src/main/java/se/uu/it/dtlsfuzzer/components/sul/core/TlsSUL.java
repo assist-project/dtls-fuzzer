@@ -32,9 +32,9 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.ConfigDelegate;
-import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulClientConfig;
-import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulConfig;
-import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulServerConfig;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULClientConfig;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULConfig;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULServerConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
@@ -46,7 +46,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
  *
  * @author robert, paul
  */
-public class TlsSul implements AbstractSUL<TlsInput, TlsOutput, TlsExecutionContext> {
+public class TlsSUL implements AbstractSUL<TlsInput, TlsOutput, TlsExecutionContext> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -89,7 +89,7 @@ public class TlsSul implements AbstractSUL<TlsInput, TlsOutput, TlsExecutionCont
     /**
      * The provided SulConfig
      */
-    private final TlsSulConfig sulConfig;
+    private final TlsSULConfig sulConfig;
 
     private CleanupTasks cleanupTasks;
 
@@ -104,7 +104,7 @@ public class TlsSul implements AbstractSUL<TlsInput, TlsOutput, TlsExecutionCont
 
     private OutputMapper<TlsOutput, TlsProtocolMessage, TlsExecutionContext> outputMapper;
 
-    public TlsSul(TlsSulConfig sulConfig, MapperConfig mapperConfig, MapperComposer<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext, TlsState> mapperComposer,
+    public TlsSUL(TlsSULConfig sulConfig, MapperConfig mapperConfig, MapperComposer<TlsInput, TlsOutput, TlsProtocolMessage, TlsExecutionContext, TlsState> mapperComposer,
             CleanupTasks cleanupTasks) {
         this.sulConfig = sulConfig;
         this.mapperComposer = mapperComposer;
@@ -144,10 +144,10 @@ public class TlsSul implements AbstractSUL<TlsInput, TlsOutput, TlsExecutionCont
         State state = new State(config, new WorkflowTrace());
         // fix port number
         if (sulConfig.isFuzzingClient()) {
-            int port = ((TlsSulClientConfig) sulConfig).getPort();
+            int port = ((TlsSULClientConfig) sulConfig).getPort();
             config.getDefaultServerConnection().setPort(port);
         } else {
-            String realHost = ((TlsSulServerConfig) sulConfig).getHost();
+            String realHost = ((TlsSULServerConfig) sulConfig).getHost();
             var split = realHost.split(":", -1);
             int port = Integer.parseInt(split[1]);
             config.getDefaultClientConnection().setPort(port);
@@ -180,7 +180,7 @@ public class TlsSul implements AbstractSUL<TlsInput, TlsOutput, TlsExecutionCont
             });
             chWaiter.start();
             receivedClientHello = false;
-            long clientWait = ((TlsSulClientConfig) sulConfig).getClientWait();
+            long clientWait = ((TlsSULClientConfig) sulConfig).getClientWait();
             if (clientWait > 0) {
                 try {
                     Thread.sleep(clientWait);

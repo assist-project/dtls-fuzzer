@@ -3,19 +3,19 @@ package se.uu.it.dtlsfuzzer.components.sul.core.config;
 import com.beust.jcommander.ParametersDelegate;
 
 import de.rub.nds.tlsattacker.core.config.Config;
-import de.rub.nds.tlsattacker.core.config.delegate.ServerDelegate;
+import de.rub.nds.tlsattacker.core.config.delegate.ClientDelegate;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULAdapterConfigStandard;
-import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULClientConfigStandard;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
+import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULServerConfigStandard;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.config.MapperConfigStandard;
 
-public class TlsSulClientConfig extends SULClientConfigStandard implements TlsSulConfig {
+public class TlsSULServerConfig extends SULServerConfigStandard implements TlsSULConfig {
 
     @ParametersDelegate
-    private ClientConfigDelegate configDelegate = new ClientConfigDelegate();
+    private ServerConfigDelegate configDelegate = new ServerConfigDelegate();
 
-    public TlsSulClientConfig() {
+    public TlsSULServerConfig() {
         super(new MapperConfigStandard(), new SULAdapterConfigStandard());
     }
 
@@ -24,35 +24,45 @@ public class TlsSulClientConfig extends SULClientConfigStandard implements TlsSu
         return configDelegate;
     }
 
-    private class ClientConfigDelegate extends ConfigDelegate {
-        ClientConfigDelegate() {
+    private class ServerConfigDelegate extends ConfigDelegate {
+        ServerConfigDelegate() {
         }
 
         @Override
         public void applyDelegate(Config config) throws ConfigurationException {
             super.applyDelegate(config);
-            ServerDelegate serverDelegate = new ServerDelegate();
-            serverDelegate.setPort(getPort());
-            serverDelegate.applyDelegate(config);
-            config.getDefaultServerConnection().setTimeout(getResponseWait().intValue());
+            ClientDelegate clientDelegate = new ClientDelegate();
+            clientDelegate.setHost(getHost());
+            clientDelegate.applyDelegate(config);
+            config.getDefaultClientConnection().setTimeout(getResponseWait().intValue());
         }
     }
 
     @Override
     public SULConfig cloneWithThreadId(int threadId) {
-        TlsSulClientConfig clone = new TlsSulClientConfig();
-        clone.clientWait = clientWait;
-        int oldPort = getPort();
-        int newPort = getPort() + threadId;
-        clone.setPort(newPort);
+        TlsSULServerConfig clone = new TlsSULServerConfig();
         clone.setResponseWait(getResponseWait());
-        String newCommand = this.getCommand().replace("" + oldPort, "" + newPort);
-        clone.command = newCommand;
         clone.setStartWait(getStartWait());
         clone.processDir = getProcessDir();
+        // host
+        String originalHost = this.getHost();
+        String[] hostParts = originalHost.split(":", -1);
+        String hostname = hostParts[0];
+        int originalPort = Integer.parseInt(hostParts[1]);
+        int newPort = originalPort + threadId;
+        String newHost = hostname + ":" + newPort;
+        clone.setHost(newHost);
+        // command
+        String newCommand = this.getCommand().replace("" + originalPort, "" + newPort);
+        clone.command = newCommand;
 
         clone.processTrigger = getProcessTrigger();
         clone.mapperConfig = getMapperConfig();
+
+        // PionDTLS-2-0-9_Server_psk related
+        if(getTerminateCommand() != null) {
+            clone.terminateCommand = getTerminateCommand().replace("" + originalPort, "" + newPort);
+        }
 
         // Scandium-2-0-0-M16 config related
         if (clone.command.contains("-starterAddress localhost:")) {

@@ -15,13 +15,13 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsInputTransformer;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputBuilderRA;
 
-public class TlsSulBuilderRA
+public class TlsSULBuilderRA
     implements
         SULBuilder<PSymbolInstance, PSymbolInstance, TlsExecutionContextRA> {
 
     private TlsInputTransformer inputTransformer;
 
-    public TlsSulBuilderRA(TlsInputTransformer inputTransformer) {
+    public TlsSULBuilderRA(TlsInputTransformer inputTransformer) {
         this.inputTransformer = inputTransformer;
     }
 
@@ -36,8 +36,8 @@ public class TlsSulBuilderRA
         MockOutputMapperRA outputMapper = new MockOutputMapperRA(sulConfig.getMapperConfig(), outputBuilder);
         MapperComposerRA<PSymbolInstance, TlsProtocolMessage, TlsExecutionContextRA, TlsState> mapperComposer = new MapperComposerRA<>(null, outputMapper);
 
-        TlsSul sul = new TlsSulBuilder().buildSUL(sulConfig, cleanupTasks);
-        return new TlsSulRA(sul, inputTransformer, mapperComposer);
+        TlsSUL sul = new TlsSULBuilder().buildSUL(sulConfig, cleanupTasks);
+        return new TlsSULRA(sul, inputTransformer, mapperComposer);
     }
 
     @Override

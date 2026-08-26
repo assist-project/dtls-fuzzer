@@ -36,9 +36,9 @@ import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timi
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeEnabler;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import se.uu.it.dtlsfuzzer.components.sul.core.TlsSulBuilderRA;
-import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulClientConfig;
-import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSulServerConfig;
+import se.uu.it.dtlsfuzzer.components.sul.core.TlsSULBuilderRA;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULClientConfig;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULServerConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsInputTransformer;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsAlphabetPojoXml;
@@ -65,7 +65,7 @@ public class MultiBuilderRA
         PSymbolInstance,
         PSymbolInstance,
         TlsExecutionContextRA
-    > sulBuilder = new TlsSulBuilderRA(inputTransformer);
+    > sulBuilder = new TlsSULBuilderRA(inputTransformer);
 
     @Override
     public StateFuzzer<
@@ -91,7 +91,7 @@ public class MultiBuilderRA
     public StateFuzzerClientConfig buildClientConfig() {
         return new StateFuzzerClientConfigStandard(
             new LearnerConfigRA(),
-            new TlsSulClientConfig(),
+            new TlsSULClientConfig(),
             new TestRunnerConfigStandard(),
             new TimingProbeConfigStandard()
         );
@@ -101,7 +101,7 @@ public class MultiBuilderRA
     public StateFuzzerServerConfig buildServerConfig() {
         return new StateFuzzerServerConfigStandard(
             new LearnerConfigRA(),
-            new TlsSulServerConfig(),
+            new TlsSULServerConfig(),
             new TestRunnerConfigStandard(),
             new TimingProbeConfigStandard()
         );
