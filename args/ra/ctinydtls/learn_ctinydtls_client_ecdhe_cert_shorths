@@ -6,7 +6,7 @@ ${sul.port}
 -startWait
 100
 -alphabet
-examples/alphabets/ra/clients/ctinydtls/ecdhe_cert_shorths.xml
+examples/alphabets/ra/clients/ecdhe_ecdsa_aes128_ccm8_cert_shorths.xml
 -responseWait
 100
 -sulConfig

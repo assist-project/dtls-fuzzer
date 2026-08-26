@@ -18,7 +18,7 @@ Client_identity
 
 # learning config
 -alphabet
-examples/alphabets/ra/clients/gnutls/dhe_ecdhe_rsa_cert_reneg.xml
+examples/alphabets/ra/clients/dhe_ecdhe_rsa_cert_reneg.xml
 -randLength
 10
 -maxRuns

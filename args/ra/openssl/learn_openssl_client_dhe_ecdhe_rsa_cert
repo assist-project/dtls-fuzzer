@@ -27,6 +27,6 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -alphabet
-examples/alphabets/ra/clients/openssl/dhe_ecdhe_rsa_cert.xml
+examples/alphabets/ra/clients/dhe_ecdhe_rsa_cert.xml
 -output
 ${output.ra}/openssl-${openssl.version}_client_dhe_ecdhe_rsa_cert

@@ -23,7 +23,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -alphabet
-examples/alphabets/ra/clients/openssl/psk.xml
+examples/alphabets/ra/clients/psk_aes128_cbc_sha256.xml
 -output
 ${output.ra}/openssl-${openssl.version}_client_psk
 

@@ -16,7 +16,7 @@ ${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sul.port} localhost
 
 # learning config
 -alphabet
-examples/alphabets/ra/clients/ctinydtls/ecdhe_cert.xml
+examples/alphabets/ra/clients/ecdhe_ecdsa_aes128_ccm8_cert.xml
 -maxRuns
 20000
 -randLength

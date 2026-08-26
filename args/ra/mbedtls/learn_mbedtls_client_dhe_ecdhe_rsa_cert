@@ -5,7 +5,7 @@ DTLS12
 -port
 ${sul.port}
 -alphabet
-examples/alphabets/ra/clients/mbedtls/dhe_ecdhe_rsa_cert.xml
+examples/alphabets/ra/clients/dhe_ecdhe_rsa_cert.xml
 -startWait
 0
 -responseWait

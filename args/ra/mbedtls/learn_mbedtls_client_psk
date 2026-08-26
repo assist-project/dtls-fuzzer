@@ -14,7 +14,7 @@ ${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_client2 dtls=1 ps
 
 # learning config
 -alphabet
-examples/alphabets/ra/clients/mbedtls/psk.xml
+examples/alphabets/ra/clients/psk_aes128_cbc_sha256.xml
 -randLength
 10
 -maxRuns

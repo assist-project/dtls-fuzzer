@@ -18,7 +18,7 @@ START
 
 # learning config
 -alphabet
-${alphabets.ra.clients}/jsse/ecdhe_cert.xml
+examples/alphabets/ra/clients/ecdhe_rsa_aes256_cbc_sha.xml
 -maxRuns
 20000
 -randLength

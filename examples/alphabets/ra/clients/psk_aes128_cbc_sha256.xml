@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <alphabet>
     <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST" />
     <ServerHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA256" name="PSK_SERVER_HELLO" />
@@ -15,13 +16,15 @@
     </GenericTlsInput>
     <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY" />
     <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE" />
-    <RAOutputSymbol name="TIMEOUT" />
     <RAOutputSymbol name="APPLICATION" />
-    <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
-    <RAOutputSymbol name="SOCKET_CLOSED" />
-    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
-    <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,DECODE_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,DECODE_ERROR)" />
-    <RAOutputSymbol name="PSK_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
+    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
     <RAOutputSymbol name="CLIENT_HELLO" />
+    <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,DECODE_ERROR)" />
+    <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="PSK_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
+    <RAOutputSymbol name="PSK_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|UNKNOWN_MESSAGE" />
+    <RAOutputSymbol name="SOCKET_CLOSED" />
+    <RAOutputSymbol name="TIMEOUT" />
 </alphabet>

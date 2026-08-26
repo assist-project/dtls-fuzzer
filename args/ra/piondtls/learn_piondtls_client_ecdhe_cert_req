@@ -5,7 +5,7 @@ ${sul.port}
 -startWait
 0
 -alphabet
-examples/alphabets/ra/clients/piondtls/ecdhe_cert_req.xml
+examples/alphabets/ra/clients/ecdhe_rsa_aes128_gcm_sha256.xml
 -responseWait
 100
 -randLength

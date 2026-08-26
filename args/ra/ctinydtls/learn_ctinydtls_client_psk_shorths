@@ -10,7 +10,7 @@ ${sul.port}
 -cmd
 ${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sul.port} localhost
 -alphabet
-examples/alphabets/ra/clients/ctinydtls/psk_shorths.xml
+examples/alphabets/ra/clients/psk_aes128_ccm8_shorths.xml
 
 # learning config
 -randLength

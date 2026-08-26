@@ -1,6 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
 <alphabet>
     <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST" />
-    <ServerHelloInput suite="TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA" name="ECDH_SERVER_HELLO" />
+    <ServerHelloInput suite="TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8" name="ECDH_SERVER_HELLO" shortHs="false" />
     <ServerKeyExchangeInput name="ECDH_SERVER_KEY_EXCHANGE" algorithm="ECDH" />
     <CertificateRequestInput certificate="RSA_SIGN" name="RSA_SIGN_CERTIFICATE_REQUEST" />
     <CertificateRequestInput certificate="RSA_FIXED_ECDH" name="RSA_FIXED_ECDH_CERTIFICATE_REQUEST" />
@@ -25,21 +26,17 @@
     <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY" />
     <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE" />
     <RAOutputSymbol name="APPLICATION" />
-    <RAOutputSymbol name="RSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|FINISHED|Alert(FATAL,INTERNAL_ERROR)" />
-    <RAOutputSymbol name="RSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|UNKNOWN_MESSAGE" />
-    <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
-    <RAOutputSymbol name="ECDH_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|UNKNOWN_MESSAGE" />
-    <RAOutputSymbol name="SOCKET_CLOSED" />
-    <RAOutputSymbol name="CLIENT_HELLO" />
+    <RAOutputSymbol name="Alert(FATAL,CLOSE_NOTIFY)" />
+    <RAOutputSymbol name="Alert(FATAL,DECODE_ERROR)" />
+    <RAOutputSymbol name="Alert(FATAL,DECRYPT_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,HANDSHAKE_FAILURE)" />
-    <RAOutputSymbol name="RSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|FINISHED" />
-    <RAOutputSymbol name="ECDH_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
-    <RAOutputSymbol name="ECDH_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED|Alert(FATAL,INTERNAL_ERROR)" />
-    <RAOutputSymbol name="ECDH_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED|Alert(FATAL,UNEXPECTED_MESSAGE)" />
-    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
-    <RAOutputSymbol name="CLIENT_HELLO|Alert(WARNING,CLOSE_NOTIFY)" />
     <RAOutputSymbol name="Alert(FATAL,INTERNAL_ERROR)" />
-    <RAOutputSymbol name="RSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|FINISHED|Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="CLIENT_HELLO" />
+    <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,CLOSE_NOTIFY)" />
+    <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="ECDH_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
+    <RAOutputSymbol name="RAW_EC_PUBLIC_KEY_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|FINISHED" />
+    <RAOutputSymbol name="SOCKET_CLOSED" />
     <RAOutputSymbol name="TIMEOUT" />
-    <RAOutputSymbol name="Alert(FATAL,BAD_CERTIFICATE)" />
 </alphabet>

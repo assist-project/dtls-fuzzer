@@ -4,22 +4,22 @@ state-fuzzer-client
 -port
 ${sul.port}
 -startWait
-0
--alphabet
-examples/alphabets/ra/clients/etinydtls/psk.xml
+100
 -responseWait
 100
--protocol
-DTLS12
--cmd
-${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sul.port} localhost
 -sulConfig
 experiments/configs/tinydtls_client.config
+-cmd
+${fuzzer.dir}/suts/etinydtls/tests/dtls-client -p ${sul.port} localhost
+-protocol
+DTLS12
 # increased response wait for CCS, which can crash the SUT
 -inputResponseTimeout
 CHANGE_CIPHER_SPEC:400
 
 # learning config
+-alphabet
+examples/alphabets/ra/clients/ecdhe_ecdsa_aes128_ccm8_cert_shorths.xml
 -randLength
 10
 -maxRuns
@@ -30,7 +30,7 @@ RaStar
 IO_RANDOM_WALK
 -seedTransitions
 -output
-${output.ra}/etinydtls_client_psk
+${output.ra}/etinydtls_client_ecdhe_cert
 -maxDepthRA
 10
 -probNewDataValue

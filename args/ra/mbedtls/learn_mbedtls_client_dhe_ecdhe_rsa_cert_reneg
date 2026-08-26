@@ -14,7 +14,7 @@ ${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_client2 dtls=1 ps
 
 # learning config
 -alphabet
-examples/alphabets/ra/clients/mbedtls/dhe_ecdhe_rsa_cert_reneg.xml
+examples/alphabets/ra/clients/dhe_ecdhe_rsa_cert_reneg.xml
 -randLength
 10
 -maxRuns
