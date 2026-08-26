@@ -16,7 +16,7 @@ ${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
 
 # learning config
 -alphabet
-examples/alphabets/ra/servers/wolfssl/psk.xml
+${alphabets.ra.servers}/psk_aes128_cbc_sha256.xml
 -randLength
 10
 -maxRuns

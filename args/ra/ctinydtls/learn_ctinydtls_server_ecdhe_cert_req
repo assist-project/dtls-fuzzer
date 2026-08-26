@@ -16,7 +16,7 @@ DTLS12
 
 # learning config
 -alphabet
-examples/alphabets/ra/servers/ctinydtls/ecdhe_cert_req.xml
+${alphabets.ra.servers}/ecdhe_ecdsa_aes128_ccm8_cert.xml
 -randLength
 10
 -maxRuns

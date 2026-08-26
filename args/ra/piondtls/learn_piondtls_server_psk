@@ -27,7 +27,7 @@ IO_RANDOM_WALK
 -output
 ${output.ra}/piondtls-${piondtls.version}_server_psk
 -alphabet
-examples/alphabets/ra/servers/piondtls/psk.xml
+examples/alphabets/ra/servers/psk_aes128_ccm8.xml
 -randLength
 10
 -maxRuns

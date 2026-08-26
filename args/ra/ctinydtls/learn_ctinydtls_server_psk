@@ -6,7 +6,7 @@ localhost:${sul.port}
 -startWait
 100
 -alphabet
-examples/alphabets/ra/servers/ctinydtls/psk.xml
+${alphabets.ra.servers}/psk_aes128_ccm8.xml
 -responseWait
 100
 -protocol

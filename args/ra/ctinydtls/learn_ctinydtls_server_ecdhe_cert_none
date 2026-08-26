@@ -6,7 +6,7 @@ localhost:${sul.port}
 -startWait
 100
 -alphabet
-examples/alphabets/ra/servers/ctinydtls/ecdhe_cert_none.xml
+${alphabets.ra.servers}/ecdhe_ecdsa_aes128_ccm8_cert.xml
 -responseWait
 100
 -sulConfig

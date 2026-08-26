@@ -15,10 +15,9 @@ modules/jdk-${jsse.version}/bin/java -jar suts/jsse-${jsse.version}-dtls-clients
 ${fuzzer.port}
 -processTrigger
 START
-
 # learning config
 -alphabet
-${alphabets.ra.servers}/jsse/ecdhe_cert.xml
+${alphabets.ra.servers}/ecdhe_ecdsa_aes256_cbc_sha_cert.xml
 -maxRuns
 20000
 -randLength

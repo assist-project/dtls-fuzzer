@@ -25,4 +25,4 @@ IO_RANDOM_WALK
 -randLength
 10
 -alphabet
-examples/alphabets/ra/servers/openssl/all_cert_req.xml
+examples/alphabets/ra/servers/all_cert_req.xml

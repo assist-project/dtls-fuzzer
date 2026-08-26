@@ -22,7 +22,7 @@ Client_identity
 
 # learner config
 -alphabet
-examples/alphabets/ra/servers/mbedtls/all_cert_req.xml
+examples/alphabets/ra/servers/all_cert_req.xml
 -randLength
 10
 -maxRuns

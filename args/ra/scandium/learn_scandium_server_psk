@@ -20,7 +20,7 @@ START
 
 # learning config
 -alphabet
-examples/alphabets/ra/servers/scandium/psk.xml
+examples/alphabets/ra/servers/scandium_psk_aes128_ccm8.xml
 -randLength
 10
 -maxDepthRA

@@ -14,7 +14,7 @@ ${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-serv  --udp --x509keyfile
 
 # learning config
 -alphabet
-examples/alphabets/ra/servers/gnutls/all_cert_req.xml
+examples/alphabets/ra/servers/gnutls_all_cert_req.xml
 -randLength
 10
 -maxRuns

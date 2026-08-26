@@ -20,7 +20,7 @@ START
 
 # learning config
 -alphabet
-examples/alphabets/ra/servers/scandium/ecdhe_cert_req.xml
+examples/alphabets/ra/servers/scandium_ecdhe_ecdsa_aes128_cbc_sha256_cert.xml
 -learningAlgorithm
 RaStar
 -equivalenceAlgorithms
