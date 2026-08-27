@@ -1,0 +1,27 @@
+state-fuzzer-client
+
+# SUT config
+-port
+${sul.port}
+-startWait
+50
+-alphabet
+${alphabets.mealy.clients}/psk8.xml
+-responseWait
+100
+-protocol
+DTLS12
+
+# learning config
+-randLength
+10
+-equivalenceQueryBound
+20000
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-output
+output/ctinydtls_client_psk
+-cmd
+${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sul.port} localhost
+-depth
+1

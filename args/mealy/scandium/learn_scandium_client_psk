@@ -1,0 +1,34 @@
+state-fuzzer-client
+
+# SUT config
+-port
+${sul.port}
+-startWait
+500
+-responseWait
+100
+-protocol
+DTLS12
+-cmd
+java -jar ${fuzzer.dir}/suts/scandium-${scandium.version}-dtls-clientserver.jar -client -port ${sul.port} -timeout 20000000 -trustLocation ${keystore}/ec_secp256r1.jks -trustPassword password -trustAlias dtls-fuzzer -keyLocation ${keystore}/ec_secp256r1.jks -keyPassword password -keyAlias dtls-fuzzer -cipherSuites TLS_PSK_WITH_AES_128_CCM_8,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256  -clientAuth NEEDED -starterAddress localhost:${fuzzer.port}
+-sulConfig
+experiments/configs/scandium.config
+-adapterPort
+${fuzzer.port}
+-processTrigger
+START
+
+# learning config
+-alphabet
+${alphabets.mealy.clients}/psk8.xml
+-randLength
+10
+-equivalenceQueryBound
+20000
+-depth
+1
+-output
+output/scandium-${scandium.version}_client_psk
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-skipNonDetTests

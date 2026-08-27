@@ -1,0 +1,33 @@
+state-fuzzer-server
+
+# SUT config
+-connect
+localhost:${sul.port}
+-startWait
+200
+-responseWait
+200
+-protocol
+DTLS13
+-cmd
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/server/server  -i -x -p ${sul.port} -u -v 4 -l TLS13-AES128-GCM-SHA256 -c ${fuzzer.dir}/${keystore}/rsa2048_cert.pem -k ${fuzzer.dir}/${keystore}/rsa2048_key.pem -A ${fuzzer.dir}/${keystore}/rsa2048_cert.pem
+-processDir
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
+-sulConfig
+experiments/configs/wolfssl_dhe_cert_DTLS13.config
+
+# learning config
+-alphabet
+${alphabets.mealy.servers}/dhe_cert_req_DTLS13.xml
+-randLength
+10
+-equivalenceQueryBound
+20000
+-output
+output/wolfssl-${wolfssl.version}_server_dhe_cert_req_DTLS13
+-equivalenceAlgorithms
+RANDOM_WP_METHOD,WP_METHOD
+-depth
+1
+-ceReruns
+3
