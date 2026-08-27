@@ -20,8 +20,10 @@
     <RAOutputSymbol name="Alert(FATAL,DECODE_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,DECRYPT_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,HANDSHAKE_FAILURE)" />
+    <RAOutputSymbol name="Alert(FATAL,INTERNAL_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
     <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
+    <RAOutputSymbol name="Alert(WARNING,NO_RENEGOTIATION)" />
     <RAOutputSymbol name="CHANGE_CIPHER_SPEC|FINISHED" />
     <RAOutputSymbol name="CHANGE_CIPHER_SPEC|FINISHED|APPLICATION" />
     <RAOutputSymbol name="HELLO_VERIFY_REQUEST" />

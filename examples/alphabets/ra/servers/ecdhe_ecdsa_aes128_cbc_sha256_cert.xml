@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <alphabet>
-    <ClientHelloInput suite="TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" name="ECDH_CLIENT_HELLO" extendedWait="300" />
+    <ClientHelloInput suite="TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" name="ECDH_CLIENT_HELLO" />
     <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDH" />
     <ChangeCipherSpecInput />
-    <FinishedInput name="FINISHED" extendedWait="300" />
+    <FinishedInput name="FINISHED" />
     <GenericTlsInput name="APPLICATION">
         <Application>
             <data>

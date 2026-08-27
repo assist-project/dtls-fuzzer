@@ -11,10 +11,12 @@ localhost:${sul.port}
 100
 -cmd
 ${fuzzer.dir}/suts/gnutls-${gnutls.version}/src/gnutls-serv  --udp --x509keyfile ${keystore}/rsa2048_key.pem --x509certfile ${keystore}/rsa2048_cert.pem --x509cafile ${keystore}/rsa2048_cert.pem --pskpasswd ${keystore}/keys.psk --require-client-cert --priority NORMAL:+PSK:+SRP --mtu 1500 -p ${sul.port}
+-inputResponseTimeout
+DH_CLIENT_HELLO:150,ECDH_CLIENT_HELLO:150,PSK_CLIENT_HELLO:150,RSA_CLIENT_HELLO:150,FINISHED:150
 
 # learning config
 -alphabet
-examples/alphabets/ra/servers/gnutls_all_cert_req.xml
+examples/alphabets/ra/servers/all_cert_req.xml
 -randLength
 10
 -maxRuns

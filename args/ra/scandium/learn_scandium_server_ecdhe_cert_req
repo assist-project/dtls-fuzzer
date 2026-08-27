@@ -17,10 +17,12 @@ experiments/configs/scandium.config
 ${fuzzer.port}
 -processTrigger
 START
+-inputResponseTimeout
+ECDH_CLIENT_HELLO:300,FINISHED:300
 
 # learning config
 -alphabet
-examples/alphabets/ra/servers/scandium_ecdhe_ecdsa_aes128_cbc_sha256_cert.xml
+examples/alphabets/ra/servers/ecdhe_ecdsa_aes128_cbc_sha256_cert.xml
 -learningAlgorithm
 RaStar
 -equivalenceAlgorithms

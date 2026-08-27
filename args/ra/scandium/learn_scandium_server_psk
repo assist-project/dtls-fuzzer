@@ -17,10 +17,12 @@ experiments/configs/scandium.config
 ${fuzzer.port}
 -processTrigger
 START
+-inputResponseTimeout
+PSK_CLIENT_HELLO:150,FINISHED:150
 
 # learning config
 -alphabet
-examples/alphabets/ra/servers/scandium_psk_aes128_ccm8.xml
+examples/alphabets/ra/servers/psk_aes128_ccm8.xml
 -randLength
 10
 -maxDepthRA
