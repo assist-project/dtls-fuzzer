@@ -20,6 +20,7 @@
         <osgi.version>8.1.0</osgi.version>
         <protocol-attacker.version>1.1.5</protocol-attacker.version>
         <ralib.version>0.1</ralib.version>
+        <automatalib.version>0.12.0</automatalib.version>
         <tlsattacker.core.version>6.3.4</tlsattacker.core.version>
         <tlsattacker.transport.version>6.3.4</tlsattacker.transport.version>
         <x509-attacker.version>3.1.7</x509-attacker.version>
@@ -41,6 +42,15 @@
                 <groupId>de.learnlib.ralib</groupId>
                 <artifactId>ralib</artifactId>
                 <version>${ralib.version}</version>
+            </dependency>
+
+              <!-- automatalib -->
+            <dependency>
+                <groupId>net.automatalib.distribution</groupId>
+                <artifactId>automata-distribution</artifactId>
+                <version>${automatalib.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- jcommander -->
@@ -99,6 +109,14 @@
         <dependency>
             <groupId>de.learnlib.ralib</groupId>
             <artifactId>ralib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.automatalib</groupId>
+            <artifactId>automata-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>

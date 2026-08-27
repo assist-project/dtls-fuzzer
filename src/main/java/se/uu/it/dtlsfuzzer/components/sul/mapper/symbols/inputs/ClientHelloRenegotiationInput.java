@@ -11,7 +11,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutputChecker;
 
-public class ClientHelloRenegotiationInput extends TlsInput {
+public class ClientHelloRenegotiationInput extends DtlsInput {
 
     static enum Enabled {
         OWN_EPOCH_CHANGE, SERVER_EPOCH_CHANGE, ALWAYS, ONCE, ON_SERVER_HELLO

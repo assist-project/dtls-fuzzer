@@ -1,7 +1,11 @@
 package se.uu.it.dtlsfuzzer;
 
 import de.learnlib.ralib.data.DataType;
+import de.learnlib.ralib.data.DataValue;
+import de.learnlib.ralib.data.util.SymbolicDataValueGenerator;
+import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.ConstantGenerator;
 import de.learnlib.ralib.theory.Theory;
+import de.learnlib.ralib.tools.theories.IntegerEqualityTheory;
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.learnlib.ralib.words.ParameterizedSymbol;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderStandard;
@@ -34,13 +38,18 @@ import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timi
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.TimingProbeBuilder;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeConfigStandard;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeEnabler;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import se.uu.it.dtlsfuzzer.components.sul.core.TlsSULBuilderRA;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULServerConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsInputTransformer;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsParamRA;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsAlphabetPojoXml;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 
@@ -71,20 +80,32 @@ public class MultiBuilderRA
     public StateFuzzer<
         RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>
     > build(StateFuzzerEnabler stateFuzzerEnabler) {
-        @SuppressWarnings("rawtypes") // TODO: PSF uses Theory without type parameters, check if Theory<?> might be usable or if it requires the map to be homogenus
+        // TODO Theories and constants should be configurable, e.g., via TlsLearningParamConfig and TlsLearningParamBuilder.
+        // Moreover, this is not the right place to build them!
         final Map<DataType, Theory> teachers = new LinkedHashMap<>();
-
-        return new StateFuzzerRA<>(
-            new StateFuzzerComposerRA<
-                ParameterizedSymbol,
-                TlsExecutionContextRA
-            >(
+        List<TlsParamRA> epochParams = Arrays.asList(TlsParamRA.EPOCH_I, TlsParamRA.EPOCH_O);
+        for (TlsParamRA param : epochParams) {
+            IntegerEqualityTheory th = new IntegerEqualityTheory(param.getDataType());
+            th.setUseSuffixOpt(true);
+            teachers.put(param.getDataType(), th);
+        }
+        var composer = new StateFuzzerComposerRA<ParameterizedSymbol, TlsExecutionContextRA>(
                 stateFuzzerEnabler,
                 inputTransformer,
                 sulBuilder,
                 teachers
-            ).initialize()
-        );
+            ) {
+            {
+                for (TlsParamRA param : epochParams) {
+                    ConstantGenerator cgen = new SymbolicDataValueGenerator.ConstantGenerator();
+                    consts.put(cgen.next(param.getDataType()), new DataValue(param.getDataType(), BigDecimal.ZERO));
+                    consts.put(cgen.next(param.getDataType()), new DataValue(param.getDataType(), BigDecimal.ONE));
+                }
+            }
+        };
+        composer.initialize();
+
+        return new StateFuzzerRA<>(composer);
     }
 
     @Override

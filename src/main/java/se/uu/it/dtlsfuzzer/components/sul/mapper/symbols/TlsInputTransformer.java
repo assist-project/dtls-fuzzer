@@ -1,5 +1,6 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols;
 
+import de.learnlib.ralib.data.DataType;
 import de.learnlib.ralib.words.InputSymbol;
 import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.ParameterizedSymbol;
@@ -28,13 +29,16 @@ public class TlsInputTransformer
     @Override
     public ParameterizedSymbol toTransformedInput(TlsInput ri) {
         LOGGER.debug("Transforming TlsInput: {} of class: {}", ri, ri.getClass());
+        DataType[] types = ri.getParams().stream()
+                .map(TlsParamRA::getDataType)
+                .toArray(DataType[]::new);
         if (ri instanceof RAOutputSymbol) {
-            ParameterizedSymbol translated = new OutputSymbol(ri.getName());
+            ParameterizedSymbol translated = new OutputSymbol(ri.getName(), types);
             LOGGER.debug("Was OutputSymbol {}, not added to translation map", translated);
             // Don't put output symbols in the translation map because we don't want to feed them as inputs.
             return translated;
         } else {
-            ParameterizedSymbol translated = new InputSymbol(ri.getName());
+            ParameterizedSymbol translated = new InputSymbol(ri.getName(), types);
             translationMap.put(translated, ri);
             LOGGER.debug("Was input symbol {}, added to translation map", translated);
             return translated;

@@ -1,8 +1,12 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
+import de.learnlib.ralib.data.DataValue;
 import jakarta.xml.bind.annotation.XmlAttribute;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.lang3.NotImplementedException;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsParamRA;
 
 public abstract class DtlsInput extends TlsInput {
 
@@ -61,6 +65,27 @@ public abstract class DtlsInput extends TlsInput {
         }
 
         postSendDtlsUpdate(context);
+    }
+
+    public void doApplyValues(DataValue [] values) {
+        int idx = 0;
+        for (TlsParamRA param : getParams()) {
+            DataValue pVal = values[idx++];
+            switch (param) {
+            case EPOCH_I:
+                this.epoch = pVal.getValue().intValue();
+                break;
+            default:
+                throw new NotImplementedException(
+                        String.format("Input %s lacks support for applying values to %s",
+                                getName(), param));
+            }
+        }
+    }
+
+    @Override
+    public List<TlsParamRA> getSupportedParams() {
+        return Arrays.asList(TlsParamRA.EPOCH_I);
     }
 
     public void postSendDtlsUpdate(TlsExecutionContext context) {
