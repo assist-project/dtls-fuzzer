@@ -11,9 +11,8 @@ public class MainRA {
     public static void main(String[] args) {
         ProviderUtil.addBouncyCastleProvider();
         MultiBuilderRA mb = new MultiBuilderRA();
-        String[] parentLoggers = { Main.class.getPackageName() };
+        String[] parentLoggers = { MainRA.class.getPackageName() };
 
-        RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance> a;
         CommandLineParser<RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>> commandLineParser =
                 new CommandLineParser<RegisterAutomatonWrapper<ParameterizedSymbol, PSymbolInstance>>(mb, mb, mb, mb, mb, mb);
 

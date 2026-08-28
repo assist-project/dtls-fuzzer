@@ -7,10 +7,12 @@ import de.learnlib.ralib.words.ParameterizedSymbol;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderStandard;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderTransformer;
 import java.util.LinkedHashMap;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.RAOutputSymbol;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 public class TlsInputTransformer
     extends AlphabetBuilderTransformer<TlsInput, ParameterizedSymbol> {
@@ -34,8 +36,8 @@ public class TlsInputTransformer
                 .toArray(DataType[]::new);
         if (ri instanceof RAOutputSymbol) {
             ParameterizedSymbol translated = new OutputSymbol(ri.getName(), types);
-            LOGGER.debug("Was OutputSymbol {}, not added to translation map", translated);
-            // Don't put output symbols in the translation map because we don't want to feed them as inputs.
+            LOGGER.debug("Was OutputSymbol {}, added to translation map", translated);
+            translationMap.put(translated, ri);
             return translated;
         } else {
             ParameterizedSymbol translated = new InputSymbol(ri.getName(), types);
@@ -49,5 +51,15 @@ public class TlsInputTransformer
     public TlsInput fromTransformedInput(ParameterizedSymbol ti) {
         LOGGER.debug("Translation map: {}", translationMap);
         return translationMap.get(ti);
+    }
+
+    public RAOutputSymbol toRAOutputSymbol(TlsOutput output) {
+        for (var e : translationMap.entrySet()) {
+            ParameterizedSymbol ri = e.getKey();
+            if (ri instanceof OutputSymbol && ri.getName().equals(output.getName())) {
+                return (RAOutputSymbol) e.getValue();
+            }
+        }
+        return null;
     }
 }

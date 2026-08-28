@@ -1,7 +1,11 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols;
 
 import de.learnlib.ralib.data.DataType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
+@XmlType
+@XmlEnum
 public enum TlsParamRA {
     EPOCH_I(new DataType("epoch_i")), EPOCH_O(new DataType("epoch_o"));
 

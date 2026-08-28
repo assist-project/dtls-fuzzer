@@ -1,6 +1,8 @@
 package se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs;
 
 import de.learnlib.ralib.data.DataValue;
+
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContext;
@@ -29,7 +31,16 @@ public class RAOutputSymbol extends DtlsInput {
         return Arrays.asList(TlsParamRA.EPOCH_O);
     }
 
-    public DataValue [] extractValues(TlsOutput output) {
-        return null;
+    /**
+     * Fetches the values for the parameters defined by {@link #params}.
+     *
+     * @param values values for parameters (fields) from messages in a TlsOutput
+     */
+    // TODO This method currently returns mock 0 values. Params need further developed.
+    // We also need to record records/fragments in output, if we want to access fields in them.
+    public DataValue[] fetchValues(TlsOutput output) {
+        DataValue[] values = new DataValue[super.getParams().size()];
+        Arrays.setAll(values, i -> new DataValue(super.getParams().get(i).getDataType(), BigDecimal.ZERO));
+        return values;
     }
 }

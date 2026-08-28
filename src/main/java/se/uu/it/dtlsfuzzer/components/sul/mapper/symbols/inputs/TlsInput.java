@@ -7,6 +7,8 @@ import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.mapper.abstr
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -19,7 +21,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class TlsInput extends AbstractInputXml<TlsOutput, TlsProtocolMessage, TlsExecutionContext> {
     @XmlElement(name = "param")
-    private List<TlsParamRA> params;
+    private List<TlsParamRA> params = new ArrayList<>();
 
     public TlsInput() {
         super();

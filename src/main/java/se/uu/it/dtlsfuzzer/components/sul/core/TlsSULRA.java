@@ -1,7 +1,8 @@
 package se.uu.it.dtlsfuzzer.components.sul.core;
 
-import de.learnlib.ralib.words.OutputSymbol;
+import de.learnlib.ralib.data.DataValue;
 import de.learnlib.ralib.words.PSymbolInstance;
+import de.learnlib.ralib.words.ParameterizedSymbol;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.AbstractSUL;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULAdapter;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.config.SULConfig;
@@ -15,6 +16,7 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsProtocolMessage;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsState;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.TlsInputTransformer;
+import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.RAOutputSymbol;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
@@ -54,10 +56,14 @@ public class TlsSULRA
             in.getBaseSymbol()
         );
         LOGGER.debug("Transformed TlsInput: {}", input);
+        input.applyValues(in.getParameterValues());
         TlsOutput output = wrappedSul.step(input);
-        LOGGER.debug("Received TlsOutput: {}", output);
-        OutputSymbol base = new OutputSymbol(output.getName());
-        return new PSymbolInstance(base);
+        LOGGER.warn("Received TlsOutput: {}", output);
+        RAOutputSymbol raOutput = inputTransformer.toRAOutputSymbol(output);
+        ParameterizedSymbol raOutputSymbol = inputTransformer.toTransformedInput(raOutput);
+        //OutputSymbol raOutputSymbol = new OutputSymbol(output.getName());
+        DataValue[] outputValues = raOutput.fetchValues(output);
+        return new PSymbolInstance(raOutputSymbol, outputValues);
     }
 
     @Override
