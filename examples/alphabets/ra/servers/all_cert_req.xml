@@ -4,7 +4,7 @@
     <ClientKeyExchangeInput name="ECDH_CLIENT_KEY_EXCHANGE" algorithm="ECDH" />
     <ClientHelloInput suite="TLS_DHE_RSA_WITH_AES_128_GCM_SHA256" name="DH_CLIENT_HELLO" />
     <ClientKeyExchangeInput name="DH_CLIENT_KEY_EXCHANGE" algorithm="DH" />
-    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA" name="PSK_CLIENT_HELLO" />
+    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA256" name="PSK_CLIENT_HELLO" />
     <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK" />
     <ClientHelloInput suite="TLS_RSA_WITH_AES_128_CBC_SHA" name="RSA_CLIENT_HELLO" />
     <ClientKeyExchangeInput name="RSA_CLIENT_KEY_EXCHANGE" algorithm="RSA" />

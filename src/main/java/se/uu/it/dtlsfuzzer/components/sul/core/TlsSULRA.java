@@ -60,6 +60,9 @@ public class TlsSULRA
         TlsOutput output = wrappedSul.step(input);
         LOGGER.warn("Received TlsOutput: {}", output);
         RAOutputSymbol raOutput = inputTransformer.toRAOutputSymbol(output);
+        if (raOutput == null) {
+            throw new RuntimeException("No output symbol defined for " + output);
+        }
         ParameterizedSymbol raOutputSymbol = inputTransformer.toTransformedInput(raOutput);
         //OutputSymbol raOutputSymbol = new OutputSymbol(output.getName());
         DataValue[] outputValues = raOutput.fetchValues(output);

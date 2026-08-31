@@ -8,7 +8,7 @@ readonly SCRIPT_DIR
 readonly PATCHES_DIR="${SCRIPT_DIR}/experiments/patches"
 
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="2396a00f7df1966717060f9b0d31da962a57f498"
+readonly PROTOCOLSTATEFUZZER_COMMIT="97d918ad364fb43fceda9754a368f10b92c3ecc1"
 readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 
@@ -104,7 +104,7 @@ check_java
 check_mvn
 
 # Checkout and install ProtocolState-Fuzzer
-#install_protocolstatefuzzer
+install_protocolstatefuzzer
 
 # Checkout TLS-Attacker repo, patch it and install it
 install_tlsattacker

@@ -111,10 +111,6 @@
             <artifactId>ralib</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>net.automatalib</groupId>
             <artifactId>automata-api</artifactId>
         </dependency>
