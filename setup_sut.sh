@@ -77,6 +77,8 @@ readonly MBEDTLS_2250="mbedtls-2.25.0"
 readonly MBEDTLS_2250_ARCH_URL="https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.25.0.tar.gz"
 readonly MBEDTLS_2260="mbedtls-2.26.0"
 readonly MBEDTLS_2260_ARCH_URL="https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.26.0.tar.gz"
+readonly MBEDTLS_367="mbedtls-3.6.7"
+readonly MBEDTLS_367_ARCH_URL="https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.7/mbedtls-3.6.7.tar.bz2"
 
 readonly OPENSSL_111b="openssl-1.1.1b"
 readonly OPENSSL_111b_ARCH_URL="https://github.com/openssl/openssl/releases/download/OpenSSL_1_1_1b/openssl-1.1.1b.tar.gz"
@@ -155,7 +157,7 @@ readonly LIBTOOL="libtool-2.4.6"
 sutvarnames=("CTINYDTLS" "ETINYDTLS" "ETINYDTLS_DEVELOP" \
 "GNUTLS_3519" "GNUTLS_367" "GNUTLS_371" "GNUTLS_LATEST" \
 "JSSE_904" "JSSE_11010" "JSSE_1202" "JSSE_1302" "JSSE_1501" "JSSE_1601" \
-"MBEDTLS_2161" "MBEDTLS_2250" "MBEDTLS_2260" \
+"MBEDTLS_2161" "MBEDTLS_2250" "MBEDTLS_2260" "MBEDTLS_367" \
 "SCANDIUM_OLD" "SCANDIUM_230" "SCANDIUM_262" "SCANDIUM_300_M2" \
 "OPENSSL_111b" "OPENSSL_111c" "OPENSSL_111g" "OPENSSL_111k" "OPENSSL_300" \
 "PIONDTLS_USENIX" "PIONDTLS_152" "PIONDTLS_202" "PIONDTLS_209" \
@@ -165,7 +167,7 @@ sutvarnames=("CTINYDTLS" "ETINYDTLS" "ETINYDTLS_DEVELOP" \
 sut_strings=("${CTINYDTLS}" "${ETINYDTLS}" "${ETINYDTLS_DEVELOP}" \
 "${GNUTLS_3519}" "${GNUTLS_367}" "${GNUTLS_371}" "${GNUTLS_LATEST}" \
 "${JSSE_904}" "${JSSE_11010}" "${JSSE_1202}" "${JSSE_1302}" "${JSSE_1501}" "${JSSE_1601}" \
-"${MBEDTLS_2161}" "${MBEDTLS_2250}" "${MBEDTLS_2260}" \
+"${MBEDTLS_2161}" "${MBEDTLS_2250}" "${MBEDTLS_2260}" "${MBEDTLS_367}" \
 "${OPENSSL_111b}" "${OPENSSL_111c}" "${OPENSSL_111g}" "${OPENSSL_111k}" "${OPENSSL_300}" \
 "${PIONDTLS_USENIX}" "${PIONDTLS_152}" "${PIONDTLS_202}" "${PIONDTLS_209}" \
 "${SCANDIUM_OLD}" "${SCANDIUM_230}" "${SCANDIUM_262}" "${SCANDIUM_300_M2}" \
@@ -255,6 +257,9 @@ function solve_arch() {
     elif [[ ${arch} == "xz" ]]
     then
         tar -xJf "${arch_file}" -C "${target_dir}" --strip-components=1
+    elif [[ ${arch} == "bz2" ]]
+    then
+        tar -xjf "${arch_file}" -C "${target_dir}" --strip-components=1
     else
         tar zxvf "${arch_file}" -C "${target_dir}" --strip-components=1
     fi
