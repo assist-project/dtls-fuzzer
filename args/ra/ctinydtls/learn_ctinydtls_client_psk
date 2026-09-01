@@ -13,22 +13,13 @@ examples/alphabets/ra/servers/psk_aes128_ccm8.xml
 DTLS12
 
 # learning config
--randLength
-10
 -maxRuns
 20000
 -learningAlgorithm
-RaStar
+SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -output
 ${output.ra}/ctinydtls_client_psk
 -cmd
 ${fuzzer.dir}/suts/ctinydtls/tests/dtls-client -p ${sul.port} localhost
--maxDepthRA
-10
--probNewDataValue
-0.5
--seed
-7

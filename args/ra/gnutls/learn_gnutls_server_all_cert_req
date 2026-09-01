@@ -17,15 +17,12 @@ DH_CLIENT_HELLO:150,ECDH_CLIENT_HELLO:150,PSK_CLIENT_HELLO:150,RSA_CLIENT_HELLO:
 # learning config
 -alphabet
 examples/alphabets/ra/servers/all_cert_req.xml
--randLength
-10
 -maxRuns
 20000
 -learningAlgorithm
-RaStar
+SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -output
 ${output.ra}/gnutls-${gnutls.version}_server_all_cert_req
 -ceReruns

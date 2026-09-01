@@ -24,14 +24,11 @@ Client_identity
 # learner config
 -alphabet
 examples/alphabets/ra/servers/psk_aes128_cbc_sha256_epoch.xml
--randLength
-10
 -maxRuns
 20000
 -learningAlgorithm
 SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -output
 ${output.ra}/mbedtls-${mbedtls.version}_server_psk_epoch

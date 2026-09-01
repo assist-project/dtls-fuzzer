@@ -17,20 +17,11 @@ DTLS12
 # learning config
 -alphabet
 ${alphabets.ra.servers}/ecdhe_ecdsa_aes128_ccm8_cert.xml
--randLength
-10
 -maxRuns
 20000
 -learningAlgorithm
-RaStar
+SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -output
 ${output.ra}/ctinydtls_server_ecdhe_cert_req
--maxDepthRA
-10
--probNewDataValue
-0.5
--seed
-7

@@ -8,24 +8,15 @@ ${sul.port}
 examples/alphabets/ra/servers/psk_aes128_ccm8.xml
 -responseWait
 100
--randLength
-10
 -maxRuns
 20000
 -protocol
 DTLS12
 -learningAlgorithm
-RaStar
+SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -output
 ${output.ra}/piondtls-${piondtls.version}_client_psk
 -cmd
 ${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role client -port ${sul.port} -cipherSuite TLS_PSK_WITH_AES_128_CCM_8
--maxDepthRA
-10
--probNewDataValue
-0.5
--seed
-7

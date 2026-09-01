@@ -14,21 +14,12 @@ DTLS12
 
 # learning config
 -learningAlgorithm
-RaStar
+SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
--randLength
-10
 -maxRuns
 20000
 -output
 ${output.ra}/etinydtls_server_psk
 -cmd
 ${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sul.port}
--maxDepthRA
-10
--probNewDataValue
-0.5
--seed
-7

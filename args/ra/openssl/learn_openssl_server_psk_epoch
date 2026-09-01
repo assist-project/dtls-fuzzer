@@ -21,8 +21,5 @@ ${output.ra}/openssl-${openssl.version}_server_psk_epoch
 SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
--randLength
-10
 -alphabet
 examples/alphabets/ra/servers/psk_aes128_cbc_sha256_epoch.xml

@@ -17,8 +17,6 @@ ${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
 # learning config
 -alphabet
 ${alphabets.ra.servers}/psk_aes128_cbc_sha256_epoch.xml
--randLength
-10
 -maxRuns
 20000
 -output
@@ -27,12 +25,5 @@ ${output.ra}/wolfssl-${wolfssl.version}_server_psk_epoch
 SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
--maxDepthRA
-10
--probNewDataValue
-0.5
--seed
-7
 -ceReruns
 3

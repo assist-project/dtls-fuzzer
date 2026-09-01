@@ -17,18 +17,9 @@ examples/alphabets/ra/servers/psk_aes128_ccm8_epoch.xml
 SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
--randLength
-10
 -maxRuns
 20000
 -output
 ${output.ra}/etinydtls_server_psk_epoch
 -cmd
 ${fuzzer.dir}/suts/etinydtls/tests/dtls-server -p ${sul.port}
--maxDepthRA
-10
--probNewDataValue
-0.5
--seed
-7

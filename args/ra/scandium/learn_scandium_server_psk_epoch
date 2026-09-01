@@ -23,14 +23,6 @@ PSK_CLIENT_HELLO:150,FINISHED:150
 # learning config
 -alphabet
 examples/alphabets/ra/servers/psk_aes128_ccm8_epoch.xml
--randLength
-10
--maxDepthRA
-10
--probNewDataValue
-0.5
--seed
-7
 -maxRuns
 20000
 -output
@@ -39,7 +31,6 @@ ${output.ra}/scandium-${scandium.version}_server_psk_epoch
 SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -ceReruns
 3
 -skipNonDetTests

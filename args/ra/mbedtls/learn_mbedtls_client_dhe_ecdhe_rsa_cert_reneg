@@ -15,15 +15,12 @@ ${fuzzer.dir}/suts/mbedtls-${mbedtls.version}/programs/ssl/ssl_client2 dtls=1 ps
 # learning config
 -alphabet
 examples/alphabets/ra/clients/dhe_ecdhe_rsa_cert_reneg.xml
--randLength
-10
 -maxRuns
 20000
 -learningAlgorithm
-RaStar
+SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -output
 ${output.ra}/mbedtls-${mbedtls.version}_client_dhe_ecdhe_rsa_cert_reneg
 -timeLimit

@@ -15,22 +15,13 @@ experiments/configs/tinydtls_server.config
 DTLS12
 
 # learning config
--randLength
-10
 -maxRuns
 20000
 -learningAlgorithm
-RaStar
+SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -output
 ${output.ra}/ctinydtls_server_ecdhe_cert_none
 -cmd
 ${fuzzer.dir}/suts/ctinydtls/tests/dtls-server -p ${sul.port} -d
--maxDepthRA
-10
--probNewDataValue
-0.5
--seed
-7

@@ -10,7 +10,6 @@ import de.learnlib.ralib.words.PSymbolInstance;
 import de.learnlib.ralib.words.ParameterizedSymbol;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.AlphabetBuilderStandard;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.learner.alphabet.xml.AlphabetSerializerXml;
-import io.github.protocolfuzzing.protocolstatefuzzer.components.learner.config.LearnerConfigRA;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.learner.statistics.RegisterAutomatonWrapper;
 import io.github.protocolfuzzing.protocolstatefuzzer.components.sul.core.SULBuilder;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.core.StateFuzzer;
@@ -38,13 +37,13 @@ import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timi
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.TimingProbeBuilder;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeConfigStandard;
 import io.github.protocolfuzzing.protocolstatefuzzer.statefuzzer.testrunner.timingprobe.config.TimingProbeEnabler;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import se.uu.it.dtlsfuzzer.components.sul.core.TlsSULBuilderRA;
+import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsLearnerConfigRA;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULClientConfig;
 import se.uu.it.dtlsfuzzer.components.sul.core.config.TlsSULServerConfig;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.TlsExecutionContextRA;
@@ -111,7 +110,7 @@ public class MultiBuilderRA
     @Override
     public StateFuzzerClientConfig buildClientConfig() {
         return new StateFuzzerClientConfigStandard(
-            new LearnerConfigRA(),
+            new TlsLearnerConfigRA(),
             new TlsSULClientConfig(),
             new TestRunnerConfigStandard(),
             new TimingProbeConfigStandard()
@@ -121,7 +120,7 @@ public class MultiBuilderRA
     @Override
     public StateFuzzerServerConfig buildServerConfig() {
         return new StateFuzzerServerConfigStandard(
-            new LearnerConfigRA(),
+            new TlsLearnerConfigRA(),
             new TlsSULServerConfig(),
             new TestRunnerConfigStandard(),
             new TimingProbeConfigStandard()

@@ -10,15 +10,12 @@ examples/alphabets/ra/clients/dhe_ecdhe_rsa_cert.xml
 0
 -responseWait
 100
--randLength
-10
 -maxRuns
 20000
 -learningAlgorithm
-RaStar
+SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -output
 ${output.ra}/mbedtls-${mbedtls.version}_client_dhe_ecdhe_rsa_cert
 -cmd

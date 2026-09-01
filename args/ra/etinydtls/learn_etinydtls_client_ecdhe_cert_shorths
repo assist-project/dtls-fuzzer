@@ -20,20 +20,11 @@ CHANGE_CIPHER_SPEC:400
 # learning config
 -alphabet
 examples/alphabets/ra/clients/ecdhe_ecdsa_aes128_ccm8_cert_shorths.xml
--randLength
-10
 -maxRuns
 20000
 -learningAlgorithm
-RaStar
+SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
--seedTransitions
 -output
 ${output.ra}/etinydtls_client_ecdhe_cert
--maxDepthRA
-10
--probNewDataValue
-0.5
--seed
-7
