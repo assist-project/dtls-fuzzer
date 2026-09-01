@@ -7,7 +7,3 @@
 > Can you update the script such that if the option '-o' is not given, the alphabet is printed to STDOUT?
 
 > also, update so that sorting is done first by the name of the entity, then by the value of the name attribute
-
-
-
-
