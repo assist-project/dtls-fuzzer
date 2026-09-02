@@ -1,0 +1,22 @@
+state-fuzzer-client
+
+-port
+${sul.port}
+-startWait
+0
+-alphabet
+examples/alphabets/ra/servers/psk_aes128_ccm8_epoch.xml
+-responseWait
+100
+-maxRuns
+20000
+-protocol
+DTLS12
+-learningAlgorithm
+SLSTAR
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-output
+${output.ra}/piondtls-${piondtls.version}_client_psk_epoch
+-cmd
+${suts.dir}/piondtls-${piondtls.version}/dtls-clientserver -role client -port ${sul.port} -cipherSuite TLS_PSK_WITH_AES_128_CCM_8

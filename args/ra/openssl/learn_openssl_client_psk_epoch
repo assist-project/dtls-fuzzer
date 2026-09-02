@@ -12,11 +12,7 @@ ${sul.port}
 -cmd
 ${fuzzer.dir}/suts/openssl-${openssl.version}/apps/openssl s_client -psk 1234 -key ${keystore}/rsa2048_key.pem -cert ${keystore}/rsa2048_cert.pem -CAfile ${keystore}/rsa2048_cert.pem -port ${sul.port} -dtls1_2 -mtu 5000
 
-# mapper config
--socketClosedAsTimeout
--disabledAsTimeout
-
-# learning config
+# learner config
 -maxRuns
 20000
 -learningAlgorithm
@@ -24,6 +20,10 @@ SLSTAR
 -equivalenceAlgorithms
 IO_RANDOM_WALK
 -alphabet
-examples/alphabets/ra/clients/dhe_ecdhe_rsa_cert.xml
+examples/alphabets/ra/clients/psk_aes128_cbc_sha256_epoch.xml
 -output
-${output.ra}/openssl-${openssl.version}_client_dhe_ecdhe_rsa_cert
+${output.ra}/openssl-${openssl.version}_client_psk_epoch
+
+# mapper config
+-socketClosedAsTimeout
+-disabledAsTimeout

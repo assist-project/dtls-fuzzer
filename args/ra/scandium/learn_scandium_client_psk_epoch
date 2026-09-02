@@ -20,11 +20,11 @@ START
 
 # learning config
 -alphabet
-examples/alphabets/ra/clients/psk_aes128_ccm8.xml
+examples/alphabets/ra/clients/psk_aes128_ccm8_epoch.xml
 -maxRuns
 20000
 -output
-${output.ra}/scandium-${scandium.version}_client_psk
+${output.ra}/scandium-${scandium.version}_client_psk_epoch
 -learningAlgorithm
 SLSTAR
 -equivalenceAlgorithms

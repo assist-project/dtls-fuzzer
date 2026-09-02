@@ -1,0 +1,29 @@
+state-fuzzer-client
+
+# SUT config
+-port
+${sul.port}
+-startWait
+200
+-responseWait
+200
+-protocol
+DTLS12
+-cmd
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/examples/client/client  -i -x -p ${sul.port} -s -u -l PSK-AES128-CBC-SHA256
+-processDir
+${fuzzer.dir}/suts/wolfssl-${wolfssl.version}/
+
+# learning config
+-alphabet
+examples/alphabets/ra/clients/psk_aes128_cbc_sha256_epoch.xml
+-maxRuns
+20000
+-output
+${output.ra}/wolfssl-${wolfssl.version}_client_psk_epoch
+-learningAlgorithm
+SLSTAR
+-equivalenceAlgorithms
+IO_RANDOM_WALK
+-ceReruns
+3
