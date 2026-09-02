@@ -16,6 +16,7 @@
     </GenericTlsInput>
     <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY" />
     <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE" />
+    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)|APPLICATION" />
     <RAOutputSymbol name="APPLICATION" />
     <RAOutputSymbol name="Alert(FATAL,DECODE_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />

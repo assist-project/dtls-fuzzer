@@ -23,6 +23,7 @@
     <RAOutputSymbol name="Alert(FATAL,HANDSHAKE_FAILURE)" />
     <RAOutputSymbol name="Alert(FATAL,INTERNAL_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)|APPLICATION" />
     <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
     <RAOutputSymbol name="CLIENT_HELLO" />
     <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,CLOSE_NOTIFY)" />

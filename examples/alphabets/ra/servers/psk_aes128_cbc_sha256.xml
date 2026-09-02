@@ -17,6 +17,7 @@
     <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE" />
     <RAOutputSymbol name="APPLICATION" />
     <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)|APPLICATION" />
     <RAOutputSymbol name="CHANGE_CIPHER_SPEC,FINISHED" />
     <RAOutputSymbol name="CHANGE_CIPHER_SPEC|FINISHED" />
     <RAOutputSymbol name="HELLO_VERIFY_REQUEST" />

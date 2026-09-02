@@ -1,15 +1,18 @@
 <?xml version='1.0' encoding='utf-8'?>
 <alphabet>
-    <ClientHelloInput suite="TLS_PSK_WITH_AES_128_CBC_SHA256" name="PSK_CLIENT_HELLO">
+    <HelloVerifyRequestInput name="HELLO_VERIFY_REQUEST" >
         <param>EPOCH_I</param>
-    </ClientHelloInput>
-    <ClientKeyExchangeInput name="PSK_CLIENT_KEY_EXCHANGE" algorithm="PSK">
+    </HelloVerifyRequestInput>
+    <ServerHelloInput suite="TLS_PSK_WITH_AES_128_CCM_8" name="PSK_SERVER_HELLO" >
         <param>EPOCH_I</param>
-    </ClientKeyExchangeInput>
-    <ChangeCipherSpecInput>
+    </ServerHelloInput>
+    <ServerHelloDoneInput name="SERVER_HELLO_DONE" >
+        <param>EPOCH_I</param>
+    </ServerHelloDoneInput>
+    <ChangeCipherSpecInput >
         <param>EPOCH_I</param>
     </ChangeCipherSpecInput>
-    <FinishedInput name="FINISHED">
+    <FinishedInput name="FINISHED" >
         <param>EPOCH_I</param>
     </FinishedInput>
     <GenericTlsInput name="APPLICATION">
@@ -22,17 +25,13 @@
         </Application>
         <param>EPOCH_I</param>
     </GenericTlsInput>
-    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY">
+    <AlertInput name="Alert(WARNING,CLOSE_NOTIFY)" level="WARNING" description="CLOSE_NOTIFY" >
         <param>EPOCH_I</param>
     </AlertInput>
-    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE">
+    <AlertInput name="Alert(FATAL,UNEXPECTED_MESSAGE)" level="FATAL" description="UNEXPECTED_MESSAGE" >
         <param>EPOCH_I</param>
     </AlertInput>
-    <RAOutputSymbol name="APPLICATION" />
-    <RAOutputSymbol name="APPLICATION|Alert(WARNING,CLOSE_NOTIFY)" />
-    <RAOutputSymbol name="APPLICATION|CHANGE_CIPHER_SPEC|FINISHED" />
     <RAOutputSymbol name="Alert(FATAL,BAD_CERTIFICATE)" />
-    <RAOutputSymbol name="Alert(FATAL,BAD_RECORD_MAC)" />
     <RAOutputSymbol name="Alert(FATAL,CLOSE_NOTIFY)" />
     <RAOutputSymbol name="Alert(FATAL,DECODE_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,DECRYPT_ERROR)" />
@@ -41,11 +40,9 @@
     <RAOutputSymbol name="Alert(FATAL,INTERNAL_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
     <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)|APPLICATION" />
-    <RAOutputSymbol name="Alert(FATAL,UNKNOWN_PSK_IDENTITY)" />
     <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
-    <RAOutputSymbol name="Alert(WARNING,NO_RENEGOTIATION)" />
-    <RAOutputSymbol name="CHANGE_CIPHER_SPEC|FINISHED" />
-    <RAOutputSymbol name="CHANGE_CIPHER_SPEC|FINISHED|APPLICATION" />
+    <RAOutputSymbol name="APPLICATION" />
+    <RAOutputSymbol name="APPLICATION|Alert(WARNING,CLOSE_NOTIFY)" />
     <RAOutputSymbol name="CLIENT_HELLO" />
     <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,CLOSE_NOTIFY)" />
     <RAOutputSymbol name="CLIENT_HELLO|Alert(FATAL,DECODE_ERROR)" />
@@ -62,8 +59,6 @@
     <RAOutputSymbol name="ECDSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE" />
     <RAOutputSymbol name="ECDSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|FINISHED" />
     <RAOutputSymbol name="EMPTY_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
-    <RAOutputSymbol name="HELLO_VERIFY_REQUEST" />
-    <RAOutputSymbol name="HELLO_VERIFY_REQUEST+" />
     <RAOutputSymbol name="PSK_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
     <RAOutputSymbol name="PSK_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|UNKNOWN_MESSAGE" />
     <RAOutputSymbol name="RAW_EC_PUBLIC_KEY_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|FINISHED" />
@@ -74,15 +69,6 @@
     <RAOutputSymbol name="RSA_CERTIFICATE|ECDH_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|UNKNOWN_MESSAGE" />
     <RAOutputSymbol name="RSA_CERTIFICATE|RSA_CLIENT_KEY_EXCHANGE|CERTIFICATE_VERIFY|CHANGE_CIPHER_SPEC|FINISHED" />
     <RAOutputSymbol name="RSA_CLIENT_KEY_EXCHANGE|CHANGE_CIPHER_SPEC|FINISHED" />
-    <RAOutputSymbol name="SERVER_HELLO" />
-    <RAOutputSymbol name="SERVER_HELLO|ECDSA_CERTIFICATE|ECDHE_SERVER_KEY_EXCHANGE|CERTIFICATE_REQUEST|SERVER_HELLO_DONE" />
-    <RAOutputSymbol name="SERVER_HELLO|PSK_SERVER_KEY_EXCHANGE|SERVER_HELLO_DONE" />
-    <RAOutputSymbol name="SERVER_HELLO|RAW_EC_PUBLIC_KEY_CERTIFICATE|ECDHE_SERVER_KEY_EXCHANGE|CERTIFICATE_REQUEST|SERVER_HELLO_DONE" />
-    <RAOutputSymbol name="SERVER_HELLO|RAW_EC_PUBLIC_KEY_CERTIFICATE|ECDHE_SERVER_KEY_EXCHANGE|SERVER_HELLO_DONE" />
-    <RAOutputSymbol name="SERVER_HELLO|RSA_CERTIFICATE|CERTIFICATE_REQUEST|SERVER_HELLO_DONE" />
-    <RAOutputSymbol name="SERVER_HELLO|RSA_CERTIFICATE|DHE_SERVER_KEY_EXCHANGE|CERTIFICATE_REQUEST|SERVER_HELLO_DONE" />
-    <RAOutputSymbol name="SERVER_HELLO|RSA_CERTIFICATE|ECDHE_SERVER_KEY_EXCHANGE|CERTIFICATE_REQUEST|SERVER_HELLO_DONE" />
-    <RAOutputSymbol name="SERVER_HELLO|SERVER_HELLO_DONE" />
     <RAOutputSymbol name="SOCKET_CLOSED" />
     <RAOutputSymbol name="TIMEOUT" />
 </alphabet>

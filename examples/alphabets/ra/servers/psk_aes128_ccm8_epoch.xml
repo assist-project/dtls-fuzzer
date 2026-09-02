@@ -40,6 +40,7 @@
     <RAOutputSymbol name="Alert(FATAL,ILLEGAL_PARAMETER)" />
     <RAOutputSymbol name="Alert(FATAL,INTERNAL_ERROR)" />
     <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)" />
+    <RAOutputSymbol name="Alert(FATAL,UNEXPECTED_MESSAGE)|APPLICATION" />
     <RAOutputSymbol name="Alert(FATAL,UNKNOWN_PSK_IDENTITY)" />
     <RAOutputSymbol name="Alert(WARNING,CLOSE_NOTIFY)" />
     <RAOutputSymbol name="Alert(WARNING,NO_RENEGOTIATION)" />
