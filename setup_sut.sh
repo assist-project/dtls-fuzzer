@@ -77,6 +77,14 @@ readonly MBEDTLS_2250="mbedtls-2.25.0"
 readonly MBEDTLS_2250_ARCH_URL="https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.25.0.tar.gz"
 readonly MBEDTLS_2260="mbedtls-2.26.0"
 readonly MBEDTLS_2260_ARCH_URL="https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.26.0.tar.gz"
+readonly MBEDTLS_362="mbedtls-3.6.2"
+readonly MBEDTLS_362_ARCH_URL="https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.2/mbedtls-3.6.2.tar.bz2"
+readonly MBEDTLS_363="mbedtls-3.6.3"
+readonly MBEDTLS_363_ARCH_URL="https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.3/mbedtls-3.6.3.tar.bz2"
+readonly MBEDTLS_365="mbedtls-3.6.5"
+readonly MBEDTLS_365_ARCH_URL="https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.5/mbedtls-3.6.5.tar.bz2"
+readonly MBEDTLS_366="mbedtls-3.6.6"
+readonly MBEDTLS_366_ARCH_URL="https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.6/mbedtls-3.6.6.tar.bz2"
 readonly MBEDTLS_367="mbedtls-3.6.7"
 readonly MBEDTLS_367_ARCH_URL="https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-3.6.7/mbedtls-3.6.7.tar.bz2"
 
@@ -90,6 +98,8 @@ readonly OPENSSL_111k="openssl-1.1.1k"
 readonly OPENSSL_111k_ARCH_URL="https://github.com/openssl/openssl/releases/download/OpenSSL_1_1_1k/openssl-1.1.1k.tar.gz"
 readonly OPENSSL_300="openssl-3.0.0"
 readonly OPENSSL_300_ARCH_URL="https://www.openssl.org/source/old/3.0/openssl-3.0.0.tar.gz"
+readonly OPENSSL_402="openssl-4.0.2"
+readonly OPENSSL_402_ARCH_URL="https://github.com/openssl/openssl/releases/download/openssl-4.0.2/openssl-4.0.2.tar.gz"
 
 readonly PIONDTLS_USENIX="piondtls-usenix" # the usenix version sits one commit before 1.5.2 (the commit after it fixes the application processing bug)
 readonly PIONDTLS_USENIX_REP_COMMIT="e4481fc"
@@ -128,6 +138,8 @@ readonly WOLFSSL_576="wolfssl-5.7.6"
 readonly WOLFSSL_576_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.7.6-stable.tar.gz"
 readonly WOLFSSL_582="wolfssl-5.8.2"
 readonly WOLFSSL_582_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.8.2-stable.tar.gz"
+readonly WOLFSSL_592="wolfssl-5.9.2"
+readonly WOLFSSL_592_ARCH_URL="https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.9.2-stable.tar.gz"
 
 # dependencies
 readonly JDK_904="jdk-9.0.4"
@@ -157,21 +169,21 @@ readonly LIBTOOL="libtool-2.4.6"
 sutvarnames=("CTINYDTLS" "ETINYDTLS" "ETINYDTLS_DEVELOP" \
 "GNUTLS_3519" "GNUTLS_367" "GNUTLS_371" "GNUTLS_LATEST" \
 "JSSE_904" "JSSE_11010" "JSSE_1202" "JSSE_1302" "JSSE_1501" "JSSE_1601" \
-"MBEDTLS_2161" "MBEDTLS_2250" "MBEDTLS_2260" "MBEDTLS_367" \
+"MBEDTLS_2161" "MBEDTLS_2250" "MBEDTLS_2260" "MBEDTLS_362" "MBEDTLS_363" "MBEDTLS_365" "MBEDTLS_366" "MBEDTLS_367" \
 "SCANDIUM_OLD" "SCANDIUM_230" "SCANDIUM_262" "SCANDIUM_300_M2" \
-"OPENSSL_111b" "OPENSSL_111c" "OPENSSL_111g" "OPENSSL_111k" "OPENSSL_300" \
+"OPENSSL_111b" "OPENSSL_111c" "OPENSSL_111g" "OPENSSL_111k" "OPENSSL_300" "OPENSSL_402" \
 "PIONDTLS_USENIX" "PIONDTLS_152" "PIONDTLS_202" "PIONDTLS_209" \
-"WOLFSSL_400" "WOLFSSL_440" "WOLFSSL_471r" "WOLFSSL_576" "WOLFSSL_582")
+"WOLFSSL_400" "WOLFSSL_440" "WOLFSSL_471r" "WOLFSSL_576" "WOLFSSL_582" "WOLFSSL_592")
 
 # Alphabetically
 sut_strings=("${CTINYDTLS}" "${ETINYDTLS}" "${ETINYDTLS_DEVELOP}" \
 "${GNUTLS_3519}" "${GNUTLS_367}" "${GNUTLS_371}" "${GNUTLS_LATEST}" \
 "${JSSE_904}" "${JSSE_11010}" "${JSSE_1202}" "${JSSE_1302}" "${JSSE_1501}" "${JSSE_1601}" \
-"${MBEDTLS_2161}" "${MBEDTLS_2250}" "${MBEDTLS_2260}" "${MBEDTLS_367}" \
-"${OPENSSL_111b}" "${OPENSSL_111c}" "${OPENSSL_111g}" "${OPENSSL_111k}" "${OPENSSL_300}" \
+"${MBEDTLS_2161}" "${MBEDTLS_2250}" "${MBEDTLS_2260}" "${MBEDTLS_362}" "${MBEDTLS_363}" "${MBEDTLS_365}" "${MBEDTLS_366}" "${MBEDTLS_367}" \
+"${OPENSSL_111b}" "${OPENSSL_111c}" "${OPENSSL_111g}" "${OPENSSL_111k}" "${OPENSSL_300}" "${OPENSSL_402}" \
 "${PIONDTLS_USENIX}" "${PIONDTLS_152}" "${PIONDTLS_202}" "${PIONDTLS_209}" \
 "${SCANDIUM_OLD}" "${SCANDIUM_230}" "${SCANDIUM_262}" "${SCANDIUM_300_M2}" \
-"${WOLFSSL_400}" "${WOLFSSL_440}" "${WOLFSSL_471r}" "${WOLFSSL_576}" "${WOLFSSL_582}")
+"${WOLFSSL_400}" "${WOLFSSL_440}" "${WOLFSSL_471r}" "${WOLFSSL_576}" "${WOLFSSL_582}" "${WOLFSSL_592}")
 
 # Options for when setting up SUT
 opt_no_patch=0
