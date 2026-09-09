@@ -9,12 +9,12 @@ ARGS_SERVER="-testFile examples/tests/ra/servers/psk_epoch -equivalenceAlgorithm
 ARGS_CLIENT="-testFile examples/tests/ra/clients/psk_epoch -equivalenceAlgorithms SAMPLED_TESTS_RA"
 ARGS_SLLAMBDA="${ARGS_GLOBAL} -Doutput.dir=output/ra-sllambda -learningAlgorithm SLLAMBDA"
 ARGS_SLSTAR="${ARGS_GLOBAL} -Doutput.dir=output/ra-slstar -learningAlgorithm SLSTAR"
-ARGS_SLLEQ="${ARGS_GLOBAL} -Doutput.dir=output/ra-slleq -learningAlgorithm SLLEQ"
+ARGS_SLLAMBDAEQ="${ARGS_GLOBAL} -Doutput.dir=output/ra-SLLAMBDAEQ -learningAlgorithm SLLAMBDAEQ"
 
 ALGORITHMS=(
     "SLLAMBDA"
     "SLSTAR"
-    "SLLEQ"
+    "SLLAMBDAEQ"
 )
 
 RA_SERVER_EXPERIMENTS=(
