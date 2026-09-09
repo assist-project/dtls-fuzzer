@@ -5,8 +5,8 @@
 
 
 
-ARGS_SERVER="-testFile examples/tests/ra/servers/psk_epoch -roundLimit 1"
-ARGS_CLIENT="-testFile examples/tests/ra/clients/psk_epoch -roundLimit 1"
+ARGS_SERVER="-testFile examples/tests/ra/servers/psk_epoch -equivalenceAlgorithms SAMPLED_TESTS_RA"
+ARGS_CLIENT="-testFile examples/tests/ra/clients/psk_epoch -equivalenceAlgorithms SAMPLED_TESTS_RA"
 ARGS_SLLAMBDA="${ARGS_GLOBAL} -Doutput.dir=output/ra-sllambda -learningAlgorithm SLLAMBDA"
 ARGS_SLSTAR="${ARGS_GLOBAL} -Doutput.dir=output/ra-slstar -learningAlgorithm SLSTAR"
 ARGS_SLLEQ="${ARGS_GLOBAL} -Doutput.dir=output/ra-slleq -learningAlgorithm SLLEQ"
@@ -17,7 +17,7 @@ ALGORITHMS=(
     "SLLEQ"
 )
 
-RA_EXPERIMENTS=(
+RA_SERVER_EXPERIMENTS=(
     "args/ra/etinydtls/learn_etinydtls_server_psk_epoch"
     "args/ra/mbedtls/learn_mbedtls_server_psk_epoch"
     "args/ra/scandium/learn_scandium_server_psk_epoch"
@@ -26,11 +26,18 @@ RA_EXPERIMENTS=(
     "args/ra/piondtls/learn_piondtls_server_psk_epoch"
 )
 
-
+RA_CLIENT_EXPERIMENTS=(
+    "args/ra/etinydtls/learn_etinydtls_client_psk_epoch"
+    "args/ra/mbedtls/learn_mbedtls_client_psk_epoch"
+    "args/ra/scandium/learn_scandium_client_psk_epoch"
+    "args/ra/wolfssl/learn_wolfssl_client_psk_epoch"
+    "args/ra/openssl/learn_openssl_client_psk_epoch"
+    "args/ra/piondtls/learn_piondtls_client_psk_epoch"
+)
 
 
 function gen_exp_for_each_alg() {
-	# -n is a name reference, otherwise variable is assigned a value
+    # -n is a name reference, otherwise variable is assigned a value
     local -n input="$1"
     local -n output="$2"
     # additional arguments
@@ -73,13 +80,10 @@ function run_experiments() {
     wait
 }
 
-gen_exp_for_each_alg RA_EXPERIMENTS actual_experiments "${ARGS_SERVER}"
+gen_exp_for_each_alg RA_SERVER_EXPERIMENTS actual_experiments "${ARGS_SERVER}"
+gen_exp_for_each_alg RA_CLIENT_EXPERIMENTS actual_experiments "${ARGS_CLIENT}"
 
 echo "The following experiments are considered"
 printf '%s\n' "${actual_experiments[@]}"
 
-run_experiments \
-    actual_experiments \
-    "$NO_SIMUL_EXPERIMENTS" \
-    "$RA_JAR" \
-    "$EXPERIMENT_FILTER"
+run_experiments actual_experiments "$NO_SIMUL_EXPERIMENTS" "$RA_JAR" "$EXPERIMENT_FILTER"
