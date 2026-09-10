@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # both mealy_arguments and ra_arguments are passed to run_experiments, just as arrays.
-# shellcheck disable=SC2034
+# shellcheck disable=SC2034,SC2154
 
 
 
@@ -66,15 +66,15 @@ function run_experiments() {
 
     for experiment in "${experiments[@]}"; do
         # Skip experiments that do not match the filter
-        if [[ -n "$filter" && ! "$experiment" == $filter ]]; then
+        if [[ -n "$filter" && ! "$experiment" == "$filter" ]]; then
             continue
         fi
 
         if [[ $(jobs -r | wc -l) -ge ${no_parallel} ]]; then
             wait -n
         fi
-        echo $experiment
-        (java -jar "${jarfile}" ${experiment}) &
+        echo "$experiment"
+        (java -jar "${jarfile}" "${experiment}") &
     done
 
     wait
