@@ -8,8 +8,8 @@ readonly SCRIPT_DIR
 readonly PATCHES_DIR="${SCRIPT_DIR}/experiments/patches"
 
 
-readonly PROTOCOLSTATEFUZZER_COMMIT="5913d98cd9a9782c92c327cd892d4fdb23a7dc75"
-readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/ntua-el21001/protocol-state-fuzzer-copy"
+readonly PROTOCOLSTATEFUZZER_COMMIT="651f67b7c1a8440a9df7b01a119636086cbcd9af"
+readonly PROTOCOLSTATEFUZZER_REP_URL="https://github.com/protocol-fuzzing/protocol-state-fuzzer.git"
 readonly PROTOCOLSTATEFUZZER_FOLDER="ProtocolState-Fuzzer"
 
 readonly TLSATTACKER_VERSION="v6.3.4"

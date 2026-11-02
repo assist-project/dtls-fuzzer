@@ -54,7 +54,9 @@ import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.inputs.TlsInput;
 import se.uu.it.dtlsfuzzer.components.sul.mapper.symbols.outputs.TlsOutput;
 
 public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigBuilder, FingerprintConfigBuilder,
-        StateFuzzerBuilder<MealyMachineWrapper<TlsInput, TlsOutput>>, DiffTesterBuilder, FingerprintBuilder, TestRunnerBuilder, TimingProbeBuilder, IdentifierBuilder<MealyMachineWrapper<TlsInput, TlsOutput>> {
+        StateFuzzerBuilder<MealyMachineWrapper<TlsInput, TlsOutput>>, DiffTesterBuilder,
+        FingerprintBuilder, TestRunnerBuilder, TimingProbeBuilder,
+        IdentifierBuilder<MealyMachineWrapper<TlsInput, TlsOutput>> {
 
     private AlphabetBuilder<TlsInput> alphabetBuilder = new AlphabetBuilderStandard<>(
             new AlphabetSerializerXml<>(TlsInput.class, TlsAlphabetPojoXml.class));
@@ -68,7 +70,8 @@ public class MultiBuilder implements StateFuzzerConfigBuilder, DiffTesterConfigB
                 new TlsSulClientConfig(),
                 new TestRunnerConfigStandard(),
                 new TimingProbeConfigStandard(),
-                new IdentifierConfigStandard());
+                new IdentifierConfigStandard()
+        );
     }
 
     @Override
