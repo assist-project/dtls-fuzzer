@@ -4,7 +4,7 @@ on: [push, pull_request]
 jobs:
   CTinyDTLS_Server_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: true
     steps:
@@ -30,7 +30,7 @@ jobs:
 
   CTinyDTLS_Client_psk:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: true
     steps:
