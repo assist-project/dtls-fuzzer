@@ -14,7 +14,6 @@
         <error-prone.version>2.52.0</error-prone.version>
         <jakarta-xml.version>4.0.5</jakarta-xml.version>
         <jcommander.version>1.82</jcommander.version>
-        <learnlib.version>19.0.0</learnlib.version>
         <log4j.version>2.26.1</log4j.version>
         <modifiable-variable.version>4.2.2</modifiable-variable.version>
         <osgi.version>8.1.0</osgi.version>
@@ -27,15 +26,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- learnlib -->
-            <dependency>
-                <groupId>de.learnlib</groupId>
-                <artifactId>learnlib-parent</artifactId>
-                <version>${learnlib.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <!-- jcommander -->
             <dependency>
                 <groupId>com.beust</groupId>
